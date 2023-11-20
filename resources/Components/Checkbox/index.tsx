@@ -1,10 +1,10 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect } from 'react';
 
 // React Hook Form
-import { useFormContext } from "react-hook-form";
+import { useFormContext } from 'react-hook-form';
 
 // Material UI
-import { Checkbox as MuiCheckbox } from "@mui/material";
+import { Checkbox as MuiCheckbox } from '@mui/material';
 
 // Interface
 interface iCheckbox {
@@ -22,7 +22,7 @@ export const Checkbox: FC<iCheckbox> = ({ name, value, ...props }) => {
 
     return (
         <React.Fragment>
-            <MuiCheckbox {... control && register(name)} {...props} />
+            <MuiCheckbox {...(control && register(name))} {...props} />
         </React.Fragment>
     );
 };

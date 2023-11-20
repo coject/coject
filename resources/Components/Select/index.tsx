@@ -1,13 +1,13 @@
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState, useEffect } from 'react';
 
 // React Hook Form
-import { useFormContext, Controller } from "react-hook-form";
+import { useFormContext, Controller } from 'react-hook-form';
 
 // Request
-import { Request } from "../../Services";
+import { Request } from '../../Services';
 
 // Material UI
-import { TextField, Autocomplete } from "@mui/material";
+import { TextField, Autocomplete } from '@mui/material';
 
 // Interface
 interface iSelect {
@@ -26,8 +26,8 @@ interface iSelect {
 
 export const Select: FC<iSelect> = ({ name, dataSource, placeholder, value, customKey, customName, variant, onChange, multiple, required, dispatch, ...props }) => {
     const Methods = useFormContext() || {};
-    const [ selectedValue, setSelectedValue ] = useState<any>();
-    const [ selectData, setSelectData ] = useState<any>([]);
+    const [selectedValue, setSelectedValue] = useState<any>();
+    const [selectData, setSelectData] = useState<any>([]);
     const { setValue, control } = useFormContext() || {};
     const DropdownID = dataSource?.uniqueName ? dataSource.uniqueName : dataSource?.name ? dataSource.name : name;
 
@@ -43,10 +43,13 @@ export const Select: FC<iSelect> = ({ name, dataSource, placeholder, value, cust
     useEffect(() => {
         if (dataSource?.staticData && !!dataSource.staticData.length && !dataSource?.apiUrl) {
             dataSource.staticData.map((Data: any) => {
-                return setSelectData((Prev: any) => [ ...Prev, {
-                    id: Data[customKey ? customKey : "id"],
-                    label: Data[customName ? customName : "label"]
-                } ]);
+                return setSelectData((Prev: any) => [
+                    ...Prev,
+                    {
+                        id: Data[customKey ? customKey : 'id'],
+                        label: Data[customName ? customName : 'label']
+                    }
+                ]);
             });
         }
     }, [dataSource?.staticData]);
@@ -55,14 +58,17 @@ export const Select: FC<iSelect> = ({ name, dataSource, placeholder, value, cust
     useEffect(() => {
         if (dataSource?.apiUrl && !dataSource.staticData) {
             Request({
-                dataSource: { ...dataSource }, dispatch, callBack: (ResponseData: any) => {
+                dataSource: { ...dataSource },
+                dispatch,
+                callBack: (ResponseData: any) => {
                     ResponseData.map((Data: any) => {
-                        return (
-                            setSelectData((Prev: any) => [...Prev, {
-                                id: Data[customKey ? customKey : "id"],
-                                label: Data[customName ? customName : "label"]
-                            }])
-                        );
+                        return setSelectData((Prev: any) => [
+                            ...Prev,
+                            {
+                                id: Data[customKey ? customKey : 'id'],
+                                label: Data[customName ? customName : 'label']
+                            }
+                        ]);
                     });
                 }
             }).then();
@@ -72,29 +78,31 @@ export const Select: FC<iSelect> = ({ name, dataSource, placeholder, value, cust
     // Master Component
     const MuiAutocomplete = () => {
         return (
-            <Autocomplete id={DropdownID} options={selectData} multiple={multiple} {...props}
-                value={ !!selectData.length && selectedValue
-                    ? multiple && !!selectedValue.length
-                        ? selectedValue.map((SValue: string) => selectData.find((option: any) => option.id === SValue))
-                        : multiple ? [] : selectData.find((option: any) => option.id === selectedValue)
-                    : multiple ? [] : null
+            <Autocomplete
+                id={DropdownID}
+                options={selectData}
+                multiple={multiple}
+                {...props}
+                value={
+                    !!selectData.length && selectedValue
+                        ? multiple && !!selectedValue.length
+                            ? selectedValue.map((SValue: string) => selectData.find((option: any) => option.id === SValue))
+                            : multiple
+                            ? []
+                            : selectData.find((option: any) => option.id === selectedValue)
+                        : multiple
+                        ? []
+                        : null
                 }
                 onChange={(e, newValue) => {
                     onChange && onChange(e, newValue, Methods);
                     setSelectedValue(multiple ? newValue?.map((NValue: any) => NValue.id) : newValue?.id);
                     control && setValue(name, multiple ? newValue?.map((NValue: any) => NValue.id) : newValue?.id);
                 }}
-                renderInput={(params) => <TextField {...params} label={placeholder ? placeholder : "Select"} variant={variant} />}
+                renderInput={(params) => <TextField {...params} label={placeholder ? placeholder : 'Select'} variant={variant} />}
             />
-        )
-    }
+        );
+    };
 
-    return (
-        <React.Fragment>
-            { control
-                ? <Controller name={name} control={control} rules={{ required: required }} render={ () => <MuiAutocomplete /> } />
-                : <MuiAutocomplete />
-            }
-        </React.Fragment>
-    );
+    return <React.Fragment>{control ? <Controller name={name} control={control} rules={{ required: required }} render={() => <MuiAutocomplete />} /> : <MuiAutocomplete />}</React.Fragment>;
 };

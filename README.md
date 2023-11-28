@@ -10,15 +10,10 @@
 <div align="center">
 
 [![npm version](https://img.shields.io/npm/v/coject.svg?style=flat-square)](https://www.npmjs.org/package/coject)
-[![CDNJS](https://img.shields.io/cdnjs/v/coject.svg?style=flat-square)](https://cdnjs.com/libraries/coject)
-[![Build status](https://img.shields.io/github/actions/workflow/status/coject/coject/ci.yml?branch=v1.x&label=CI&logo=github&style=flat-square)](https://github.com/coject/coject/actions/workflows/ci.yml)
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod&style=flat-square)](https://gitpod.io/#https://github.com/coject/coject)
-[![code coverage](https://img.shields.io/coveralls/mzabriskie/coject.svg?style=flat-square)](https://coveralls.io/r/mzabriskie/coject)
 [![install size](https://img.shields.io/badge/dynamic/json?url=https://packagephobia.com/v2/api.json?p=coject&query=$.install.pretty&label=install%20size&style=flat-square)](https://packagephobia.now.sh/result?p=coject)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/coject?style=flat-square)](https://bundlephobia.com/package/coject@latest)
 [![npm downloads](https://img.shields.io/npm/dm/coject.svg?style=flat-square)](https://npm-stat.com/charts.html?package=coject)
 [![gitter chat](https://img.shields.io/gitter/room/mzabriskie/coject.svg?style=flat-square)](https://gitter.im/mzabriskie/coject)
-[![code helpers](https://www.codetriage.com/coject/coject/badges/users.svg)](https://www.codetriage.com/coject/coject)
 [![Known Vulnerabilities](https://snyk.io/test/npm/coject/badge.svg)](https://snyk.io/test/npm/coject)
 
 </div>

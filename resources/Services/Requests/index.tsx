@@ -1,8 +1,8 @@
 // Axios Middleware
-import axios from 'axios';
+import axios from "axios";
 
 // React Toastify
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 // Interface
 interface iCojectAction {
@@ -24,22 +24,20 @@ export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, call
     // Default Method
     const DefaultMethod = () => {
         switch (mode?.toLowerCase()) {
-            case 'create':
-                return 'post';
-            case 'update':
-                return 'put';
-            case 'delete':
-                return 'delete';
+            case "create":
+                return "post";
+            case "update":
+                return "put";
+            case "delete":
+                return "delete";
             default:
-                return 'get';
+                return "get";
         }
     };
 
     // Handling Variables
     switch (mode) {
-        case 'create':
-        case 'update':
-        case 'delete':
+        case "create": case "update": case "delete":
             if (((dataSource[mode] && dataSource[mode].formData) || dataSource?.formData) && ((dataSource[mode] && dataSource[mode].requestData) || dataSource?.requestData)) {
                 if (dataSource[mode] && dataSource[mode].requestData) {
                     for (let Index = 0; Index < Object.keys(dataSource[mode].requestData).length; Index++) {
@@ -51,19 +49,18 @@ export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, call
                     }
                 }
             }
-            Type = 'SINGLE';
-            APIUrlId = apiUrlId ? apiUrlId : dataSource?.apiUrlId ? dataSource?.apiUrlId : '';
+            Type = "SINGLE";
+            APIUrlId = apiUrlId ? apiUrlId : dataSource?.apiUrlId ? dataSource?.apiUrlId : "";
             APIUrl = dataSource[mode] && dataSource[mode].apiUrl ? dataSource[mode].apiUrl : dataSource?.apiUrl;
             Headers = dataSource[mode] && dataSource[mode].headers ? dataSource[mode].headers : dataSource?.headers;
-            DataPath = dataSource[mode] && dataSource[mode].dataPath ? dataSource[mode].dataPath.split('.') : dataSource?.dataPath?.split('.');
+            DataPath = dataSource[mode] && dataSource[mode].dataPath ? dataSource[mode].dataPath.split(".") : dataSource?.dataPath?.split(".");
             Method = dataSource[mode] && dataSource[mode].method ? dataSource[mode].method : dataSource?.method ? dataSource.method : DefaultMethod();
             Name = dataSource[mode] && dataSource[mode].name ? dataSource[mode].name : dataSource?.uniqueName ? dataSource?.uniqueName : dataSource?.name;
-            Data =
-                (dataSource[mode] && dataSource[mode].formData) || dataSource?.formData
+            Data = (dataSource[mode] && dataSource[mode].formData) || dataSource?.formData
                     ? data
                     : dataSource?.requestData && dataSource?.requestData instanceof Array
-                    ? [...(data ? data : []), ...(dataSource[mode] && dataSource[mode].requestData ? dataSource[mode].requestData : dataSource.requestData)]
-                    : { ...data, ...(dataSource[mode] && dataSource[mode].requestData ? dataSource[mode].requestData : dataSource.requestData) };
+                        ? [...(data ? data : []), ...(dataSource[mode] && dataSource[mode].requestData ? dataSource[mode].requestData : dataSource.requestData)]
+                        : { ...data, ...(dataSource[mode] && dataSource[mode].requestData ? dataSource[mode].requestData : dataSource.requestData) };
             break;
         default:
             if (dataSource?.formData && dataSource?.requestData) {
@@ -73,34 +70,21 @@ export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, call
             }
             APIUrl = dataSource?.apiUrl;
             Headers = dataSource?.headers;
-            DataPath = dataSource?.dataPath?.split('.');
+            DataPath = dataSource?.dataPath?.split(".");
             Method = dataSource?.method ? dataSource.method : DefaultMethod();
             Name = dataSource?.uniqueName ? dataSource?.uniqueName : dataSource?.name;
-            Data = dataSource?.formData
-                ? data
-                : dataSource?.requestData && dataSource?.requestData instanceof Array
-                ? [...(data ? data : []), ...dataSource.requestData]
-                : { ...data, ...dataSource.requestData };
-            APIUrlId = apiUrlId ? apiUrlId : dataSource?.apiUrlId ? dataSource?.apiUrlId : '';
+            Data = dataSource?.formData ? data : dataSource?.requestData && dataSource?.requestData instanceof Array ? [...(data ? data : []), ...dataSource.requestData] : { ...data, ...dataSource.requestData };
+            APIUrlId = apiUrlId ? apiUrlId : dataSource?.apiUrlId ? dataSource?.apiUrlId : "";
             break;
     }
 
     // Loading State
-    dispatch &&
-        dispatch({
-            type: 'LOADING',
-            name: Name || 'default'
-        });
+    dispatch && dispatch({ type: "LOADING", name: Name || "default" });
 
     // Success State
     const SuccessAction = (Response: any) => {
         if (!!Response.data?.MESSAGE?.MESSAGE) {
-            dispatch &&
-                dispatch({
-                    type: 'ERRORS',
-                    error: Response.data.MESSAGE.MESSAGE,
-                    name: Name || 'default'
-                });
+            dispatch && dispatch({ type: "ERRORS", error: Response.data.MESSAGE.MESSAGE, name: Name || "default" });
             toast.error(Response.data.MESSAGE.MESSAGE, { position: toast.POSITION.TOP_RIGHT });
         } else {
             let Payload = Response.data;
@@ -109,12 +93,7 @@ export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, call
                     Payload = Payload[DataPath[Index]];
                 }
             }
-            dispatch &&
-                dispatch({
-                    type: Type || 'SUCCESS',
-                    name: Name || 'default',
-                    payload: mode === 'delete' ? {} : Payload
-                });
+            dispatch && dispatch({ type: Type || "SUCCESS", name: Name || "default", payload: mode === "delete" ? {} : Payload });
             callBack && callBack(Payload);
             dataSource?.callBack && dataSource?.callBack(Payload);
             dataSource?.create?.callBack && dataSource.create.callBack(Payload);
@@ -125,21 +104,16 @@ export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, call
 
     // Error State
     const CatchAction = (Error: any) => {
-        dispatch &&
-            dispatch({
-                type: 'ERRORS',
-                error: Error.message,
-                name: Name || 'default'
-            });
+        dispatch && dispatch({ type: "ERRORS", error: Error.message, name: Name || "default" });
     };
 
     // Request Actions
-    if (Method.toLowerCase() === 'get' || Method.toLowerCase() === 'delete')
-        await Axios[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? '/' + APIUrlId : ''}`, Headers)
+    if (Method.toLowerCase() === "get" || Method.toLowerCase() === "delete")
+        await Axios[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, Headers)
             .then((Response: any) => SuccessAction(Response))
             .catch((Error: any) => CatchAction(Error));
     else
-        await Axios[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? '/' + APIUrlId : ''}`, Data, Headers)
+        await Axios[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, Data, Headers)
             .then((Response: any) => SuccessAction(Response))
             .catch((Error: any) => CatchAction(Error));
 };

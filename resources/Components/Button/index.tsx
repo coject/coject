@@ -1,7 +1,7 @@
-import React, { FC, ReactNode } from 'react';
+import React, { FC, ReactNode } from "react";
 
 // Material UI
-import { Button as MuiButton } from '@mui/material';
+import { Button as MuiButton } from "@mui/material";
 
 // Interface
 interface iButton {

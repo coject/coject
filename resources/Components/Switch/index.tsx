@@ -1,10 +1,10 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect } from "react";
 
 // React Hook Form
-import { useFormContext } from 'react-hook-form';
+import { useFormContext } from "react-hook-form";
 
 // Material UI
-import { Switch as MuiSwitch } from '@mui/material';
+import { Switch as MuiSwitch } from "@mui/material";
 
 // Interface
 interface iSwitch {
@@ -18,7 +18,7 @@ export const Switch: FC<iSwitch> = ({ name, value, ...props }) => {
     // Value
     useEffect(() => {
         if (value) control && setValue(name, value);
-    }, [value]);
+    }, [control, name, setValue, value]);
 
     return (
         <React.Fragment>

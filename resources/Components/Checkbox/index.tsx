@@ -1,10 +1,10 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect } from "react";
 
 // React Hook Form
-import { useFormContext } from 'react-hook-form';
+import { useFormContext } from "react-hook-form";
 
 // Material UI
-import { Checkbox as MuiCheckbox } from '@mui/material';
+import { Checkbox as MuiCheckbox } from "@mui/material";
 
 // Interface
 interface iCheckbox {

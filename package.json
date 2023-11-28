@@ -15,7 +15,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/coject.git"
+        "url": "git+https://github.com/coject/coject.git"
     },
     "keywords": [
         "Node",
@@ -30,9 +30,9 @@
     "author": "Akwad",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/coject/issues"
+        "url": "https://github.com/coject/coject/issues"
     },
-    "homepage": "https://github.com/coject#readme",
+    "homepage": "https://github.com/coject/coject",
     "devDependencies": {
         "@emotion/react": "^11.11.1",
         "@emotion/styled": "^11.11.0",

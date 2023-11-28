@@ -4,7 +4,10 @@ import React, { FC, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 
 // Material UI
-import { TextField } from "@mui/material";
+import { Box, TextField } from "@mui/material";
+
+// Styles
+import useStyles from "./theme";
 
 // Interface
 interface iInput {
@@ -14,16 +17,19 @@ interface iInput {
 }
 
 export const Input: FC<iInput> = ({ name, value, label, ...props }) => {
+    const { classes } = useStyles();
     const { register, setValue, control } = useFormContext() || {};
 
     // Value
     useEffect(() => {
         if (value) control && setValue(name, value);
-    }, [value]);
+    }, [control, name, setValue, value]);
 
     return (
         <React.Fragment>
-            <TextField {...(control && register(name))} defaultValue={value} label={label ? label : name} {...props} />
+            <Box className={classes.root}>
+                <TextField {...(control && register(name))} defaultValue={value} label={label ? label : name} {...props} />
+            </Box>
         </React.Fragment>
     );
 };

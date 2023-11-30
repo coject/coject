@@ -18,7 +18,7 @@ export const Checkbox: FC<iCheckbox> = ({ name, value, ...props }) => {
     // Value
     useEffect(() => {
         if (value) control && setValue(name, value);
-    }, [value]);
+    }, [control, name, setValue, value]);
 
     return (
         <React.Fragment>

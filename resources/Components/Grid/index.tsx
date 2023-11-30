@@ -43,7 +43,7 @@ export const Grid: FC<iGrid> = ({ dataSource, schema, actions, toolbar, initialS
         if (dataSource?.staticData && !!dataSource.staticData.length && !dataSource?.apiUrl) {
             setGridData(dataSource.staticData);
         }
-    }, [dataSource?.apiUrl, dataSource.staticData]);
+    }, [dataSource?.apiUrl, dataSource?.staticData]);
 
     // Dynamic Data
     useEffect(() => {
@@ -101,7 +101,7 @@ export const Grid: FC<iGrid> = ({ dataSource, schema, actions, toolbar, initialS
 
             {/* Data Grid */}
             <Box className={classes.root}>
-                <DataGrid rows={gridData} columns={columnsSchema} density={"compact"} {...props}
+                <DataGrid className={!gridData?.length ? classes.empty : ""} rows={gridData} columns={columnsSchema} density={"compact"} {...props}
                     getRowClassName={(params) => (
                         params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""
                     )}

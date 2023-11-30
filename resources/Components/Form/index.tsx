@@ -90,13 +90,17 @@ export const Form: FC<iForm> = ({ name, mode, getForm, schema, dataSource, onSub
                             }
                         })}
                         { children }
-                        { (schema && !!schema?.length && Fields.includes("button")) ? schema.map((field: any, index: number) => { if (field.type === "button") {
-                            if (field.template) {
-                                return <React.Fragment key={index}>{field.template(Methods.getValues())}</React.Fragment>
-                            } else {
-                                return <Grid item key={index} {...(field.media ? field.media : { md: 12, lg: 12 })}><Button {...field.props}>{field.field}</Button></Grid>
-                            }
-                        }}) : <Grid item md={12} lg={12}><Button fullWidth type="submit" variant="contained">Save</Button></Grid> }
+                        { (schema && !!schema?.length && Fields.includes("button"))
+                            ? schema.map((field: any, index: number) => {
+                                if (field.type === "button") {
+                                    if (field.template) {
+                                        return <React.Fragment key={index}>{field.template(Methods.getValues())}</React.Fragment>
+                                    } else {
+                                        return <Grid item key={index} {...(field.media ? field.media : { md: 12, lg: 12 })}><Button {...field.props}>{field.field}</Button></Grid>
+                                    }
+                                } else return null }
+                            )
+                            : <Grid item md={12} lg={12}><Button fullWidth type="submit" variant="contained">Save</Button></Grid> }
                     </Grid>
                 </form>
             </FormProvider>

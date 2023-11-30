@@ -46,7 +46,7 @@ export const Select: FC<iSelect> = ({ name, dataSource, placeholder, value, cust
                 return setSelectData((Prev: any) => [ ...Prev, { id: Data[customKey ? customKey : "id"], label: Data[customName ? customName : "label"] } ]);
             });
         }
-    }, [dataSource?.staticData]);
+    }, [customKey, customName, dataSource?.apiUrl, dataSource?.staticData]);
 
     // Dynamic Data
     useEffect(() => {
@@ -60,7 +60,7 @@ export const Select: FC<iSelect> = ({ name, dataSource, placeholder, value, cust
                 }
             }).then();
         }
-    }, [dataSource?.apiUrl]);
+    }, [customKey, customName, dataSource, dataSource?.apiUrl, dispatch]);
 
     // Master Component
     const MuiAutocomplete = () => {

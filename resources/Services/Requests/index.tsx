@@ -107,8 +107,6 @@ export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, call
         dispatch && dispatch({ type: "ERRORS", error: Error.message, name: Name || "default" });
     };
 
-    console.log(Headers)
-
     // Request Actions
     if (Method.toLowerCase() === "get" || Method.toLowerCase() === "delete")
         await Axios[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, { "headers": Headers })

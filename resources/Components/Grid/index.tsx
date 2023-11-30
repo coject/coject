@@ -108,7 +108,12 @@ export const Grid: FC<iGrid> = ({ dataSource, schema, actions, toolbar, initialS
                     initialState={initialState ? initialState : {
                         pagination: { paginationModel: { pageSize: 15 } }
                     }}
-                    pageSizeOptions={pageSizeOptions ? pageSizeOptions : [15, 25, 35, 50, 100]}
+                    pageSizeOptions={
+                        pageSizeOptions ? pageSizeOptions : [15, 25, 35, 50, 100]
+                    }
+                    getRowId={
+                        (row) => dataSource?.primaryKey ? row[dataSource?.primaryKey] : row.id
+                    }
                     slots={{
                         toolbar: toolbar ? CustomToolbar : null
                     }}

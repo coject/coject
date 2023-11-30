@@ -18,14 +18,14 @@
 
 </div>
 
-# Coject v1.2
+## Coject v1.3
 
 The [Coject](https://coject.com/) library exported as [React.js](https://react.dev/) components.
 All Component Is Dependency On [Material UI](https://mui.com/) Library.
 
-## Installation
+### Installation
 
-Using npm:
+### Using npm:
 ```shell
 // npm install
 $ npm i coject
@@ -34,7 +34,7 @@ $ npm i coject
 $ yarn add coject
 ```
 
-Dependency npm [For JavaScript/TypeScript Project]:
+### Dependency npm [For JavaScript/TypeScript Project]:
 ```shell
 // npm install
 $ npm i @emotion/react @emotion/styled @mui/icons-material @mui/material @mui/x-data-grid @mui/x-date-pickers @types/moment @types/moment-hijri coject moment moment-hijri react-hook-form react-toastify tss-react
@@ -43,7 +43,7 @@ $ npm i @emotion/react @emotion/styled @mui/icons-material @mui/material @mui/x-
 $ yarn add @emotion/react @emotion/styled @mui/icons-material @mui/material @mui/x-data-grid @mui/x-date-pickers @types/moment @types/moment-hijri coject moment moment-hijri react-hook-form react-toastify tss-react
 ```
 
-In React.js:
+### In React.js:
 ```js
 // Load Input Components
 import { Form, Input } from 'coject';
@@ -69,6 +69,6 @@ See the [package source](https://github.com/coject/coject) for more details.
 **Note:**<br>
 Install [Material UI](https://www.npmjs.com/package/n_) for Coject use in the React.js > 16.
 
-## Support
+### Support
 
 Tested in Chrome 74-75, Firefox 66-67, IE 11, Edge 18, Safari 11-12, & Node.js 8-12.

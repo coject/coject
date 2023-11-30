@@ -103,13 +103,14 @@ export const Request = ({ dataSource, mode, data, apiUrlId, dispatch, callBack }
     const CatchAction = (Error) => {
         dispatch && dispatch({ type: "ERRORS", error: Error.message, name: Name || "default" });
     };
+    console.log(Headers);
     // Request Actions
     if (Method.toLowerCase() === "get" || Method.toLowerCase() === "delete")
-        yield Axios[Method.toLowerCase()](`${(dataSource === null || dataSource === void 0 ? void 0 : dataSource.baseUrl) ? dataSource === null || dataSource === void 0 ? void 0 : dataSource.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, Headers)
+        yield Axios[Method.toLowerCase()](`${(dataSource === null || dataSource === void 0 ? void 0 : dataSource.baseUrl) ? dataSource === null || dataSource === void 0 ? void 0 : dataSource.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, { "headers": Headers })
             .then((Response) => SuccessAction(Response))
             .catch((Error) => CatchAction(Error));
     else
-        yield Axios[Method.toLowerCase()](`${(dataSource === null || dataSource === void 0 ? void 0 : dataSource.baseUrl) ? dataSource === null || dataSource === void 0 ? void 0 : dataSource.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, Data, Headers)
+        yield Axios[Method.toLowerCase()](`${(dataSource === null || dataSource === void 0 ? void 0 : dataSource.baseUrl) ? dataSource === null || dataSource === void 0 ? void 0 : dataSource.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, Data, { "headers": Headers })
             .then((Response) => SuccessAction(Response))
             .catch((Error) => CatchAction(Error));
 });

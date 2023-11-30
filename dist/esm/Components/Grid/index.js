@@ -37,7 +37,7 @@ export const Grid = (_a) => {
         if ((dataSource === null || dataSource === void 0 ? void 0 : dataSource.staticData) && !!dataSource.staticData.length && !(dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl)) {
             setGridData(dataSource.staticData);
         }
-    }, [dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl, dataSource.staticData]);
+    }, [dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl, dataSource === null || dataSource === void 0 ? void 0 : dataSource.staticData]);
     // Dynamic Data
     useEffect(() => {
         if ((dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl) && !dataSource.staticData) {
@@ -79,7 +79,7 @@ export const Grid = (_a) => {
                 React.createElement(MuiGrid, { item: true, md: 12, lg: 12 },
                     React.createElement(Button, { fullWidth: true, type: "button", variant: "contained", onClick: () => Request({ dataSource, mode: "delete", apiUrlId: dataSource.primaryKey ? selectedData[dataSource.primaryKey] : selectedData.id, callBack: () => setDelModal(false), dispatch }).then() }, "Delete")))),
         React.createElement(Box, { className: classes.root },
-            React.createElement(DataGrid, Object.assign({ rows: gridData, columns: columnsSchema, density: "compact" }, props, { getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), initialState: initialState ? initialState : {
+            React.createElement(DataGrid, Object.assign({ className: !(gridData === null || gridData === void 0 ? void 0 : gridData.length) ? classes.empty : "", rows: gridData, columns: columnsSchema, density: "compact" }, props, { getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), initialState: initialState ? initialState : {
                     pagination: { paginationModel: { pageSize: 15 } }
                 }, pageSizeOptions: pageSizeOptions ? pageSizeOptions : [15, 25, 35, 50, 100], slots: {
                     toolbar: toolbar ? CustomToolbar : null

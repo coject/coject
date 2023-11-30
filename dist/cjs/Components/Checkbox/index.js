@@ -47,7 +47,7 @@ const Checkbox = (_a) => {
     (0, react_1.useEffect)(() => {
         if (value)
             control && setValue(name, value);
-    }, [value]);
+    }, [control, name, setValue, value]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Checkbox, Object.assign({}, (control && register(name)), props))));
 };

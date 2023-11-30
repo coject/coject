@@ -63,7 +63,7 @@ const Select = (_a) => {
                 return setSelectData((Prev) => [...Prev, { id: Data[customKey ? customKey : "id"], label: Data[customName ? customName : "label"] }]);
             });
         }
-    }, [dataSource === null || dataSource === void 0 ? void 0 : dataSource.staticData]);
+    }, [customKey, customName, dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl, dataSource === null || dataSource === void 0 ? void 0 : dataSource.staticData]);
     // Dynamic Data
     (0, react_1.useEffect)(() => {
         if ((dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl) && !dataSource.staticData) {
@@ -76,7 +76,7 @@ const Select = (_a) => {
                 }
             }).then();
         }
-    }, [dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl]);
+    }, [customKey, customName, dataSource, dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl, dispatch]);
     // Master Component
     const MuiAutocomplete = () => {
         return (react_1.default.createElement(material_1.Autocomplete, Object.assign({ id: DropdownID, options: selectData, multiple: multiple }, props, { value: !!selectData.length && selectedValue

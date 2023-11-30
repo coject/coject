@@ -47,6 +47,11 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                     fill: theme.palette.primary.contrastText
                 }
             }
+        },
+        empty: {
+            "& .MuiDataGrid-virtualScroller": {
+                minHeight: "350px"
+            }
         }
     };
 });

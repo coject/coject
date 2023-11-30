@@ -37,7 +37,7 @@ export const Select = (_a) => {
                 return setSelectData((Prev) => [...Prev, { id: Data[customKey ? customKey : "id"], label: Data[customName ? customName : "label"] }]);
             });
         }
-    }, [dataSource === null || dataSource === void 0 ? void 0 : dataSource.staticData]);
+    }, [customKey, customName, dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl, dataSource === null || dataSource === void 0 ? void 0 : dataSource.staticData]);
     // Dynamic Data
     useEffect(() => {
         if ((dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl) && !dataSource.staticData) {
@@ -50,7 +50,7 @@ export const Select = (_a) => {
                 }
             }).then();
         }
-    }, [dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl]);
+    }, [customKey, customName, dataSource, dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl, dispatch]);
     // Master Component
     const MuiAutocomplete = () => {
         return (React.createElement(Autocomplete, Object.assign({ id: DropdownID, options: selectData, multiple: multiple }, props, { value: !!selectData.length && selectedValue

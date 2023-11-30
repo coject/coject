@@ -21,7 +21,7 @@ export const Checkbox = (_a) => {
     useEffect(() => {
         if (value)
             control && setValue(name, value);
-    }, [value]);
+    }, [control, name, setValue, value]);
     return (React.createElement(React.Fragment, null,
         React.createElement(MuiCheckbox, Object.assign({}, (control && register(name)), props))));
 };

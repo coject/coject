@@ -66,7 +66,7 @@ const Grid = (_a) => {
         if ((dataSource === null || dataSource === void 0 ? void 0 : dataSource.staticData) && !!dataSource.staticData.length && !(dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl)) {
             setGridData(dataSource.staticData);
         }
-    }, [dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl, dataSource.staticData]);
+    }, [dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl, dataSource === null || dataSource === void 0 ? void 0 : dataSource.staticData]);
     // Dynamic Data
     (0, react_1.useEffect)(() => {
         if ((dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl) && !dataSource.staticData) {
@@ -108,7 +108,7 @@ const Grid = (_a) => {
                 react_1.default.createElement(material_1.Grid, { item: true, md: 12, lg: 12 },
                     react_1.default.createElement(material_1.Button, { fullWidth: true, type: "button", variant: "contained", onClick: () => (0, Services_1.Request)({ dataSource, mode: "delete", apiUrlId: dataSource.primaryKey ? selectedData[dataSource.primaryKey] : selectedData.id, callBack: () => setDelModal(false), dispatch }).then() }, "Delete")))),
         react_1.default.createElement(material_1.Box, { className: classes.root },
-            react_1.default.createElement(x_data_grid_1.DataGrid, Object.assign({ rows: gridData, columns: columnsSchema, density: "compact" }, props, { getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), initialState: initialState ? initialState : {
+            react_1.default.createElement(x_data_grid_1.DataGrid, Object.assign({ className: !(gridData === null || gridData === void 0 ? void 0 : gridData.length) ? classes.empty : "", rows: gridData, columns: columnsSchema, density: "compact" }, props, { getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), initialState: initialState ? initialState : {
                     pagination: { paginationModel: { pageSize: 15 } }
                 }, pageSizeOptions: pageSizeOptions ? pageSizeOptions : [15, 25, 35, 50, 100], slots: {
                     toolbar: toolbar ? CustomToolbar : null

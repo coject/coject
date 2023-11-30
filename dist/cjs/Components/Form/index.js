@@ -89,18 +89,22 @@ const Form = (_a) => {
                         }
                     }),
                     children,
-                    (schema && !!(schema === null || schema === void 0 ? void 0 : schema.length) && Fields.includes("button")) ? schema.map((field, index) => {
-                        if (field.type === "button") {
-                            if (field.template) {
-                                return react_1.default.createElement(react_1.default.Fragment, { key: index }, field.template(Methods.getValues()));
+                    (schema && !!(schema === null || schema === void 0 ? void 0 : schema.length) && Fields.includes("button"))
+                        ? schema.map((field, index) => {
+                            if (field.type === "button") {
+                                if (field.template) {
+                                    return react_1.default.createElement(react_1.default.Fragment, { key: index }, field.template(Methods.getValues()));
+                                }
+                                else {
+                                    return react_1.default.createElement(material_1.Grid, Object.assign({ item: true, key: index }, (field.media ? field.media : { md: 12, lg: 12 })),
+                                        react_1.default.createElement(material_1.Button, Object.assign({}, field.props), field.field));
+                                }
                             }
-                            else {
-                                return react_1.default.createElement(material_1.Grid, Object.assign({ item: true, key: index }, (field.media ? field.media : { md: 12, lg: 12 })),
-                                    react_1.default.createElement(material_1.Button, Object.assign({}, field.props), field.field));
-                            }
-                        }
-                    }) : react_1.default.createElement(material_1.Grid, { item: true, md: 12, lg: 12 },
-                        react_1.default.createElement(material_1.Button, { fullWidth: true, type: "submit", variant: "contained" }, "Save")))))));
+                            else
+                                return null;
+                        })
+                        : react_1.default.createElement(material_1.Grid, { item: true, md: 12, lg: 12 },
+                            react_1.default.createElement(material_1.Button, { fullWidth: true, type: "submit", variant: "contained" }, "Save")))))));
 };
 exports.Form = Form;
 //# sourceMappingURL=index.js.map

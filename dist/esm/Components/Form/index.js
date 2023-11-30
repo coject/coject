@@ -83,17 +83,21 @@ export const Form = (_a) => {
                         }
                     }),
                     children,
-                    (schema && !!(schema === null || schema === void 0 ? void 0 : schema.length) && Fields.includes("button")) ? schema.map((field, index) => {
-                        if (field.type === "button") {
-                            if (field.template) {
-                                return React.createElement(React.Fragment, { key: index }, field.template(Methods.getValues()));
+                    (schema && !!(schema === null || schema === void 0 ? void 0 : schema.length) && Fields.includes("button"))
+                        ? schema.map((field, index) => {
+                            if (field.type === "button") {
+                                if (field.template) {
+                                    return React.createElement(React.Fragment, { key: index }, field.template(Methods.getValues()));
+                                }
+                                else {
+                                    return React.createElement(Grid, Object.assign({ item: true, key: index }, (field.media ? field.media : { md: 12, lg: 12 })),
+                                        React.createElement(Button, Object.assign({}, field.props), field.field));
+                                }
                             }
-                            else {
-                                return React.createElement(Grid, Object.assign({ item: true, key: index }, (field.media ? field.media : { md: 12, lg: 12 })),
-                                    React.createElement(Button, Object.assign({}, field.props), field.field));
-                            }
-                        }
-                    }) : React.createElement(Grid, { item: true, md: 12, lg: 12 },
-                        React.createElement(Button, { fullWidth: true, type: "submit", variant: "contained" }, "Save")))))));
+                            else
+                                return null;
+                        })
+                        : React.createElement(Grid, { item: true, md: 12, lg: 12 },
+                            React.createElement(Button, { fullWidth: true, type: "submit", variant: "contained" }, "Save")))))));
 };
 //# sourceMappingURL=index.js.map

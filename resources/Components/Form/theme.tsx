@@ -1,11 +1,12 @@
 import { makeStyles } from "tss-react/mui";
 
-const useStyles = makeStyles()((theme) => {
+const useStyles = makeStyles()(() => {
     return {
         root: {
             width: "100%",
             "& button": {
-                padding: "15px"
+                padding: "9px 15px",
+                textTransform: "capitalize"
             }
         }
     }

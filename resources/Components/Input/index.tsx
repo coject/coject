@@ -4,31 +4,26 @@ import React, { FC, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 
 // Material UI
-import { Box, TextField } from "@mui/material";
+import { Box, TextField, TextFieldProps } from "@mui/material";
 
 // Styles
 import useStyles from "./theme";
 
-// Interface
-interface iInput {
-    name: string;
-    value?: string;
-    label?: string;
-}
-
-export const Input: FC<iInput> = ({ name, value, label, ...props }) => {
+export const Input: FC<TextFieldProps> = ({ value, ...props }) => {
     const { classes } = useStyles();
     const { register, setValue, control } = useFormContext() || {};
 
     // Value
     useEffect(() => {
-        if (value) control && setValue(name, value);
-    }, [control, name, setValue, value]);
+        if (value) control && setValue(props?.name || "default", value);
+    }, [control, props?.name, setValue, value]);
 
     return (
         <React.Fragment>
             <Box className={classes.root}>
-                <TextField {...(control && register(name))} defaultValue={value} label={label ? label : name} {...props} />
+                <TextField {...(control && register(props?.name || "default"))} defaultValue={value} label={props?.label ? props?.label : props?.name} {...props}>
+                    {props?.children}
+                </TextField>
             </Box>
         </React.Fragment>
     );

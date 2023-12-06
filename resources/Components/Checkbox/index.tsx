@@ -4,25 +4,34 @@ import React, { FC, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 
 // Material UI
-import { Checkbox as MuiCheckbox } from "@mui/material";
+import { Box, FormControlLabel, Checkbox as MuiCheckbox, CheckboxProps } from "@mui/material";
+
+// Styles
+import useStyles from "./theme";
 
 // Interface
-interface iCheckbox {
-    name: string;
-    value?: string;
+interface iCheckbox extends CheckboxProps {
+    name?: string;
+    label?: string;
+    trueValue?: string;
+    falseValue?: string;
 }
 
-export const Checkbox: FC<iCheckbox> = ({ name, value, ...props }) => {
+export const Checkbox: FC<iCheckbox> = ({ name, label, trueValue, falseValue, ...props }) => {
+    const { classes } = useStyles();
     const { register, setValue, control } = useFormContext() || {};
+    const CheckedValue = props?.value ? (`${props?.value}` !== (falseValue ? falseValue : "false")) ? (trueValue ? (`${props?.value}` === trueValue) : true) : false : false;
 
     // Value
     useEffect(() => {
-        if (value) control && setValue(name, value);
-    }, [control, name, setValue, value]);
+        if (props?.value) control && setValue(name || "default", props?.value);
+    }, [control, name, setValue, props?.value]);
 
     return (
         <React.Fragment>
-            <MuiCheckbox {...(control && register(name))} {...props} />
+            <Box className={classes.root}>
+                <FormControlLabel control={<MuiCheckbox {...(control && register(name || "default"))} defaultChecked={CheckedValue} {...props} />} label={label ? label : name} />
+            </Box>
         </React.Fragment>
     );
 };

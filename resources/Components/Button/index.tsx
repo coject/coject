@@ -1,17 +1,19 @@
-import React, { FC, ReactNode } from "react";
+import React, { FC } from "react";
 
 // Material UI
-import { Button as MuiButton } from "@mui/material";
+import { Box, Button as MuiButton, ButtonProps } from "@mui/material";
 
-// Interface
-interface iButton {
-    children?: ReactNode;
-}
+// Styles
+import useStyles from "./theme";
 
-export const Button: FC<iButton> = ({ children, ...props }) => {
+export const Button: FC<ButtonProps> = ({ ...props }) => {
+    const { classes } = useStyles();
+
     return (
         <React.Fragment>
-            <MuiButton {...props}>{children}</MuiButton>
+            <Box className={classes.root}>
+                <MuiButton {...props}>{props?.children}</MuiButton>
+            </Box>
         </React.Fragment>
     );
 };

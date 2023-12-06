@@ -37,10 +37,10 @@ $ yarn add coject
 ### Dependency npm [For JavaScript/TypeScript Project]:
 ```shell
 // npm install
-$ npm i @emotion/react @emotion/styled @mui/icons-material @mui/material @mui/x-data-grid @mui/x-date-pickers @types/moment @types/moment-hijri coject moment moment-hijri react-hook-form react-toastify tss-react
+$ npm i @emotion/react @emotion/styled @mui/icons-material @mui/material @mui/x-data-grid @mui/x-date-pickers @types/moment @types/moment-hijri coject moment moment-hijri react-hook-form react-toastify tss-react axios
 
 // yarn install
-$ yarn add @emotion/react @emotion/styled @mui/icons-material @mui/material @mui/x-data-grid @mui/x-date-pickers @types/moment @types/moment-hijri coject moment moment-hijri react-hook-form react-toastify tss-react
+$ yarn add @emotion/react @emotion/styled @mui/icons-material @mui/material @mui/x-data-grid @mui/x-date-pickers @types/moment @types/moment-hijri coject moment moment-hijri react-hook-form react-toastify tss-react axios
 ```
 
 ### In React.js:
@@ -53,8 +53,8 @@ function FormApp() {
   return (
     <>
       <Form onSubmit={(formData) => console.log(formData)}>
-          <Input type="email" name="username" lable="Username" />
-          <Input type="password" name="password" lable="Password" />
+          <Input type="email" name="username" label="Username" />
+          <Input type="password" name="password" label="Password" />
       </Form>
     </>
   );

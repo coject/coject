@@ -1,0 +1,33 @@
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+import React, { useEffect } from "react";
+// React Hook Form
+import { useFormContext } from "react-hook-form";
+// Material UI
+import { Box, FormControlLabel, Checkbox as MuiCheckbox } from "@mui/material";
+// Styles
+import useStyles from "./theme";
+export const Checkbox = (_a) => {
+    var { name, label, trueValue, falseValue } = _a, props = __rest(_a, ["name", "label", "trueValue", "falseValue"]);
+    const { classes } = useStyles();
+    const { register, setValue, control } = useFormContext() || {};
+    const CheckedValue = (props === null || props === void 0 ? void 0 : props.value) ? (`${props === null || props === void 0 ? void 0 : props.value}` !== (falseValue ? falseValue : "false")) ? (trueValue ? (`${props === null || props === void 0 ? void 0 : props.value}` === trueValue) : true) : false : false;
+    // Value
+    useEffect(() => {
+        if (props === null || props === void 0 ? void 0 : props.value)
+            control && setValue(name || "default", props === null || props === void 0 ? void 0 : props.value);
+    }, [control, name, setValue, props === null || props === void 0 ? void 0 : props.value]);
+    return (React.createElement(React.Fragment, null,
+        React.createElement(Box, { className: classes.root },
+            React.createElement(FormControlLabel, { control: React.createElement(MuiCheckbox, Object.assign({}, (control && register(name || "default")), { defaultChecked: CheckedValue }, props)), label: label ? label : name }))));
+};
+//# sourceMappingURL=index.js.map

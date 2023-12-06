@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState, useReducer } from "react";
 
 // Request
 import { Request } from "../../Services";
@@ -10,30 +10,37 @@ import { Box, Grid as MuiGrid, Button, Typography } from "@mui/material";
 import * as MuiIcons from "@mui/icons-material";
 
 // Material UI Table
-import { DataGrid, GridActionsCellItem, GridToolbarContainer, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarExport } from "@mui/x-data-grid";
+import { DataGrid, DataGridProps, GridColDef, GridActionsCellItem, GridToolbarContainer, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarExport } from "@mui/x-data-grid";
 
 // Components
-import { Form, Modal } from "../index";
+import { Form, DatePicker, Modal } from "../index";
 
 // Styles
 import useStyles from "./theme";
 
 // Interface
-interface iGrid {
-    schema?: any;
+type iSchema = GridColDef & {
+    component?: string;
+    componentProps?: any;
+    componentMedia?: any;
+}
+interface iGrid extends DataGridProps {
     dispatch?: any;
     dataSource?: any;
-    actions?: boolean;
     toolbar?: boolean;
-    initialState?: any;
-    pageSizeOptions?: number[];
+    actions?: boolean;
+    onAddSubmit?: any;
+    onEditSubmit?: any;
+    schema?: iSchema | any;
 }
 
-export const Grid: FC<iGrid> = ({ dataSource, schema, actions, toolbar, initialState, pageSizeOptions, dispatch, ...props }) => {
+export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit, ...props }) => {
     const Icons: any = MuiIcons;
     const { classes } = useStyles();
     const [ gridData, setGridData ] = useState<any>([]);
+    const [ schemaData, setSchemaData ] = useState<any>({});
     const [ selectedData, setSelectedData ] = useState<any>(null);
+    const [, forceUpdate] = useReducer(x => x + 1, 0);
     const [ addNew, setAddNew ] = useState<boolean>(false);
     const [ update, setUpdate ] = useState<boolean>(false);
     const [ delModal, setDelModal ] = useState<boolean>(false);
@@ -48,12 +55,52 @@ export const Grid: FC<iGrid> = ({ dataSource, schema, actions, toolbar, initialS
     // Dynamic Data
     useEffect(() => {
         if (dataSource?.apiUrl && !dataSource.staticData) {
-            Request({ dataSource: { ...dataSource }, dispatch, callBack: (ResponseData: any) => setGridData(ResponseData) }).then();
+            Request({ dataSource, dispatch, callBack: (data: any) => setGridData(data) }).then();
         }
     }, [dataSource, dataSource?.apiUrl, dispatch]);
 
+    // Dynamic Data ( Schema )
+    useEffect(() => {
+        if (schema) {
+            schema.map((field: any) => {
+                if (field.component === "select" && field.componentProps?.dataSource) {
+                    return Request({ dataSource: field.componentProps.dataSource, callBack: (data: any) => setSchemaData((prev: any) => ({...prev, [field.field]: data})) }).then();
+                } else return null;
+            })
+        }
+    }, [schema]);
+
     // Default Schema
-    const defaultSchema: any = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => ({ field: columnKey, flex: (columnKey === (dataSource?.primaryKey ? dataSource.primaryKey : "id") ? 0 : 1), component: "input", width: 100 })) : [];
+    const defaultSchema: any = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => (
+        {
+            width: 100,
+            field: columnKey,
+            component: "input",
+            flex: (columnKey === (dataSource?.primaryKey ? dataSource.primaryKey : "id") ? 0 : 1)
+        }
+    )) : [];
+
+    // Custom Schema
+    useEffect(() => {
+        if (schema) {
+            schema.map((columnSchema: any) => {
+                if (columnSchema.component === "date" && !columnSchema.renderCell) {
+                    columnSchema.renderCell     = (data: any) => <DatePicker value={data.value} textView />
+                }
+                if (columnSchema.component === "select") {
+                    const customKey = columnSchema.componentProps.customKey;
+                    const customName = columnSchema.componentProps.customName;
+                    columnSchema.type           = "singleSelect";
+                    columnSchema.getOptionValue = (value: any) => customKey ? value[customKey] : value.id;
+                    columnSchema.getOptionLabel = (value: any) => customName ? value[customName] : value.label;
+                    columnSchema.valueOptions   = schemaData[columnSchema.field];
+                    columnSchema.componentProps.dataSource = { staticData: schemaData[columnSchema.field] };
+                }
+                return ({ ...columnSchema });
+            })
+        }
+        forceUpdate();
+    }, [forceUpdate, schema, schemaData]);
 
     // Columns Schema
     const columnsSchema: any = [ ...(schema ? schema : defaultSchema), ...(actions
@@ -71,10 +118,18 @@ export const Grid: FC<iGrid> = ({ dataSource, schema, actions, toolbar, initialS
     const CustomToolbar = () => {
         return (
             <GridToolbarContainer>
-                <GridToolbarColumnsButton />
-                <GridToolbarFilterButton />
-                <GridToolbarExport />
-                { actions && ( <Button onClick={() => setAddNew(true)} type={"button"}><Icons.Add /> Add New</Button> )}
+                { toolbar &&
+                    <React.Fragment>
+                        <GridToolbarColumnsButton/>
+                        <GridToolbarFilterButton />
+                        <GridToolbarExport />
+                    </React.Fragment>
+                }
+                { actions &&
+                    <Button onClick={() => setAddNew(true)} type={"button"}>
+                        <Icons.Add /> Add New
+                    </Button>
+                }
             </GridToolbarContainer>
         );
     };
@@ -82,10 +137,10 @@ export const Grid: FC<iGrid> = ({ dataSource, schema, actions, toolbar, initialS
     return (
         <React.Fragment>
             {/* Create Modal */}
-            <Modal title={"Add New Item"} open={addNew} setOpen={setAddNew}><Form dataSource={dataSource} schema={schema ? schema : defaultSchema} mode={"create"} /></Modal>
+            <Modal title={"Add New Item"} open={addNew} setOpen={setAddNew}><Form onSubmit={(data: any) => onAddSubmit(data)} dataSource={dataSource} schema={schema ? schema : defaultSchema} mode={"create"} /></Modal>
 
             {/* Update Modal */}
-            <Modal title={"Update Item"} open={update} setOpen={setUpdate}><Form dataSource={{...dataSource, staticData: selectedData}} schema={schema ? schema : defaultSchema} mode={"update"} /></Modal>
+            <Modal title={"Update Item"} open={update} setOpen={setUpdate}><Form onSubmit={(data: any) => onEditSubmit(data)} dataSource={{...dataSource, staticData: selectedData}} schema={schema ? schema : defaultSchema} mode={"update"} /></Modal>
 
             {/* Delete Modal */}
             <Modal title={"Delete Item"} open={delModal} setOpen={setDelModal}>
@@ -94,29 +149,24 @@ export const Grid: FC<iGrid> = ({ dataSource, schema, actions, toolbar, initialS
                         <Typography color={theme => theme.palette.error.main}>Are You Sure To Delete This Item?</Typography>
                     </MuiGrid>
                     <MuiGrid item md={12} lg={12}>
-                        <Button fullWidth type={"button"} variant={"contained"} onClick={() => Request({ dataSource, mode: "delete", apiUrlId: dataSource.primaryKey ? selectedData[dataSource.primaryKey] : selectedData.id, callBack: () => setDelModal(false), dispatch }).then()}>Delete</Button>
+                        <Button fullWidth type={"button"} variant={"contained"} onClick={() =>
+                            Request({
+                                dataSource, mode: "delete",
+                                apiUrlId: dataSource.primaryKey ? selectedData[dataSource.primaryKey] : selectedData.id,
+                                callBack: () => setDelModal(false), dispatch }).then()
+                            }>Delete</Button>
                     </MuiGrid>
                 </MuiGrid>
             </Modal>
 
             {/* Data Grid */}
             <Box className={classes.root}>
-                <DataGrid className={!gridData?.length ? classes.empty : ""} rows={gridData} columns={columnsSchema} density={"compact"} {...props}
-                    getRowClassName={(params) => (
-                        params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""
-                    )}
-                    initialState={initialState ? initialState : {
-                        pagination: { paginationModel: { pageSize: 15 } }
-                    }}
-                    pageSizeOptions={
-                        pageSizeOptions ? pageSizeOptions : [15, 25, 35, 50, 100]
-                    }
-                    getRowId={
-                        (row) => dataSource?.primaryKey ? row[dataSource?.primaryKey] : row.id
-                    }
-                    slots={{
-                        toolbar: toolbar ? CustomToolbar : null
-                    }}
+                <DataGrid className={!gridData?.length ? classes.empty : ""}
+                    rows={gridData} columns={columnsSchema} density={"compact"} {...props}
+                    getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "")}
+                    initialState={props?.initialState ? props?.initialState : {pagination: {paginationModel: {pageSize: 15}}}}
+                    pageSizeOptions={props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100]}
+                    slots={props?.slots ? props?.slots : {toolbar: actions || toolbar ? CustomToolbar : null}}
                 />
             </Box>
         </React.Fragment>

@@ -1,7 +1,7 @@
-import React, { FC, ReactNode } from "react";
+import React, { FC } from "react";
 
 // Material UI
-import { Box, Typography, IconButton, Modal as MuiModal } from "@mui/material";
+import { Box, Typography, IconButton, Modal as MuiModal, ModalProps } from "@mui/material";
 
 // Material Icon
 import * as MuiIcons from "@mui/icons-material";
@@ -10,14 +10,12 @@ import * as MuiIcons from "@mui/icons-material";
 import useStyles from "./theme";
 
 // Interface
-interface iModal {
-    open: boolean;
+interface iModal extends ModalProps {
     setOpen?: any;
     title?: string;
-    children?: ReactNode;
 }
 
-export const Modal: FC<iModal> = ({ open, setOpen, title, children, ...props }) => {
+export const Modal: FC<iModal> = ({ open, setOpen, title, ...props }) => {
     const Icons: any = MuiIcons;
     const { classes } = useStyles();
 
@@ -30,7 +28,7 @@ export const Modal: FC<iModal> = ({ open, setOpen, title, children, ...props }) 
                         <IconButton onClick={() => setOpen(false)}><Icons.Close /></IconButton>
                     </Box>
                     <Box className={classes.body}>
-                        <React.Fragment>{children}</React.Fragment>
+                        <React.Fragment>{props?.children}</React.Fragment>
                     </Box>
                 </Box>
             </MuiModal>

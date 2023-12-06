@@ -25,8 +25,7 @@ const useStyles = makeStyles()((theme) => {
             },
             "& .MuiAutocomplete-root": {
                 "& .MuiInputBase-root, & input": {
-                    cursor: "pointer",
-                    backgroundColor: theme.palette.grey[100]
+                    cursor: "pointer"
                 }
             }
         }

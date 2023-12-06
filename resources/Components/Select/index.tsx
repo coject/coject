@@ -7,24 +7,26 @@ import { useFormContext, Controller } from "react-hook-form";
 import { Request } from "../../Services";
 
 // Material UI
-import { TextField, Autocomplete } from "@mui/material";
+import { Box, TextField, Autocomplete, AutocompleteProps, TextFieldProps } from "@mui/material";
+
+// Styles
+import useStyles from "./theme";
 
 // Interface
-interface iSelect {
-    name: string;
-    variant?: any;
-    value?: string;
+interface iSelect extends AutocompleteProps<any, any, any, any> {
+    name?: string;
+    label?: string;
     onChange?: any;
     dispatch?: any;
     dataSource?: any;
-    multiple?: boolean;
     required?: boolean;
     customKey?: string;
     customName?: string;
-    placeholder?: string;
+    inputProps?: TextFieldProps;
 }
 
-export const Select: FC<iSelect> = ({ name, dataSource, placeholder, value, customKey, customName, variant, onChange, multiple, required, dispatch, ...props }) => {
+export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, label, dataSource, customKey, customName, onChange, required, dispatch, inputProps, ...props }) => {
+    const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [ selectedValue, setSelectedValue ] = useState<any>();
     const [ selectData, setSelectData ] = useState<any>([]);
@@ -33,11 +35,11 @@ export const Select: FC<iSelect> = ({ name, dataSource, placeholder, value, cust
 
     // Value
     useEffect(() => {
-        if (value) {
-            setSelectedValue(value);
-            control && setValue(name, value);
+        if (props?.value) {
+            setSelectedValue(props.value);
+            control && setValue(name || "default", props.value);
         }
-    }, [control, name, setValue, value]);
+    }, [control, name, setValue, props?.value]);
 
     // Static Data
     useEffect(() => {
@@ -65,30 +67,32 @@ export const Select: FC<iSelect> = ({ name, dataSource, placeholder, value, cust
     // Master Component
     const MuiAutocomplete = () => {
         return (
-            <Autocomplete id={DropdownID} options={selectData} multiple={multiple} {...props}
+            <Autocomplete id={DropdownID} options={selectData} multiple={props?.multiple} {...props}
                 value={
                     !!selectData.length && selectedValue
-                        ? multiple && !!selectedValue.length
+                        ? props?.multiple && !!selectedValue.length
                             ? selectedValue.map((SValue: string) => selectData.find((option: any) => option.id === SValue))
-                            : multiple ? [] : selectData.find((option: any) => option.id === selectedValue)
-                        : multiple ? [] : null
+                            : props?.multiple ? [] : selectData.find((option: any) => option.id === selectedValue)
+                        : props?.multiple ? [] : null
                 }
                 onChange={(e, newValue) => {
                     onChange && onChange(e, newValue, Methods);
-                    setSelectedValue(multiple ? newValue?.map((NValue: any) => NValue.id) : newValue?.id);
-                    control && setValue(name, multiple ? newValue?.map((NValue: any) => NValue.id) : newValue?.id);
+                    setSelectedValue(props?.multiple ? newValue?.map((NValue: any) => NValue.id) : newValue?.id);
+                    control && setValue(name || "default", props?.multiple ? newValue?.map((NValue: any) => NValue.id) : newValue?.id);
                 }}
-                renderInput={(params) => <TextField {...params} label={placeholder ? placeholder : "Select"} variant={variant} />}
+                renderInput={(params) => <TextField {...params} {...inputProps} label={label ? label : (name || "default")} required={required} />}
             />
         );
     };
 
     return (
         <React.Fragment>
-            { control
-                ? <Controller name={name} control={control} rules={{ required: required }} render={() => <MuiAutocomplete />} />
-                : <MuiAutocomplete />
-            }
+            <Box className={classes.root}>
+                { control
+                    ? <Controller name={name || "default"} control={control} rules={{ required: required }} render={() => <MuiAutocomplete />} />
+                    : <MuiAutocomplete />
+                }
+            </Box>
         </React.Fragment>
     )
 };

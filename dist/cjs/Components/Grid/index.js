@@ -80,13 +80,8 @@ const Grid = (_a) => {
         if (schema) {
             schema.map((field) => {
                 var _a;
-                if (field.component === "select" && ((_a = field.componentProps) === null || _a === void 0 ? void 0 : _a.dataSource)) {
-                    if (field.componentProps.dataSource.staticData) {
-                        return setSchemaData((prev) => (Object.assign(Object.assign({}, prev), { [field.field]: field.componentProps.dataSource.staticData })));
-                    }
-                    else {
-                        return (0, Services_1.Request)({ dataSource: field.componentProps.dataSource, callBack: (data) => setSchemaData((prev) => (Object.assign(Object.assign({}, prev), { [field.field]: data }))) }).then();
-                    }
+                if (field.component === "select" && ((_a = field.componentProps) === null || _a === void 0 ? void 0 : _a.dataSource) && !field.componentProps.dataSource.staticData) {
+                    return (0, Services_1.Request)({ dataSource: field.componentProps.dataSource, callBack: (data) => setSchemaData((prev) => (Object.assign(Object.assign({}, prev), { [field.field]: data }))) }).then();
                 }
                 else
                     return null;
@@ -103,24 +98,30 @@ const Grid = (_a) => {
     (0, react_1.useEffect)(() => {
         if (schema) {
             schema.map((columnSchema) => {
+                var _a;
                 if (columnSchema.headerName) {
-                    if (columnSchema.componentProps) {
-                        columnSchema.componentProps = { label: columnSchema.headerName };
-                    }
-                    else
+                    if (columnSchema.componentProps)
                         columnSchema.componentProps.label = columnSchema.headerName;
+                    else
+                        columnSchema.componentProps = { label: columnSchema.headerName };
                 }
                 if (columnSchema.component === "date" && !columnSchema.renderCell) {
                     columnSchema.renderCell = (data) => react_1.default.createElement(index_1.DatePicker, { value: data.value, textView: true });
                 }
-                if (columnSchema.component === "select") {
+                if (columnSchema.component === "select" && ((_a = columnSchema.componentProps) === null || _a === void 0 ? void 0 : _a.dataSource)) {
                     const customKey = columnSchema.componentProps.customKey;
                     const customName = columnSchema.componentProps.customName;
                     columnSchema.type = "singleSelect";
                     columnSchema.getOptionValue = (value) => customKey ? value[customKey] : value.id;
                     columnSchema.getOptionLabel = (value) => customName ? value[customName] : value.label;
-                    columnSchema.valueOptions = schemaData[columnSchema.field];
-                    columnSchema.componentProps.dataSource = { staticData: schemaData[columnSchema.field] };
+                    if (columnSchema.componentProps.dataSource.staticData) {
+                        columnSchema.valueOptions = columnSchema.componentProps.dataSource.staticData;
+                        columnSchema.componentProps.dataSource = { staticData: columnSchema.componentProps.dataSource.staticData };
+                    }
+                    else {
+                        columnSchema.valueOptions = schemaData[columnSchema.field];
+                        columnSchema.componentProps.dataSource = { staticData: schemaData[columnSchema.field] };
+                    }
                 }
                 return (Object.assign({}, columnSchema));
             });

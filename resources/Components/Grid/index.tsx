@@ -63,12 +63,8 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, schema, 
     useEffect(() => {
         if (schema) {
             schema.map((field: any) => {
-                if (field.component === "select" && field.componentProps?.dataSource) {
-                    if (field.componentProps.dataSource.staticData) {
-                        return setSchemaData((prev: any) => ({...prev, [field.field]: field.componentProps.dataSource.staticData}))
-                    } else {
-                        return Request({ dataSource: field.componentProps.dataSource, callBack: (data: any) => setSchemaData((prev: any) => ({...prev, [field.field]: data})) }).then();
-                    }
+                if (field.component === "select" && field.componentProps?.dataSource && !field.componentProps.dataSource.staticData) {
+                    return Request({ dataSource: field.componentProps.dataSource, callBack: (data: any) => setSchemaData((prev: any) => ({...prev, [field.field]: data})) }).then();
                 } else return null;
             })
         }
@@ -88,21 +84,25 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, schema, 
         if (schema) {
             schema.map((columnSchema: any) => {
                 if (columnSchema.headerName) {
-                    if (columnSchema.componentProps) {
-                        columnSchema.componentProps = { label: columnSchema.headerName }
-                    } else columnSchema.componentProps.label = columnSchema.headerName;
+                    if (columnSchema.componentProps) columnSchema.componentProps.label = columnSchema.headerName
+                    else columnSchema.componentProps = {label: columnSchema.headerName}
                 }
                 if (columnSchema.component === "date" && !columnSchema.renderCell) {
                     columnSchema.renderCell     = (data: any) => <DatePicker value={data.value} textView />;
                 }
-                if (columnSchema.component === "select") {
+                if (columnSchema.component === "select" && columnSchema.componentProps?.dataSource) {
                     const customKey = columnSchema.componentProps.customKey;
                     const customName = columnSchema.componentProps.customName;
-                    columnSchema.type           = "singleSelect";
+                    columnSchema.type = "singleSelect";
                     columnSchema.getOptionValue = (value: any) => customKey ? value[customKey] : value.id;
                     columnSchema.getOptionLabel = (value: any) => customName ? value[customName] : value.label;
-                    columnSchema.valueOptions   = schemaData[columnSchema.field];
-                    columnSchema.componentProps.dataSource = { staticData: schemaData[columnSchema.field] };
+                    if (columnSchema.componentProps.dataSource.staticData) {
+                        columnSchema.valueOptions = columnSchema.componentProps.dataSource.staticData;
+                        columnSchema.componentProps.dataSource = { staticData: columnSchema.componentProps.dataSource.staticData };
+                    } else {
+                        columnSchema.valueOptions = schemaData[columnSchema.field];
+                        columnSchema.componentProps.dataSource = { staticData: schemaData[columnSchema.field] };
+                    }
                 }
                 return ({ ...columnSchema });
             })

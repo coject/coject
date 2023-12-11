@@ -5,11 +5,13 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
     return {
         root: {
             margin: 0,
-            width: "100%",
+            width: "auto",
             display: "flex",
             alignItems: "center",
             "& button": {
                 fontSize: "14px",
+                minWidth: "auto",
+                minHeight: "auto",
                 lineHeight: "14px",
                 textTransform: "capitalize"
             }

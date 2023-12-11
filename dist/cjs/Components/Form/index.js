@@ -31,7 +31,7 @@ const DatePicker_1 = require("../DatePicker");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
 const Form = (_a) => {
-    var { name, mode, getForm, schema, dataSource, onSubmit, onSubmitClear, setModal, dispatch, children } = _a, props = __rest(_a, ["name", "mode", "getForm", "schema", "dataSource", "onSubmit", "onSubmitClear", "setModal", "dispatch", "children"]);
+    var { name, mode, getForm, schema, dataSource, onSubmit, onSubmitClear, setModal, dispatch, onSuccess, style, children } = _a, props = __rest(_a, ["name", "mode", "getForm", "schema", "dataSource", "onSubmit", "onSubmitClear", "setModal", "dispatch", "onSuccess", "style", "children"]);
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useForm)();
     const Data = (dataSource && dataSource.staticData) ? Object.assign({}, dataSource.staticData) : {};
@@ -44,17 +44,16 @@ const Form = (_a) => {
             (0, Services_1.Request)({ dataSource, mode,
                 data: name ? { [name]: submitData } : submitData,
                 apiUrlId: dataSource.primaryKey ? Data[dataSource.primaryKey] : Data.id,
-                callBack: () => {
+                callBack: (data) => {
                     onSubmitClear && Methods.reset();
+                    onSuccess && onSuccess(data);
                     setModal && setModal(false);
                 }, dispatch }).then();
         }
     };
-    // Schema Fields
-    const Fields = schema && !!schema.length && (schema === null || schema === void 0 ? void 0 : schema.map((Field) => Field.type));
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_hook_form_1.FormProvider, Object.assign({}, Methods),
-            react_1.default.createElement("form", Object.assign({ className: classes.root, onSubmit: Methods.handleSubmit(onFormSubmit) }, props),
+            react_1.default.createElement("form", Object.assign({ className: classes.root, onSubmit: Methods.handleSubmit(onFormSubmit), style: style }, props),
                 react_1.default.createElement(material_1.Grid, { container: true, spacing: 2 },
                     schema && !!(schema === null || schema === void 0 ? void 0 : schema.length) && schema.map((field, index) => {
                         var _a, _b, _c, _d, _e, _f;
@@ -89,22 +88,9 @@ const Form = (_a) => {
                         }
                     }),
                     children,
-                    (schema && !!(schema === null || schema === void 0 ? void 0 : schema.length) && Fields.includes("button"))
-                        ? schema.map((field, index) => {
-                            if (field.type === "button") {
-                                if (field.template) {
-                                    return react_1.default.createElement(react_1.default.Fragment, { key: index }, field.template(Methods.getValues()));
-                                }
-                                else {
-                                    return react_1.default.createElement(material_1.Grid, Object.assign({ item: true, key: index }, (field.media ? field.media : { md: 12, lg: 12 })),
-                                        react_1.default.createElement(material_1.Button, Object.assign({}, field.componentProps), field.field));
-                                }
-                            }
-                            else
-                                return null;
-                        })
-                        : react_1.default.createElement(material_1.Grid, { item: true, md: 12, lg: 12 },
-                            react_1.default.createElement(material_1.Button, { fullWidth: true, type: "submit", variant: "outlined" }, "Save")))))));
+                    !(children) &&
+                        react_1.default.createElement(material_1.Grid, { item: true, md: 12, lg: 12 },
+                            react_1.default.createElement(material_1.Button, { fullWidth: true, type: 'submit', variant: 'outlined' }, "Submit")))))));
 };
 exports.Form = Form;
 //# sourceMappingURL=index.js.map

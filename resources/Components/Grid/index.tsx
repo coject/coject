@@ -40,7 +40,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, schema, 
     const [ gridData, setGridData ] = useState<any>([]);
     const [ schemaData, setSchemaData ] = useState<any>({});
     const [ selectedData, setSelectedData ] = useState<any>(null);
-    const [, forceUpdate] = useReducer(x => x + 1, 0);
+    const [ , forceUpdate ] = useReducer(x => x + 1, 0);
     const [ addNew, setAddNew ] = useState<boolean>(false);
     const [ update, setUpdate ] = useState<boolean>(false);
     const [ delModal, setDelModal ] = useState<boolean>(false);
@@ -64,7 +64,11 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, schema, 
         if (schema) {
             schema.map((field: any) => {
                 if (field.component === "select" && field.componentProps?.dataSource) {
-                    return Request({ dataSource: field.componentProps.dataSource, callBack: (data: any) => setSchemaData((prev: any) => ({...prev, [field.field]: data})) }).then();
+                    if (field.componentProps.dataSource.staticData) {
+                        return setSchemaData((prev: any) => ({...prev, [field.field]: field.componentProps.dataSource.staticData}))
+                    } else {
+                        return Request({ dataSource: field.componentProps.dataSource, callBack: (data: any) => setSchemaData((prev: any) => ({...prev, [field.field]: data})) }).then();
+                    }
                 } else return null;
             })
         }
@@ -73,7 +77,6 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, schema, 
     // Default Schema
     const defaultSchema: any = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => (
         {
-            width: 100,
             field: columnKey,
             component: "input",
             flex: (columnKey === (dataSource?.primaryKey ? dataSource.primaryKey : "id") ? 0 : 1)
@@ -84,8 +87,11 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, schema, 
     useEffect(() => {
         if (schema) {
             schema.map((columnSchema: any) => {
+                if (columnSchema.headerName) {
+                    columnSchema.componentProps.label = columnSchema.headerName;
+                }
                 if (columnSchema.component === "date" && !columnSchema.renderCell) {
-                    columnSchema.renderCell     = (data: any) => <DatePicker value={data.value} textView />
+                    columnSchema.renderCell     = (data: any) => <DatePicker value={data.value} textView />;
                 }
                 if (columnSchema.component === "select") {
                     const customKey = columnSchema.componentProps.customKey;

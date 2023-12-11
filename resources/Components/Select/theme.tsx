@@ -34,6 +34,12 @@ const useStyles = makeStyles()((theme) => {
                 "& .MuiInputBase-root": {
                     cursor: "pointer",
                     padding: "0 25px 0 0"
+                },
+                "& .MuiFormHelperText-root": {
+                    fontSize: "12px"
+                },
+                "& .MuiInputBase-fullWidth": {
+                    minWidth: "200px"
                 }
             }
         }

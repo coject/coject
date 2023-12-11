@@ -24,10 +24,17 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
             "& legend": {
                 fontSize: "10px"
             },
-            "& .MuiAutocomplete-root": {
-                "& .MuiInputBase-root, & input": {
-                    cursor: "pointer"
-                }
+            "& .MuiInputBase-inputSizeSmall": {
+                padding: "8px 12px"
+            },
+            "& .MuiInputLabel-sizeSmall": {
+                top: "-2px"
+            },
+            "& .MuiFormHelperText-root": {
+                fontSize: "12px"
+            },
+            "& .MuiInputBase-fullWidth": {
+                minWidth: "200px"
             }
         }
     };

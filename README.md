@@ -43,6 +43,10 @@ $ npm i @emotion/react @emotion/styled @mui/icons-material @mui/material @mui/x-
 $ yarn add @emotion/react @emotion/styled @mui/icons-material @mui/material @mui/x-data-grid @mui/x-date-pickers @types/moment @types/moment-hijri coject moment moment-hijri react-hook-form react-toastify tss-react axios
 ```
 
+### Important
+1. Create `.env` File In The Same Directory Where Your `package.json` Is
+2. Define The Following Variable `GENERATE_SOURCEMAP=false`
+
 ### In React.js:
 ```js
 // Load Input Components

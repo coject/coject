@@ -25,7 +25,7 @@ import { DatePicker } from "../DatePicker";
 // Styles
 import useStyles from "./theme";
 export const Form = (_a) => {
-    var { name, mode, getForm, schema, dataSource, onSubmit, onSubmitClear, setModal, dispatch, children } = _a, props = __rest(_a, ["name", "mode", "getForm", "schema", "dataSource", "onSubmit", "onSubmitClear", "setModal", "dispatch", "children"]);
+    var { name, mode, getForm, schema, dataSource, onSubmit, onSubmitClear, setModal, dispatch, onSuccess, style, children } = _a, props = __rest(_a, ["name", "mode", "getForm", "schema", "dataSource", "onSubmit", "onSubmitClear", "setModal", "dispatch", "onSuccess", "style", "children"]);
     const { classes } = useStyles();
     const Methods = useForm();
     const Data = (dataSource && dataSource.staticData) ? Object.assign({}, dataSource.staticData) : {};
@@ -38,17 +38,16 @@ export const Form = (_a) => {
             Request({ dataSource, mode,
                 data: name ? { [name]: submitData } : submitData,
                 apiUrlId: dataSource.primaryKey ? Data[dataSource.primaryKey] : Data.id,
-                callBack: () => {
+                callBack: (data) => {
                     onSubmitClear && Methods.reset();
+                    onSuccess && onSuccess(data);
                     setModal && setModal(false);
                 }, dispatch }).then();
         }
     };
-    // Schema Fields
-    const Fields = schema && !!schema.length && (schema === null || schema === void 0 ? void 0 : schema.map((Field) => Field.type));
     return (React.createElement(React.Fragment, null,
         React.createElement(FormProvider, Object.assign({}, Methods),
-            React.createElement("form", Object.assign({ className: classes.root, onSubmit: Methods.handleSubmit(onFormSubmit) }, props),
+            React.createElement("form", Object.assign({ className: classes.root, onSubmit: Methods.handleSubmit(onFormSubmit), style: style }, props),
                 React.createElement(Grid, { container: true, spacing: 2 },
                     schema && !!(schema === null || schema === void 0 ? void 0 : schema.length) && schema.map((field, index) => {
                         var _a, _b, _c, _d, _e, _f;
@@ -83,21 +82,8 @@ export const Form = (_a) => {
                         }
                     }),
                     children,
-                    (schema && !!(schema === null || schema === void 0 ? void 0 : schema.length) && Fields.includes("button"))
-                        ? schema.map((field, index) => {
-                            if (field.type === "button") {
-                                if (field.template) {
-                                    return React.createElement(React.Fragment, { key: index }, field.template(Methods.getValues()));
-                                }
-                                else {
-                                    return React.createElement(Grid, Object.assign({ item: true, key: index }, (field.media ? field.media : { md: 12, lg: 12 })),
-                                        React.createElement(Button, Object.assign({}, field.componentProps), field.field));
-                                }
-                            }
-                            else
-                                return null;
-                        })
-                        : React.createElement(Grid, { item: true, md: 12, lg: 12 },
-                            React.createElement(Button, { fullWidth: true, type: "submit", variant: "outlined" }, "Save")))))));
+                    !(children) &&
+                        React.createElement(Grid, { item: true, md: 12, lg: 12 },
+                            React.createElement(Button, { fullWidth: true, type: 'submit', variant: 'outlined' }, "Submit")))))));
 };
 //# sourceMappingURL=index.js.map

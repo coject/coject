@@ -28,6 +28,7 @@ type iSchema = GridColDef & {
 }
 
 interface iForm {
+    style?: any;
     mode?: string;
     name?: string;
     getForm?: any;
@@ -35,12 +36,13 @@ interface iForm {
     children?: any;
     dispatch?: any;
     setModal?: any;
+    onSuccess?: any;
     dataSource?: any;
     schema?: iSchema | any;
     onSubmitClear?: boolean;
 }
 
-export const Form: FC<iForm> = ({ name, mode, getForm, schema, dataSource, onSubmit, onSubmitClear, setModal, dispatch, children, ...props }) => {
+export const Form: FC<iForm> = ({ name, mode, getForm, schema, dataSource, onSubmit, onSubmitClear, setModal, dispatch, onSuccess, style, children, ...props }) => {
     const { classes } = useStyles();
     const Methods = useForm();
     const Data = ( dataSource && dataSource.staticData ) ? { ...dataSource.staticData } : {};
@@ -56,20 +58,18 @@ export const Form: FC<iForm> = ({ name, mode, getForm, schema, dataSource, onSub
             Request({ dataSource, mode,
                 data: name ? { [name]: submitData } : submitData,
                 apiUrlId: dataSource.primaryKey ? Data[dataSource.primaryKey] : Data.id,
-                callBack: () => {
+                callBack: (data: any) => {
                     onSubmitClear && Methods.reset();
+                    onSuccess && onSuccess(data);
                     setModal && setModal(false);
                 }, dispatch }).then();
         }
     };
 
-    // Schema Fields
-    const Fields = schema && !!schema.length && schema?.map((Field: any) => Field.type);
-
     return (
         <React.Fragment>
             <FormProvider {...Methods}>
-                <form className={classes.root} onSubmit={Methods.handleSubmit(onFormSubmit)} {...props}>
+                <form className={classes.root} onSubmit={Methods.handleSubmit(onFormSubmit)} style={style} {...props}>
                     <Grid container spacing={2}>
                         { schema && !!schema?.length && schema.map((field: any, index: number) => {
                             switch (field.component?.toLowerCase()) {
@@ -98,17 +98,9 @@ export const Form: FC<iForm> = ({ name, mode, getForm, schema, dataSource, onSub
                             }
                         })}
                         { children }
-                        { (schema && !!schema?.length && Fields.includes("button"))
-                            ? schema.map((field: any, index: number) => {
-                                if (field.type === "button") {
-                                    if (field.template) {
-                                        return <React.Fragment key={index}>{field.template(Methods.getValues())}</React.Fragment>
-                                    } else {
-                                        return <Grid item key={index} {...(field.media ? field.media : { md: 12, lg: 12 })}><Button {...field.componentProps}>{field.field}</Button></Grid>
-                                    }
-                                } else return null }
-                            )
-                            : <Grid item md={12} lg={12}><Button fullWidth type="submit" variant="outlined">Save</Button></Grid> }
+                        { !(children) &&
+                            <Grid item md={12} lg={12}><Button fullWidth type='submit' variant='outlined'>Submit</Button></Grid>
+                        }
                     </Grid>
                 </form>
             </FormProvider>

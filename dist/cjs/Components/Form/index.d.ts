@@ -6,6 +6,7 @@ type iSchema = GridColDef & {
     componentMedia?: any;
 };
 interface iForm {
+    style?: any;
     mode?: string;
     name?: string;
     getForm?: any;
@@ -13,6 +14,7 @@ interface iForm {
     children?: any;
     dispatch?: any;
     setModal?: any;
+    onSuccess?: any;
     dataSource?: any;
     schema?: iSchema | any;
     onSubmitClear?: boolean;

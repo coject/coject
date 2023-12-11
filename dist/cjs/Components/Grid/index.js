@@ -81,7 +81,12 @@ const Grid = (_a) => {
             schema.map((field) => {
                 var _a;
                 if (field.component === "select" && ((_a = field.componentProps) === null || _a === void 0 ? void 0 : _a.dataSource)) {
-                    return (0, Services_1.Request)({ dataSource: field.componentProps.dataSource, callBack: (data) => setSchemaData((prev) => (Object.assign(Object.assign({}, prev), { [field.field]: data }))) }).then();
+                    if (field.componentProps.dataSource.staticData) {
+                        return setSchemaData((prev) => (Object.assign(Object.assign({}, prev), { [field.field]: field.componentProps.dataSource.staticData })));
+                    }
+                    else {
+                        return (0, Services_1.Request)({ dataSource: field.componentProps.dataSource, callBack: (data) => setSchemaData((prev) => (Object.assign(Object.assign({}, prev), { [field.field]: data }))) }).then();
+                    }
                 }
                 else
                     return null;
@@ -90,7 +95,6 @@ const Grid = (_a) => {
     }, [schema]);
     // Default Schema
     const defaultSchema = !!gridData.length ? (_b = Object.keys(gridData[0])) === null || _b === void 0 ? void 0 : _b.map((columnKey) => ({
-        width: 100,
         field: columnKey,
         component: "input",
         flex: (columnKey === ((dataSource === null || dataSource === void 0 ? void 0 : dataSource.primaryKey) ? dataSource.primaryKey : "id") ? 0 : 1)
@@ -99,6 +103,9 @@ const Grid = (_a) => {
     (0, react_1.useEffect)(() => {
         if (schema) {
             schema.map((columnSchema) => {
+                if (columnSchema.headerName) {
+                    columnSchema.componentProps.label = columnSchema.headerName;
+                }
                 if (columnSchema.component === "date" && !columnSchema.renderCell) {
                     columnSchema.renderCell = (data) => react_1.default.createElement(index_1.DatePicker, { value: data.value, textView: true });
                 }

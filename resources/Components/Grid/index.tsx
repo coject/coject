@@ -88,7 +88,9 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, schema, 
         if (schema) {
             schema.map((columnSchema: any) => {
                 if (columnSchema.headerName) {
-                    columnSchema.componentProps.label = columnSchema.headerName;
+                    if (columnSchema.componentProps) {
+                        columnSchema.componentProps = { label: columnSchema.headerName }
+                    } else columnSchema.componentProps.label = columnSchema.headerName;
                 }
                 if (columnSchema.component === "date" && !columnSchema.renderCell) {
                     columnSchema.renderCell     = (data: any) => <DatePicker value={data.value} textView />;

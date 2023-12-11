@@ -104,7 +104,11 @@ const Grid = (_a) => {
         if (schema) {
             schema.map((columnSchema) => {
                 if (columnSchema.headerName) {
-                    columnSchema.componentProps.label = columnSchema.headerName;
+                    if (columnSchema.componentProps) {
+                        columnSchema.componentProps = { label: columnSchema.headerName };
+                    }
+                    else
+                        columnSchema.componentProps.label = columnSchema.headerName;
                 }
                 if (columnSchema.component === "date" && !columnSchema.renderCell) {
                     columnSchema.renderCell = (data) => react_1.default.createElement(index_1.DatePicker, { value: data.value, textView: true });

@@ -68,12 +68,17 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, lab
     const MuiAutocomplete = () => {
         return (
             <Autocomplete id={DropdownID} options={selectData} multiple={props?.multiple} {...props}
-                value={
-                    !!selectData.length && selectedValue
-                        ? props?.multiple && !!selectedValue.length
-                            ? selectedValue.map((SValue: string) => selectData.find((option: any) => option.id === SValue))
-                            : props?.multiple ? [] : selectData.find((option: any) => option.id === selectedValue)
-                        : props?.multiple ? [] : null
+                value={ !!selectData.length && selectedValue
+                    ? props?.multiple && !!selectedValue.length
+                        ? selectedValue.map((SValue: string) => selectData.find((option: any) => option.id === SValue))
+                        : props?.multiple ? [] : selectData.find((option: any) => option.id === selectedValue)
+                    : props?.multiple ? [] : null
+                }
+                defaultValue={ !!selectData.length && selectedValue
+                    ? props?.multiple && !!selectedValue.length
+                        ? selectedValue.map((SValue: string) => selectData.find((option: any) => option.id === SValue))
+                        : props?.multiple ? [] : selectData.find((option: any) => option.id === selectedValue)
+                    : props?.multiple ? [] : null
                 }
                 onChange={(e, newValue) => {
                     onChange && onChange(e, newValue, Methods);

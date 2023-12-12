@@ -11,6 +11,7 @@ interface iGrid extends DataGridProps {
     toolbar?: boolean;
     actions?: boolean;
     onAddSubmit?: any;
+    customId?: string;
     onEditSubmit?: any;
     schema?: iSchema | any;
 }

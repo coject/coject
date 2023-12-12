@@ -24,13 +24,13 @@ import { Form, DatePicker, Modal } from "../index";
 import useStyles from "./theme";
 export const Grid = (_a) => {
     var _b;
-    var { dataSource, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit } = _a, props = __rest(_a, ["dataSource", "schema", "actions", "toolbar", "dispatch", "onAddSubmit", "onEditSubmit"]);
+    var { dataSource, customId, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit } = _a, props = __rest(_a, ["dataSource", "customId", "schema", "actions", "toolbar", "dispatch", "onAddSubmit", "onEditSubmit"]);
     const Icons = MuiIcons;
     const { classes } = useStyles();
     const [gridData, setGridData] = useState([]);
     const [schemaData, setSchemaData] = useState({});
     const [selectedData, setSelectedData] = useState(null);
-    const [, forceUpdate] = useReducer(x => x + 1, 0);
+    const [_, forceUpdate] = useReducer(x => x + 1, 0);
     const [addNew, setAddNew] = useState(false);
     const [update, setUpdate] = useState(false);
     const [delModal, setDelModal] = useState(false);
@@ -125,9 +125,9 @@ export const Grid = (_a) => {
     };
     return (React.createElement(React.Fragment, null,
         React.createElement(Modal, { title: "Add New Item", open: addNew, setOpen: setAddNew },
-            React.createElement(Form, { onSubmit: (data) => onAddSubmit(data), dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create" })),
+            React.createElement(Form, { onSubmit: (data) => onAddSubmit && onAddSubmit(data), dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create" })),
         React.createElement(Modal, { title: "Update Item", open: update, setOpen: setUpdate },
-            React.createElement(Form, { onSubmit: (data) => onEditSubmit(data), dataSource: Object.assign(Object.assign({}, dataSource), { staticData: selectedData }), schema: schema ? schema : defaultSchema, mode: "update" })),
+            React.createElement(Form, { onSubmit: (data) => onEditSubmit && onEditSubmit(data), dataSource: Object.assign(Object.assign({}, dataSource), { staticData: selectedData }), schema: schema ? schema : defaultSchema, mode: "update" })),
         React.createElement(Modal, { title: "Delete Item", open: delModal, setOpen: setDelModal },
             React.createElement(MuiGrid, { container: true, spacing: 2 },
                 React.createElement(MuiGrid, { item: true, md: 12, lg: 12 },
@@ -139,6 +139,6 @@ export const Grid = (_a) => {
                             callBack: () => setDelModal(false), dispatch
                         }).then() }, "Delete")))),
         React.createElement(Box, { className: classes.root },
-            React.createElement(DataGrid, Object.assign({ className: !(gridData === null || gridData === void 0 ? void 0 : gridData.length) ? classes.empty : "", rows: gridData, columns: columnsSchema, density: "compact" }, props, { getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), initialState: (props === null || props === void 0 ? void 0 : props.initialState) ? props === null || props === void 0 ? void 0 : props.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, pageSizeOptions: (props === null || props === void 0 ? void 0 : props.pageSizeOptions) ? props === null || props === void 0 ? void 0 : props.pageSizeOptions : [15, 25, 35, 50, 100], slots: (props === null || props === void 0 ? void 0 : props.slots) ? props === null || props === void 0 ? void 0 : props.slots : { toolbar: actions || toolbar ? CustomToolbar : null } })))));
+            React.createElement(DataGrid, Object.assign({ className: !(gridData === null || gridData === void 0 ? void 0 : gridData.length) ? classes.empty : "", getRowId: () => customId ? customId : "id", rows: gridData, columns: columnsSchema, density: "compact" }, props, { getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), initialState: (props === null || props === void 0 ? void 0 : props.initialState) ? props === null || props === void 0 ? void 0 : props.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, pageSizeOptions: (props === null || props === void 0 ? void 0 : props.pageSizeOptions) ? props === null || props === void 0 ? void 0 : props.pageSizeOptions : [15, 25, 35, 50, 100], slots: (props === null || props === void 0 ? void 0 : props.slots) ? props === null || props === void 0 ? void 0 : props.slots : { toolbar: actions || toolbar ? CustomToolbar : null } })))));
 };
 //# sourceMappingURL=index.js.map

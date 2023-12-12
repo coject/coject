@@ -53,13 +53,13 @@ const index_1 = require("../index");
 const theme_1 = __importDefault(require("./theme"));
 const Grid = (_a) => {
     var _b;
-    var { dataSource, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit } = _a, props = __rest(_a, ["dataSource", "schema", "actions", "toolbar", "dispatch", "onAddSubmit", "onEditSubmit"]);
+    var { dataSource, customId, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit } = _a, props = __rest(_a, ["dataSource", "customId", "schema", "actions", "toolbar", "dispatch", "onAddSubmit", "onEditSubmit"]);
     const Icons = MuiIcons;
     const { classes } = (0, theme_1.default)();
     const [gridData, setGridData] = (0, react_1.useState)([]);
     const [schemaData, setSchemaData] = (0, react_1.useState)({});
     const [selectedData, setSelectedData] = (0, react_1.useState)(null);
-    const [, forceUpdate] = (0, react_1.useReducer)(x => x + 1, 0);
+    const [_, forceUpdate] = (0, react_1.useReducer)(x => x + 1, 0);
     const [addNew, setAddNew] = (0, react_1.useState)(false);
     const [update, setUpdate] = (0, react_1.useState)(false);
     const [delModal, setDelModal] = (0, react_1.useState)(false);
@@ -154,9 +154,9 @@ const Grid = (_a) => {
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(index_1.Modal, { title: "Add New Item", open: addNew, setOpen: setAddNew },
-            react_1.default.createElement(index_1.Form, { onSubmit: (data) => onAddSubmit(data), dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create" })),
+            react_1.default.createElement(index_1.Form, { onSubmit: (data) => onAddSubmit && onAddSubmit(data), dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create" })),
         react_1.default.createElement(index_1.Modal, { title: "Update Item", open: update, setOpen: setUpdate },
-            react_1.default.createElement(index_1.Form, { onSubmit: (data) => onEditSubmit(data), dataSource: Object.assign(Object.assign({}, dataSource), { staticData: selectedData }), schema: schema ? schema : defaultSchema, mode: "update" })),
+            react_1.default.createElement(index_1.Form, { onSubmit: (data) => onEditSubmit && onEditSubmit(data), dataSource: Object.assign(Object.assign({}, dataSource), { staticData: selectedData }), schema: schema ? schema : defaultSchema, mode: "update" })),
         react_1.default.createElement(index_1.Modal, { title: "Delete Item", open: delModal, setOpen: setDelModal },
             react_1.default.createElement(material_1.Grid, { container: true, spacing: 2 },
                 react_1.default.createElement(material_1.Grid, { item: true, md: 12, lg: 12 },
@@ -168,7 +168,7 @@ const Grid = (_a) => {
                             callBack: () => setDelModal(false), dispatch
                         }).then() }, "Delete")))),
         react_1.default.createElement(material_1.Box, { className: classes.root },
-            react_1.default.createElement(x_data_grid_1.DataGrid, Object.assign({ className: !(gridData === null || gridData === void 0 ? void 0 : gridData.length) ? classes.empty : "", rows: gridData, columns: columnsSchema, density: "compact" }, props, { getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), initialState: (props === null || props === void 0 ? void 0 : props.initialState) ? props === null || props === void 0 ? void 0 : props.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, pageSizeOptions: (props === null || props === void 0 ? void 0 : props.pageSizeOptions) ? props === null || props === void 0 ? void 0 : props.pageSizeOptions : [15, 25, 35, 50, 100], slots: (props === null || props === void 0 ? void 0 : props.slots) ? props === null || props === void 0 ? void 0 : props.slots : { toolbar: actions || toolbar ? CustomToolbar : null } })))));
+            react_1.default.createElement(x_data_grid_1.DataGrid, Object.assign({ className: !(gridData === null || gridData === void 0 ? void 0 : gridData.length) ? classes.empty : "", getRowId: () => customId ? customId : "id", rows: gridData, columns: columnsSchema, density: "compact" }, props, { getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), initialState: (props === null || props === void 0 ? void 0 : props.initialState) ? props === null || props === void 0 ? void 0 : props.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, pageSizeOptions: (props === null || props === void 0 ? void 0 : props.pageSizeOptions) ? props === null || props === void 0 ? void 0 : props.pageSizeOptions : [15, 25, 35, 50, 100], slots: (props === null || props === void 0 ? void 0 : props.slots) ? props === null || props === void 0 ? void 0 : props.slots : { toolbar: actions || toolbar ? CustomToolbar : null } })))));
 };
 exports.Grid = Grid;
 //# sourceMappingURL=index.js.map

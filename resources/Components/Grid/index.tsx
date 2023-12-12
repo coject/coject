@@ -30,17 +30,18 @@ interface iGrid extends DataGridProps {
     toolbar?: boolean;
     actions?: boolean;
     onAddSubmit?: any;
+    customId?: string;
     onEditSubmit?: any;
     schema?: iSchema | any;
 }
 
-export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit, ...props }) => {
+export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customId, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit, ...props }) => {
     const Icons: any = MuiIcons;
     const { classes } = useStyles();
     const [ gridData, setGridData ] = useState<any>([]);
     const [ schemaData, setSchemaData ] = useState<any>({});
     const [ selectedData, setSelectedData ] = useState<any>(null);
-    const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+    const [ _, forceUpdate ] = useReducer(x => x + 1, 0);
     const [ addNew, setAddNew ] = useState<boolean>(false);
     const [ update, setUpdate ] = useState<boolean>(false);
     const [ delModal, setDelModal ] = useState<boolean>(false);
@@ -145,10 +146,10 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, schema, 
     return (
         <React.Fragment>
             {/* Create Modal */}
-            <Modal title={"Add New Item"} open={addNew} setOpen={setAddNew}><Form onSubmit={(data: any) => onAddSubmit(data)} dataSource={dataSource} schema={schema ? schema : defaultSchema} mode={"create"} /></Modal>
+            <Modal title={"Add New Item"} open={addNew} setOpen={setAddNew}><Form onSubmit={(data: any) => onAddSubmit && onAddSubmit(data)} dataSource={dataSource} schema={schema ? schema : defaultSchema} mode={"create"} /></Modal>
 
             {/* Update Modal */}
-            <Modal title={"Update Item"} open={update} setOpen={setUpdate}><Form onSubmit={(data: any) => onEditSubmit(data)} dataSource={{...dataSource, staticData: selectedData}} schema={schema ? schema : defaultSchema} mode={"update"} /></Modal>
+            <Modal title={"Update Item"} open={update} setOpen={setUpdate}><Form onSubmit={(data: any) => onEditSubmit && onEditSubmit(data)} dataSource={{...dataSource, staticData: selectedData}} schema={schema ? schema : defaultSchema} mode={"update"} /></Modal>
 
             {/* Delete Modal */}
             <Modal title={"Delete Item"} open={delModal} setOpen={setDelModal}>
@@ -170,6 +171,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, schema, 
             {/* Data Grid */}
             <Box className={classes.root}>
                 <DataGrid className={!gridData?.length ? classes.empty : ""}
+                    getRowId={() => customId ? customId : "id"}
                     rows={gridData} columns={columnsSchema} density={"compact"} {...props}
                     getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "")}
                     initialState={props?.initialState ? props?.initialState : {pagination: {paginationModel: {pageSize: 15}}}}

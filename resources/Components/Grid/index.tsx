@@ -30,18 +30,18 @@ interface iGrid extends DataGridProps {
     toolbar?: boolean;
     actions?: boolean;
     onAddSubmit?: any;
-    customId?: string;
+    customKey?: string;
     onEditSubmit?: any;
     schema?: iSchema | any;
 }
 
-export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customId, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit, ...props }) => {
+export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit, ...props }) => {
     const Icons: any = MuiIcons;
     const { classes } = useStyles();
     const [ gridData, setGridData ] = useState<any>([]);
     const [ schemaData, setSchemaData ] = useState<any>({});
     const [ selectedData, setSelectedData ] = useState<any>(null);
-    const [ _, forceUpdate ] = useReducer(x => x + 1, 0);
+    const [ , forceUpdate ] = useReducer(x => x + 1, 0);
     const [ addNew, setAddNew ] = useState<boolean>(false);
     const [ update, setUpdate ] = useState<boolean>(false);
     const [ delModal, setDelModal ] = useState<boolean>(false);
@@ -171,7 +171,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customId
             {/* Data Grid */}
             <Box className={classes.root}>
                 <DataGrid className={!gridData?.length ? classes.empty : ""}
-                    getRowId={() => customId ? customId : "id"}
+                    { ...(customKey ? { getRowId: (row : any) => row[customKey] } : {}) }
                     rows={gridData} columns={columnsSchema} density={"compact"} {...props}
                     getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "")}
                     initialState={props?.initialState ? props?.initialState : {pagination: {paginationModel: {pageSize: 15}}}}

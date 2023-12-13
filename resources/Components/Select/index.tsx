@@ -7,7 +7,7 @@ import { useFormContext, Controller } from "react-hook-form";
 import { Request } from "../../Services";
 
 // Material UI
-import { Box, TextField, Autocomplete, AutocompleteProps, TextFieldProps } from "@mui/material";
+import { Box, TextField, Autocomplete, AutocompleteProps, InputProps } from "@mui/material";
 
 // Styles
 import useStyles from "./theme";
@@ -20,12 +20,13 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     dispatch?: any;
     dataSource?: any;
     required?: boolean;
+    renderOption?: any;
     customKey?: string;
     customName?: string;
-    inputProps?: TextFieldProps;
+    inputProps?: InputProps;
 }
 
-export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, label, dataSource, customKey, customName, onChange, required, dispatch, inputProps, ...props }) => {
+export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, label, dataSource, customKey, customName, renderOption, onChange, required, dispatch, inputProps, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [ selectedValue, setSelectedValue ] = useState<any>();
@@ -44,25 +45,19 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, lab
     // Static Data
     useEffect(() => {
         if (dataSource?.staticData && !!dataSource.staticData.length && !dataSource?.apiUrl) {
-            dataSource.staticData.map((Data: any) => {
-                return setSelectData((Prev: any) => [ ...Prev, { id: Data[customKey ? customKey : "id"], label: Data[customName ? customName : "label"] } ]);
-            });
+            setSelectData(dataSource.staticData);
         }
-    }, [customKey, customName, dataSource?.apiUrl, dataSource?.staticData]);
+    }, [dataSource?.apiUrl, dataSource?.staticData]);
 
     // Dynamic Data
     useEffect(() => {
         if (dataSource?.apiUrl && !dataSource.staticData) {
             Request({
                 dataSource: { ...dataSource }, dispatch,
-                callBack: (ResponseData: any) => {
-                    ResponseData.map((Data: any) => {
-                        return setSelectData((Prev: any) => [ ...Prev, { id: Data[customKey ? customKey : "id"], label: Data[customName ? customName : "label"] } ]);
-                    });
-                }
+                callBack: (ResponseData: any) => setSelectData(ResponseData)
             }).then();
         }
-    }, [customKey, customName, dataSource, dataSource?.apiUrl, dispatch]);
+    }, [dataSource, dataSource?.apiUrl, dispatch]);
 
     // Master Component
     const MuiAutocomplete = () => {
@@ -85,7 +80,10 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, lab
                     setSelectedValue(props?.multiple ? newValue?.map((NValue: any) => NValue.id) : newValue?.id);
                     control && setValue(name || "default", props?.multiple ? newValue?.map((NValue: any) => NValue.id) : newValue?.id);
                 }}
-                renderInput={(params) => <TextField {...params} {...inputProps} label={label ? label : (name || "default")} required={required} />}
+                { ...(customKey ? { getOptionKey: (option: any) => option[`${customKey}`]} : {}) }
+                { ...(customName ? { getOptionLabel: (option: any) => option[`${customName}`]} : {}) }
+                { ...(renderOption ? { renderOption: (props, option: any) => <Box component={"li"} {...props}>{renderOption(option)}</Box> } : {}) }
+                renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, ...inputProps, type: "search" }} label={label ? label : (name || "default")} required={required} />}
             />
         );
     };
@@ -101,3 +99,6 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, lab
         </React.Fragment>
     )
 };
+
+
+// { ...(optionRender ? { renderOption: (props, option) => <Box component={"li"} {...props}>{optionRender(option)}</Box> } : {}) }

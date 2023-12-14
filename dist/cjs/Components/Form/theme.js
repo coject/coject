@@ -5,6 +5,7 @@ const useStyles = (0, mui_1.makeStyles)()(() => {
     return {
         root: {
             width: "100%",
+            padding: "16px",
             "& button": {
                 padding: "9px 15px",
                 textTransform: "capitalize"

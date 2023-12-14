@@ -48,18 +48,31 @@ const theme_1 = __importDefault(require("./theme"));
 const Checkbox = (_a) => {
     var { name, label, trueValue, falseValue } = _a, props = __rest(_a, ["name", "label", "trueValue", "falseValue"]);
     const { classes } = (0, theme_1.default)();
+    const [checkedValue, setCheckedValue] = (0, react_1.useState)(false);
     const { register, setValue, control } = (0, react_hook_form_1.useFormContext)() || {};
-    const checkedValue = (props === null || props === void 0 ? void 0 : props.value) ? (`${props === null || props === void 0 ? void 0 : props.value}` !== (falseValue ? falseValue : "false")) ? (trueValue ? (`${props === null || props === void 0 ? void 0 : props.value}` === trueValue) : true) : false : false;
     // Value
     (0, react_1.useEffect)(() => {
-        if (props === null || props === void 0 ? void 0 : props.value)
+        if (props === null || props === void 0 ? void 0 : props.value) {
             control && setValue(name || "default", (trueValue ? ((props === null || props === void 0 ? void 0 : props.value) === trueValue) ? trueValue : (falseValue ? falseValue : false) : props === null || props === void 0 ? void 0 : props.value));
+            setCheckedValue((props === null || props === void 0 ? void 0 : props.value) ? (`${props === null || props === void 0 ? void 0 : props.value}` !== (falseValue ? falseValue : "false")) ? (trueValue ? (`${props === null || props === void 0 ? void 0 : props.value}` === trueValue) : true) : false : false);
+        }
         else
             control && setValue(name || "default", falseValue ? falseValue : false);
     }, [control, name, setValue, props === null || props === void 0 ? void 0 : props.value, falseValue, trueValue]);
+    // Change Value
+    const changeValue = (event) => {
+        if (event.target.checked) {
+            setCheckedValue(true);
+            setValue(name || "default", (trueValue ? trueValue : true));
+        }
+        else {
+            setCheckedValue(false);
+            setValue(name || "default", (falseValue ? falseValue : false));
+        }
+    };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: classes.root },
-            react_1.default.createElement(material_1.FormControlLabel, { control: react_1.default.createElement(material_1.Checkbox, Object.assign({}, (control && register(name || "default")), { defaultChecked: checkedValue }, props)), label: label ? label : name }))));
+            react_1.default.createElement(material_1.FormControlLabel, { control: react_1.default.createElement(material_1.Checkbox, Object.assign({}, (control && register(name || "default")), { value: checkedValue, checked: checkedValue, onChange: changeValue }, props)), label: label ? label : name }))));
 };
 exports.Checkbox = Checkbox;
 //# sourceMappingURL=index.js.map

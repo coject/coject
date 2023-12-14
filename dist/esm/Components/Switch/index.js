@@ -9,7 +9,7 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 // React Hook Form
 import { useFormContext } from "react-hook-form";
 // Material UI
@@ -19,17 +19,30 @@ import useStyles from "./theme";
 export const Switch = (_a) => {
     var { name, trueValue, falseValue, label } = _a, props = __rest(_a, ["name", "trueValue", "falseValue", "label"]);
     const { classes } = useStyles();
+    const [checkedValue, setCheckedValue] = useState(false);
     const { register, setValue, control } = useFormContext() || {};
-    const checkedValue = (props === null || props === void 0 ? void 0 : props.value) ? (`${props === null || props === void 0 ? void 0 : props.value}` !== (falseValue ? falseValue : "false")) ? (trueValue ? (`${props === null || props === void 0 ? void 0 : props.value}` === trueValue) : true) : false : false;
     // Value
     useEffect(() => {
-        if (props === null || props === void 0 ? void 0 : props.value)
+        if (props === null || props === void 0 ? void 0 : props.value) {
             control && setValue(name || "default", (trueValue ? ((props === null || props === void 0 ? void 0 : props.value) === trueValue) ? trueValue : (falseValue ? falseValue : false) : props === null || props === void 0 ? void 0 : props.value));
+            setCheckedValue((props === null || props === void 0 ? void 0 : props.value) ? (`${props === null || props === void 0 ? void 0 : props.value}` !== (falseValue ? falseValue : "false")) ? (trueValue ? (`${props === null || props === void 0 ? void 0 : props.value}` === trueValue) : true) : false : false);
+        }
         else
             control && setValue(name || "default", falseValue ? falseValue : false);
     }, [control, name, setValue, props === null || props === void 0 ? void 0 : props.value, falseValue, trueValue]);
+    // Change Value
+    const changeValue = (event) => {
+        if (event.target.checked) {
+            setCheckedValue(true);
+            setValue(name || "default", (trueValue ? trueValue : true));
+        }
+        else {
+            setCheckedValue(false);
+            setValue(name || "default", (falseValue ? falseValue : false));
+        }
+    };
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: classes.root },
-            React.createElement(FormControlLabel, { control: React.createElement(MuiSwitch, Object.assign({}, (control && register(name || "default")), { defaultChecked: checkedValue }, props)), label: label ? label : name }))));
+            React.createElement(FormControlLabel, { control: React.createElement(MuiSwitch, Object.assign({}, (control && register(name || "default")), { value: checkedValue, checked: checkedValue, onChange: changeValue }, props)), label: label ? label : name }))));
 };
 //# sourceMappingURL=index.js.map

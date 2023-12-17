@@ -98,7 +98,10 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, lab
                 { ...(customName ? { getOptionLabel: (option: any) => option[`${customName}`] } : {}) }
                 { ...((renderOption || checkboxes) ? { renderOption: (props, row: any, { selected }) => <Box component={"li"} {...props}>
                     { checkboxes
-                        ? <Checkbox icon={<Icons.CheckBoxOutlineBlank fontSize="small" />} checkedIcon={<Icons.CheckBox fontSize="small" />} style={{ marginRight: 5 }} checked={selected} />
+                        ? <React.Fragment>
+                            <Checkbox icon={<Icons.CheckBoxOutlineBlank fontSize="small" />} checkedIcon={<Icons.CheckBox fontSize="small" />} style={{ marginRight: 5 }} checked={selected} />
+                            {customName ? row[`${customName}`] : row.label}
+                          </React.Fragment>
                         : renderOption(row)
                     }
                 </Box> } : {}) }

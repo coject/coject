@@ -7,7 +7,10 @@ import { useFormContext, Controller } from "react-hook-form";
 import { Request } from "../../Services";
 
 // Material UI
-import { Box, TextField, Autocomplete, AutocompleteProps, Chip } from "@mui/material";
+import { Box, TextField, Autocomplete, AutocompleteProps, Chip, Checkbox } from "@mui/material";
+
+// Components
+import { Icons } from "../../Components";
 
 // Styles
 import useStyles from "./theme";
@@ -24,11 +27,12 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     renderOption?: any;
     customKey?: string;
     customName?: string;
+    checkboxes?: boolean;
     fixedOption?: (string | number)[];
     disabledOption?: (string | number)[];
 }
 
-export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, label, dataSource, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, dispatch, inputProps, ...props }) => {
+export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, label, dataSource, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, dispatch, inputProps, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [ selectedValue, setSelectedValue ] = useState<any>();
@@ -92,7 +96,12 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, lab
                 )) }
                 { ...(customKey ? { getOptionKey: (option: any) => option[`${customKey}`] } : {}) }
                 { ...(customName ? { getOptionLabel: (option: any) => option[`${customName}`] } : {}) }
-                { ...(renderOption ? { renderOption: (props, option: any) => <Box component={"li"} {...props}>{renderOption(option)}</Box> } : {}) }
+                { ...((renderOption || checkboxes) ? { renderOption: (props, row: any, { selected }) => <Box component={"li"} {...props}>
+                    { checkboxes
+                        ? <Checkbox icon={<Icons.CheckBoxOutlineBlank fontSize="small" />} checkedIcon={<Icons.CheckBox fontSize="small" />} style={{ marginRight: 5 }} checked={selected} />
+                        : renderOption(row)
+                    }
+                </Box> } : {}) }
                 getOptionDisabled={(row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false)}
                 renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, ...inputProps, type: "search" }} label={label ? label : (name || "default")} required={required} />}
             />

@@ -34,9 +34,11 @@ const react_hook_form_1 = require("react-hook-form");
 const Services_1 = require("../../Services");
 // Material UI
 const material_1 = require("@mui/material");
+// Components
+const Components_1 = require("../../Components");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Select = ({ name, label, dataSource, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, dispatch, inputProps, ...props }) => {
+const Select = ({ name, label, dataSource, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, dispatch, inputProps, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useFormContext)() || {};
     const [selectedValue, setSelectedValue] = (0, react_1.useState)();
@@ -85,7 +87,9 @@ const Select = ({ name, label, dataSource, customKey, customName, renderOption, 
                 onChange && onChange(event, newValue, Methods);
                 setSelectedValue(props?.multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue) => NValue.id))])] : newValue?.id);
                 control && setValue(name || "default", props?.multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue) => NValue.id))])] : newValue?.id);
-            }, renderTags: (tagValue, getTagProps) => tagValue.map((row, index) => (react_1.default.createElement(material_1.Chip, { ...getTagProps({ index }), label: customName ? row[`${customName}`] : row.label, disabled: (fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false }))), ...(customKey ? { getOptionKey: (option) => option[`${customKey}`] } : {}), ...(customName ? { getOptionLabel: (option) => option[`${customName}`] } : {}), ...(renderOption ? { renderOption: (props, option) => react_1.default.createElement(material_1.Box, { component: "li", ...props }, renderOption(option)) } : {}), getOptionDisabled: (row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false), renderInput: (params) => react_1.default.createElement(material_1.TextField, { ...params, InputProps: { ...params.InputProps, ...inputProps, type: "search" }, label: label ? label : (name || "default"), required: required }) }));
+            }, renderTags: (tagValue, getTagProps) => tagValue.map((row, index) => (react_1.default.createElement(material_1.Chip, { ...getTagProps({ index }), label: customName ? row[`${customName}`] : row.label, disabled: (fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false }))), ...(customKey ? { getOptionKey: (option) => option[`${customKey}`] } : {}), ...(customName ? { getOptionLabel: (option) => option[`${customName}`] } : {}), ...((renderOption || checkboxes) ? { renderOption: (props, row, { selected }) => react_1.default.createElement(material_1.Box, { component: "li", ...props }, checkboxes
+                    ? react_1.default.createElement(material_1.Checkbox, { icon: react_1.default.createElement(Components_1.Icons.CheckBoxOutlineBlank, { fontSize: "small" }), checkedIcon: react_1.default.createElement(Components_1.Icons.CheckBox, { fontSize: "small" }), style: { marginRight: 5 }, checked: selected })
+                    : renderOption(row)) } : {}), getOptionDisabled: (row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false), renderInput: (params) => react_1.default.createElement(material_1.TextField, { ...params, InputProps: { ...params.InputProps, ...inputProps, type: "search" }, label: label ? label : (name || "default"), required: required }) }));
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: classes.root }, control

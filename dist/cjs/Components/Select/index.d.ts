@@ -11,6 +11,7 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     renderOption?: any;
     customKey?: string;
     customName?: string;
+    checkboxes?: boolean;
     fixedOption?: (string | number)[];
     disabledOption?: (string | number)[];
 }

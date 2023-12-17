@@ -22,17 +22,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -45,18 +34,17 @@ const react_hook_form_1 = require("react-hook-form");
 const material_1 = require("@mui/material");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Input = (_a) => {
-    var { value } = _a, props = __rest(_a, ["value"]);
+const Input = ({ value, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const { register, setValue, control } = (0, react_hook_form_1.useFormContext)() || {};
     // Value
     (0, react_1.useEffect)(() => {
         if (value)
-            control && setValue((props === null || props === void 0 ? void 0 : props.name) || "default", value);
-    }, [control, props === null || props === void 0 ? void 0 : props.name, setValue, value]);
+            control && setValue(props?.name || "default", value);
+    }, [control, props?.name, setValue, value]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: classes.root },
-            react_1.default.createElement(material_1.TextField, Object.assign({}, (control && register((props === null || props === void 0 ? void 0 : props.name) || "default")), { defaultValue: value, label: (props === null || props === void 0 ? void 0 : props.label) ? props === null || props === void 0 ? void 0 : props.label : props === null || props === void 0 ? void 0 : props.name }, props), props === null || props === void 0 ? void 0 : props.children))));
+            react_1.default.createElement(material_1.TextField, { ...(control && register(props?.name || "default")), defaultValue: value, label: props?.label ? props?.label : props?.name, ...props }, props?.children))));
 };
 exports.Input = Input;
 //# sourceMappingURL=index.js.map

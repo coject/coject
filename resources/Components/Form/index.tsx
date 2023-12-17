@@ -70,38 +70,42 @@ export const Form: FC<iForm> = ({ name, mode, getForm, schema, dataSource, onSub
         <React.Fragment>
             <FormProvider {...Methods}>
                 <form className={classes.root} onSubmit={Methods.handleSubmit(onFormSubmit)} style={style} {...props}>
-                    <Grid container spacing={2}>
-                        { schema && !!schema?.length && schema.map((field: any, index: number) => {
-                            switch (field.component?.toLowerCase()) {
-                                case "date":
-                                    return field.actionTemplate
-                                        ? ( <React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment> )
-                                        : ( <Grid item key={index} {...(field.componentMedia ? field.componentMedia : { md: 12, lg: 12 })}><DatePicker fullWidth name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid> );
-                                case "input":
-                                    return field.actionTemplate
-                                        ? ( <React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment> )
-                                        : ( <Grid item key={index} {...(field.componentMedia ? field.componentMedia : { md: 12, lg: 12 })}><Input fullWidth name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid> );
-                                case "switch":
-                                    return field.actionTemplate
-                                        ? ( <React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment> )
-                                        : ( <Grid item key={index} {...(field.componentMedia ? field.componentMedia : { md: 12, lg: 12 })}><Switch name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid> );
-                                case "checkbox":
-                                    return field.actionTemplate
-                                        ? ( <React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment> )
-                                        : ( <Grid item key={index} {...(field.componentMedia ? field.componentMedia : { md: 12, lg: 12 })}><Checkbox name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid> );
-                                case "select":
-                                    return field.actionTemplate
-                                        ? ( <React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment> )
-                                        : ( <Grid item key={index} {...(field.componentMedia ? field.componentMedia : { md: 12, lg: 12 })}><Select name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid> );
-                                default:
-                                    return null;
+                    { schema &&
+                        <Grid container spacing={2}>
+                            { schema && !!schema?.length && schema.map((field: any, index: number) => {
+                                switch (field.component?.toLowerCase()) {
+                                    case "date":
+                                        return field.actionTemplate
+                                            ? ( <React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment> )
+                                            : ( <Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><DatePicker fullWidth name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid> );
+                                    case "input":
+                                        return field.actionTemplate
+                                            ? ( <React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment> )
+                                            : ( <Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><Input fullWidth name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid> );
+                                    case "switch":
+                                        return field.actionTemplate
+                                            ? ( <React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment> )
+                                            : ( <Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><Switch name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid> );
+                                    case "checkbox":
+                                        return field.actionTemplate
+                                            ? ( <React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment> )
+                                            : ( <Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><Checkbox name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid> );
+                                    case "select":
+                                        return field.actionTemplate
+                                            ? ( <React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment> )
+                                            : ( <Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><Select name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid> );
+                                    default:
+                                        return null;
+                                }
+                            })}
+                            { !(children) &&
+                                <Grid item xs={12} sm={12} md={12} lg={12}>
+                                    <Button fullWidth type="submit" variant="outlined">Submit</Button>
+                                </Grid>
                             }
-                        })}
-                        { children }
-                        { !(children) &&
-                            <Grid item md={12} lg={12}><Button fullWidth type='submit' variant='outlined'>Submit</Button></Grid>
-                        }
-                    </Grid>
+                        </Grid>
+                    }
+                    { children }
                 </form>
             </FormProvider>
         </React.Fragment>

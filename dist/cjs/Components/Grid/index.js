@@ -22,17 +22,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -51,9 +40,7 @@ const x_data_grid_1 = require("@mui/x-data-grid");
 const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Grid = (_a) => {
-    var _b;
-    var { dataSource, customKey, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit } = _a, props = __rest(_a, ["dataSource", "customKey", "schema", "actions", "toolbar", "dispatch", "onAddSubmit", "onEditSubmit"]);
+const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit, ...props }) => {
     const Icons = MuiIcons;
     const { classes } = (0, theme_1.default)();
     const [gridData, setGridData] = (0, react_1.useState)([]);
@@ -65,23 +52,22 @@ const Grid = (_a) => {
     const [delModal, setDelModal] = (0, react_1.useState)(false);
     // Static Data
     (0, react_1.useEffect)(() => {
-        if ((dataSource === null || dataSource === void 0 ? void 0 : dataSource.staticData) && !!dataSource.staticData.length && !(dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl)) {
+        if (dataSource?.staticData && !!dataSource.staticData.length && !dataSource?.apiUrl) {
             setGridData(dataSource.staticData);
         }
-    }, [dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl, dataSource === null || dataSource === void 0 ? void 0 : dataSource.staticData]);
+    }, [dataSource?.apiUrl, dataSource?.staticData]);
     // Dynamic Data
     (0, react_1.useEffect)(() => {
-        if ((dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl) && !dataSource.staticData) {
+        if (dataSource?.apiUrl && !dataSource.staticData) {
             (0, Services_1.Request)({ dataSource, dispatch, callBack: (data) => setGridData(data) }).then();
         }
-    }, [dataSource, dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl, dispatch]);
+    }, [dataSource, dataSource?.apiUrl, dispatch]);
     // Dynamic Data ( Schema )
     (0, react_1.useEffect)(() => {
         if (schema) {
             schema.map((field) => {
-                var _a;
-                if (field.component === "select" && ((_a = field.componentProps) === null || _a === void 0 ? void 0 : _a.dataSource) && !field.componentProps.dataSource.staticData) {
-                    return (0, Services_1.Request)({ dataSource: field.componentProps.dataSource, callBack: (data) => setSchemaData((prev) => (Object.assign(Object.assign({}, prev), { [field.field]: data }))) }).then();
+                if (field.component === "select" && field.componentProps?.dataSource && !field.componentProps.dataSource.staticData) {
+                    return (0, Services_1.Request)({ dataSource: field.componentProps.dataSource, callBack: (data) => setSchemaData((prev) => ({ ...prev, [field.field]: data })) }).then();
                 }
                 else
                     return null;
@@ -89,16 +75,15 @@ const Grid = (_a) => {
         }
     }, [schema]);
     // Default Schema
-    const defaultSchema = !!gridData.length ? (_b = Object.keys(gridData[0])) === null || _b === void 0 ? void 0 : _b.map((columnKey) => ({
+    const defaultSchema = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => ({
         field: columnKey,
         component: "input",
-        flex: (columnKey === ((dataSource === null || dataSource === void 0 ? void 0 : dataSource.primaryKey) ? dataSource.primaryKey : "id") ? 0 : 1)
+        flex: (columnKey === (dataSource?.primaryKey ? dataSource.primaryKey : "id") ? 0 : 1)
     })) : [];
     // Custom Schema
     (0, react_1.useEffect)(() => {
         if (schema) {
             schema.map((columnSchema) => {
-                var _a;
                 if (columnSchema.headerName) {
                     if (columnSchema.componentProps)
                         columnSchema.componentProps.label = columnSchema.headerName;
@@ -108,7 +93,7 @@ const Grid = (_a) => {
                 if (columnSchema.component === "date" && !columnSchema.renderCell) {
                     columnSchema.renderCell = (data) => react_1.default.createElement(index_1.DatePicker, { value: data.value, textView: true });
                 }
-                if (columnSchema.component === "select" && ((_a = columnSchema.componentProps) === null || _a === void 0 ? void 0 : _a.dataSource)) {
+                if (columnSchema.component === "select" && columnSchema.componentProps?.dataSource) {
                     const customKey = columnSchema.componentProps.customKey;
                     const customName = columnSchema.componentProps.customName;
                     columnSchema.type = "singleSelect";
@@ -123,7 +108,7 @@ const Grid = (_a) => {
                         columnSchema.componentProps.dataSource = { staticData: schemaData[columnSchema.field] };
                     }
                 }
-                return (Object.assign({}, columnSchema));
+                return ({ ...columnSchema });
             });
         }
         forceUpdate();
@@ -156,7 +141,7 @@ const Grid = (_a) => {
         react_1.default.createElement(index_1.Modal, { title: "Add New Item", open: addNew, setOpen: setAddNew },
             react_1.default.createElement(index_1.Form, { onSubmit: (data) => onAddSubmit && onAddSubmit(data), dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create" })),
         react_1.default.createElement(index_1.Modal, { title: "Update Item", open: update, setOpen: setUpdate },
-            react_1.default.createElement(index_1.Form, { onSubmit: (data) => onEditSubmit && onEditSubmit(data), dataSource: Object.assign(Object.assign({}, dataSource), { staticData: selectedData }), schema: schema ? schema : defaultSchema, mode: "update" })),
+            react_1.default.createElement(index_1.Form, { onSubmit: (data) => onEditSubmit && onEditSubmit(data), dataSource: { ...dataSource, staticData: selectedData }, schema: schema ? schema : defaultSchema, mode: "update" })),
         react_1.default.createElement(index_1.Modal, { title: "Delete Item", open: delModal, setOpen: setDelModal },
             react_1.default.createElement(material_1.Grid, { container: true, spacing: 2 },
                 react_1.default.createElement(material_1.Grid, { item: true, md: 12, lg: 12 },
@@ -168,7 +153,7 @@ const Grid = (_a) => {
                             callBack: () => setDelModal(false), dispatch
                         }).then() }, "Delete")))),
         react_1.default.createElement(material_1.Box, { className: classes.root },
-            react_1.default.createElement(x_data_grid_1.DataGrid, Object.assign({ className: !(gridData === null || gridData === void 0 ? void 0 : gridData.length) ? classes.empty : "" }, (customKey ? { getRowId: (row) => row[customKey] } : {}), { rows: gridData, columns: columnsSchema, density: "compact" }, props, { getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), initialState: (props === null || props === void 0 ? void 0 : props.initialState) ? props === null || props === void 0 ? void 0 : props.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, pageSizeOptions: (props === null || props === void 0 ? void 0 : props.pageSizeOptions) ? props === null || props === void 0 ? void 0 : props.pageSizeOptions : [15, 25, 35, 50, 100], slots: (props === null || props === void 0 ? void 0 : props.slots) ? props === null || props === void 0 ? void 0 : props.slots : { toolbar: actions || toolbar ? CustomToolbar : null } })))));
+            react_1.default.createElement(x_data_grid_1.DataGrid, { className: !gridData?.length ? classes.empty : "", ...(customKey ? { getRowId: (row) => row[customKey] } : {}), rows: gridData, columns: columnsSchema, density: "compact", ...props, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, pageSizeOptions: props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100], slots: props?.slots ? props?.slots : { toolbar: actions || toolbar ? CustomToolbar : null } }))));
 };
 exports.Grid = Grid;
 //# sourceMappingURL=index.js.map

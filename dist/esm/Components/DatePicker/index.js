@@ -1,14 +1,3 @@
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 import React, { useState, useEffect } from "react";
 // React Hook Form
 import { useFormContext } from "react-hook-form";
@@ -24,8 +13,7 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { DatePicker as MuiDatePicker } from "@mui/x-date-pickers/DatePicker";
 // Styles
 import useStyles from "./theme";
-export const DatePicker = (_a) => {
-    var { name, value, hijri, format, inFormat, outFormat, minDate, maxDate, views, withTime, textView, fullWidth, onChange } = _a, props = __rest(_a, ["name", "value", "hijri", "format", "inFormat", "outFormat", "minDate", "maxDate", "views", "withTime", "textView", "fullWidth", "onChange"]);
+export const DatePicker = ({ name, value, hijri, format, inFormat, outFormat, minDate, maxDate, views, withTime, textView, fullWidth, onChange, ...props }) => {
     const { classes } = useStyles();
     const DateComponent = withTime ? DateTimePicker : MuiDatePicker;
     const Views = views ? { views: [`${views}`] } : {};
@@ -51,10 +39,10 @@ export const DatePicker = (_a) => {
         React.createElement(Box, { className: classes.root },
             React.createElement(LocalizationProvider, { dateAdapter: hijri ? AdapterMomentHijri : AdapterMoment }, textView
                 ? React.createElement(Typography, null, selectedDate.format(format ? format : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY"))
-                : React.createElement(DateComponent, Object.assign({ className: `${fullWidth ? "MuiFormControl-fullWidth" : ""}`, label: props.label ? props.label : name, value: selectedDate }, Calendar, Views, props, { format: format ? format : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY", onChange: (newValue) => {
+                : React.createElement(DateComponent, { className: `${fullWidth ? "MuiFormControl-fullWidth" : ""}`, label: props.label ? props.label : name, value: selectedDate, ...Calendar, ...Views, ...props, format: format ? format : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY", onChange: (newValue) => {
                         setSelectedDate(newValue);
                         onChange && onChange(newValue.format(outFormat ? outFormat : "DD-MM-YYYY"));
                         register && !!Object.keys(register).length && setValue(name || "default", newValue.format(outFormat ? outFormat : "DD-MM-YYYY"));
-                    } }))))));
+                    } })))));
 };
 //# sourceMappingURL=index.js.map

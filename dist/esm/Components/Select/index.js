@@ -1,73 +1,66 @@
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 import React, { useState, useEffect } from "react";
 // React Hook Form
 import { useFormContext, Controller } from "react-hook-form";
 // Request
 import { Request } from "../../Services";
 // Material UI
-import { Box, TextField, Autocomplete } from "@mui/material";
+import { Box, TextField, Autocomplete, Chip } from "@mui/material";
 // Styles
 import useStyles from "./theme";
-export const Select = (_a) => {
-    var { name, label, dataSource, customKey, customName, renderOption, onChange, required, dispatch, inputProps } = _a, props = __rest(_a, ["name", "label", "dataSource", "customKey", "customName", "renderOption", "onChange", "required", "dispatch", "inputProps"]);
+export const Select = ({ name, label, dataSource, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, dispatch, inputProps, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [selectedValue, setSelectedValue] = useState();
     const [selectData, setSelectData] = useState([]);
     const { setValue, control } = useFormContext() || {};
-    const DropdownID = (dataSource === null || dataSource === void 0 ? void 0 : dataSource.uniqueName) ? dataSource.uniqueName : (dataSource === null || dataSource === void 0 ? void 0 : dataSource.name) ? dataSource.name : name;
+    const DropdownID = dataSource?.uniqueName ? dataSource.uniqueName : dataSource?.name ? dataSource.name : name;
     // Value
     useEffect(() => {
-        if (props === null || props === void 0 ? void 0 : props.value) {
-            setSelectedValue(props.value);
-            control && setValue(name || "default", props.value);
+        if (props?.value || (fixedOption && props?.multiple)) {
+            if (fixedOption && props?.multiple) {
+                setSelectedValue([...fixedOption, ...(props?.value ? (props?.multiple ? props?.value : [props?.value]) : [])]);
+                control && setValue(name || "default", [...fixedOption, ...(props?.value ? (props?.multiple ? props?.value : [props?.value]) : [])]);
+            }
+            else {
+                setSelectedValue(props.value);
+                control && setValue(name || "default", props.value);
+            }
         }
-    }, [control, name, setValue, props === null || props === void 0 ? void 0 : props.value]);
+    }, [control, name, setValue, props.value, fixedOption, props?.multiple]);
     // Static Data
     useEffect(() => {
-        if ((dataSource === null || dataSource === void 0 ? void 0 : dataSource.staticData) && !!dataSource.staticData.length && !(dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl)) {
+        if (dataSource?.staticData && !!dataSource.staticData.length && !dataSource?.apiUrl) {
             setSelectData(dataSource.staticData);
         }
-    }, [dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl, dataSource === null || dataSource === void 0 ? void 0 : dataSource.staticData]);
+    }, [dataSource?.apiUrl, dataSource?.staticData]);
     // Dynamic Data
     useEffect(() => {
-        if ((dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl) && !dataSource.staticData) {
+        if (dataSource?.apiUrl && !dataSource.staticData) {
             Request({
-                dataSource: Object.assign({}, dataSource), dispatch,
+                dataSource: { ...dataSource }, dispatch,
                 callBack: (ResponseData) => setSelectData(ResponseData)
             }).then();
         }
-    }, [dataSource, dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl, dispatch]);
+    }, [dataSource, dataSource?.apiUrl, dispatch]);
     // Master Component
     const MuiAutocomplete = () => {
-        return (React.createElement(Autocomplete, Object.assign({ id: DropdownID, options: selectData, multiple: props === null || props === void 0 ? void 0 : props.multiple }, props, { value: !!selectData.length && selectedValue
-                ? (props === null || props === void 0 ? void 0 : props.multiple) && !!selectedValue.length
-                    ? selectedValue.map((SValue) => selectData.find((option) => option.id === SValue))
-                    : (props === null || props === void 0 ? void 0 : props.multiple) ? [] : selectData.find((option) => option.id === selectedValue)
-                : (props === null || props === void 0 ? void 0 : props.multiple) ? [] : null, defaultValue: !!selectData.length && selectedValue
-                ? (props === null || props === void 0 ? void 0 : props.multiple) && !!selectedValue.length
-                    ? selectedValue.map((SValue) => selectData.find((option) => option.id === SValue))
-                    : (props === null || props === void 0 ? void 0 : props.multiple) ? [] : selectData.find((option) => option.id === selectedValue)
-                : (props === null || props === void 0 ? void 0 : props.multiple) ? [] : null, onChange: (e, newValue) => {
-                onChange && onChange(e, newValue, Methods);
-                setSelectedValue((props === null || props === void 0 ? void 0 : props.multiple) ? newValue === null || newValue === void 0 ? void 0 : newValue.map((NValue) => NValue.id) : newValue === null || newValue === void 0 ? void 0 : newValue.id);
-                control && setValue(name || "default", (props === null || props === void 0 ? void 0 : props.multiple) ? newValue === null || newValue === void 0 ? void 0 : newValue.map((NValue) => NValue.id) : newValue === null || newValue === void 0 ? void 0 : newValue.id);
-            } }, (customKey ? { getOptionKey: (option) => option[`${customKey}`] } : {}), (customName ? { getOptionLabel: (option) => option[`${customName}`] } : {}), (renderOption ? { renderOption: (props, option) => React.createElement(Box, Object.assign({ component: "li" }, props), renderOption(option)) } : {}), { renderInput: (params) => React.createElement(TextField, Object.assign({}, params, { InputProps: Object.assign(Object.assign(Object.assign({}, params.InputProps), inputProps), { type: "search" }), label: label ? label : (name || "default"), required: required })) })));
+        return (React.createElement(Autocomplete, { id: DropdownID, options: selectData, multiple: props?.multiple, ...props, value: !!selectData?.length && selectedValue
+                ? props?.multiple
+                    ? selectedValue?.map((SValue) => selectData.find((option) => option.id === SValue))
+                    : props?.multiple ? [] : selectData.find((option) => option.id === selectedValue)
+                : props?.multiple ? [] : null, defaultValue: !!selectData?.length && selectedValue
+                ? props?.multiple
+                    ? selectedValue?.map((SValue) => selectData.find((option) => option.id === SValue))
+                    : props?.multiple ? [] : selectData.find((option) => option.id === selectedValue)
+                : props?.multiple ? [] : null, onChange: (event, newValue) => {
+                onChange && onChange(event, newValue, Methods);
+                setSelectedValue(props?.multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue) => NValue.id))])] : newValue?.id);
+                control && setValue(name || "default", props?.multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue) => NValue.id))])] : newValue?.id);
+            }, renderTags: (tagValue, getTagProps) => tagValue.map((row, index) => (React.createElement(Chip, { ...getTagProps({ index }), ...(customName ? { label: row[`${customName}`] } : {}), disabled: (fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false }))), ...(customKey ? { getOptionKey: (option) => option[`${customKey}`] } : {}), ...(customName ? { getOptionLabel: (option) => option[`${customName}`] } : {}), ...(renderOption ? { renderOption: (props, option) => React.createElement(Box, { component: "li", ...props }, renderOption(option)) } : {}), getOptionDisabled: (row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false), renderInput: (params) => React.createElement(TextField, { ...params, InputProps: { ...params.InputProps, ...inputProps, type: "search" }, label: label ? label : (name || "default"), required: required }) }));
     };
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: classes.root }, control
             ? React.createElement(Controller, { name: name || "default", control: control, rules: { required: required }, render: () => React.createElement(MuiAutocomplete, null) })
             : React.createElement(MuiAutocomplete, null))));
 };
-// { ...(optionRender ? { renderOption: (props, option) => <Box component={"li"} {...props}>{optionRender(option)}</Box> } : {}) }
 //# sourceMappingURL=index.js.map

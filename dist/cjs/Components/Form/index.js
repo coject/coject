@@ -1,15 +1,4 @@
 "use strict";
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -30,11 +19,10 @@ const Checkbox_1 = require("../Checkbox");
 const DatePicker_1 = require("../DatePicker");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Form = (_a) => {
-    var { name, mode, getForm, schema, dataSource, onSubmit, onSubmitClear, setModal, dispatch, onSuccess, style, children } = _a, props = __rest(_a, ["name", "mode", "getForm", "schema", "dataSource", "onSubmit", "onSubmitClear", "setModal", "dispatch", "onSuccess", "style", "children"]);
+const Form = ({ name, mode, getForm, schema, dataSource, onSubmit, onSubmitClear, setModal, dispatch, onSuccess, style, children, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useForm)();
-    const Data = (dataSource && dataSource.staticData) ? Object.assign({}, dataSource.staticData) : {};
+    const Data = (dataSource && dataSource.staticData) ? { ...dataSource.staticData } : {};
     // Use Form
     getForm && getForm(Methods);
     // On Form Submit
@@ -52,45 +40,45 @@ const Form = (_a) => {
         }
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_hook_form_1.FormProvider, Object.assign({}, Methods),
-            react_1.default.createElement("form", Object.assign({ className: classes.root, onSubmit: Methods.handleSubmit(onFormSubmit), style: style }, props),
-                react_1.default.createElement(material_1.Grid, { container: true, spacing: 2 },
-                    schema && !!(schema === null || schema === void 0 ? void 0 : schema.length) && schema.map((field, index) => {
-                        var _a, _b, _c, _d, _e, _f;
-                        switch ((_a = field.component) === null || _a === void 0 ? void 0 : _a.toLowerCase()) {
-                            case "date":
-                                return field.actionTemplate
-                                    ? (react_1.default.createElement(react_1.default.Fragment, { key: index }, field.actionTemplate(field)))
-                                    : (react_1.default.createElement(material_1.Grid, Object.assign({ item: true, key: index }, (field.componentMedia ? field.componentMedia : { md: 12, lg: 12 })),
-                                        react_1.default.createElement(DatePicker_1.DatePicker, Object.assign({ fullWidth: true, name: field.field }, field.componentProps, { value: Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : (_b = field === null || field === void 0 ? void 0 : field.componentProps) === null || _b === void 0 ? void 0 : _b.value) }))));
-                            case "input":
-                                return field.actionTemplate
-                                    ? (react_1.default.createElement(react_1.default.Fragment, { key: index }, field.actionTemplate(field)))
-                                    : (react_1.default.createElement(material_1.Grid, Object.assign({ item: true, key: index }, (field.componentMedia ? field.componentMedia : { md: 12, lg: 12 })),
-                                        react_1.default.createElement(Input_1.Input, Object.assign({ fullWidth: true, name: field.field }, field.componentProps, { value: Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : (_c = field === null || field === void 0 ? void 0 : field.componentProps) === null || _c === void 0 ? void 0 : _c.value) }))));
-                            case "switch":
-                                return field.actionTemplate
-                                    ? (react_1.default.createElement(react_1.default.Fragment, { key: index }, field.actionTemplate(field)))
-                                    : (react_1.default.createElement(material_1.Grid, Object.assign({ item: true, key: index }, (field.componentMedia ? field.componentMedia : { md: 12, lg: 12 })),
-                                        react_1.default.createElement(Switch_1.Switch, Object.assign({ name: field.field }, field.componentProps, { value: Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : (_d = field === null || field === void 0 ? void 0 : field.componentProps) === null || _d === void 0 ? void 0 : _d.value) }))));
-                            case "checkbox":
-                                return field.actionTemplate
-                                    ? (react_1.default.createElement(react_1.default.Fragment, { key: index }, field.actionTemplate(field)))
-                                    : (react_1.default.createElement(material_1.Grid, Object.assign({ item: true, key: index }, (field.componentMedia ? field.componentMedia : { md: 12, lg: 12 })),
-                                        react_1.default.createElement(Checkbox_1.Checkbox, Object.assign({ name: field.field }, field.componentProps, { value: Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : (_e = field === null || field === void 0 ? void 0 : field.componentProps) === null || _e === void 0 ? void 0 : _e.value) }))));
-                            case "select":
-                                return field.actionTemplate
-                                    ? (react_1.default.createElement(react_1.default.Fragment, { key: index }, field.actionTemplate(field)))
-                                    : (react_1.default.createElement(material_1.Grid, Object.assign({ item: true, key: index }, (field.componentMedia ? field.componentMedia : { md: 12, lg: 12 })),
-                                        react_1.default.createElement(Select_1.Select, Object.assign({ name: field.field }, field.componentProps, { value: Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : (_f = field === null || field === void 0 ? void 0 : field.componentProps) === null || _f === void 0 ? void 0 : _f.value) }))));
-                            default:
-                                return null;
-                        }
-                    }),
-                    children,
-                    !(children) &&
-                        react_1.default.createElement(material_1.Grid, { item: true, md: 12, lg: 12 },
-                            react_1.default.createElement(material_1.Button, { fullWidth: true, type: 'submit', variant: 'outlined' }, "Submit")))))));
+        react_1.default.createElement(react_hook_form_1.FormProvider, { ...Methods },
+            react_1.default.createElement("form", { className: classes.root, onSubmit: Methods.handleSubmit(onFormSubmit), style: style, ...props },
+                schema &&
+                    react_1.default.createElement(material_1.Grid, { container: true, spacing: 2 },
+                        schema && !!schema?.length && schema.map((field, index) => {
+                            switch (field.component?.toLowerCase()) {
+                                case "date":
+                                    return field.actionTemplate
+                                        ? (react_1.default.createElement(react_1.default.Fragment, { key: index }, field.actionTemplate(field)))
+                                        : (react_1.default.createElement(material_1.Grid, { item: true, key: index, ...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 }) },
+                                            react_1.default.createElement(DatePicker_1.DatePicker, { fullWidth: true, name: field.field, ...field.componentProps, value: Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value) })));
+                                case "input":
+                                    return field.actionTemplate
+                                        ? (react_1.default.createElement(react_1.default.Fragment, { key: index }, field.actionTemplate(field)))
+                                        : (react_1.default.createElement(material_1.Grid, { item: true, key: index, ...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 }) },
+                                            react_1.default.createElement(Input_1.Input, { fullWidth: true, name: field.field, ...field.componentProps, value: Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value) })));
+                                case "switch":
+                                    return field.actionTemplate
+                                        ? (react_1.default.createElement(react_1.default.Fragment, { key: index }, field.actionTemplate(field)))
+                                        : (react_1.default.createElement(material_1.Grid, { item: true, key: index, ...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 }) },
+                                            react_1.default.createElement(Switch_1.Switch, { name: field.field, ...field.componentProps, value: Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value) })));
+                                case "checkbox":
+                                    return field.actionTemplate
+                                        ? (react_1.default.createElement(react_1.default.Fragment, { key: index }, field.actionTemplate(field)))
+                                        : (react_1.default.createElement(material_1.Grid, { item: true, key: index, ...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 }) },
+                                            react_1.default.createElement(Checkbox_1.Checkbox, { name: field.field, ...field.componentProps, value: Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value) })));
+                                case "select":
+                                    return field.actionTemplate
+                                        ? (react_1.default.createElement(react_1.default.Fragment, { key: index }, field.actionTemplate(field)))
+                                        : (react_1.default.createElement(material_1.Grid, { item: true, key: index, ...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 }) },
+                                            react_1.default.createElement(Select_1.Select, { name: field.field, ...field.componentProps, value: Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value) })));
+                                default:
+                                    return null;
+                            }
+                        }),
+                        !(children) &&
+                            react_1.default.createElement(material_1.Grid, { item: true, xs: 12, sm: 12, md: 12, lg: 12 },
+                                react_1.default.createElement(material_1.Button, { fullWidth: true, type: "submit", variant: "outlined" }, "Submit"))),
+                children))));
 };
 exports.Form = Form;
 //# sourceMappingURL=index.js.map

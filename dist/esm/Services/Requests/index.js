@@ -1,25 +1,15 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 // Axios Middleware
 import axios from "axios";
 // React Toastify
 import { toast } from "react-toastify";
 // Request
-export const Request = ({ dataSource, mode, data, apiUrlId, dispatch, callBack }) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, callBack }) => {
     let Type, Name, Method, Data, Headers, APIUrl, APIUrlId, DataPath;
     // Request With Token
     const Axios = axios.create();
     // Default Method
     const DefaultMethod = () => {
-        switch (mode === null || mode === void 0 ? void 0 : mode.toLowerCase()) {
+        switch (mode?.toLowerCase()) {
             case "create":
                 return "post";
             case "update":
@@ -35,7 +25,7 @@ export const Request = ({ dataSource, mode, data, apiUrlId, dispatch, callBack }
         case "create":
         case "update":
         case "delete":
-            if (((dataSource[mode] && dataSource[mode].formData) || (dataSource === null || dataSource === void 0 ? void 0 : dataSource.formData)) && ((dataSource[mode] && dataSource[mode].requestData) || (dataSource === null || dataSource === void 0 ? void 0 : dataSource.requestData))) {
+            if (((dataSource[mode] && dataSource[mode].formData) || dataSource?.formData) && ((dataSource[mode] && dataSource[mode].requestData) || dataSource?.requestData)) {
                 if (dataSource[mode] && dataSource[mode].requestData) {
                     for (let Index = 0; Index < Object.keys(dataSource[mode].requestData).length; Index++) {
                         data.append(Object.keys(dataSource[mode].requestData)[Index], dataSource[mode].requestData[Object.keys(dataSource[mode].requestData)[Index]]);
@@ -48,39 +38,38 @@ export const Request = ({ dataSource, mode, data, apiUrlId, dispatch, callBack }
                 }
             }
             Type = "SINGLE";
-            APIUrlId = apiUrlId ? apiUrlId : (dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrlId) ? dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrlId : "";
-            APIUrl = dataSource[mode] && dataSource[mode].apiUrl ? dataSource[mode].apiUrl : dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl;
-            Headers = dataSource[mode] && dataSource[mode].headers ? dataSource[mode].headers : dataSource === null || dataSource === void 0 ? void 0 : dataSource.headers;
-            DataPath = dataSource[mode] && dataSource[mode].dataPath ? dataSource[mode].dataPath.split(".") : (_a = dataSource === null || dataSource === void 0 ? void 0 : dataSource.dataPath) === null || _a === void 0 ? void 0 : _a.split(".");
-            Method = dataSource[mode] && dataSource[mode].method ? dataSource[mode].method : (dataSource === null || dataSource === void 0 ? void 0 : dataSource.method) ? dataSource.method : DefaultMethod();
-            Name = dataSource[mode] && dataSource[mode].name ? dataSource[mode].name : (dataSource === null || dataSource === void 0 ? void 0 : dataSource.uniqueName) ? dataSource === null || dataSource === void 0 ? void 0 : dataSource.uniqueName : dataSource === null || dataSource === void 0 ? void 0 : dataSource.name;
-            Data = (dataSource[mode] && dataSource[mode].formData) || (dataSource === null || dataSource === void 0 ? void 0 : dataSource.formData)
+            APIUrlId = apiUrlId ? apiUrlId : dataSource?.apiUrlId ? dataSource?.apiUrlId : "";
+            APIUrl = dataSource[mode] && dataSource[mode].apiUrl ? dataSource[mode].apiUrl : dataSource?.apiUrl;
+            Headers = dataSource[mode] && dataSource[mode].headers ? dataSource[mode].headers : dataSource?.headers;
+            DataPath = dataSource[mode] && dataSource[mode].dataPath ? dataSource[mode].dataPath.split(".") : dataSource?.dataPath?.split(".");
+            Method = dataSource[mode] && dataSource[mode].method ? dataSource[mode].method : dataSource?.method ? dataSource.method : DefaultMethod();
+            Name = dataSource[mode] && dataSource[mode].name ? dataSource[mode].name : dataSource?.uniqueName ? dataSource?.uniqueName : dataSource?.name;
+            Data = (dataSource[mode] && dataSource[mode].formData) || dataSource?.formData
                 ? data
-                : (dataSource === null || dataSource === void 0 ? void 0 : dataSource.requestData) && (dataSource === null || dataSource === void 0 ? void 0 : dataSource.requestData) instanceof Array
+                : dataSource?.requestData && dataSource?.requestData instanceof Array
                     ? [...(data ? data : []), ...(dataSource[mode] && dataSource[mode].requestData ? dataSource[mode].requestData : dataSource.requestData)]
-                    : Object.assign(Object.assign({}, data), (dataSource[mode] && dataSource[mode].requestData ? dataSource[mode].requestData : dataSource.requestData));
+                    : { ...data, ...(dataSource[mode] && dataSource[mode].requestData ? dataSource[mode].requestData : dataSource.requestData) };
             break;
         default:
-            if ((dataSource === null || dataSource === void 0 ? void 0 : dataSource.formData) && (dataSource === null || dataSource === void 0 ? void 0 : dataSource.requestData)) {
+            if (dataSource?.formData && dataSource?.requestData) {
                 for (let Index = 0; Index < Object.keys(dataSource.requestData).length; Index++) {
                     data.append(Object.keys(dataSource.requestData)[Index], dataSource.requestData[Object.keys(dataSource.requestData)[Index]]);
                 }
             }
-            APIUrl = dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrl;
-            Headers = dataSource === null || dataSource === void 0 ? void 0 : dataSource.headers;
-            DataPath = (_b = dataSource === null || dataSource === void 0 ? void 0 : dataSource.dataPath) === null || _b === void 0 ? void 0 : _b.split(".");
-            Method = (dataSource === null || dataSource === void 0 ? void 0 : dataSource.method) ? dataSource.method : DefaultMethod();
-            Name = (dataSource === null || dataSource === void 0 ? void 0 : dataSource.uniqueName) ? dataSource === null || dataSource === void 0 ? void 0 : dataSource.uniqueName : dataSource === null || dataSource === void 0 ? void 0 : dataSource.name;
-            Data = (dataSource === null || dataSource === void 0 ? void 0 : dataSource.formData) ? data : (dataSource === null || dataSource === void 0 ? void 0 : dataSource.requestData) && (dataSource === null || dataSource === void 0 ? void 0 : dataSource.requestData) instanceof Array ? [...(data ? data : []), ...dataSource.requestData] : Object.assign(Object.assign({}, data), dataSource.requestData);
-            APIUrlId = apiUrlId ? apiUrlId : (dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrlId) ? dataSource === null || dataSource === void 0 ? void 0 : dataSource.apiUrlId : "";
+            APIUrl = dataSource?.apiUrl;
+            Headers = dataSource?.headers;
+            DataPath = dataSource?.dataPath?.split(".");
+            Method = dataSource?.method ? dataSource.method : DefaultMethod();
+            Name = dataSource?.uniqueName ? dataSource?.uniqueName : dataSource?.name;
+            Data = dataSource?.formData ? data : dataSource?.requestData && dataSource?.requestData instanceof Array ? [...(data ? data : []), ...dataSource.requestData] : { ...data, ...dataSource.requestData };
+            APIUrlId = apiUrlId ? apiUrlId : dataSource?.apiUrlId ? dataSource?.apiUrlId : "";
             break;
     }
     // Loading State
     dispatch && dispatch({ type: "LOADING", name: Name || "default" });
     // Success State
     const SuccessAction = (Response) => {
-        var _a, _b, _c, _d, _e;
-        if (!!((_b = (_a = Response.data) === null || _a === void 0 ? void 0 : _a.MESSAGE) === null || _b === void 0 ? void 0 : _b.MESSAGE)) {
+        if (!!Response.data?.MESSAGE?.MESSAGE) {
             dispatch && dispatch({ type: "ERRORS", error: Response.data.MESSAGE.MESSAGE, name: Name || "default" });
             toast.error(Response.data.MESSAGE.MESSAGE, { position: toast.POSITION.TOP_RIGHT });
         }
@@ -93,10 +82,10 @@ export const Request = ({ dataSource, mode, data, apiUrlId, dispatch, callBack }
             }
             dispatch && dispatch({ type: Type || "SUCCESS", name: Name || "default", payload: mode === "delete" ? {} : Payload });
             callBack && callBack(Payload);
-            (dataSource === null || dataSource === void 0 ? void 0 : dataSource.callBack) && (dataSource === null || dataSource === void 0 ? void 0 : dataSource.callBack(Payload));
-            ((_c = dataSource === null || dataSource === void 0 ? void 0 : dataSource.create) === null || _c === void 0 ? void 0 : _c.callBack) && dataSource.create.callBack(Payload);
-            ((_d = dataSource === null || dataSource === void 0 ? void 0 : dataSource.update) === null || _d === void 0 ? void 0 : _d.callBack) && dataSource.update.callBack(Payload);
-            ((_e = dataSource === null || dataSource === void 0 ? void 0 : dataSource.delete) === null || _e === void 0 ? void 0 : _e.callBack) && dataSource.delete.callBack(Payload);
+            dataSource?.callBack && dataSource?.callBack(Payload);
+            dataSource?.create?.callBack && dataSource.create.callBack(Payload);
+            dataSource?.update?.callBack && dataSource.update.callBack(Payload);
+            dataSource?.delete?.callBack && dataSource.delete.callBack(Payload);
         }
     };
     // Error State
@@ -105,12 +94,12 @@ export const Request = ({ dataSource, mode, data, apiUrlId, dispatch, callBack }
     };
     // Request Actions
     if (Method.toLowerCase() === "get" || Method.toLowerCase() === "delete")
-        yield Axios[Method.toLowerCase()](`${(dataSource === null || dataSource === void 0 ? void 0 : dataSource.baseUrl) ? dataSource === null || dataSource === void 0 ? void 0 : dataSource.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, { "headers": Headers })
+        await Axios[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, { "headers": Headers })
             .then((Response) => SuccessAction(Response))
             .catch((Error) => CatchAction(Error));
     else
-        yield Axios[Method.toLowerCase()](`${(dataSource === null || dataSource === void 0 ? void 0 : dataSource.baseUrl) ? dataSource === null || dataSource === void 0 ? void 0 : dataSource.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, Data, { "headers": Headers })
+        await Axios[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, Data, { "headers": Headers })
             .then((Response) => SuccessAction(Response))
             .catch((Error) => CatchAction(Error));
-});
+};
 //# sourceMappingURL=index.js.map

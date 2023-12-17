@@ -7,7 +7,7 @@ import { useFormContext, Controller } from "react-hook-form";
 import { Request } from "../../Services";
 
 // Material UI
-import { Box, TextField, Autocomplete, AutocompleteProps, InputProps } from "@mui/material";
+import { Box, TextField, Autocomplete, AutocompleteProps, Chip } from "@mui/material";
 
 // Styles
 import useStyles from "./theme";
@@ -19,14 +19,16 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     onChange?: any;
     dispatch?: any;
     dataSource?: any;
+    inputProps?: any;
     required?: boolean;
     renderOption?: any;
     customKey?: string;
     customName?: string;
-    inputProps?: InputProps;
+    fixedOption?: (string | number)[];
+    disabledOption?: (string | number)[];
 }
 
-export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, label, dataSource, customKey, customName, renderOption, onChange, required, dispatch, inputProps, ...props }) => {
+export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, label, dataSource, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, dispatch, inputProps, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [ selectedValue, setSelectedValue ] = useState<any>();
@@ -36,11 +38,16 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, lab
 
     // Value
     useEffect(() => {
-        if (props?.value) {
-            setSelectedValue(props.value);
-            control && setValue(name || "default", props.value);
+        if (props?.value || (fixedOption && props?.multiple)) {
+            if (fixedOption && props?.multiple) {
+                setSelectedValue([...fixedOption, ...(props?.value ? (props?.multiple ? props?.value : [props?.value]) : [])]);
+                control && setValue(name || "default", [...fixedOption, ...(props?.value ? (props?.multiple ? props?.value : [props?.value]) : [])]);
+            } else {
+                setSelectedValue(props.value);
+                control && setValue(name || "default", props.value);
+            }
         }
-    }, [control, name, setValue, props?.value]);
+    }, [control, name, setValue, props.value, fixedOption, props?.multiple]);
 
     // Static Data
     useEffect(() => {
@@ -63,26 +70,30 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, lab
     const MuiAutocomplete = () => {
         return (
             <Autocomplete id={DropdownID} options={selectData} multiple={props?.multiple} {...props}
-                value={ !!selectData.length && selectedValue
-                    ? props?.multiple && !!selectedValue.length
-                        ? selectedValue.map((SValue: string) => selectData.find((option: any) => option.id === SValue))
+                value={ !!selectData?.length && selectedValue
+                    ? props?.multiple
+                        ? selectedValue?.map((SValue: string) => selectData.find((option: any) => option.id === SValue))
                         : props?.multiple ? [] : selectData.find((option: any) => option.id === selectedValue)
                     : props?.multiple ? [] : null
                 }
-                defaultValue={ !!selectData.length && selectedValue
-                    ? props?.multiple && !!selectedValue.length
-                        ? selectedValue.map((SValue: string) => selectData.find((option: any) => option.id === SValue))
+                defaultValue={ !!selectData?.length && selectedValue
+                    ? props?.multiple
+                        ? selectedValue?.map((SValue: string) => selectData.find((option: any) => option.id === SValue))
                         : props?.multiple ? [] : selectData.find((option: any) => option.id === selectedValue)
                     : props?.multiple ? [] : null
                 }
-                onChange={(e, newValue) => {
-                    onChange && onChange(e, newValue, Methods);
-                    setSelectedValue(props?.multiple ? newValue?.map((NValue: any) => NValue.id) : newValue?.id);
-                    control && setValue(name || "default", props?.multiple ? newValue?.map((NValue: any) => NValue.id) : newValue?.id);
+                onChange={(event, newValue) => {
+                    onChange && onChange(event, newValue, Methods);
+                    setSelectedValue(props?.multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => NValue.id))])] : newValue?.id);
+                    control && setValue(name || "default", props?.multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => NValue.id))])] : newValue?.id);
                 }}
-                { ...(customKey ? { getOptionKey: (option: any) => option[`${customKey}`]} : {}) }
-                { ...(customName ? { getOptionLabel: (option: any) => option[`${customName}`]} : {}) }
+                renderTags={(tagValue, getTagProps) => tagValue.map((row, index) => (
+                    <Chip {...getTagProps({ index })} { ...(customName ? { label: row[`${customName}`] } : {}) } disabled={(fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id ) : false} />
+                )) }
+                { ...(customKey ? { getOptionKey: (option: any) => option[`${customKey}`] } : {}) }
+                { ...(customName ? { getOptionLabel: (option: any) => option[`${customName}`] } : {}) }
                 { ...(renderOption ? { renderOption: (props, option: any) => <Box component={"li"} {...props}>{renderOption(option)}</Box> } : {}) }
+                getOptionDisabled={(row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false)}
                 renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, ...inputProps, type: "search" }} label={label ? label : (name || "default")} required={required} />}
             />
         );
@@ -99,6 +110,3 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, lab
         </React.Fragment>
     )
 };
-
-
-// { ...(optionRender ? { renderOption: (props, option) => <Box component={"li"} {...props}>{optionRender(option)}</Box> } : {}) }

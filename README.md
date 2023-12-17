@@ -3,8 +3,8 @@
 <p align="center">Promise based HTTP client for the browser and node.js</p>
 
 <p align="center">
-    <a href="https://coject.com/"><b>Website</b></a> •
-    <a href="https://coject.com/docs/intro"><b>Documentation</b></a>
+    <a href="https://dev.aait.com.sa/"><b>Website</b></a> •
+    <a href="https://dev.aait.com.sa/CojectDocumentation/"><b>Documentation</b></a>
 </p>
 
 <div align="center">

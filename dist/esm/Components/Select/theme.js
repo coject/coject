@@ -24,6 +24,10 @@ const useStyles = makeStyles()((theme) => {
             },
             "& button": {
                 padding: "2px 10px",
+                backgroundColor: "transparent !important"
+            },
+            "& .MuiFormControl-root": {
+                width: "auto"
             },
             "& .MuiAutocomplete-root": {
                 "& .MuiAutocomplete-input": {
@@ -41,6 +45,12 @@ const useStyles = makeStyles()((theme) => {
                     minWidth: "200px"
                 }
             }
+        },
+        error: {
+            fontSize: "11px",
+            lineHeight: "16px",
+            textTransform: "capitalize",
+            color: theme.palette.error.main
         }
     };
 });

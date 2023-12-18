@@ -34,7 +34,7 @@ const react_hook_form_1 = require("react-hook-form");
 const material_1 = require("@mui/material");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Checkbox = ({ name, label, trueValue, falseValue, ...props }) => {
+const Checkbox = ({ name, label, trueValue, falseValue, helperText, error, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const [checkedValue, setCheckedValue] = (0, react_1.useState)(false);
     const { register, setValue, control } = (0, react_hook_form_1.useFormContext)() || {};
@@ -51,16 +51,17 @@ const Checkbox = ({ name, label, trueValue, falseValue, ...props }) => {
     const changeValue = (event) => {
         if (event.target.checked) {
             setCheckedValue(true);
-            setValue(name || "default", (trueValue ? trueValue : true));
+            control && setValue(name || "default", (trueValue ? trueValue : true));
         }
         else {
             setCheckedValue(false);
-            setValue(name || "default", (falseValue ? falseValue : false));
+            control && setValue(name || "default", (falseValue ? falseValue : false));
         }
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: classes.root },
-            react_1.default.createElement(material_1.FormControlLabel, { control: react_1.default.createElement(material_1.Checkbox, { ...(control && register(name || "default")), value: checkedValue, checked: checkedValue, onChange: changeValue, ...props }), label: label ? label : name }))));
+            react_1.default.createElement(material_1.FormControlLabel, { control: react_1.default.createElement(material_1.Checkbox, { ...(control && register(name || "default")), value: checkedValue, checked: checkedValue, onChange: changeValue, color: error ? "error" : (props?.color ? props.color : "primary"), ...props }), label: label ? label : (name || "default") }),
+            helperText && react_1.default.createElement(material_1.FormHelperText, { className: classes.error }, helperText))));
 };
 exports.Checkbox = Checkbox;
 //# sourceMappingURL=index.js.map

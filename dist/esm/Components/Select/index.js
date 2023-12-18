@@ -4,12 +4,12 @@ import { useFormContext, Controller } from "react-hook-form";
 // Request
 import { Request } from "../../Services";
 // Material UI
-import { Box, TextField, Autocomplete, Chip, Checkbox } from "@mui/material";
+import { Box, TextField, Autocomplete, Chip, Checkbox, FormHelperText } from '@mui/material';
 // Components
 import { Icons } from "../../Components";
 // Styles
 import useStyles from "./theme";
-export const Select = ({ name, label, dataSource, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, dispatch, inputProps, ...props }) => {
+export const Select = ({ name, label, helperText, dataSource, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, dispatch, inputProps, error, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [selectedValue, setSelectedValue] = useState();
@@ -62,11 +62,13 @@ export const Select = ({ name, label, dataSource, checkboxes, customKey, customN
                     ? React.createElement(React.Fragment, null,
                         React.createElement(Checkbox, { icon: React.createElement(Icons.CheckBoxOutlineBlank, { fontSize: "small" }), checkedIcon: React.createElement(Icons.CheckBox, { fontSize: "small" }), style: { marginRight: 5 }, checked: selected }),
                         customName ? row[`${customName}`] : row.label)
-                    : renderOption(row)) } : {}), getOptionDisabled: (row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false), renderInput: (params) => React.createElement(TextField, { ...params, InputProps: { ...params.InputProps, ...inputProps, type: "search" }, label: label ? label : (name || "default"), required: required }) }));
+                    : renderOption(row)) } : {}), getOptionDisabled: (row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false), renderInput: (params) => React.createElement(TextField, { ...params, InputProps: { ...params.InputProps, ...inputProps, type: "search" }, error: error, label: label ? label : (name || "default"), required: required }) }));
     };
     return (React.createElement(React.Fragment, null,
-        React.createElement(Box, { className: classes.root }, control
-            ? React.createElement(Controller, { name: name || "default", control: control, rules: { required: required }, render: () => React.createElement(MuiAutocomplete, null) })
-            : React.createElement(MuiAutocomplete, null))));
+        React.createElement(Box, { className: classes.root },
+            control
+                ? React.createElement(Controller, { name: name || "default", control: control, rules: { required: required }, render: () => React.createElement(MuiAutocomplete, null) })
+                : React.createElement(MuiAutocomplete, null),
+            helperText && React.createElement(FormHelperText, { className: classes.error }, helperText))));
 };
 //# sourceMappingURL=index.js.map

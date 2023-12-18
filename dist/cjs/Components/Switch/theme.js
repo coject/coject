@@ -21,6 +21,12 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                 lineHeight: "14px",
                 textTransform: "capitalize"
             }
+        },
+        error: {
+            fontSize: "11px",
+            lineHeight: "16px",
+            textTransform: "capitalize",
+            color: theme.palette.error.main
         }
     };
 });

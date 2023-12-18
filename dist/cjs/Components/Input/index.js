@@ -34,7 +34,7 @@ const react_hook_form_1 = require("react-hook-form");
 const material_1 = require("@mui/material");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Input = ({ value, ...props }) => {
+const Input = ({ value, helperText, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const { register, setValue, control } = (0, react_hook_form_1.useFormContext)() || {};
     // Value
@@ -44,7 +44,8 @@ const Input = ({ value, ...props }) => {
     }, [control, props?.name, setValue, value]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: classes.root },
-            react_1.default.createElement(material_1.TextField, { ...(control && register(props?.name || "default")), defaultValue: value, label: props?.label ? props?.label : props?.name, ...props }, props?.children))));
+            react_1.default.createElement(material_1.TextField, { ...(control && register(props?.name || "default")), defaultValue: value, label: props?.label ? props?.label : (props?.name || "default"), ...props }, props?.children),
+            helperText && react_1.default.createElement(material_1.FormHelperText, { className: classes.error }, helperText))));
 };
 exports.Input = Input;
 //# sourceMappingURL=index.js.map

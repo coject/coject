@@ -38,7 +38,7 @@ const material_1 = require("@mui/material");
 const Components_1 = require("../../Components");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Select = ({ name, label, dataSource, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, dispatch, inputProps, ...props }) => {
+const Select = ({ name, label, helperText, dataSource, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, dispatch, inputProps, error, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useFormContext)() || {};
     const [selectedValue, setSelectedValue] = (0, react_1.useState)();
@@ -91,12 +91,14 @@ const Select = ({ name, label, dataSource, checkboxes, customKey, customName, re
                     ? react_1.default.createElement(react_1.default.Fragment, null,
                         react_1.default.createElement(material_1.Checkbox, { icon: react_1.default.createElement(Components_1.Icons.CheckBoxOutlineBlank, { fontSize: "small" }), checkedIcon: react_1.default.createElement(Components_1.Icons.CheckBox, { fontSize: "small" }), style: { marginRight: 5 }, checked: selected }),
                         customName ? row[`${customName}`] : row.label)
-                    : renderOption(row)) } : {}), getOptionDisabled: (row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false), renderInput: (params) => react_1.default.createElement(material_1.TextField, { ...params, InputProps: { ...params.InputProps, ...inputProps, type: "search" }, label: label ? label : (name || "default"), required: required }) }));
+                    : renderOption(row)) } : {}), getOptionDisabled: (row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false), renderInput: (params) => react_1.default.createElement(material_1.TextField, { ...params, InputProps: { ...params.InputProps, ...inputProps, type: "search" }, error: error, label: label ? label : (name || "default"), required: required }) }));
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(material_1.Box, { className: classes.root }, control
-            ? react_1.default.createElement(react_hook_form_1.Controller, { name: name || "default", control: control, rules: { required: required }, render: () => react_1.default.createElement(MuiAutocomplete, null) })
-            : react_1.default.createElement(MuiAutocomplete, null))));
+        react_1.default.createElement(material_1.Box, { className: classes.root },
+            control
+                ? react_1.default.createElement(react_hook_form_1.Controller, { name: name || "default", control: control, rules: { required: required }, render: () => react_1.default.createElement(MuiAutocomplete, null) })
+                : react_1.default.createElement(MuiAutocomplete, null),
+            helperText && react_1.default.createElement(material_1.FormHelperText, { className: classes.error }, helperText))));
 };
 exports.Select = Select;
 //# sourceMappingURL=index.js.map

@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 // React Hook Form
 import { useFormContext } from "react-hook-form";
 // Material UI
-import { Box, FormControlLabel, Checkbox as MuiCheckbox } from "@mui/material";
+import { Box, FormControlLabel, Checkbox as MuiCheckbox, FormHelperText } from "@mui/material";
 // Styles
 import useStyles from "./theme";
-export const Checkbox = ({ name, label, trueValue, falseValue, ...props }) => {
+export const Checkbox = ({ name, label, trueValue, falseValue, helperText, error, ...props }) => {
     const { classes } = useStyles();
     const [checkedValue, setCheckedValue] = useState(false);
     const { register, setValue, control } = useFormContext() || {};
@@ -22,15 +22,16 @@ export const Checkbox = ({ name, label, trueValue, falseValue, ...props }) => {
     const changeValue = (event) => {
         if (event.target.checked) {
             setCheckedValue(true);
-            setValue(name || "default", (trueValue ? trueValue : true));
+            control && setValue(name || "default", (trueValue ? trueValue : true));
         }
         else {
             setCheckedValue(false);
-            setValue(name || "default", (falseValue ? falseValue : false));
+            control && setValue(name || "default", (falseValue ? falseValue : false));
         }
     };
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: classes.root },
-            React.createElement(FormControlLabel, { control: React.createElement(MuiCheckbox, { ...(control && register(name || "default")), value: checkedValue, checked: checkedValue, onChange: changeValue, ...props }), label: label ? label : name }))));
+            React.createElement(FormControlLabel, { control: React.createElement(MuiCheckbox, { ...(control && register(name || "default")), value: checkedValue, checked: checkedValue, onChange: changeValue, color: error ? "error" : (props?.color ? props.color : "primary"), ...props }), label: label ? label : (name || "default") }),
+            helperText && React.createElement(FormHelperText, { className: classes.error }, helperText))));
 };
 //# sourceMappingURL=index.js.map

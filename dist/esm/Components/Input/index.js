@@ -2,10 +2,10 @@ import React, { useEffect } from "react";
 // React Hook Form
 import { useFormContext } from "react-hook-form";
 // Material UI
-import { Box, TextField } from "@mui/material";
+import { Box, TextField, FormHelperText } from "@mui/material";
 // Styles
 import useStyles from "./theme";
-export const Input = ({ value, ...props }) => {
+export const Input = ({ value, helperText, ...props }) => {
     const { classes } = useStyles();
     const { register, setValue, control } = useFormContext() || {};
     // Value
@@ -15,6 +15,7 @@ export const Input = ({ value, ...props }) => {
     }, [control, props?.name, setValue, value]);
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: classes.root },
-            React.createElement(TextField, { ...(control && register(props?.name || "default")), defaultValue: value, label: props?.label ? props?.label : props?.name, ...props }, props?.children))));
+            React.createElement(TextField, { ...(control && register(props?.name || "default")), defaultValue: value, label: props?.label ? props?.label : (props?.name || "default"), ...props }, props?.children),
+            helperText && React.createElement(FormHelperText, { className: classes.error }, helperText))));
 };
 //# sourceMappingURL=index.js.map

@@ -7,7 +7,7 @@ import { useFormContext, Controller } from "react-hook-form";
 import { Request } from "../../Services";
 
 // Material UI
-import { Box, TextField, Autocomplete, AutocompleteProps, Chip, Checkbox } from "@mui/material";
+import { Box, TextField, Autocomplete, AutocompleteProps, Chip, Checkbox, FormHelperText } from '@mui/material';
 
 // Components
 import { Icons } from "../../Components";
@@ -21,18 +21,20 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     label?: string;
     onChange?: any;
     dispatch?: any;
+    error?: boolean;
     dataSource?: any;
     inputProps?: any;
     required?: boolean;
     renderOption?: any;
     customKey?: string;
     customName?: string;
+    helperText?: string;
     checkboxes?: boolean;
     fixedOption?: (string | number)[];
     disabledOption?: (string | number)[];
 }
 
-export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, label, dataSource, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, dispatch, inputProps, ...props }) => {
+export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, label, helperText, dataSource, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, dispatch, inputProps, error, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [ selectedValue, setSelectedValue ] = useState<any>();
@@ -106,7 +108,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, lab
                     }
                 </Box> } : {}) }
                 getOptionDisabled={(row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false)}
-                renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, ...inputProps, type: "search" }} label={label ? label : (name || "default")} required={required} />}
+                renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, ...inputProps, type: "search" }} error={error} label={label ? label : (name || "default")} required={required} />}
             />
         );
     };
@@ -118,6 +120,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, lab
                     ? <Controller name={name || "default"} control={control} rules={{ required: required }} render={() => <MuiAutocomplete />} />
                     : <MuiAutocomplete />
                 }
+                { helperText && <FormHelperText className={classes.error}>{helperText}</FormHelperText> }
             </Box>
         </React.Fragment>
     )

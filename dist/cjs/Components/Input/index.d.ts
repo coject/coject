@@ -1,3 +1,7 @@
 import { FC } from "react";
 import { TextFieldProps } from "@mui/material";
-export declare const Input: FC<TextFieldProps>;
+type iInput = Omit<TextFieldProps, "helperText"> & {
+    helperText?: string;
+};
+export declare const Input: FC<iInput>;
+export {};

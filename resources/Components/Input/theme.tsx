@@ -29,12 +29,15 @@ const useStyles = makeStyles()((theme) => {
             "& .MuiInputLabel-sizeSmall": {
                 top: "-2px"
             },
-            "& .MuiFormHelperText-root": {
-                fontSize: "12px"
-            },
             "& .MuiInputBase-fullWidth": {
                 minWidth: "200px"
             }
+        },
+        error: {
+            fontSize: "11px",
+            lineHeight: "16px",
+            textTransform: "capitalize",
+            color: theme.palette.error.main
         }
     }
 });

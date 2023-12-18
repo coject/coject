@@ -21,6 +21,9 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                     top: "2px"
                 }
             },
+            "& button": {
+                backgroundColor: "transparent !important"
+            },
             "& legend": {
                 fontSize: "10px"
             },
@@ -32,6 +35,20 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                     cursor: "pointer"
                 }
             }
+        },
+        errorRoot: {
+            "& p, & input, & label, & button": {
+                color: theme.palette.error.main + "!important"
+            },
+            "& fieldset": {
+                borderColor: theme.palette.error.main + "!important"
+            }
+        },
+        error: {
+            fontSize: "11px",
+            lineHeight: "16px",
+            textTransform: "capitalize",
+            color: theme.palette.error.main
         }
     };
 });

@@ -8,7 +8,7 @@ import Moment from "moment";
 import MomentHijri from "moment-hijri";
 
 // Material UI
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, FormHelperText } from "@mui/material";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { AdapterMomentHijri } from "@mui/x-date-pickers/AdapterMomentHijri";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -20,10 +20,12 @@ import useStyles from "./theme";
 
 // Interface
 type iDatePicker = DateTimePickerProps<any> & DatePickerProps<any> & {
+    style?: any;
     name?: string;
     value?: string;
     views?: string;
     onChange?: any;
+    error?: boolean;
     hijri?: boolean;
     format?: string;
     minDate?: string;
@@ -33,13 +35,14 @@ type iDatePicker = DateTimePickerProps<any> & DatePickerProps<any> & {
     withTime?: boolean;
     textView?: boolean;
     fullWidth?: boolean;
+    helperText?: string;
 }
 
-export const DatePicker: FC<iDatePicker> = ({ name, value, hijri, format, inFormat, outFormat, minDate, maxDate, views, withTime, textView, fullWidth, onChange, ...props }) => {
+export const DatePicker: FC<iDatePicker> = ({ name, value, hijri, format, inFormat, outFormat, minDate, maxDate, views, error, helperText, style, withTime, textView, fullWidth, onChange, ...props }) => {
     const { classes } = useStyles();
     const DateComponent: any = withTime ? DateTimePicker : MuiDatePicker;
     const Views = views ? { views: [`${views}`] } : {};
-    const { register, setValue } = useFormContext() || {};
+    const { setValue, control } = useFormContext() || {};
     const [ selectedDate, setSelectedDate ] = useState<any>(hijri ? MomentHijri(new Date()) : Moment(new Date()));
 
     // Calendar
@@ -49,34 +52,35 @@ export const DatePicker: FC<iDatePicker> = ({ name, value, hijri, format, inForm
 
     // Default Value
     useEffect(() => {
-        register && !!Object.keys(register).length && setValue(name || "default", selectedDate.format(outFormat ? outFormat : "DD-MM-YYYY"));
-    }, [register, setValue, name, selectedDate, outFormat]);
+        control && setValue(name || "default", selectedDate.format(outFormat ? outFormat : "DD-MM-YYYY"));
+    }, [control, setValue, name, selectedDate, outFormat]);
 
     // Normal Value
     useEffect(() => {
         if (value) {
             const ValueFormat = hijri ? MomentHijri(value, inFormat ? inFormat : "DD-MM-YYYY") : Moment(value, inFormat ? inFormat : "DD-MM-YYYY");
             setSelectedDate(ValueFormat);
-            register && !!Object.keys(register).length && setValue(name || "default", ValueFormat.format(outFormat ? outFormat : "DD-MM-YYYY"));
+            control && setValue(name || "default", ValueFormat.format(outFormat ? outFormat : "DD-MM-YYYY"));
         }
-    }, [value, setValue, register, name, hijri, inFormat, outFormat]);
+    }, [value, setValue, control, name, hijri, inFormat, outFormat]);
 
     return (
         <React.Fragment>
-            <Box className={classes.root}>
+            <Box className={`${classes.root} ${error ? classes.errorRoot : ""}`}>
                 <LocalizationProvider dateAdapter={hijri ? AdapterMomentHijri : AdapterMoment}>
                     { textView
-                        ? <Typography>{selectedDate.format(format ? format : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY")}</Typography>
-                        : <DateComponent className={`${fullWidth ? "MuiFormControl-fullWidth" : ""}`} label={props.label ? props.label : name} value={selectedDate} {...Calendar} {...Views} {...props}
+                        ? <Typography {...style} {...props}>{selectedDate.format(format ? format : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY")}</Typography>
+                        : <DateComponent className={`${fullWidth ? "MuiFormControl-fullWidth" : ""}`} label={props.label ? props.label : name} value={selectedDate} {...style} {...Calendar} {...Views} {...props}
                             format={format ? format : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY"}
                             onChange={(newValue: any) => {
                                 setSelectedDate(newValue);
                                 onChange && onChange(newValue.format(outFormat ? outFormat : "DD-MM-YYYY"));
-                                register && !!Object.keys(register).length && setValue(name || "default", newValue.format(outFormat ? outFormat : "DD-MM-YYYY"));
+                                control && setValue(name || "default", newValue.format(outFormat ? outFormat : "DD-MM-YYYY"));
                             }
                         } />
                     }
                 </LocalizationProvider>
+                { helperText && <FormHelperText className={classes.error}>{helperText}</FormHelperText> }
             </Box>
         </React.Fragment>
     );

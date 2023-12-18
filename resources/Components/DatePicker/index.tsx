@@ -23,7 +23,6 @@ type iDatePicker = DateTimePickerProps<any> & DatePickerProps<any> & {
     style?: any;
     name?: string;
     value?: string;
-    views?: string;
     onChange?: any;
     error?: boolean;
     hijri?: boolean;
@@ -38,10 +37,9 @@ type iDatePicker = DateTimePickerProps<any> & DatePickerProps<any> & {
     helperText?: string;
 }
 
-export const DatePicker: FC<iDatePicker> = ({ name, value, hijri, format, inFormat, outFormat, minDate, maxDate, views, error, helperText, style, withTime, textView, fullWidth, onChange, ...props }) => {
+export const DatePicker: FC<iDatePicker> = ({ name, value, hijri, format, inFormat, outFormat, minDate, maxDate, error, helperText, style, withTime, textView, fullWidth, onChange, ...props }) => {
     const { classes } = useStyles();
     const DateComponent: any = withTime ? DateTimePicker : MuiDatePicker;
-    const Views = views ? { views: [`${views}`] } : {};
     const { setValue, control } = useFormContext() || {};
     const [ selectedDate, setSelectedDate ] = useState<any>(hijri ? MomentHijri(new Date()) : Moment(new Date()));
 
@@ -70,7 +68,7 @@ export const DatePicker: FC<iDatePicker> = ({ name, value, hijri, format, inForm
                 <LocalizationProvider dateAdapter={hijri ? AdapterMomentHijri : AdapterMoment}>
                     { textView
                         ? <Typography {...style} {...props}>{selectedDate.format(format ? format : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY")}</Typography>
-                        : <DateComponent className={`${fullWidth ? "MuiFormControl-fullWidth" : ""}`} label={props.label ? props.label : name} value={selectedDate} {...style} {...Calendar} {...Views} {...props}
+                        : <DateComponent className={`${fullWidth ? "MuiFormControl-fullWidth" : ""}`} label={props.label ? props.label : name} value={selectedDate} {...style} {...Calendar} {...props}
                             format={format ? format : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY"}
                             onChange={(newValue: any) => {
                                 setSelectedDate(newValue);

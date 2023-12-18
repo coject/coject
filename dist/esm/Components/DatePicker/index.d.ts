@@ -5,7 +5,6 @@ type iDatePicker = DateTimePickerProps<any> & DatePickerProps<any> & {
     style?: any;
     name?: string;
     value?: string;
-    views?: string;
     onChange?: any;
     error?: boolean;
     hijri?: boolean;

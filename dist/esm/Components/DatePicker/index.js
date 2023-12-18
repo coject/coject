@@ -13,10 +13,9 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { DatePicker as MuiDatePicker } from "@mui/x-date-pickers/DatePicker";
 // Styles
 import useStyles from "./theme";
-export const DatePicker = ({ name, value, hijri, format, inFormat, outFormat, minDate, maxDate, views, error, helperText, style, withTime, textView, fullWidth, onChange, ...props }) => {
+export const DatePicker = ({ name, value, hijri, format, inFormat, outFormat, minDate, maxDate, error, helperText, style, withTime, textView, fullWidth, onChange, ...props }) => {
     const { classes } = useStyles();
     const DateComponent = withTime ? DateTimePicker : MuiDatePicker;
-    const Views = views ? { views: [`${views}`] } : {};
     const { setValue, control } = useFormContext() || {};
     const [selectedDate, setSelectedDate] = useState(hijri ? MomentHijri(new Date()) : Moment(new Date()));
     // Calendar
@@ -39,7 +38,7 @@ export const DatePicker = ({ name, value, hijri, format, inFormat, outFormat, mi
         React.createElement(Box, { className: `${classes.root} ${error ? classes.errorRoot : ""}` },
             React.createElement(LocalizationProvider, { dateAdapter: hijri ? AdapterMomentHijri : AdapterMoment }, textView
                 ? React.createElement(Typography, { ...style, ...props }, selectedDate.format(format ? format : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY"))
-                : React.createElement(DateComponent, { className: `${fullWidth ? "MuiFormControl-fullWidth" : ""}`, label: props.label ? props.label : name, value: selectedDate, ...style, ...Calendar, ...Views, ...props, format: format ? format : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY", onChange: (newValue) => {
+                : React.createElement(DateComponent, { className: `${fullWidth ? "MuiFormControl-fullWidth" : ""}`, label: props.label ? props.label : name, value: selectedDate, ...style, ...Calendar, ...props, format: format ? format : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY", onChange: (newValue) => {
                         setSelectedDate(newValue);
                         onChange && onChange(newValue.format(outFormat ? outFormat : "DD-MM-YYYY"));
                         control && setValue(name || "default", newValue.format(outFormat ? outFormat : "DD-MM-YYYY"));

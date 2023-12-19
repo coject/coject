@@ -146,10 +146,10 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customKe
     return (
         <React.Fragment>
             {/* Create Modal */}
-            <Modal title={"Add New Item"} open={addNew} setOpen={setAddNew}><Form onSubmit={(data: any) => onAddSubmit && onAddSubmit(data)} dataSource={dataSource} schema={schema ? schema : defaultSchema} mode={"create"} /></Modal>
+            <Modal title={"Add New Item"} open={addNew} setOpen={setAddNew}><Form onSubmit={(data: any) => onAddSubmit && onAddSubmit(data)} dataSource={dataSource} schema={schema ? schema : defaultSchema} mode={"create"} setModal={setAddNew} /></Modal>
 
             {/* Update Modal */}
-            <Modal title={"Update Item"} open={update} setOpen={setUpdate}><Form onSubmit={(data: any) => onEditSubmit && onEditSubmit(data)} dataSource={{...dataSource, staticData: selectedData}} schema={schema ? schema : defaultSchema} mode={"update"} /></Modal>
+            <Modal title={"Update Item"} open={update} setOpen={setUpdate}><Form onSubmit={(data: any) => onEditSubmit && onEditSubmit(data)} dataSource={{...dataSource, staticData: selectedData}} schema={schema ? schema : defaultSchema} mode={"update"} setModal={setUpdate} /></Modal>
 
             {/* Delete Modal */}
             <Modal title={"Delete Item"} open={delModal} setOpen={setDelModal}>

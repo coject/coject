@@ -77,17 +77,17 @@ const Select = ({ name, label, helperText, dataSource, checkboxes, customKey, cu
     const MuiAutocomplete = () => {
         return (react_1.default.createElement(material_1.Autocomplete, { id: DropdownID, options: selectData, multiple: props?.multiple, ...props, value: !!selectData?.length && selectedValue
                 ? props?.multiple
-                    ? selectedValue?.map((SValue) => selectData.find((option) => option.id === SValue))
-                    : props?.multiple ? [] : selectData.find((option) => option.id === selectedValue)
+                    ? selectedValue?.map((SValue) => selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === SValue))
+                    : props?.multiple ? [] : selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
                 : props?.multiple ? [] : null, defaultValue: !!selectData?.length && selectedValue
                 ? props?.multiple
-                    ? selectedValue?.map((SValue) => selectData.find((option) => option.id === SValue))
-                    : props?.multiple ? [] : selectData.find((option) => option.id === selectedValue)
+                    ? selectedValue?.map((SValue) => selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === SValue))
+                    : props?.multiple ? [] : selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
                 : props?.multiple ? [] : null, onChange: (event, newValue) => {
                 onChange && onChange(event, newValue, Methods);
-                setSelectedValue(props?.multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue) => NValue.id))])] : newValue?.id);
-                control && setValue(name || "default", props?.multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue) => NValue.id))])] : newValue?.id);
-            }, renderTags: (tagValue, getTagProps) => tagValue.map((row, index) => (react_1.default.createElement(material_1.Chip, { ...getTagProps({ index }), label: customName ? row[`${customName}`] : row.label, disabled: (fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false }))), ...(customKey ? { getOptionKey: (option) => option[`${customKey}`] } : {}), ...(customName ? { getOptionLabel: (option) => option[`${customName}`] } : {}), ...((renderOption || checkboxes) ? { renderOption: (props, row, { selected }) => react_1.default.createElement(material_1.Box, { component: "li", ...props }, checkboxes
+                setSelectedValue(props?.multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
+                control && setValue(name || "default", props?.multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
+            }, renderTags: (tagValue, getTagProps) => tagValue.map((row, index) => (react_1.default.createElement(material_1.Chip, { ...getTagProps({ index }), label: customName ? row[`${customName}`] : row.label, disabled: (fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false }))), ...(customName ? { getOptionLabel: (option) => option[`${customName}`] } : {}), ...((renderOption || checkboxes) ? { renderOption: (props, row, { selected }) => react_1.default.createElement(material_1.Box, { component: "li", ...props }, checkboxes
                     ? react_1.default.createElement(react_1.default.Fragment, null,
                         react_1.default.createElement(material_1.Checkbox, { icon: react_1.default.createElement(Components_1.Icons.CheckBoxOutlineBlank, { fontSize: "small" }), checkedIcon: react_1.default.createElement(Components_1.Icons.CheckBox, { fontSize: "small" }), style: { marginRight: 5 }, checked: selected }),
                         customName ? row[`${customName}`] : row.label)

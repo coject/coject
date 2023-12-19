@@ -139,9 +139,9 @@ const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAdd
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(index_1.Modal, { title: "Add New Item", open: addNew, setOpen: setAddNew },
-            react_1.default.createElement(index_1.Form, { onSubmit: (data) => onAddSubmit && onAddSubmit(data), dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create" })),
+            react_1.default.createElement(index_1.Form, { onSubmit: (data) => onAddSubmit && onAddSubmit(data), dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create", setModal: setAddNew })),
         react_1.default.createElement(index_1.Modal, { title: "Update Item", open: update, setOpen: setUpdate },
-            react_1.default.createElement(index_1.Form, { onSubmit: (data) => onEditSubmit && onEditSubmit(data), dataSource: { ...dataSource, staticData: selectedData }, schema: schema ? schema : defaultSchema, mode: "update" })),
+            react_1.default.createElement(index_1.Form, { onSubmit: (data) => onEditSubmit && onEditSubmit(data), dataSource: { ...dataSource, staticData: selectedData }, schema: schema ? schema : defaultSchema, mode: "update", setModal: setUpdate })),
         react_1.default.createElement(index_1.Modal, { title: "Delete Item", open: delModal, setOpen: setDelModal },
             react_1.default.createElement(material_1.Grid, { container: true, spacing: 2 },
                 react_1.default.createElement(material_1.Grid, { item: true, md: 12, lg: 12 },

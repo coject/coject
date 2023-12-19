@@ -110,9 +110,9 @@ export const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch
     };
     return (React.createElement(React.Fragment, null,
         React.createElement(Modal, { title: "Add New Item", open: addNew, setOpen: setAddNew },
-            React.createElement(Form, { onSubmit: (data) => onAddSubmit && onAddSubmit(data), dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create" })),
+            React.createElement(Form, { onSubmit: (data) => onAddSubmit && onAddSubmit(data), dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create", setModal: setAddNew })),
         React.createElement(Modal, { title: "Update Item", open: update, setOpen: setUpdate },
-            React.createElement(Form, { onSubmit: (data) => onEditSubmit && onEditSubmit(data), dataSource: { ...dataSource, staticData: selectedData }, schema: schema ? schema : defaultSchema, mode: "update" })),
+            React.createElement(Form, { onSubmit: (data) => onEditSubmit && onEditSubmit(data), dataSource: { ...dataSource, staticData: selectedData }, schema: schema ? schema : defaultSchema, mode: "update", setModal: setUpdate })),
         React.createElement(Modal, { title: "Delete Item", open: delModal, setOpen: setDelModal },
             React.createElement(MuiGrid, { container: true, spacing: 2 },
                 React.createElement(MuiGrid, { item: true, md: 12, lg: 12 },

@@ -29,7 +29,9 @@ const useStyles = makeStyles()((theme) => {
             }
         },
         body: {
-            padding: "25px"
+            padding: "25px",
+            overflow: "auto",
+            maxHeight: "calc(80vh - 60px)"
         }
     }
 });

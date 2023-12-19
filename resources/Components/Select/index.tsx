@@ -78,25 +78,24 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, lab
             <Autocomplete id={DropdownID} options={selectData} multiple={props?.multiple} {...props}
                 value={ !!selectData?.length && selectedValue
                     ? props?.multiple
-                        ? selectedValue?.map((SValue: string) => selectData.find((option: any) => option.id === SValue))
-                        : props?.multiple ? [] : selectData.find((option: any) => option.id === selectedValue)
+                        ? selectedValue?.map((SValue: string) => selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === SValue))
+                        : props?.multiple ? [] : selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
                     : props?.multiple ? [] : null
                 }
                 defaultValue={ !!selectData?.length && selectedValue
                     ? props?.multiple
-                        ? selectedValue?.map((SValue: string) => selectData.find((option: any) => option.id === SValue))
-                        : props?.multiple ? [] : selectData.find((option: any) => option.id === selectedValue)
+                        ? selectedValue?.map((SValue: string) => selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === SValue))
+                        : props?.multiple ? [] : selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
                     : props?.multiple ? [] : null
                 }
                 onChange={(event, newValue) => {
                     onChange && onChange(event, newValue, Methods);
-                    setSelectedValue(props?.multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => NValue.id))])] : newValue?.id);
-                    control && setValue(name || "default", props?.multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => NValue.id))])] : newValue?.id);
+                    setSelectedValue(props?.multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
+                    control && setValue(name || "default", props?.multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
                 }}
                 renderTags={(tagValue, getTagProps) => tagValue.map((row, index) => (
                     <Chip {...getTagProps({ index })} label={customName ? row[`${customName}`] : row.label} disabled={(fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id ) : false} />
                 )) }
-                { ...(customKey ? { getOptionKey: (option: any) => option[`${customKey}`] } : {}) }
                 { ...(customName ? { getOptionLabel: (option: any) => option[`${customName}`] } : {}) }
                 { ...((renderOption || checkboxes) ? { renderOption: (props, row: any, { selected }) => <Box component={"li"} {...props}>
                     { checkboxes

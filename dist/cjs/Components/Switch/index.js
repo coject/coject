@@ -59,8 +59,8 @@ const Switch = ({ name, trueValue, falseValue, label, helperText, error, ...prop
         }
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(material_1.Box, { className: classes.root },
-            react_1.default.createElement(material_1.FormControlLabel, { control: react_1.default.createElement(material_1.Switch, { ...(control && register(name || "default")), value: checkedValue, checked: checkedValue, onChange: changeValue, color: error ? "error" : (props?.color ? props.color : "primary"), ...props }), label: label ? label : (name || "default") }),
+        react_1.default.createElement(material_1.Box, { className: `${classes.root} ${error ? classes.rootError : ""}` },
+            react_1.default.createElement(material_1.FormControlLabel, { control: react_1.default.createElement(material_1.Switch, { ...(control && register(name || "default")), value: checkedValue, checked: checkedValue, onChange: changeValue, ...props }), label: label ? label : (name || "default") }),
             helperText && react_1.default.createElement(material_1.FormHelperText, { className: classes.error }, helperText))));
 };
 exports.Switch = Switch;

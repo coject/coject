@@ -30,8 +30,8 @@ export const Switch = ({ name, trueValue, falseValue, label, helperText, error, 
         }
     };
     return (React.createElement(React.Fragment, null,
-        React.createElement(Box, { className: classes.root },
-            React.createElement(FormControlLabel, { control: React.createElement(MuiSwitch, { ...(control && register(name || "default")), value: checkedValue, checked: checkedValue, onChange: changeValue, color: error ? "error" : (props?.color ? props.color : "primary"), ...props }), label: label ? label : (name || "default") }),
+        React.createElement(Box, { className: `${classes.root} ${error ? classes.rootError : ""}` },
+            React.createElement(FormControlLabel, { control: React.createElement(MuiSwitch, { ...(control && register(name || "default")), value: checkedValue, checked: checkedValue, onChange: changeValue, ...props }), label: label ? label : (name || "default") }),
             helperText && React.createElement(FormHelperText, { className: classes.error }, helperText))));
 };
 //# sourceMappingURL=index.js.map

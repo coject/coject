@@ -35,7 +35,7 @@ export const DatePicker = ({ name, value, hijri, format, inFormat, outFormat, mi
         }
     }, [value, setValue, control, name, hijri, inFormat, outFormat]);
     return (React.createElement(React.Fragment, null,
-        React.createElement(Box, { className: `${classes.root} ${error ? classes.errorRoot : ""}` },
+        React.createElement(Box, { className: `${classes.root} ${error ? classes.rootError : ""}` },
             React.createElement(LocalizationProvider, { dateAdapter: hijri ? AdapterMomentHijri : AdapterMoment }, textView
                 ? React.createElement(Typography, { ...style, ...props }, selectedDate.format(format ? format : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY"))
                 : React.createElement(DateComponent, { className: `${fullWidth ? "MuiFormControl-fullWidth" : ""}`, label: props.label ? props.label : name, value: selectedDate, ...style, ...Calendar, ...props, format: format ? format : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY", onChange: (newValue) => {

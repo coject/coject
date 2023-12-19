@@ -22,6 +22,14 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                 textTransform: "capitalize"
             }
         },
+        rootError: {
+            "& span": {
+                color: theme.palette.error.main
+            },
+            "& .MuiSwitch-track": {
+                backgroundColor: theme.palette.error.main
+            }
+        },
         error: {
             fontSize: "11px",
             lineHeight: "16px",

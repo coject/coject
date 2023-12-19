@@ -36,7 +36,7 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                 }
             }
         },
-        errorRoot: {
+        rootError: {
             "& p, & input, & label, & button": {
                 color: theme.palette.error.main + "!important"
             },

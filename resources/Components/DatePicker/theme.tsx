@@ -35,7 +35,7 @@ const useStyles = makeStyles()((theme) => {
                 }
             }
         },
-        errorRoot: {
+        rootError: {
             "& p, & input, & label, & button": {
                 color: theme.palette.error.main + "!important"
             },

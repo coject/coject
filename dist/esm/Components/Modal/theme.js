@@ -30,7 +30,7 @@ const useStyles = makeStyles()((theme) => {
         body: {
             padding: "25px",
             overflow: "auto",
-            maxHeight: "calc(80vh - 60px)"
+            maxHeight: "calc(90vh - 60px)"
         }
     };
 });

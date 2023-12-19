@@ -64,7 +64,7 @@ export const DatePicker: FC<iDatePicker> = ({ name, value, hijri, format, inForm
 
     return (
         <React.Fragment>
-            <Box className={`${classes.root} ${error ? classes.errorRoot : ""}`}>
+            <Box className={`${classes.root} ${error ? classes.rootError : ""}`}>
                 <LocalizationProvider dateAdapter={hijri ? AdapterMomentHijri : AdapterMoment}>
                     { textView
                         ? <Typography {...style} {...props}>{selectedDate.format(format ? format : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY")}</Typography>

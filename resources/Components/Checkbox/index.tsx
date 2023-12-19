@@ -45,8 +45,8 @@ export const Checkbox: FC<iCheckbox> = ({ name, label, trueValue, falseValue, he
 
     return (
         <React.Fragment>
-            <Box className={classes.root}>
-                <FormControlLabel control={<MuiCheckbox {...(control && register(name || "default"))} value={checkedValue} checked={checkedValue} onChange={changeValue} color={error ? "error" : (props?.color ? props.color : "primary")} {...props} />} label={label ? label : (name || "default")} />
+            <Box className={`${classes.root} ${error ? classes.rootError : ""}`}>
+                <FormControlLabel control={<MuiCheckbox {...(control && register(name || "default"))} value={checkedValue} checked={checkedValue} onChange={changeValue} {...props} />} label={label ? label : (name || "default")} />
                 { helperText && <FormHelperText className={classes.error}>{helperText}</FormHelperText> }
             </Box>
         </React.Fragment>

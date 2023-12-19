@@ -10,7 +10,7 @@ import { Box, FormControlLabel, Switch as MuiSwitch, SwitchProps, FormHelperText
 import useStyles from "./theme";
 
 // Interface
-interface iSwitch extends Omit<SwitchProps, "onChange"> {
+interface iSwitch extends Omit<SwitchProps, "onChange" | "defaultChecked"> {
     name?: string;
     label?: string;
     onChange?: any;
@@ -23,12 +23,14 @@ interface iSwitch extends Omit<SwitchProps, "onChange"> {
 export const Switch: FC<iSwitch> = ({ name, onChange, trueValue, falseValue, label, helperText, error, ...props }) => {
     const { classes } = useStyles();
     const [ checkedValue, setCheckedValue ] = useState<boolean>(false);
+    const [ innerValue, setInnerValue ] = useState<string | boolean>(false);
     const { register, setValue, control } = useFormContext() || {};
 
     // Value
     useEffect(() => {
         if (props?.value) {
             control && setValue(name || "default", (trueValue ? (props?.value === trueValue) ? trueValue : (falseValue ? falseValue : false) : props?.value));
+            setInnerValue(props?.value ? (`${props?.value}` !== (falseValue ? falseValue : "false")) ? (trueValue ? (`${props?.value}` === trueValue) : true) : false : false);
             setCheckedValue(props?.value ? (`${props?.value}` !== (falseValue ? falseValue : "false")) ? (trueValue ? (`${props?.value}` === trueValue) : true) : false : false);
         } else control && setValue(name || "default", falseValue ? falseValue : false);
     }, [control, name, setValue, props?.value, falseValue, trueValue]);
@@ -38,9 +40,11 @@ export const Switch: FC<iSwitch> = ({ name, onChange, trueValue, falseValue, lab
         onChange && onChange(event);
         if (event.target.checked) {
             setCheckedValue(true);
+            setInnerValue(trueValue ? trueValue : true);
             control && setValue(name || "default", (trueValue ? trueValue : true));
         } else {
             setCheckedValue(false);
+            setInnerValue(falseValue ? falseValue : false);
             control && setValue(name || "default", (falseValue ? falseValue : false));
         }
     }
@@ -48,7 +52,7 @@ export const Switch: FC<iSwitch> = ({ name, onChange, trueValue, falseValue, lab
     return (
         <React.Fragment>
             <Box className={`${classes.root} ${error ? classes.rootError : ""}`}>
-                <FormControlLabel control={<MuiSwitch {...(control && register(name || "default"))} value={checkedValue} checked={checkedValue} onChange={changeValue} {...props} />} label={label ? label : (name || "default")} />
+                <FormControlLabel control={<MuiSwitch {...(control && register(name || "default"))} value={innerValue} checked={checkedValue} onChange={changeValue} {...props} />} label={label ? label : (name || "default")} />
                 { helperText && <FormHelperText className={classes.error}>{helperText}</FormHelperText> }
             </Box>
         </React.Fragment>

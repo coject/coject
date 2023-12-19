@@ -37,11 +37,13 @@ const theme_1 = __importDefault(require("./theme"));
 const Switch = ({ name, onChange, trueValue, falseValue, label, helperText, error, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const [checkedValue, setCheckedValue] = (0, react_1.useState)(false);
+    const [innerValue, setInnerValue] = (0, react_1.useState)(false);
     const { register, setValue, control } = (0, react_hook_form_1.useFormContext)() || {};
     // Value
     (0, react_1.useEffect)(() => {
         if (props?.value) {
             control && setValue(name || "default", (trueValue ? (props?.value === trueValue) ? trueValue : (falseValue ? falseValue : false) : props?.value));
+            setInnerValue(props?.value ? (`${props?.value}` !== (falseValue ? falseValue : "false")) ? (trueValue ? (`${props?.value}` === trueValue) : true) : false : false);
             setCheckedValue(props?.value ? (`${props?.value}` !== (falseValue ? falseValue : "false")) ? (trueValue ? (`${props?.value}` === trueValue) : true) : false : false);
         }
         else
@@ -52,16 +54,18 @@ const Switch = ({ name, onChange, trueValue, falseValue, label, helperText, erro
         onChange && onChange(event);
         if (event.target.checked) {
             setCheckedValue(true);
+            setInnerValue(trueValue ? trueValue : true);
             control && setValue(name || "default", (trueValue ? trueValue : true));
         }
         else {
             setCheckedValue(false);
+            setInnerValue(falseValue ? falseValue : false);
             control && setValue(name || "default", (falseValue ? falseValue : false));
         }
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: `${classes.root} ${error ? classes.rootError : ""}` },
-            react_1.default.createElement(material_1.FormControlLabel, { control: react_1.default.createElement(material_1.Switch, { ...(control && register(name || "default")), value: checkedValue, checked: checkedValue, onChange: changeValue, ...props }), label: label ? label : (name || "default") }),
+            react_1.default.createElement(material_1.FormControlLabel, { control: react_1.default.createElement(material_1.Switch, { ...(control && register(name || "default")), value: innerValue, checked: checkedValue, onChange: changeValue, ...props }), label: label ? label : (name || "default") }),
             helperText && react_1.default.createElement(material_1.FormHelperText, { className: classes.error }, helperText))));
 };
 exports.Switch = Switch;

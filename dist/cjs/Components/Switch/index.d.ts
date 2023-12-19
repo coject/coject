@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { SwitchProps } from "@mui/material";
-interface iSwitch extends Omit<SwitchProps, "onChange"> {
+interface iSwitch extends Omit<SwitchProps, "onChange" | "defaultChecked"> {
     name?: string;
     label?: string;
     onChange?: any;

@@ -93,7 +93,7 @@ export const Form: FC<iForm> = ({ name, mode, getForm, schema, dataSource, onSub
                                     case "select":
                                         return field.actionTemplate
                                             ? ( <React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment> )
-                                            : ( <Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><Select name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid> );
+                                            : ( <Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><Select fullWidth name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid> );
                                     default:
                                         return null;
                                 }

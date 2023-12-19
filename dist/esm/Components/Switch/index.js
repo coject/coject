@@ -5,7 +5,7 @@ import { useFormContext } from "react-hook-form";
 import { Box, FormControlLabel, Switch as MuiSwitch, FormHelperText } from "@mui/material";
 // Styles
 import useStyles from "./theme";
-export const Switch = ({ name, trueValue, falseValue, label, helperText, error, ...props }) => {
+export const Switch = ({ name, onChange, trueValue, falseValue, label, helperText, error, ...props }) => {
     const { classes } = useStyles();
     const [checkedValue, setCheckedValue] = useState(false);
     const { register, setValue, control } = useFormContext() || {};
@@ -20,6 +20,7 @@ export const Switch = ({ name, trueValue, falseValue, label, helperText, error, 
     }, [control, name, setValue, props?.value, falseValue, trueValue]);
     // Change Value
     const changeValue = (event) => {
+        onChange && onChange(event);
         if (event.target.checked) {
             setCheckedValue(true);
             control && setValue(name || "default", (trueValue ? trueValue : true));

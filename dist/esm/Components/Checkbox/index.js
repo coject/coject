@@ -5,7 +5,7 @@ import { useFormContext } from "react-hook-form";
 import { Box, FormControlLabel, Checkbox as MuiCheckbox, FormHelperText } from "@mui/material";
 // Styles
 import useStyles from "./theme";
-export const Checkbox = ({ name, label, trueValue, falseValue, helperText, error, ...props }) => {
+export const Checkbox = ({ name, label, onChange, trueValue, falseValue, helperText, error, ...props }) => {
     const { classes } = useStyles();
     const [checkedValue, setCheckedValue] = useState(false);
     const { register, setValue, control } = useFormContext() || {};
@@ -20,6 +20,7 @@ export const Checkbox = ({ name, label, trueValue, falseValue, helperText, error
     }, [control, name, setValue, props?.value, falseValue, trueValue]);
     // Change Value
     const changeValue = (event) => {
+        onChange && onChange(event);
         if (event.target.checked) {
             setCheckedValue(true);
             control && setValue(name || "default", (trueValue ? trueValue : true));

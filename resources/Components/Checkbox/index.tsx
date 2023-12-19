@@ -10,16 +10,17 @@ import { Box, FormControlLabel, Checkbox as MuiCheckbox, CheckboxProps, FormHelp
 import useStyles from "./theme";
 
 // Interface
-interface iCheckbox extends CheckboxProps {
+interface iCheckbox extends Omit<CheckboxProps, "onChange"> {
     name?: string;
     label?: string;
+    onChange?: any;
     error?: boolean;
     trueValue?: string;
     falseValue?: string;
     helperText?: string;
 }
 
-export const Checkbox: FC<iCheckbox> = ({ name, label, trueValue, falseValue, helperText, error, ...props }) => {
+export const Checkbox: FC<iCheckbox> = ({ name, label, onChange, trueValue, falseValue, helperText, error, ...props }) => {
     const { classes } = useStyles();
     const [ checkedValue, setCheckedValue ] = useState<boolean>(false);
     const { register, setValue, control } = useFormContext() || {};
@@ -34,6 +35,7 @@ export const Checkbox: FC<iCheckbox> = ({ name, label, trueValue, falseValue, he
 
     // Change Value
     const changeValue = (event: any) => {
+        onChange && onChange(event);
         if (event.target.checked) {
             setCheckedValue(true);
             control && setValue(name || "default", (trueValue ? trueValue : true));

@@ -64,7 +64,7 @@ export const Form = ({ name, mode, getForm, schema, dataSource, onSubmit, onSubm
                                     return field.actionTemplate
                                         ? (React.createElement(React.Fragment, { key: index }, field.actionTemplate(field)))
                                         : (React.createElement(Grid, { item: true, key: index, ...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 }) },
-                                            React.createElement(Select, { name: field.field, ...field.componentProps, value: Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value) })));
+                                            React.createElement(Select, { fullWidth: true, name: field.field, ...field.componentProps, value: Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value) })));
                                 default:
                                     return null;
                             }

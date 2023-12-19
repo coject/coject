@@ -10,16 +10,17 @@ import { Box, FormControlLabel, Switch as MuiSwitch, SwitchProps, FormHelperText
 import useStyles from "./theme";
 
 // Interface
-interface iSwitch extends SwitchProps {
+interface iSwitch extends Omit<SwitchProps, "onChange"> {
     name?: string;
     label?: string;
+    onChange?: any;
     error?: boolean;
     trueValue?: string;
     falseValue?: string;
     helperText?: string;
 }
 
-export const Switch: FC<iSwitch> = ({ name, trueValue, falseValue, label, helperText, error, ...props }) => {
+export const Switch: FC<iSwitch> = ({ name, onChange, trueValue, falseValue, label, helperText, error, ...props }) => {
     const { classes } = useStyles();
     const [ checkedValue, setCheckedValue ] = useState<boolean>(false);
     const { register, setValue, control } = useFormContext() || {};
@@ -34,6 +35,7 @@ export const Switch: FC<iSwitch> = ({ name, trueValue, falseValue, label, helper
 
     // Change Value
     const changeValue = (event: any) => {
+        onChange && onChange(event);
         if (event.target.checked) {
             setCheckedValue(true);
             control && setValue(name || "default", (trueValue ? trueValue : true));

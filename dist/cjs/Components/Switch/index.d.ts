@@ -1,8 +1,9 @@
 import { FC } from "react";
 import { SwitchProps } from "@mui/material";
-interface iSwitch extends SwitchProps {
+interface iSwitch extends Omit<SwitchProps, "onChange"> {
     name?: string;
     label?: string;
+    onChange?: any;
     error?: boolean;
     trueValue?: string;
     falseValue?: string;

@@ -34,7 +34,7 @@ const react_hook_form_1 = require("react-hook-form");
 const material_1 = require("@mui/material");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Switch = ({ name, trueValue, falseValue, label, helperText, error, ...props }) => {
+const Switch = ({ name, onChange, trueValue, falseValue, label, helperText, error, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const [checkedValue, setCheckedValue] = (0, react_1.useState)(false);
     const { register, setValue, control } = (0, react_hook_form_1.useFormContext)() || {};
@@ -49,6 +49,7 @@ const Switch = ({ name, trueValue, falseValue, label, helperText, error, ...prop
     }, [control, name, setValue, props?.value, falseValue, trueValue]);
     // Change Value
     const changeValue = (event) => {
+        onChange && onChange(event);
         if (event.target.checked) {
             setCheckedValue(true);
             control && setValue(name || "default", (trueValue ? trueValue : true));

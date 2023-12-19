@@ -1,8 +1,9 @@
 import { FC } from "react";
 import { CheckboxProps } from "@mui/material";
-interface iCheckbox extends CheckboxProps {
+interface iCheckbox extends Omit<CheckboxProps, "onChange"> {
     name?: string;
     label?: string;
+    onChange?: any;
     error?: boolean;
     trueValue?: string;
     falseValue?: string;

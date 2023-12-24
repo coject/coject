@@ -1,3 +1,5 @@
+// Material MUI Icons
+import * as MuiIcons from "@mui/icons-material";
 // Form
 export { Form } from "./Form";
 // Grid
@@ -16,6 +18,6 @@ export { Switch } from "./Switch";
 export { Checkbox } from "./Checkbox";
 // Date
 export { DatePicker } from "./DatePicker";
-import * as Icons_1 from "@mui/icons-material";
-export { Icons_1 as Icons };
+// Icons
+export const Icons = MuiIcons;
 //# sourceMappingURL=index.js.map

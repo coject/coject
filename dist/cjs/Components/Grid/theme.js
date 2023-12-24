@@ -30,9 +30,6 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                     }
                 }
             },
-            "& .MuiDataGrid-main": {
-                border: "1px solid" + theme.palette.grey[400]
-            },
             "& .MuiDataGrid-columnHeaders": {
                 minHeight: "45px !important",
                 borderRadius: "unset",

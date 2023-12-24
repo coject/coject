@@ -36,20 +36,21 @@ const material_1 = require("@mui/material");
 const MuiIcons = __importStar(require("@mui/icons-material"));
 // Material UI Table
 const x_data_grid_1 = require("@mui/x-data-grid");
-// Components
+// Coject
 const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit, ...props }) => {
+const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, ...props }) => {
     const Icons = MuiIcons;
     const { classes } = (0, theme_1.default)();
     const [gridData, setGridData] = (0, react_1.useState)([]);
     const [schemaData, setSchemaData] = (0, react_1.useState)({});
     const [selectedData, setSelectedData] = (0, react_1.useState)(null);
     const [, forceUpdate] = (0, react_1.useReducer)(x => x + 1, 0);
-    const [addNew, setAddNew] = (0, react_1.useState)(false);
-    const [update, setUpdate] = (0, react_1.useState)(false);
-    const [delModal, setDelModal] = (0, react_1.useState)(false);
+    const [callData, setCallData] = (0, react_1.useState)(false);
+    const [addModal, setAddModal] = (0, react_1.useState)(false);
+    const [editModal, setEditModal] = (0, react_1.useState)(false);
+    const [deleteModal, setDeleteModal] = (0, react_1.useState)(false);
     // Static Data
     (0, react_1.useEffect)(() => {
         if (dataSource?.staticData && !!dataSource.staticData.length && !dataSource?.apiUrl) {
@@ -118,8 +119,8 @@ const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAdd
             ? [{ field: "actions", type: "actions", headerName: "Actions", width: 100, cellClassName: "actions",
                     getActions: ({ row }) => {
                         return [
-                            react_1.default.createElement(x_data_grid_1.GridActionsCellItem, { icon: react_1.default.createElement(Icons.Edit, null), label: "Edit", onClick: () => { setUpdate(true); setSelectedData(row); } }),
-                            react_1.default.createElement(x_data_grid_1.GridActionsCellItem, { icon: react_1.default.createElement(Icons.Delete, null), label: "Delete", onClick: () => { setDelModal(true); setSelectedData(row); } })
+                            react_1.default.createElement(x_data_grid_1.GridActionsCellItem, { icon: react_1.default.createElement(Icons.Edit, null), label: "Edit", onClick: () => { setEditModal(true); setSelectedData(row); } }),
+                            react_1.default.createElement(x_data_grid_1.GridActionsCellItem, { icon: react_1.default.createElement(Icons.Delete, null), label: "Delete", onClick: () => { setDeleteModal(true); setSelectedData(row); } })
                         ];
                     }
                 }] : [])
@@ -133,27 +134,34 @@ const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAdd
                     react_1.default.createElement(x_data_grid_1.GridToolbarFilterButton, null),
                     react_1.default.createElement(x_data_grid_1.GridToolbarExport, null)),
             actions &&
-                react_1.default.createElement(material_1.Button, { onClick: () => setAddNew(true), type: "button" },
+                react_1.default.createElement(material_1.Button, { onClick: () => setAddModal(true), type: "button" },
                     react_1.default.createElement(Icons.Add, null),
                     " Add New")));
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(index_1.Modal, { title: "Add New Item", open: addNew, setOpen: setAddNew },
-            react_1.default.createElement(index_1.Form, { onSubmit: (data) => onAddSubmit && onAddSubmit(data), dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create", setModal: setAddNew })),
-        react_1.default.createElement(index_1.Modal, { title: "Update Item", open: update, setOpen: setUpdate },
-            react_1.default.createElement(index_1.Form, { onSubmit: (data) => onEditSubmit && onEditSubmit(data), dataSource: { ...dataSource, staticData: selectedData }, schema: schema ? schema : defaultSchema, mode: "update", setModal: setUpdate })),
-        react_1.default.createElement(index_1.Modal, { title: "Delete Item", open: delModal, setOpen: setDelModal },
+        react_1.default.createElement(index_1.Modal, { title: "Add New Item", open: addModal, setOpen: setAddModal },
+            react_1.default.createElement(index_1.Form, { dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create", noRequest: noAddRequest, onSubmit: (data) => onAddSubmit && onAddSubmit(data), onSuccess: () => setCallData(!callData), setModal: setAddModal })),
+        react_1.default.createElement(index_1.Modal, { title: "Update Item", open: editModal, setOpen: setEditModal },
+            react_1.default.createElement(index_1.Form, { dataSource: { ...dataSource, staticData: selectedData }, schema: schema ? schema : defaultSchema, mode: "update", noRequest: noEditRequest, onSubmit: (data) => onEditSubmit && onEditSubmit(data), onSuccess: () => setCallData(!callData), setModal: setEditModal })),
+        react_1.default.createElement(index_1.Modal, { title: "Delete Item", open: deleteModal, setOpen: setDeleteModal },
             react_1.default.createElement(material_1.Grid, { container: true, spacing: 2 },
                 react_1.default.createElement(material_1.Grid, { item: true, md: 12, lg: 12 },
                     react_1.default.createElement(material_1.Typography, { color: theme => theme.palette.error.main }, "Are You Sure To Delete This Item?")),
                 react_1.default.createElement(material_1.Grid, { item: true, md: 12, lg: 12 },
-                    react_1.default.createElement(material_1.Button, { fullWidth: true, type: "button", variant: "contained", onClick: () => (0, Services_1.Request)({
-                            dataSource, mode: "delete",
-                            apiUrlId: dataSource.primaryKey ? selectedData[dataSource.primaryKey] : selectedData.id,
-                            callBack: () => setDelModal(false), dispatch
-                        }).then() }, "Delete")))),
+                    react_1.default.createElement(material_1.Button, { fullWidth: true, type: "button", variant: "contained", onClick: () => {
+                            onDeleteSubmit && onDeleteSubmit(dataSource.primaryKey ? selectedData[dataSource.primaryKey] : selectedData.id);
+                            if (!noDeleteRequest) {
+                                (0, Services_1.Request)({
+                                    dataSource, mode: "delete", callBack: () => {
+                                        setCallData(!callData);
+                                        setDeleteModal(false);
+                                    }, dispatch,
+                                    apiUrlId: dataSource.primaryKey ? selectedData[dataSource.primaryKey] : selectedData.id
+                                }).then();
+                            }
+                        } }, "Delete")))),
         react_1.default.createElement(material_1.Box, { className: classes.root },
-            react_1.default.createElement(x_data_grid_1.DataGrid, { className: !gridData?.length ? classes.empty : "", ...(customKey ? { getRowId: (row) => row[customKey] } : {}), rows: gridData, columns: columnsSchema, density: "compact", ...props, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, pageSizeOptions: props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100], slots: props?.slots ? props?.slots : { toolbar: actions || toolbar ? CustomToolbar : null } }))));
+            react_1.default.createElement(x_data_grid_1.DataGrid, { className: !gridData?.length ? classes.empty : "", ...(customKey ? { getRowId: (row) => row[customKey] } : {}), rows: gridData, columns: columnsSchema, density: "compact", ...props, pageSizeOptions: props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100], slots: props?.slots ? props?.slots : { toolbar: actions || toolbar ? CustomToolbar : null }, initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "") }))));
 };
 exports.Grid = Grid;
 //# sourceMappingURL=index.js.map

@@ -34,8 +34,8 @@ const react_hook_form_1 = require("react-hook-form");
 const Services_1 = require("../../Services");
 // Material UI
 const material_1 = require("@mui/material");
-// Components
-const Components_1 = require("../../Components");
+// Coject
+const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
 const Select = ({ name, label, helperText, dataSource, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, dispatch, inputProps, error, ...props }) => {
@@ -89,7 +89,7 @@ const Select = ({ name, label, helperText, dataSource, checkboxes, customKey, cu
                 control && setValue(name || "default", props?.multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
             }, renderTags: (tagValue, getTagProps) => tagValue.map((row, index) => (react_1.default.createElement(material_1.Chip, { ...getTagProps({ index }), label: customName ? row[`${customName}`] : row.label, disabled: (fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false }))), ...(customName ? { getOptionLabel: (option) => option[`${customName}`] } : {}), ...((renderOption || checkboxes) ? { renderOption: (props, row, { selected }) => react_1.default.createElement(material_1.Box, { component: "li", ...props }, checkboxes
                     ? react_1.default.createElement(react_1.default.Fragment, null,
-                        react_1.default.createElement(material_1.Checkbox, { icon: react_1.default.createElement(Components_1.Icons.CheckBoxOutlineBlank, { fontSize: "small" }), checkedIcon: react_1.default.createElement(Components_1.Icons.CheckBox, { fontSize: "small" }), style: { marginRight: 5 }, checked: selected }),
+                        react_1.default.createElement(material_1.Checkbox, { icon: react_1.default.createElement(index_1.Icons.CheckBoxOutlineBlank, { fontSize: "small" }), checkedIcon: react_1.default.createElement(index_1.Icons.CheckBox, { fontSize: "small" }), style: { marginRight: 5 }, checked: selected }),
                         customName ? row[`${customName}`] : row.label)
                     : renderOption(row)) } : {}), getOptionDisabled: (row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false), renderInput: (params) => react_1.default.createElement(material_1.TextField, { ...params, InputProps: { ...params.InputProps, ...inputProps, type: "search" }, error: error, label: label ? label : (name || "default"), required: required }) }));
     };

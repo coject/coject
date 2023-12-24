@@ -5,8 +5,8 @@ import { useFormContext, Controller } from "react-hook-form";
 import { Request } from "../../Services";
 // Material UI
 import { Box, TextField, Autocomplete, Chip, Checkbox, FormHelperText } from '@mui/material';
-// Components
-import { Icons } from "../../Components";
+// Coject
+import { Icons } from "../index";
 // Styles
 import useStyles from "./theme";
 export const Select = ({ name, label, helperText, dataSource, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, dispatch, inputProps, error, ...props }) => {

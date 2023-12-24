@@ -5,15 +5,11 @@ import { useForm, FormProvider } from "react-hook-form";
 import { Request } from "../../Services";
 // Material UI
 import { Grid, Button } from "@mui/material";
-// Components
-import { Input } from "../Input";
-import { Switch } from "../Switch";
-import { Select } from "../Select";
-import { Checkbox } from "../Checkbox";
-import { DatePicker } from "../DatePicker";
+// Coject
+import { Input, Switch, Select, Checkbox, DatePicker } from "../index";
 // Styles
 import useStyles from "./theme";
-export const Form = ({ name, mode, getForm, schema, dataSource, onSubmit, onSubmitClear, setModal, dispatch, onSuccess, style, children, ...props }) => {
+export const Form = ({ name, mode, getForm, schema, dataSource, onSubmit, onSubmitClear, setModal, dispatch, onSuccess, noRequest, style, children, ...props }) => {
     const { classes } = useStyles();
     const Methods = useForm();
     const Data = (dataSource && dataSource.staticData) ? { ...dataSource.staticData } : {};
@@ -22,14 +18,14 @@ export const Form = ({ name, mode, getForm, schema, dataSource, onSubmit, onSubm
     // On Form Submit
     const onFormSubmit = (submitData) => {
         onSubmit && onSubmit(submitData);
-        if (dataSource) {
+        if (dataSource && !noRequest) {
             Request({ dataSource, mode,
                 data: name ? { [name]: submitData } : submitData,
                 apiUrlId: dataSource.primaryKey ? Data[dataSource.primaryKey] : Data.id,
                 callBack: (data) => {
-                    onSubmitClear && Methods.reset();
-                    onSuccess && onSuccess(data);
                     setModal && setModal(false);
+                    onSuccess && onSuccess(data);
+                    onSubmitClear && Methods.reset();
                 }, dispatch }).then();
         }
     };

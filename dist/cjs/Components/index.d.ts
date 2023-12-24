@@ -7,4 +7,4 @@ export { Button } from "./Button";
 export { Switch } from "./Switch";
 export { Checkbox } from "./Checkbox";
 export { DatePicker } from "./DatePicker";
-export * as Icons from "@mui/icons-material";
+export declare const Icons: any;

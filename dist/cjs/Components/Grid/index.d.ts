@@ -13,7 +13,11 @@ interface iGrid extends DataGridProps {
     onAddSubmit?: any;
     customKey?: string;
     onEditSubmit?: any;
+    onDeleteSubmit?: any;
     schema?: iSchema | any;
+    noAddRequest?: boolean;
+    noEditRequest?: boolean;
+    noDeleteRequest?: boolean;
 }
 export declare const Grid: FC<Omit<iGrid, "rows" | "columns">>;
 export {};

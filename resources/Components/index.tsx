@@ -1,3 +1,6 @@
+// Material MUI Icons
+import * as MuiIcons from "@mui/icons-material";
+
 // Form
 export { Form } from "./Form";
 
@@ -26,4 +29,4 @@ export { Checkbox } from "./Checkbox";
 export { DatePicker } from "./DatePicker";
 
 // Icons
-export * as Icons from "@mui/icons-material";
+export const Icons: any = MuiIcons;

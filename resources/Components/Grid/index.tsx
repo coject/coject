@@ -12,7 +12,7 @@ import * as MuiIcons from "@mui/icons-material";
 // Material UI Table
 import { DataGrid, DataGridProps, GridColDef, GridActionsCellItem, GridToolbarContainer, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarExport } from "@mui/x-data-grid";
 
-// Components
+// Coject
 import { Form, DatePicker, Modal } from "../index";
 
 // Styles
@@ -32,19 +32,24 @@ interface iGrid extends DataGridProps {
     onAddSubmit?: any;
     customKey?: string;
     onEditSubmit?: any;
+    onDeleteSubmit?: any;
     schema?: iSchema | any;
+    noAddRequest?: boolean;
+    noEditRequest?: boolean;
+    noDeleteRequest?: boolean;
 }
 
-export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit, ...props }) => {
+export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, ...props }) => {
     const Icons: any = MuiIcons;
     const { classes } = useStyles();
     const [ gridData, setGridData ] = useState<any>([]);
     const [ schemaData, setSchemaData ] = useState<any>({});
     const [ selectedData, setSelectedData ] = useState<any>(null);
     const [ , forceUpdate ] = useReducer(x => x + 1, 0);
-    const [ addNew, setAddNew ] = useState<boolean>(false);
-    const [ update, setUpdate ] = useState<boolean>(false);
-    const [ delModal, setDelModal ] = useState<boolean>(false);
+    const [ callData, setCallData ] = useState<boolean>(false);
+    const [ addModal, setAddModal ] = useState<boolean>(false);
+    const [ editModal, setEditModal ] = useState<boolean>(false);
+    const [ deleteModal, setDeleteModal ] = useState<boolean>(false);
 
     // Static Data
     useEffect(() => {
@@ -116,8 +121,8 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customKe
         ? [ { field: "actions", type: "actions", headerName: "Actions", width: 100, cellClassName: "actions",
             getActions: ({ row }: any) => {
                 return [
-                    <GridActionsCellItem icon={<Icons.Edit />} label="Edit" onClick={() => { setUpdate(true); setSelectedData(row) }} />,
-                    <GridActionsCellItem icon={<Icons.Delete />} label="Delete" onClick={() => { setDelModal(true); setSelectedData(row) }} />
+                    <GridActionsCellItem icon={<Icons.Edit />} label="Edit" onClick={() => { setEditModal(true); setSelectedData(row) }} />,
+                    <GridActionsCellItem icon={<Icons.Delete />} label="Delete" onClick={() => { setDeleteModal(true); setSelectedData(row) }} />
                 ];
             }
         }] : [])
@@ -135,9 +140,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customKe
                     </React.Fragment>
                 }
                 { actions &&
-                    <Button onClick={() => setAddNew(true)} type={"button"}>
-                        <Icons.Add /> Add New
-                    </Button>
+                    <Button onClick={() => setAddModal(true)} type={"button"}><Icons.Add /> Add New</Button>
                 }
             </GridToolbarContainer>
         );
@@ -146,24 +149,33 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customKe
     return (
         <React.Fragment>
             {/* Create Modal */}
-            <Modal title={"Add New Item"} open={addNew} setOpen={setAddNew}><Form onSubmit={(data: any) => onAddSubmit && onAddSubmit(data)} dataSource={dataSource} schema={schema ? schema : defaultSchema} mode={"create"} setModal={setAddNew} /></Modal>
+            <Modal title={"Add New Item"} open={addModal} setOpen={setAddModal}>
+                <Form dataSource={dataSource} schema={schema ? schema : defaultSchema} mode={"create"} noRequest={noAddRequest} onSubmit={(data: any) => onAddSubmit && onAddSubmit(data)} onSuccess={() => setCallData(!callData)} setModal={setAddModal} />
+            </Modal>
 
             {/* Update Modal */}
-            <Modal title={"Update Item"} open={update} setOpen={setUpdate}><Form onSubmit={(data: any) => onEditSubmit && onEditSubmit(data)} dataSource={{...dataSource, staticData: selectedData}} schema={schema ? schema : defaultSchema} mode={"update"} setModal={setUpdate} /></Modal>
+            <Modal title={"Update Item"} open={editModal} setOpen={setEditModal}>
+                <Form dataSource={{...dataSource, staticData: selectedData}} schema={schema ? schema : defaultSchema} mode={"update"} noRequest={noEditRequest} onSubmit={(data: any) => onEditSubmit && onEditSubmit(data)} onSuccess={() => setCallData(!callData)} setModal={setEditModal} />
+            </Modal>
 
             {/* Delete Modal */}
-            <Modal title={"Delete Item"} open={delModal} setOpen={setDelModal}>
+            <Modal title={"Delete Item"} open={deleteModal} setOpen={setDeleteModal}>
                 <MuiGrid container spacing={2}>
                     <MuiGrid item md={12} lg={12}>
                         <Typography color={theme => theme.palette.error.main}>Are You Sure To Delete This Item?</Typography>
                     </MuiGrid>
                     <MuiGrid item md={12} lg={12}>
-                        <Button fullWidth type={"button"} variant={"contained"} onClick={() =>
-                            Request({
-                                dataSource, mode: "delete",
-                                apiUrlId: dataSource.primaryKey ? selectedData[dataSource.primaryKey] : selectedData.id,
-                                callBack: () => setDelModal(false), dispatch }).then()
-                            }>Delete</Button>
+                        <Button fullWidth type={"button"} variant={"contained"} onClick={() => {
+                            onDeleteSubmit && onDeleteSubmit(dataSource.primaryKey ? selectedData[dataSource.primaryKey] : selectedData.id);
+                            if (!noDeleteRequest) {
+                                Request({
+                                    dataSource, mode: "delete", callBack: () => {
+                                        setCallData(!callData);
+                                        setDeleteModal(false);
+                                    }, dispatch,
+                                    apiUrlId: dataSource.primaryKey ? selectedData[dataSource.primaryKey] : selectedData.id
+                                }).then()
+                            } }}>Delete</Button>
                     </MuiGrid>
                 </MuiGrid>
             </Modal>
@@ -173,10 +185,10 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customKe
                 <DataGrid className={!gridData?.length ? classes.empty : ""}
                     { ...(customKey ? { getRowId: (row : any) => row[customKey] } : {}) }
                     rows={gridData} columns={columnsSchema} density={"compact"} {...props}
-                    getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "")}
-                    initialState={props?.initialState ? props?.initialState : {pagination: {paginationModel: {pageSize: 15}}}}
                     pageSizeOptions={props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100]}
                     slots={props?.slots ? props?.slots : {toolbar: actions || toolbar ? CustomToolbar : null}}
+                    initialState={props?.initialState ? props?.initialState : {pagination: {paginationModel: {pageSize: 15}}}}
+                    getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "")}
                 />
             </Box>
         </React.Fragment>

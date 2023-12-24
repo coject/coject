@@ -24,6 +24,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Icons = exports.DatePicker = exports.Checkbox = exports.Switch = exports.Button = exports.Select = exports.Input = exports.Modal = exports.Grid = exports.Form = void 0;
+// Material MUI Icons
+const MuiIcons = __importStar(require("@mui/icons-material"));
 // Form
 var Form_1 = require("./Form");
 Object.defineProperty(exports, "Form", { enumerable: true, get: function () { return Form_1.Form; } });
@@ -52,5 +54,5 @@ Object.defineProperty(exports, "Checkbox", { enumerable: true, get: function () 
 var DatePicker_1 = require("./DatePicker");
 Object.defineProperty(exports, "DatePicker", { enumerable: true, get: function () { return DatePicker_1.DatePicker; } });
 // Icons
-exports.Icons = __importStar(require("@mui/icons-material"));
+exports.Icons = MuiIcons;
 //# sourceMappingURL=index.js.map

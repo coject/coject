@@ -9,8 +9,8 @@ import { Request } from "../../Services";
 // Material UI
 import { Box, TextField, Autocomplete, AutocompleteProps, Chip, Checkbox, FormHelperText } from '@mui/material';
 
-// Components
-import { Icons } from "../../Components";
+// Coject
+import { Icons } from "../index";
 
 // Styles
 import useStyles from "./theme";

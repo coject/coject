@@ -10,12 +10,8 @@ import { Request } from "../../Services";
 import { Grid, Button } from "@mui/material";
 import { GridColDef } from "@mui/x-data-grid";
 
-// Components
-import { Input } from "../Input";
-import { Switch } from "../Switch";
-import { Select } from "../Select";
-import { Checkbox } from "../Checkbox";
-import { DatePicker } from "../DatePicker";
+// Coject
+import { Input, Switch, Select, Checkbox, DatePicker } from "../index";
 
 // Styles
 import useStyles from "./theme";
@@ -38,11 +34,12 @@ interface iForm {
     setModal?: any;
     onSuccess?: any;
     dataSource?: any;
+    noRequest?: boolean;
     schema?: iSchema | any;
     onSubmitClear?: boolean;
 }
 
-export const Form: FC<iForm> = ({ name, mode, getForm, schema, dataSource, onSubmit, onSubmitClear, setModal, dispatch, onSuccess, style, children, ...props }) => {
+export const Form: FC<iForm> = ({ name, mode, getForm, schema, dataSource, onSubmit, onSubmitClear, setModal, dispatch, onSuccess, noRequest, style, children, ...props }) => {
     const { classes } = useStyles();
     const Methods = useForm();
     const Data = ( dataSource && dataSource.staticData ) ? { ...dataSource.staticData } : {};
@@ -54,15 +51,16 @@ export const Form: FC<iForm> = ({ name, mode, getForm, schema, dataSource, onSub
     const onFormSubmit = (submitData: any) => {
         onSubmit && onSubmit(submitData);
 
-        if (dataSource) {
+        if (dataSource && !noRequest) {
             Request({ dataSource, mode,
                 data: name ? { [name]: submitData } : submitData,
                 apiUrlId: dataSource.primaryKey ? Data[dataSource.primaryKey] : Data.id,
                 callBack: (data: any) => {
-                    onSubmitClear && Methods.reset();
-                    onSuccess && onSuccess(data);
                     setModal && setModal(false);
-                }, dispatch }).then();
+                    onSuccess && onSuccess(data);
+                    onSubmitClear && Methods.reset();
+                }, dispatch
+            }).then();
         }
     };
 

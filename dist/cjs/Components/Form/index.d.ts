@@ -16,6 +16,7 @@ interface iForm {
     setModal?: any;
     onSuccess?: any;
     dataSource?: any;
+    noRequest?: boolean;
     schema?: iSchema | any;
     onSubmitClear?: boolean;
 }

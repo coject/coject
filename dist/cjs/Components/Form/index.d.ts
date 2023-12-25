@@ -18,6 +18,7 @@ interface iForm {
     dataSource?: any;
     noRequest?: boolean;
     schema?: iSchema | any;
+    invisibility?: string[];
     onSubmitClear?: boolean;
 }
 export declare const Form: FC<iForm>;

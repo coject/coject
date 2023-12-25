@@ -36,11 +36,13 @@ interface iGrid extends DataGridProps {
     onDeleteSubmit?: any;
     schema?: iSchema | any;
     noAddRequest?: boolean;
+    invisibility?: string[];
     noEditRequest?: boolean;
     noDeleteRequest?: boolean;
+    formInvisibility?: string[];
 }
 
-export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customKey, schema, actions, invisibility, formInvisibility, toolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const Icons: any = MuiIcons;
     const { classes } = useStyles();
     const [ gridData, setGridData ] = useState<any>([]);
@@ -151,7 +153,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customKe
         <React.Fragment>
             {/* Create Modal */}
             <Modal title={"Add New Item"} open={addModal} setOpen={setAddModal}>
-                <Form dataSource={dataSource} schema={schema ? schema : defaultSchema} mode={"create"} noRequest={noRequest || noAddRequest} onSubmit={(data: any) => {
+                <Form dataSource={dataSource} schema={schema ? schema : defaultSchema} mode={"create"} noRequest={noRequest || noAddRequest} {...(invisibility ? {invisibility: formInvisibility} : {})} onSubmit={(data: any) => {
                     onAddSubmit && onAddSubmit(data);
                     !!dataSource?.staticData && setAddModal(false);
                 }} onSuccess={() => setCallData(!callData)} setModal={setAddModal} />
@@ -159,7 +161,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customKe
 
             {/* Update Modal */}
             <Modal title={"Update Item"} open={editModal} setOpen={setEditModal}>
-                <Form dataSource={{...dataSource, staticData: selectedData}} schema={schema ? schema : defaultSchema} mode={"update"} noRequest={noRequest || noEditRequest} onSubmit={(data: any) => {
+                <Form dataSource={{...dataSource, staticData: selectedData}} schema={schema ? schema : defaultSchema} mode={"update"} noRequest={noRequest || noEditRequest} {...(invisibility ? {invisibility: formInvisibility} : {})} onSubmit={(data: any) => {
                     onEditSubmit && onEditSubmit(data);
                     !!dataSource?.staticData?.length && setEditModal(false);
                 }} onSuccess={() => setCallData(!callData)} setModal={setEditModal} />
@@ -197,6 +199,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customKe
                     slots={props?.slots ? props?.slots : {toolbar: actions || toolbar ? CustomToolbar : null}}
                     initialState={props?.initialState ? props?.initialState : {pagination: {paginationModel: {pageSize: 15}}}}
                     getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "")}
+                    { ...(invisibility ? {columnVisibilityModel: invisibility.reduce((prev: any, key: string) => ({ ...prev, [key]: false}), {}) } : {}) }
                 />
             </Box>
         </React.Fragment>

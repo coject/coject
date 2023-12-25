@@ -40,7 +40,7 @@ const x_data_grid_1 = require("@mui/x-data-grid");
 const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+const Grid = ({ dataSource, customKey, schema, actions, invisibility, formInvisibility, toolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const Icons = MuiIcons;
     const { classes } = (0, theme_1.default)();
     const [gridData, setGridData] = (0, react_1.useState)([]);
@@ -140,12 +140,12 @@ const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAdd
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(index_1.Modal, { title: "Add New Item", open: addModal, setOpen: setAddModal },
-            react_1.default.createElement(index_1.Form, { dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create", noRequest: noRequest || noAddRequest, onSubmit: (data) => {
+            react_1.default.createElement(index_1.Form, { dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create", noRequest: noRequest || noAddRequest, ...(invisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
                     onAddSubmit && onAddSubmit(data);
                     !!dataSource?.staticData && setAddModal(false);
                 }, onSuccess: () => setCallData(!callData), setModal: setAddModal })),
         react_1.default.createElement(index_1.Modal, { title: "Update Item", open: editModal, setOpen: setEditModal },
-            react_1.default.createElement(index_1.Form, { dataSource: { ...dataSource, staticData: selectedData }, schema: schema ? schema : defaultSchema, mode: "update", noRequest: noRequest || noEditRequest, onSubmit: (data) => {
+            react_1.default.createElement(index_1.Form, { dataSource: { ...dataSource, staticData: selectedData }, schema: schema ? schema : defaultSchema, mode: "update", noRequest: noRequest || noEditRequest, ...(invisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
                     onEditSubmit && onEditSubmit(data);
                     !!dataSource?.staticData?.length && setEditModal(false);
                 }, onSuccess: () => setCallData(!callData), setModal: setEditModal })),
@@ -168,7 +168,7 @@ const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAdd
                             }
                         } }, "Delete")))),
         react_1.default.createElement(material_1.Box, { className: classes.root },
-            react_1.default.createElement(x_data_grid_1.DataGrid, { className: !gridData?.length ? classes.empty : "", ...(customKey ? { getRowId: (row) => row[customKey] } : {}), rows: gridData, columns: columnsSchema, density: "compact", ...props, pageSizeOptions: props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100], slots: props?.slots ? props?.slots : { toolbar: actions || toolbar ? CustomToolbar : null }, initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "") }))));
+            react_1.default.createElement(x_data_grid_1.DataGrid, { className: !gridData?.length ? classes.empty : "", ...(customKey ? { getRowId: (row) => row[customKey] } : {}), rows: gridData, columns: columnsSchema, density: "compact", ...props, pageSizeOptions: props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100], slots: props?.slots ? props?.slots : { toolbar: actions || toolbar ? CustomToolbar : null }, initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), ...(invisibility ? { columnVisibilityModel: invisibility.reduce((prev, key) => ({ ...prev, [key]: false }), {}) } : {}) }))));
 };
 exports.Grid = Grid;
 //# sourceMappingURL=index.js.map

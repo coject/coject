@@ -11,7 +11,7 @@ import { DataGrid, GridActionsCellItem, GridToolbarContainer, GridToolbarColumns
 import { Form, DatePicker, Modal } from "../index";
 // Styles
 import useStyles from "./theme";
-export const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+export const Grid = ({ dataSource, customKey, schema, actions, invisibility, formInvisibility, toolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const Icons = MuiIcons;
     const { classes } = useStyles();
     const [gridData, setGridData] = useState([]);
@@ -111,12 +111,12 @@ export const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch
     };
     return (React.createElement(React.Fragment, null,
         React.createElement(Modal, { title: "Add New Item", open: addModal, setOpen: setAddModal },
-            React.createElement(Form, { dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create", noRequest: noRequest || noAddRequest, onSubmit: (data) => {
+            React.createElement(Form, { dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create", noRequest: noRequest || noAddRequest, ...(invisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
                     onAddSubmit && onAddSubmit(data);
                     !!dataSource?.staticData && setAddModal(false);
                 }, onSuccess: () => setCallData(!callData), setModal: setAddModal })),
         React.createElement(Modal, { title: "Update Item", open: editModal, setOpen: setEditModal },
-            React.createElement(Form, { dataSource: { ...dataSource, staticData: selectedData }, schema: schema ? schema : defaultSchema, mode: "update", noRequest: noRequest || noEditRequest, onSubmit: (data) => {
+            React.createElement(Form, { dataSource: { ...dataSource, staticData: selectedData }, schema: schema ? schema : defaultSchema, mode: "update", noRequest: noRequest || noEditRequest, ...(invisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
                     onEditSubmit && onEditSubmit(data);
                     !!dataSource?.staticData?.length && setEditModal(false);
                 }, onSuccess: () => setCallData(!callData), setModal: setEditModal })),
@@ -139,6 +139,6 @@ export const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch
                             }
                         } }, "Delete")))),
         React.createElement(Box, { className: classes.root },
-            React.createElement(DataGrid, { className: !gridData?.length ? classes.empty : "", ...(customKey ? { getRowId: (row) => row[customKey] } : {}), rows: gridData, columns: columnsSchema, density: "compact", ...props, pageSizeOptions: props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100], slots: props?.slots ? props?.slots : { toolbar: actions || toolbar ? CustomToolbar : null }, initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "") }))));
+            React.createElement(DataGrid, { className: !gridData?.length ? classes.empty : "", ...(customKey ? { getRowId: (row) => row[customKey] } : {}), rows: gridData, columns: columnsSchema, density: "compact", ...props, pageSizeOptions: props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100], slots: props?.slots ? props?.slots : { toolbar: actions || toolbar ? CustomToolbar : null }, initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), ...(invisibility ? { columnVisibilityModel: invisibility.reduce((prev, key) => ({ ...prev, [key]: false }), {}) } : {}) }))));
 };
 //# sourceMappingURL=index.js.map

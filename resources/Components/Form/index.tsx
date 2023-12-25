@@ -36,10 +36,11 @@ interface iForm {
     dataSource?: any;
     noRequest?: boolean;
     schema?: iSchema | any;
+    invisibility?: string[];
     onSubmitClear?: boolean;
 }
 
-export const Form: FC<iForm> = ({ name, mode, getForm, schema, dataSource, onSubmit, onSubmitClear, setModal, dispatch, onSuccess, noRequest, style, children, ...props }) => {
+export const Form: FC<iForm> = ({ name, mode, getForm, schema, dataSource, onSubmit, onSubmitClear, setModal, dispatch, onSuccess, noRequest, invisibility, style, children, ...props }) => {
     const { classes } = useStyles();
     const Methods = useForm();
     const Data = ( dataSource && dataSource.staticData ) ? { ...dataSource.staticData } : {};
@@ -49,7 +50,7 @@ export const Form: FC<iForm> = ({ name, mode, getForm, schema, dataSource, onSub
 
     // On Form Submit
     const onFormSubmit = (submitData: any) => {
-        onSubmit && onSubmit(submitData);
+        onSubmit && onSubmit({...Data, ...submitData});
 
         if (dataSource && !noRequest) {
             Request({ dataSource, mode,
@@ -71,7 +72,7 @@ export const Form: FC<iForm> = ({ name, mode, getForm, schema, dataSource, onSub
                     { schema &&
                         <Grid container spacing={2}>
                             { schema && !!schema?.length && schema.map((field: any, index: number) => {
-                                switch (field.component?.toLowerCase()) {
+                                if (!(invisibility?.includes(field.field))) switch (field.component?.toLowerCase()) {
                                     case "date":
                                         return field.actionTemplate
                                             ? ( <React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment> )
@@ -94,7 +95,7 @@ export const Form: FC<iForm> = ({ name, mode, getForm, schema, dataSource, onSub
                                             : ( <Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><Select fullWidth name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid> );
                                     default:
                                         return null;
-                                }
+                                } else return null;
                             })}
                             { !(children) &&
                                 <Grid item xs={12} sm={12} md={12} lg={12}>

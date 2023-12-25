@@ -11,7 +11,7 @@ import { DataGrid, GridActionsCellItem, GridToolbarContainer, GridToolbarColumns
 import { Form, DatePicker, Modal } from "../index";
 // Styles
 import useStyles from "./theme";
-export const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, ...props }) => {
+export const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const Icons = MuiIcons;
     const { classes } = useStyles();
     const [gridData, setGridData] = useState([]);
@@ -24,7 +24,7 @@ export const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch
     const [deleteModal, setDeleteModal] = useState(false);
     // Static Data
     useEffect(() => {
-        if (dataSource?.staticData && !!dataSource.staticData.length && !dataSource?.apiUrl) {
+        if (dataSource?.staticData && !dataSource?.apiUrl) {
             setGridData(dataSource.staticData);
         }
     }, [dataSource?.apiUrl, dataSource?.staticData]);
@@ -33,7 +33,7 @@ export const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch
         if (dataSource?.apiUrl && !dataSource.staticData) {
             Request({ dataSource, dispatch, callBack: (data) => setGridData(data) }).then();
         }
-    }, [dataSource, dataSource?.apiUrl, dispatch]);
+    }, [callData, dataSource, dataSource?.apiUrl, dispatch]);
     // Dynamic Data ( Schema )
     useEffect(() => {
         if (schema) {
@@ -111,17 +111,24 @@ export const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch
     };
     return (React.createElement(React.Fragment, null,
         React.createElement(Modal, { title: "Add New Item", open: addModal, setOpen: setAddModal },
-            React.createElement(Form, { dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create", noRequest: noAddRequest, onSubmit: (data) => onAddSubmit && onAddSubmit(data), onSuccess: () => setCallData(!callData), setModal: setAddModal })),
+            React.createElement(Form, { dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create", noRequest: noRequest || noAddRequest, onSubmit: (data) => {
+                    onAddSubmit && onAddSubmit(data);
+                    !!dataSource?.staticData && setAddModal(false);
+                }, onSuccess: () => setCallData(!callData), setModal: setAddModal })),
         React.createElement(Modal, { title: "Update Item", open: editModal, setOpen: setEditModal },
-            React.createElement(Form, { dataSource: { ...dataSource, staticData: selectedData }, schema: schema ? schema : defaultSchema, mode: "update", noRequest: noEditRequest, onSubmit: (data) => onEditSubmit && onEditSubmit(data), onSuccess: () => setCallData(!callData), setModal: setEditModal })),
+            React.createElement(Form, { dataSource: { ...dataSource, staticData: selectedData }, schema: schema ? schema : defaultSchema, mode: "update", noRequest: noRequest || noEditRequest, onSubmit: (data) => {
+                    onEditSubmit && onEditSubmit(data);
+                    !!dataSource?.staticData?.length && setEditModal(false);
+                }, onSuccess: () => setCallData(!callData), setModal: setEditModal })),
         React.createElement(Modal, { title: "Delete Item", open: deleteModal, setOpen: setDeleteModal },
             React.createElement(MuiGrid, { container: true, spacing: 2 },
                 React.createElement(MuiGrid, { item: true, md: 12, lg: 12 },
                     React.createElement(Typography, { color: theme => theme.palette.error.main }, "Are You Sure To Delete This Item?")),
                 React.createElement(MuiGrid, { item: true, md: 12, lg: 12 },
                     React.createElement(Button, { fullWidth: true, type: "button", variant: "contained", onClick: () => {
-                            onDeleteSubmit && onDeleteSubmit(dataSource.primaryKey ? selectedData[dataSource.primaryKey] : selectedData.id);
-                            if (!noDeleteRequest) {
+                            onDeleteSubmit && onDeleteSubmit(selectedData);
+                            !!dataSource?.staticData?.length && setDeleteModal(false);
+                            if (!noRequest || !noDeleteRequest) {
                                 Request({
                                     dataSource, mode: "delete", callBack: () => {
                                         setCallData(!callData);

@@ -40,7 +40,7 @@ const x_data_grid_1 = require("@mui/x-data-grid");
 const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, ...props }) => {
+const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const Icons = MuiIcons;
     const { classes } = (0, theme_1.default)();
     const [gridData, setGridData] = (0, react_1.useState)([]);
@@ -53,7 +53,7 @@ const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAdd
     const [deleteModal, setDeleteModal] = (0, react_1.useState)(false);
     // Static Data
     (0, react_1.useEffect)(() => {
-        if (dataSource?.staticData && !!dataSource.staticData.length && !dataSource?.apiUrl) {
+        if (dataSource?.staticData && !dataSource?.apiUrl) {
             setGridData(dataSource.staticData);
         }
     }, [dataSource?.apiUrl, dataSource?.staticData]);
@@ -62,7 +62,7 @@ const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAdd
         if (dataSource?.apiUrl && !dataSource.staticData) {
             (0, Services_1.Request)({ dataSource, dispatch, callBack: (data) => setGridData(data) }).then();
         }
-    }, [dataSource, dataSource?.apiUrl, dispatch]);
+    }, [callData, dataSource, dataSource?.apiUrl, dispatch]);
     // Dynamic Data ( Schema )
     (0, react_1.useEffect)(() => {
         if (schema) {
@@ -140,17 +140,24 @@ const Grid = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAdd
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(index_1.Modal, { title: "Add New Item", open: addModal, setOpen: setAddModal },
-            react_1.default.createElement(index_1.Form, { dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create", noRequest: noAddRequest, onSubmit: (data) => onAddSubmit && onAddSubmit(data), onSuccess: () => setCallData(!callData), setModal: setAddModal })),
+            react_1.default.createElement(index_1.Form, { dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create", noRequest: noRequest || noAddRequest, onSubmit: (data) => {
+                    onAddSubmit && onAddSubmit(data);
+                    !!dataSource?.staticData && setAddModal(false);
+                }, onSuccess: () => setCallData(!callData), setModal: setAddModal })),
         react_1.default.createElement(index_1.Modal, { title: "Update Item", open: editModal, setOpen: setEditModal },
-            react_1.default.createElement(index_1.Form, { dataSource: { ...dataSource, staticData: selectedData }, schema: schema ? schema : defaultSchema, mode: "update", noRequest: noEditRequest, onSubmit: (data) => onEditSubmit && onEditSubmit(data), onSuccess: () => setCallData(!callData), setModal: setEditModal })),
+            react_1.default.createElement(index_1.Form, { dataSource: { ...dataSource, staticData: selectedData }, schema: schema ? schema : defaultSchema, mode: "update", noRequest: noRequest || noEditRequest, onSubmit: (data) => {
+                    onEditSubmit && onEditSubmit(data);
+                    !!dataSource?.staticData?.length && setEditModal(false);
+                }, onSuccess: () => setCallData(!callData), setModal: setEditModal })),
         react_1.default.createElement(index_1.Modal, { title: "Delete Item", open: deleteModal, setOpen: setDeleteModal },
             react_1.default.createElement(material_1.Grid, { container: true, spacing: 2 },
                 react_1.default.createElement(material_1.Grid, { item: true, md: 12, lg: 12 },
                     react_1.default.createElement(material_1.Typography, { color: theme => theme.palette.error.main }, "Are You Sure To Delete This Item?")),
                 react_1.default.createElement(material_1.Grid, { item: true, md: 12, lg: 12 },
                     react_1.default.createElement(material_1.Button, { fullWidth: true, type: "button", variant: "contained", onClick: () => {
-                            onDeleteSubmit && onDeleteSubmit(dataSource.primaryKey ? selectedData[dataSource.primaryKey] : selectedData.id);
-                            if (!noDeleteRequest) {
+                            onDeleteSubmit && onDeleteSubmit(selectedData);
+                            !!dataSource?.staticData?.length && setDeleteModal(false);
+                            if (!noRequest || !noDeleteRequest) {
                                 (0, Services_1.Request)({
                                     dataSource, mode: "delete", callBack: () => {
                                         setCallData(!callData);

@@ -7,6 +7,7 @@ type iSchema = GridColDef & {
 };
 interface iGrid extends DataGridProps {
     dispatch?: any;
+    noRequest?: any;
     dataSource?: any;
     toolbar?: boolean;
     actions?: boolean;

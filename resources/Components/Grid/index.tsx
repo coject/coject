@@ -26,6 +26,7 @@ type iSchema = GridColDef & {
 }
 interface iGrid extends DataGridProps {
     dispatch?: any;
+    noRequest?: any;
     dataSource?: any;
     toolbar?: boolean;
     actions?: boolean;
@@ -39,7 +40,7 @@ interface iGrid extends DataGridProps {
     noDeleteRequest?: boolean;
 }
 
-export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, ...props }) => {
+export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customKey, schema, actions, toolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const Icons: any = MuiIcons;
     const { classes } = useStyles();
     const [ gridData, setGridData ] = useState<any>([]);
@@ -53,7 +54,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customKe
 
     // Static Data
     useEffect(() => {
-        if (dataSource?.staticData && !!dataSource.staticData.length && !dataSource?.apiUrl) {
+        if (dataSource?.staticData && !dataSource?.apiUrl) {
             setGridData(dataSource.staticData);
         }
     }, [dataSource?.apiUrl, dataSource?.staticData]);
@@ -63,7 +64,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customKe
         if (dataSource?.apiUrl && !dataSource.staticData) {
             Request({ dataSource, dispatch, callBack: (data: any) => setGridData(data) }).then();
         }
-    }, [dataSource, dataSource?.apiUrl, dispatch]);
+    }, [callData, dataSource, dataSource?.apiUrl, dispatch]);
 
     // Dynamic Data ( Schema )
     useEffect(() => {
@@ -150,12 +151,18 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customKe
         <React.Fragment>
             {/* Create Modal */}
             <Modal title={"Add New Item"} open={addModal} setOpen={setAddModal}>
-                <Form dataSource={dataSource} schema={schema ? schema : defaultSchema} mode={"create"} noRequest={noAddRequest} onSubmit={(data: any) => onAddSubmit && onAddSubmit(data)} onSuccess={() => setCallData(!callData)} setModal={setAddModal} />
+                <Form dataSource={dataSource} schema={schema ? schema : defaultSchema} mode={"create"} noRequest={noRequest || noAddRequest} onSubmit={(data: any) => {
+                    onAddSubmit && onAddSubmit(data);
+                    !!dataSource?.staticData && setAddModal(false);
+                }} onSuccess={() => setCallData(!callData)} setModal={setAddModal} />
             </Modal>
 
             {/* Update Modal */}
             <Modal title={"Update Item"} open={editModal} setOpen={setEditModal}>
-                <Form dataSource={{...dataSource, staticData: selectedData}} schema={schema ? schema : defaultSchema} mode={"update"} noRequest={noEditRequest} onSubmit={(data: any) => onEditSubmit && onEditSubmit(data)} onSuccess={() => setCallData(!callData)} setModal={setEditModal} />
+                <Form dataSource={{...dataSource, staticData: selectedData}} schema={schema ? schema : defaultSchema} mode={"update"} noRequest={noRequest || noEditRequest} onSubmit={(data: any) => {
+                    onEditSubmit && onEditSubmit(data);
+                    !!dataSource?.staticData?.length && setEditModal(false);
+                }} onSuccess={() => setCallData(!callData)} setModal={setEditModal} />
             </Modal>
 
             {/* Delete Modal */}
@@ -166,8 +173,9 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, customKe
                     </MuiGrid>
                     <MuiGrid item md={12} lg={12}>
                         <Button fullWidth type={"button"} variant={"contained"} onClick={() => {
-                            onDeleteSubmit && onDeleteSubmit(dataSource.primaryKey ? selectedData[dataSource.primaryKey] : selectedData.id);
-                            if (!noDeleteRequest) {
+                            onDeleteSubmit && onDeleteSubmit(selectedData);
+                            !!dataSource?.staticData?.length && setDeleteModal(false);
+                            if (!noRequest || !noDeleteRequest) {
                                 Request({
                                     dataSource, mode: "delete", callBack: () => {
                                         setCallData(!callData);

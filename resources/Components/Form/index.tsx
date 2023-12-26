@@ -50,7 +50,7 @@ export const Form: FC<iForm> = ({ name, mode, getForm, schema, dataSource, onSub
 
     // On Form Submit
     const onFormSubmit = (submitData: any) => {
-        onSubmit && onSubmit({...Data, ...submitData});
+        onSubmit && onSubmit({...((mode === "update") ? Data : {}), ...submitData});
 
         if (dataSource && !noRequest) {
             Request({ dataSource, mode,

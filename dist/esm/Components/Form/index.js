@@ -17,7 +17,7 @@ export const Form = ({ name, mode, getForm, schema, dataSource, onSubmit, onSubm
     getForm && getForm(Methods);
     // On Form Submit
     const onFormSubmit = (submitData) => {
-        onSubmit && onSubmit({ ...Data, ...submitData });
+        onSubmit && onSubmit({ ...((mode === "update") ? Data : {}), ...submitData });
         if (dataSource && !noRequest) {
             Request({ dataSource, mode,
                 data: name ? { [name]: submitData } : submitData,

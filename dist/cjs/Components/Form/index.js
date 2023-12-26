@@ -23,7 +23,7 @@ const Form = ({ name, mode, getForm, schema, dataSource, onSubmit, onSubmitClear
     getForm && getForm(Methods);
     // On Form Submit
     const onFormSubmit = (submitData) => {
-        onSubmit && onSubmit({ ...Data, ...submitData });
+        onSubmit && onSubmit({ ...((mode === "update") ? Data : {}), ...submitData });
         if (dataSource && !noRequest) {
             (0, Services_1.Request)({ dataSource, mode,
                 data: name ? { [name]: submitData } : submitData,

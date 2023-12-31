@@ -2,11 +2,15 @@
 import axios from "axios";
 // React Toastify
 import { toast } from "react-toastify";
+// Request Creation
+export const RequestCreation = axios.create({
+    headers: {
+        "Authorization": ""
+    }
+});
 // Request
 export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, callBack }) => {
     let Type, Name, Method, Data, Headers, APIUrl, APIUrlId, DataPath;
-    // Request With Token
-    const Axios = axios.create();
     // Default Method
     const DefaultMethod = () => {
         switch (mode?.toLowerCase()) {
@@ -94,11 +98,11 @@ export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, call
     };
     // Request Actions
     if (Method.toLowerCase() === "get" || Method.toLowerCase() === "delete")
-        await Axios[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, { "headers": Headers })
+        await RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, { "headers": Headers })
             .then((Response) => SuccessAction(Response))
             .catch((Error) => CatchAction(Error));
     else
-        await Axios[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, Data, { "headers": Headers })
+        await RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, Data, { "headers": Headers })
             .then((Response) => SuccessAction(Response))
             .catch((Error) => CatchAction(Error));
 };

@@ -3,16 +3,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Request = void 0;
+exports.Request = exports.RequestCreation = void 0;
 // Axios Middleware
 const axios_1 = __importDefault(require("axios"));
 // React Toastify
 const react_toastify_1 = require("react-toastify");
+// Request Creation
+exports.RequestCreation = axios_1.default.create({
+    headers: {
+        "Authorization": ""
+    }
+});
 // Request
 const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, callBack }) => {
     let Type, Name, Method, Data, Headers, APIUrl, APIUrlId, DataPath;
-    // Request With Token
-    const Axios = axios_1.default.create();
     // Default Method
     const DefaultMethod = () => {
         switch (mode?.toLowerCase()) {
@@ -100,11 +104,11 @@ const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, callBack })
     };
     // Request Actions
     if (Method.toLowerCase() === "get" || Method.toLowerCase() === "delete")
-        await Axios[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, { "headers": Headers })
+        await exports.RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, { "headers": Headers })
             .then((Response) => SuccessAction(Response))
             .catch((Error) => CatchAction(Error));
     else
-        await Axios[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, Data, { "headers": Headers })
+        await exports.RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, Data, { "headers": Headers })
             .then((Response) => SuccessAction(Response))
             .catch((Error) => CatchAction(Error));
 };

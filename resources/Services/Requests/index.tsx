@@ -14,12 +14,16 @@ interface iCojectAction {
     apiUrlId?: string;
 }
 
+// Request Creation
+export const RequestCreation: any = axios.create({
+    headers: {
+        "Authorization": ""
+    }
+});
+
 // Request
 export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, callBack }: iCojectAction) => {
     let Type: string, Name: string, Method: string, Data: any, Headers: any, APIUrl: string, APIUrlId: string, DataPath: string;
-
-    // Request With Token
-    const Axios: any = axios.create();
 
     // Default Method
     const DefaultMethod = () => {
@@ -109,11 +113,11 @@ export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, call
 
     // Request Actions
     if (Method.toLowerCase() === "get" || Method.toLowerCase() === "delete")
-        await Axios[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, { "headers": Headers })
+        await RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, { "headers": Headers })
             .then((Response: any) => SuccessAction(Response))
             .catch((Error: any) => CatchAction(Error));
     else
-        await Axios[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, Data, { "headers": Headers })
+        await RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, Data, { "headers": Headers })
             .then((Response: any) => SuccessAction(Response))
             .catch((Error: any) => CatchAction(Error));
 };

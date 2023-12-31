@@ -6,5 +6,6 @@ interface iCojectAction {
     dataSource?: any;
     apiUrlId?: string;
 }
+export declare const RequestCreation: any;
 export declare const Request: ({ dataSource, mode, data, apiUrlId, dispatch, callBack }: iCojectAction) => Promise<void>;
 export {};

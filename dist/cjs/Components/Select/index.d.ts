@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { AutocompleteProps } from '@mui/material';
 interface iSelect extends AutocompleteProps<any, any, any, any> {
+    rules?: any;
     name?: string;
     label?: string;
     onChange?: any;

@@ -11,6 +11,7 @@ import useStyles from "./theme";
 
 // Interface
 interface iCheckbox extends Omit<CheckboxProps, "onChange" | "defaultChecked"> {
+    value?: any;
     name?: string;
     label?: string;
     onChange?: any;
@@ -20,18 +21,24 @@ interface iCheckbox extends Omit<CheckboxProps, "onChange" | "defaultChecked"> {
     helperText?: string;
 }
 
-export const Checkbox: FC<iCheckbox> = ({ name, label, onChange, trueValue, falseValue, helperText, error, ...props }) => {
+export const Checkbox: FC<iCheckbox> = ({ name, value, label, onChange, trueValue, falseValue, helperText, error, ...props }) => {
     const { classes } = useStyles();
-    const { setValue, control } = useFormContext() || {};
     const [ checkedValue, setCheckedValue ] = useState<boolean>(false);
+    const { setValue, control, getValues, watch } = useFormContext() || {};
+
+    // Methods Watching
+    useEffect(() => {
+        control && setCheckedValue(!!getValues(name || "default") ? trueValue ? trueValue === getValues(name || "default") : !!getValues(name || "default") : false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [control, getValues, name, watch(name || "default")]);
 
     // Value
     useEffect(() => {
-        if (props?.value) {
-            control && setValue(name || "default", (trueValue ? (props?.value === trueValue) ? trueValue : (falseValue ? falseValue : false) : props?.value));
-            setCheckedValue(props?.value ? (`${props?.value}` !== (falseValue ? falseValue : "false")) ? (trueValue ? (`${props?.value}` === trueValue) : true) : false : false);
+        if (value) {
+            control && setValue(name || "default", (trueValue ? (value === trueValue) ? trueValue : (falseValue ? falseValue : false) : value));
+            setCheckedValue(value ? (`${value}` !== (falseValue ? falseValue : "false")) ? (trueValue ? (`${value}` === trueValue) : true) : false : false);
         } else control && setValue(name || "default", falseValue ? falseValue : false);
-    }, [control, name, setValue, props?.value, falseValue, trueValue]);
+    }, [control, name, setValue, value, falseValue, trueValue]);
 
     // Change Value
     const changeValue = (event: any) => {

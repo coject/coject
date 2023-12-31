@@ -40,13 +40,22 @@ type iDatePicker = DateTimePickerProps<any> & DatePickerProps<any> & {
 export const DatePicker: FC<iDatePicker> = ({ name, value, hijri, format, inFormat, outFormat, minDate, maxDate, error, helperText, style, withTime, textView, fullWidth, onChange, ...props }) => {
     const { classes } = useStyles();
     const DateComponent: any = withTime ? DateTimePicker : MuiDatePicker;
-    const { setValue, control } = useFormContext() || {};
     const [ selectedDate, setSelectedDate ] = useState<any>(hijri ? MomentHijri(new Date()) : Moment(new Date()));
+    const { setValue, control, getValues, watch } = useFormContext() || {};
 
     // Calendar
     const Calendar = hijri
         ? { minDate: MomentHijri(minDate ? minDate : "14-03-1937", inFormat ? inFormat : "DD-MM-YYYY"), maxDate: MomentHijri(maxDate ? maxDate : "26-10-2076", inFormat ? inFormat : "DD-MM-YYYY") }
         : { minDate: Moment(minDate ? minDate : "01-01-1900", inFormat ? inFormat : "DD-MM-YYYY"), maxDate: Moment(minDate ? minDate : "01-12-2099", inFormat ? inFormat : "DD-MM-YYYY") };
+
+    // Methods Watching
+    useEffect(() => {
+        if (getValues && getValues(name || "default")) {
+            const ValueFormat = hijri ? MomentHijri(getValues(name || "default"), inFormat ? inFormat : "DD-MM-YYYY") : Moment(getValues(name || "default"), inFormat ? inFormat : "DD-MM-YYYY");
+            setSelectedDate(ValueFormat);
+        } else setSelectedDate(hijri ? MomentHijri(new Date()) : Moment(new Date()));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [getValues, name, watch && watch(name || "default")]);
 
     // Default Value
     useEffect(() => {

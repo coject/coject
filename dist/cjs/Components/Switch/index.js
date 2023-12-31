@@ -34,19 +34,24 @@ const react_hook_form_1 = require("react-hook-form");
 const material_1 = require("@mui/material");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Switch = ({ name, onChange, trueValue, falseValue, label, helperText, error, ...props }) => {
+const Switch = ({ name, value, onChange, trueValue, falseValue, label, helperText, error, ...props }) => {
     const { classes } = (0, theme_1.default)();
-    const { setValue, control } = (0, react_hook_form_1.useFormContext)() || {};
     const [checkedValue, setCheckedValue] = (0, react_1.useState)(false);
+    const { setValue, control, getValues, watch } = (0, react_hook_form_1.useFormContext)() || {};
+    // Methods Watching
+    (0, react_1.useEffect)(() => {
+        control && setCheckedValue(!!getValues(name || "default") ? trueValue ? trueValue === getValues(name || "default") : !!getValues(name || "default") : false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [control, getValues, name, watch(name || "default")]);
     // Value
     (0, react_1.useEffect)(() => {
-        if (props?.value) {
-            control && setValue(name || "default", (trueValue ? (props?.value === trueValue) ? trueValue : (falseValue ? falseValue : false) : props?.value));
-            setCheckedValue(props?.value ? (`${props?.value}` !== (falseValue ? falseValue : "false")) ? (trueValue ? (`${props?.value}` === trueValue) : true) : false : false);
+        if (value) {
+            control && setValue(name || "default", (trueValue ? (value === trueValue) ? trueValue : (falseValue ? falseValue : false) : value));
+            setCheckedValue(value ? (`${value}` !== (falseValue ? falseValue : "false")) ? (trueValue ? (`${value}` === trueValue) : true) : false : false);
         }
         else
             control && setValue(name || "default", falseValue ? falseValue : false);
-    }, [control, name, setValue, props?.value, falseValue, trueValue]);
+    }, [control, name, setValue, value, falseValue, trueValue]);
     // Change Value
     const changeValue = (event) => {
         onChange && onChange(event, ((event.target.checked) ? (trueValue ? trueValue : true) : (falseValue ? falseValue : false)));

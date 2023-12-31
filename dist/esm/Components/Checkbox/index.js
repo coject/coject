@@ -5,19 +5,24 @@ import { useFormContext } from "react-hook-form";
 import { Box, FormControlLabel, Checkbox as MuiCheckbox, FormHelperText } from "@mui/material";
 // Styles
 import useStyles from "./theme";
-export const Checkbox = ({ name, label, onChange, trueValue, falseValue, helperText, error, ...props }) => {
+export const Checkbox = ({ name, value, label, onChange, trueValue, falseValue, helperText, error, ...props }) => {
     const { classes } = useStyles();
-    const { setValue, control } = useFormContext() || {};
     const [checkedValue, setCheckedValue] = useState(false);
+    const { setValue, control, getValues, watch } = useFormContext() || {};
+    // Methods Watching
+    useEffect(() => {
+        control && setCheckedValue(!!getValues(name || "default") ? trueValue ? trueValue === getValues(name || "default") : !!getValues(name || "default") : false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [control, getValues, name, watch(name || "default")]);
     // Value
     useEffect(() => {
-        if (props?.value) {
-            control && setValue(name || "default", (trueValue ? (props?.value === trueValue) ? trueValue : (falseValue ? falseValue : false) : props?.value));
-            setCheckedValue(props?.value ? (`${props?.value}` !== (falseValue ? falseValue : "false")) ? (trueValue ? (`${props?.value}` === trueValue) : true) : false : false);
+        if (value) {
+            control && setValue(name || "default", (trueValue ? (value === trueValue) ? trueValue : (falseValue ? falseValue : false) : value));
+            setCheckedValue(value ? (`${value}` !== (falseValue ? falseValue : "false")) ? (trueValue ? (`${value}` === trueValue) : true) : false : false);
         }
         else
             control && setValue(name || "default", falseValue ? falseValue : false);
-    }, [control, name, setValue, props?.value, falseValue, trueValue]);
+    }, [control, name, setValue, value, falseValue, trueValue]);
     // Change Value
     const changeValue = (event) => {
         onChange && onChange(event, ((event.target.checked) ? (trueValue ? trueValue : true) : (falseValue ? falseValue : false)));

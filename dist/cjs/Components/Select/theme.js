@@ -30,6 +30,7 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
             },
             "& .MuiFormControl-root": {
                 width: "auto",
+                minWidth: "250px",
                 "&.MuiFormControl-fullWidth": {
                     width: "100%"
                 }

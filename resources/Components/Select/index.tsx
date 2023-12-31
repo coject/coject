@@ -17,6 +17,7 @@ import useStyles from "./theme";
 
 // Interface
 interface iSelect extends AutocompleteProps<any, any, any, any> {
+    rules?: any;
     name?: string;
     label?: string;
     onChange?: any;
@@ -34,17 +35,23 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     disabledOption?: (string | number)[];
 }
 
-export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, label, helperText, dataSource, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, dispatch, inputProps, error, ...props }) => {
+export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, label, helperText, rules, dataSource, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, dispatch, inputProps, error, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [ selectedValue, setSelectedValue ] = useState<any>();
     const [ selectData, setSelectData ] = useState<any>([]);
-    const { setValue, control } = useFormContext() || {};
     const DropdownID = dataSource?.uniqueName ? dataSource.uniqueName : dataSource?.name ? dataSource.name : name;
+    const { setValue, control, watch, getValues } = useFormContext() || {};
+
+    // Methods Watching
+    useEffect(() => {
+        control && setSelectedValue(getValues(name || "default") ? getValues(name || "default") : "");
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [control, getValues, name, watch(name || "default")]);
 
     // Value
     useEffect(() => {
-        if (props?.value || (fixedOption && props?.multiple)) {
+        if ((props?.value || (fixedOption && props?.multiple))) {
             if (fixedOption && props?.multiple) {
                 setSelectedValue([...fixedOption, ...(props?.value ? (props?.multiple ? props?.value : [props?.value]) : [])]);
                 control && setValue(name || "default", [...fixedOption, ...(props?.value ? (props?.multiple ? props?.value : [props?.value]) : [])]);
@@ -57,7 +64,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, lab
 
     // Static Data
     useEffect(() => {
-        if (dataSource?.staticData && !!dataSource.staticData.length && !dataSource?.apiUrl) {
+        if (!!dataSource?.staticData && !dataSource?.apiUrl) {
             setSelectData(dataSource.staticData);
         }
     }, [dataSource?.apiUrl, dataSource?.staticData]);
@@ -107,7 +114,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, lab
                     }
                 </Box> } : {}) }
                 getOptionDisabled={(row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false)}
-                renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, ...inputProps, type: "search" }} error={error} label={label ? label : (name || "default")} required={required} />}
+                renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, ...inputProps, type: "search" }} fullWidth={!!inputProps?.fullWidth} error={error} label={label ? label : (name || "default")} required={required} />}
             />
         );
     };
@@ -116,7 +123,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, lab
         <React.Fragment>
             <Box className={classes.root}>
                 { control
-                    ? <Controller name={name || "default"} control={control} rules={{ required: required }} render={() => <MuiAutocomplete />} />
+                    ? <Controller name={name || "default"} control={control} rules={rules} render={() => <MuiAutocomplete />} />
                     : <MuiAutocomplete />
                 }
                 { helperText && <FormHelperText className={classes.error}>{helperText}</FormHelperText> }

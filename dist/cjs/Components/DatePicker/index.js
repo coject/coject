@@ -45,12 +45,22 @@ const theme_1 = __importDefault(require("./theme"));
 const DatePicker = ({ name, value, hijri, format, inFormat, outFormat, minDate, maxDate, error, helperText, style, withTime, textView, fullWidth, onChange, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const DateComponent = withTime ? DateTimePicker_1.DateTimePicker : DatePicker_1.DatePicker;
-    const { setValue, control } = (0, react_hook_form_1.useFormContext)() || {};
     const [selectedDate, setSelectedDate] = (0, react_1.useState)(hijri ? (0, moment_hijri_1.default)(new Date()) : (0, moment_1.default)(new Date()));
+    const { setValue, control, getValues, watch } = (0, react_hook_form_1.useFormContext)() || {};
     // Calendar
     const Calendar = hijri
         ? { minDate: (0, moment_hijri_1.default)(minDate ? minDate : "14-03-1937", inFormat ? inFormat : "DD-MM-YYYY"), maxDate: (0, moment_hijri_1.default)(maxDate ? maxDate : "26-10-2076", inFormat ? inFormat : "DD-MM-YYYY") }
         : { minDate: (0, moment_1.default)(minDate ? minDate : "01-01-1900", inFormat ? inFormat : "DD-MM-YYYY"), maxDate: (0, moment_1.default)(minDate ? minDate : "01-12-2099", inFormat ? inFormat : "DD-MM-YYYY") };
+    // Methods Watching
+    (0, react_1.useEffect)(() => {
+        if (getValues && getValues(name || "default")) {
+            const ValueFormat = hijri ? (0, moment_hijri_1.default)(getValues(name || "default"), inFormat ? inFormat : "DD-MM-YYYY") : (0, moment_1.default)(getValues(name || "default"), inFormat ? inFormat : "DD-MM-YYYY");
+            setSelectedDate(ValueFormat);
+        }
+        else
+            setSelectedDate(hijri ? (0, moment_hijri_1.default)(new Date()) : (0, moment_1.default)(new Date()));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [getValues, name, watch && watch(name || "default")]);
     // Default Value
     (0, react_1.useEffect)(() => {
         control && setValue(name || "default", selectedDate.format(outFormat ? outFormat : "DD-MM-YYYY"));

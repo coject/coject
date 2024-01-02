@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, ReactNode } from 'react';
 
 // React Hook Form
 import { useForm, FormProvider } from "react-hook-form";
@@ -23,27 +23,58 @@ type iSchema = GridColDef & {
     componentMedia?: any;
 }
 
-interface iForm {
-    style?: any;
-    mode?: string;
+interface iDataSource {
     name?: string;
+    headers?: any;
+    apiUrl?: string;
+    baseUrl?: string;
+    requestData?: any;
+    dataPath?: string;
+    method?: "get" | "post" | "put" | "delete";
+    create?: {
+        headers?: any;
+        apiUrl?: string;
+        requestData?: any;
+        dataPath?: string;
+        method?: "get" | "post" | "put" | "delete";
+    };
+    update?: {
+        headers?: any;
+        apiUrl?: string;
+        requestData?: any;
+        dataPath?: string;
+        method?: "get" | "post" | "put" | "delete";
+    };
+    delete?: {
+        headers?: any;
+        apiUrl?: string;
+        requestData?: any;
+        dataPath?: string;
+        method?: "get" | "post" | "put" | "delete";
+    };
+}
+
+interface iForm {
     getForm?: any;
     onSubmit?: any;
-    children?: any;
     dispatch?: any;
     setModal?: any;
-    onSuccess?: any;
-    dataSource?: any;
+    callback?: any;
+    staticData?: any;
+    customKey?: string;
     noRequest?: boolean;
+    children?: ReactNode;
     schema?: iSchema | any;
     invisibility?: string[];
     onSubmitClear?: boolean;
+    dataSource?: iDataSource;
+    mode?: "render" | "create" | "update" | "delete";
 }
 
-export const Form: FC<iForm> = ({ name, mode, getForm, schema, dataSource, onSubmit, onSubmitClear, setModal, dispatch, onSuccess, noRequest, invisibility, style, children, ...props }) => {
+export const Form: FC<iForm> = ({ mode, getForm, schema, dataSource, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, noRequest, invisibility, children, ...props }) => {
+    const Data = { ...(staticData ? staticData : {}) };
     const { classes } = useStyles();
     const Methods = useForm();
-    const Data = ( dataSource && dataSource.staticData ) ? { ...dataSource.staticData } : {};
 
     // Use Form
     getForm && getForm(Methods);
@@ -53,12 +84,13 @@ export const Form: FC<iForm> = ({ name, mode, getForm, schema, dataSource, onSub
         onSubmit && onSubmit({...((mode === "update") ? Data : {}), ...submitData});
 
         if (dataSource && !noRequest) {
-            Request({ dataSource, mode,
-                data: name ? { [name]: submitData } : submitData,
-                apiUrlId: dataSource.primaryKey ? Data[dataSource.primaryKey] : Data.id,
-                callBack: (data: any) => {
+            Request({
+                dataSource, mode,
+                data: { ...(dataSource?.requestData ? dataSource.requestData(submitData) : submitData) },
+                apiUrlId: customKey ? Data[customKey] : Data.id,
+                callback: (data: any) => {
+                    callback && callback(data);
                     setModal && setModal(false);
-                    onSuccess && onSuccess(data);
                     onSubmitClear && Methods.reset();
                 }, dispatch
             }).then();
@@ -68,7 +100,7 @@ export const Form: FC<iForm> = ({ name, mode, getForm, schema, dataSource, onSub
     return (
         <React.Fragment>
             <FormProvider {...Methods}>
-                <form className={classes.root} onSubmit={Methods.handleSubmit(onFormSubmit)} style={style} {...props}>
+                <form className={classes.root} onSubmit={Methods.handleSubmit(onFormSubmit)} {...props}>
                     { schema &&
                         <Grid container spacing={2}>
                             { schema && !!schema?.length && schema.map((field: any, index: number) => {

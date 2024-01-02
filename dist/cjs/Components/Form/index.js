@@ -15,29 +15,31 @@ const material_1 = require("@mui/material");
 const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Form = ({ name, mode, getForm, schema, dataSource, onSubmit, onSubmitClear, setModal, dispatch, onSuccess, noRequest, invisibility, style, children, ...props }) => {
+const Form = ({ mode, getForm, schema, dataSource, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, noRequest, invisibility, children, ...props }) => {
+    const Data = { ...(staticData ? staticData : {}) };
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useForm)();
-    const Data = (dataSource && dataSource.staticData) ? { ...dataSource.staticData } : {};
     // Use Form
     getForm && getForm(Methods);
     // On Form Submit
     const onFormSubmit = (submitData) => {
         onSubmit && onSubmit({ ...((mode === "update") ? Data : {}), ...submitData });
         if (dataSource && !noRequest) {
-            (0, Services_1.Request)({ dataSource, mode,
-                data: name ? { [name]: submitData } : submitData,
-                apiUrlId: dataSource.primaryKey ? Data[dataSource.primaryKey] : Data.id,
-                callBack: (data) => {
+            (0, Services_1.Request)({
+                dataSource, mode,
+                data: { ...(dataSource?.requestData ? dataSource.requestData(submitData) : submitData) },
+                apiUrlId: customKey ? Data[customKey] : Data.id,
+                callback: (data) => {
+                    callback && callback(data);
                     setModal && setModal(false);
-                    onSuccess && onSuccess(data);
                     onSubmitClear && Methods.reset();
-                }, dispatch }).then();
+                }, dispatch
+            }).then();
         }
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_hook_form_1.FormProvider, { ...Methods },
-            react_1.default.createElement("form", { className: classes.root, onSubmit: Methods.handleSubmit(onFormSubmit), style: style, ...props },
+            react_1.default.createElement("form", { className: classes.root, onSubmit: Methods.handleSubmit(onFormSubmit), ...props },
                 schema &&
                     react_1.default.createElement(material_1.Grid, { container: true, spacing: 2 },
                         schema && !!schema?.length && schema.map((field, index) => {

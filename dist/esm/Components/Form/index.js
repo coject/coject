@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 // React Hook Form
 import { useForm, FormProvider } from "react-hook-form";
 // Request
@@ -9,29 +9,31 @@ import { Grid, Button } from "@mui/material";
 import { Input, Switch, Select, Checkbox, DatePicker } from "../index";
 // Styles
 import useStyles from "./theme";
-export const Form = ({ name, mode, getForm, schema, dataSource, onSubmit, onSubmitClear, setModal, dispatch, onSuccess, noRequest, invisibility, style, children, ...props }) => {
+export const Form = ({ mode, getForm, schema, dataSource, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, noRequest, invisibility, children, ...props }) => {
+    const Data = { ...(staticData ? staticData : {}) };
     const { classes } = useStyles();
     const Methods = useForm();
-    const Data = (dataSource && dataSource.staticData) ? { ...dataSource.staticData } : {};
     // Use Form
     getForm && getForm(Methods);
     // On Form Submit
     const onFormSubmit = (submitData) => {
         onSubmit && onSubmit({ ...((mode === "update") ? Data : {}), ...submitData });
         if (dataSource && !noRequest) {
-            Request({ dataSource, mode,
-                data: name ? { [name]: submitData } : submitData,
-                apiUrlId: dataSource.primaryKey ? Data[dataSource.primaryKey] : Data.id,
-                callBack: (data) => {
+            Request({
+                dataSource, mode,
+                data: { ...(dataSource?.requestData ? dataSource.requestData(submitData) : submitData) },
+                apiUrlId: customKey ? Data[customKey] : Data.id,
+                callback: (data) => {
+                    callback && callback(data);
                     setModal && setModal(false);
-                    onSuccess && onSuccess(data);
                     onSubmitClear && Methods.reset();
-                }, dispatch }).then();
+                }, dispatch
+            }).then();
         }
     };
     return (React.createElement(React.Fragment, null,
         React.createElement(FormProvider, { ...Methods },
-            React.createElement("form", { className: classes.root, onSubmit: Methods.handleSubmit(onFormSubmit), style: style, ...props },
+            React.createElement("form", { className: classes.root, onSubmit: Methods.handleSubmit(onFormSubmit), ...props },
                 schema &&
                     React.createElement(Grid, { container: true, spacing: 2 },
                         schema && !!schema?.length && schema.map((field, index) => {

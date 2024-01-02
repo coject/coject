@@ -1,33 +1,59 @@
 // Axios Middleware
 import axios from "axios";
 
-// React Toastify
-import { toast } from "react-toastify";
-
 // Interface
-interface iCojectAction {
+interface iDataSource {
+    name?: string;
+    headers?: any;
+    apiUrl?: string;
+    baseUrl?: string;
+    requestData?: any;
+    dataPath?: string;
+    method?: "get" | "post" | "put" | "delete";
+    create?: {
+        headers?: any;
+        apiUrl?: string;
+        requestData?: any;
+        dataPath?: string;
+        method?: "get" | "post" | "put" | "delete";
+    };
+    update?: {
+        headers?: any;
+        apiUrl?: string;
+        requestData?: any;
+        dataPath?: string;
+        method?: "get" | "post" | "put" | "delete";
+    };
+    delete?: {
+        headers?: any;
+        apiUrl?: string;
+        requestData?: any;
+        dataPath?: string;
+        method?: "get" | "post" | "put" | "delete";
+    };
+}
+
+interface iRequest {
     data?: any;
-    mode?: string;
     dispatch?: any;
-    callBack?: any;
-    dataSource?: any;
+    callback?: any;
     apiUrlId?: string;
+    dataSource?: iDataSource;
+    mode?: "render" | "create" | "update" | "delete";
 }
 
 // Request Creation
-export const RequestCreation: any = axios.create({
-    headers: {
-        "Authorization": ""
-    }
-});
+export const RequestCreation: any = axios.create();
 
 // Request
-export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, callBack }: iCojectAction) => {
-    let Type: string, Name: string, Method: string, Data: any, Headers: any, APIUrl: string, APIUrlId: string, DataPath: string;
+export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, callback }: iRequest) => {
+    let Type: string, Name: string, Method: string, Data: any, Headers: any, APIUrl: string, APIUrlId: string, DataPath: any;
 
     // Default Method
     const DefaultMethod = () => {
         switch (mode?.toLowerCase()) {
+            case "render":
+                return "get";
             case "create":
                 return "post";
             case "update":
@@ -42,82 +68,53 @@ export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, call
     // Handling Variables
     switch (mode) {
         case "create": case "update": case "delete":
-            if (((dataSource[mode] && dataSource[mode].formData) || dataSource?.formData) && ((dataSource[mode] && dataSource[mode].requestData) || dataSource?.requestData)) {
-                if (dataSource[mode] && dataSource[mode].requestData) {
-                    for (let Index = 0; Index < Object.keys(dataSource[mode].requestData).length; Index++) {
-                        data.append(Object.keys(dataSource[mode].requestData)[Index], dataSource[mode].requestData[Object.keys(dataSource[mode].requestData)[Index]]);
-                    }
-                } else if (dataSource.requestData) {
-                    for (let Index = 0; Index < Object.keys(dataSource.requestData).length; Index++) {
-                        data.append(Object.keys(dataSource.requestData)[Index], dataSource.requestData[Object.keys(dataSource.requestData)[Index]]);
-                    }
-                }
-            }
             Type = "SINGLE";
-            APIUrlId = apiUrlId ? apiUrlId : dataSource?.apiUrlId ? dataSource?.apiUrlId : "";
-            APIUrl = dataSource[mode] && dataSource[mode].apiUrl ? dataSource[mode].apiUrl : dataSource?.apiUrl;
-            Headers = dataSource[mode] && dataSource[mode].headers ? dataSource[mode].headers : dataSource?.headers;
-            DataPath = dataSource[mode] && dataSource[mode].dataPath ? dataSource[mode].dataPath.split(".") : dataSource?.dataPath?.split(".");
-            Method = dataSource[mode] && dataSource[mode].method ? dataSource[mode].method : dataSource?.method ? dataSource.method : DefaultMethod();
-            Name = dataSource[mode] && dataSource[mode].name ? dataSource[mode].name : dataSource?.uniqueName ? dataSource?.uniqueName : dataSource?.name;
-            Data = (dataSource[mode] && dataSource[mode].formData) || dataSource?.formData
-                    ? data
-                    : dataSource?.requestData && dataSource?.requestData instanceof Array
-                        ? [...(data ? data : []), ...(dataSource[mode] && dataSource[mode].requestData ? dataSource[mode].requestData : dataSource.requestData)]
-                        : { ...data, ...(dataSource[mode] && dataSource[mode].requestData ? dataSource[mode].requestData : dataSource.requestData) };
+            APIUrlId = apiUrlId ? apiUrlId : "";
+            Name = dataSource?.name ? dataSource.name : "default";
+            Headers = dataSource && dataSource[mode]?.headers ? dataSource[mode]?.headers : dataSource?.headers;
+            DataPath = dataSource && dataSource[mode]?.dataPath ? dataSource[mode]?.dataPath?.split(".") : dataSource?.dataPath?.split(".");
+            APIUrl = (dataSource && dataSource[mode]?.apiUrl) ? dataSource[mode]?.apiUrl || "" : (dataSource?.apiUrl ? dataSource.apiUrl : "");
+            Method = dataSource && dataSource[mode]?.method ? dataSource[mode]?.method || "" : dataSource?.method ? dataSource.method : DefaultMethod();
+            Data = { ...((dataSource && dataSource[mode]?.requestData) ? dataSource[mode]?.requestData(data) : (dataSource?.requestData ? dataSource.requestData(data) : (data ? data : {}))) };
             break;
         default:
-            if (dataSource?.formData && dataSource?.requestData) {
-                for (let Index = 0; Index < Object.keys(dataSource.requestData).length; Index++) {
-                    data.append(Object.keys(dataSource.requestData)[Index], dataSource.requestData[Object.keys(dataSource.requestData)[Index]]);
-                }
-            }
-            APIUrl = dataSource?.apiUrl;
             Headers = dataSource?.headers;
+            APIUrl = dataSource?.apiUrl || "";
+            APIUrlId = apiUrlId ? apiUrlId : "";
             DataPath = dataSource?.dataPath?.split(".");
+            Name = dataSource?.name ? dataSource.name : "default";
             Method = dataSource?.method ? dataSource.method : DefaultMethod();
-            Name = dataSource?.uniqueName ? dataSource?.uniqueName : dataSource?.name;
-            Data = dataSource?.formData ? data : dataSource?.requestData && dataSource?.requestData instanceof Array ? [...(data ? data : []), ...dataSource.requestData] : { ...data, ...dataSource.requestData };
-            APIUrlId = apiUrlId ? apiUrlId : dataSource?.apiUrlId ? dataSource?.apiUrlId : "";
+            Data = { ...(dataSource?.requestData ? dataSource.requestData(data) : (data ? data : {})) };
             break;
     }
 
     // Loading State
-    dispatch && dispatch({ type: "LOADING", name: Name || "default" });
+    dispatch && dispatch({ type: "LOADING", name: Name });
 
     // Success State
     const SuccessAction = (Response: any) => {
-        if (!!Response.data?.MESSAGE?.MESSAGE) {
-            dispatch && dispatch({ type: "ERRORS", error: Response.data.MESSAGE.MESSAGE, name: Name || "default" });
-            toast.error(Response.data.MESSAGE.MESSAGE, { position: toast.POSITION.TOP_RIGHT });
-        } else {
-            let Payload = Response.data;
-            if (DataPath) {
-                for (let Index = 0; Index < DataPath.length; Index++) {
-                    Payload = Payload[DataPath[Index]];
-                }
+        let Payload = Response.data;
+        if (DataPath) {
+            for (let Index = 0; Index < DataPath.length; Index++) {
+                Payload = Payload[DataPath[Index]];
             }
-            dispatch && dispatch({ type: Type || "SUCCESS", name: Name || "default", payload: mode === "delete" ? {} : Payload });
-            callBack && callBack(Payload);
-            dataSource?.callBack && dataSource?.callBack(Payload);
-            dataSource?.create?.callBack && dataSource.create.callBack(Payload);
-            dataSource?.update?.callBack && dataSource.update.callBack(Payload);
-            dataSource?.delete?.callBack && dataSource.delete.callBack(Payload);
         }
+        callback && callback(Payload);
+        dispatch && dispatch({ type: Type || "SUCCESS", name: Name, payload: mode === "delete" ? {} : Payload });
     };
 
     // Error State
     const CatchAction = (Error: any) => {
-        dispatch && dispatch({ type: "ERRORS", error: Error.message, name: Name || "default" });
+        dispatch && dispatch({ type: "ERRORS", error: Error.message, name: Name });
     };
 
     // Request Actions
     if (Method.toLowerCase() === "get" || Method.toLowerCase() === "delete")
-        await RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, { "headers": Headers })
+        await RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl || ""}${APIUrlId ? "/" + APIUrlId : ""}`, { "headers": Headers })
             .then((Response: any) => SuccessAction(Response))
             .catch((Error: any) => CatchAction(Error));
     else
-        await RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl}${APIUrlId ? "/" + APIUrlId : ""}`, Data, { "headers": Headers })
+        await RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl || ""}${APIUrlId ? "/" + APIUrlId : ""}`, Data, { "headers": Headers })
             .then((Response: any) => SuccessAction(Response))
             .catch((Error: any) => CatchAction(Error));
 };

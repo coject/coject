@@ -32,16 +32,13 @@ const react_1 = __importStar(require("react"));
 const Services_1 = require("../../Services");
 // Material UI
 const material_1 = require("@mui/material");
-// Material UI Icons
-const MuiIcons = __importStar(require("@mui/icons-material"));
 // Material UI Table
 const x_data_grid_1 = require("@mui/x-data-grid");
 // Coject
 const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Grid = ({ dataSource, customKey, schema, actions, invisibility, formInvisibility, toolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
-    const Icons = MuiIcons;
+const Grid = ({ dataSource, staticData, callback, customKey, onAddCallback, onEditCallback, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const [gridData, setGridData] = (0, react_1.useState)([]);
     const [schemaData, setSchemaData] = (0, react_1.useState)({});
@@ -53,33 +50,36 @@ const Grid = ({ dataSource, customKey, schema, actions, invisibility, formInvisi
     const [deleteModal, setDeleteModal] = (0, react_1.useState)(false);
     // Static Data
     (0, react_1.useEffect)(() => {
-        if (dataSource?.staticData && !dataSource?.apiUrl) {
-            setGridData(dataSource.staticData);
+        if (staticData && !dataSource?.apiUrl) {
+            setGridData(staticData);
         }
-    }, [dataSource?.apiUrl, dataSource?.staticData]);
+    }, [dataSource?.apiUrl, staticData]);
     // Dynamic Data
     (0, react_1.useEffect)(() => {
-        if (dataSource?.apiUrl && !dataSource.staticData) {
-            (0, Services_1.Request)({ dataSource, dispatch, callBack: (data) => setGridData(data) }).then();
+        if (dataSource?.apiUrl && !staticData) {
+            (0, Services_1.Request)({ dataSource, dispatch, callback: (data) => setGridData(data) }).then();
         }
-    }, [callData, dataSource, dataSource?.apiUrl, dispatch]);
+    }, [callData, dataSource, dataSource?.apiUrl, dispatch, staticData]);
     // Dynamic Data ( Schema )
     (0, react_1.useEffect)(() => {
         if (schema) {
             schema.map((field) => {
-                if (field.component === "select" && field.componentProps?.dataSource && !field.componentProps.dataSource.staticData) {
-                    return (0, Services_1.Request)({ dataSource: field.componentProps.dataSource, callBack: (data) => setSchemaData((prev) => ({ ...prev, [field.field]: data })) }).then();
+                if (field.component === "select" && field.componentProps?.dataSource && !field.componentProps.staticData) {
+                    return (0, Services_1.Request)({ dataSource: field.componentProps.dataSource, callback: (data) => {
+                            callback && callback(data);
+                            setSchemaData((prev) => ({ ...prev, [field.field]: data }));
+                        } }).then();
                 }
                 else
                     return null;
             });
         }
-    }, [schema]);
+    }, [schema, callback]);
     // Default Schema
     const defaultSchema = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => ({
         field: columnKey,
         component: "input",
-        flex: (columnKey === (dataSource?.primaryKey ? dataSource.primaryKey : "id") ? 0 : 1)
+        flex: (columnKey === (customKey ? customKey : "id") ? 0 : 1)
     })) : [];
     // Custom Schema
     (0, react_1.useEffect)(() => {
@@ -100,9 +100,9 @@ const Grid = ({ dataSource, customKey, schema, actions, invisibility, formInvisi
                     columnSchema.type = "singleSelect";
                     columnSchema.getOptionValue = (value) => customKey ? value[customKey] : value.id;
                     columnSchema.getOptionLabel = (value) => customName ? value[customName] : value.label;
-                    if (columnSchema.componentProps.dataSource.staticData) {
-                        columnSchema.valueOptions = columnSchema.componentProps.dataSource.staticData;
-                        columnSchema.componentProps.dataSource = { staticData: columnSchema.componentProps.dataSource.staticData };
+                    if (columnSchema.componentProps.staticData) {
+                        columnSchema.valueOptions = columnSchema.componentProps.staticData;
+                        columnSchema.componentProps.dataSource = { staticData: columnSchema.componentProps.staticData };
                     }
                     else {
                         columnSchema.valueOptions = schemaData[columnSchema.field];
@@ -114,41 +114,65 @@ const Grid = ({ dataSource, customKey, schema, actions, invisibility, formInvisi
         }
         forceUpdate();
     }, [forceUpdate, schema, schemaData]);
+    // Grid Actions
+    const gridActions = (row) => actions && (actions instanceof Array
+        ? actions?.map((label, index) => {
+            if (label === "edit" || label === "delete") {
+                return (react_1.default.createElement(x_data_grid_1.GridActionsCellItem, { key: index, label: label, icon: label === "edit" ? react_1.default.createElement(index_1.Icons.Edit, null) : react_1.default.createElement(index_1.Icons.Delete, null), onClick: () => {
+                        (label === "edit") ? setEditModal(true) : setDeleteModal(true);
+                        setSelectedData(row);
+                    } }));
+            }
+            else
+                return undefined;
+        }).filter((element) => element !== undefined)
+        : [
+            react_1.default.createElement(x_data_grid_1.GridActionsCellItem, { label: "edit", icon: react_1.default.createElement(index_1.Icons.Edit, null), onClick: () => { setEditModal(true); setSelectedData(row); } }),
+            react_1.default.createElement(x_data_grid_1.GridActionsCellItem, { label: "delete", icon: react_1.default.createElement(index_1.Icons.Delete, null), onClick: () => { setDeleteModal(true); setSelectedData(row); } })
+        ]);
+    // Grid Custom Actions
+    const gridCustomActions = (row) => customActions?.map((action, index) => {
+        const ActionIcon = index_1.Icons[action.icon];
+        return (react_1.default.createElement(x_data_grid_1.GridActionsCellItem, { key: index, label: action.label, icon: react_1.default.createElement(ActionIcon, null), onClick: (event) => action.onClick(event, row) }));
+    }).filter((element) => element !== undefined);
     // Columns Schema
     const columnsSchema = [...(schema ? schema : defaultSchema), ...(actions
-            ? [{ field: "actions", type: "actions", headerName: "Actions", width: 100, cellClassName: "actions",
-                    getActions: ({ row }) => {
-                        return [
-                            react_1.default.createElement(x_data_grid_1.GridActionsCellItem, { icon: react_1.default.createElement(Icons.Edit, null), label: "Edit", onClick: () => { setEditModal(true); setSelectedData(row); } }),
-                            react_1.default.createElement(x_data_grid_1.GridActionsCellItem, { icon: react_1.default.createElement(Icons.Delete, null), label: "Delete", onClick: () => { setDeleteModal(true); setSelectedData(row); } })
-                        ];
-                    }
-                }] : [])
-    ];
+            ? [{ field: "actions", type: "actions", headerName: "Actions", width: 100, cellClassName: "actions", getActions: ({ row }) => ([...(gridActions(row) || []), ...(gridCustomActions(row) || [])]) }]
+            : [])];
     // Custom Toolbar
     const CustomToolbar = () => {
         return (react_1.default.createElement(x_data_grid_1.GridToolbarContainer, null,
             toolbar &&
                 react_1.default.createElement(react_1.default.Fragment, null,
-                    react_1.default.createElement(x_data_grid_1.GridToolbarColumnsButton, null),
-                    react_1.default.createElement(x_data_grid_1.GridToolbarFilterButton, null),
-                    react_1.default.createElement(x_data_grid_1.GridToolbarExport, null)),
-            actions &&
-                react_1.default.createElement(material_1.Button, { onClick: () => setAddModal(true), type: "button" },
-                    react_1.default.createElement(Icons.Add, null),
-                    " Add New")));
+                    toolbar instanceof Array ? (toolbar?.includes("visibility") && react_1.default.createElement(x_data_grid_1.GridToolbarColumnsButton, null)) : react_1.default.createElement(x_data_grid_1.GridToolbarColumnsButton, null),
+                    toolbar instanceof Array ? (toolbar?.includes("filter") && react_1.default.createElement(x_data_grid_1.GridToolbarFilterButton, null)) : react_1.default.createElement(x_data_grid_1.GridToolbarFilterButton, null),
+                    toolbar instanceof Array ? (toolbar?.includes("export") && react_1.default.createElement(x_data_grid_1.GridToolbarExport, null)) : react_1.default.createElement(x_data_grid_1.GridToolbarExport, null)),
+            customToolbar && customToolbar(gridData),
+            actions && (actions instanceof Array
+                ? (actions?.includes("add") && react_1.default.createElement(material_1.Button, { onClick: () => setAddModal(true), type: "button" },
+                    react_1.default.createElement(index_1.Icons.Add, null),
+                    " Add New"))
+                : react_1.default.createElement(material_1.Button, { onClick: () => setAddModal(true), type: "button" },
+                    react_1.default.createElement(index_1.Icons.Add, null),
+                    " Add New"))));
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(index_1.Modal, { title: "Add New Item", open: addModal, setOpen: setAddModal },
             react_1.default.createElement(index_1.Form, { dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create", noRequest: noRequest || noAddRequest, ...(invisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
                     onAddSubmit && onAddSubmit(data);
-                    !!dataSource?.staticData && setAddModal(false);
-                }, onSuccess: () => setCallData(!callData), setModal: setAddModal })),
+                    !!staticData && setAddModal(false);
+                }, callback: (data) => {
+                    setCallData(!callData);
+                    onAddCallback && onAddCallback(data);
+                }, setModal: setAddModal })),
         react_1.default.createElement(index_1.Modal, { title: "Update Item", open: editModal, setOpen: setEditModal },
-            react_1.default.createElement(index_1.Form, { dataSource: { ...dataSource, staticData: selectedData }, schema: schema ? schema : defaultSchema, mode: "update", noRequest: noRequest || noEditRequest, ...(invisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
+            react_1.default.createElement(index_1.Form, { dataSource: dataSource, staticData: staticData, schema: schema ? schema : defaultSchema, mode: "update", noRequest: noRequest || noEditRequest, ...(customKey ? { customKey: customKey } : {}), ...(invisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
                     onEditSubmit && onEditSubmit(data);
-                    !!dataSource?.staticData?.length && setEditModal(false);
-                }, onSuccess: () => setCallData(!callData), setModal: setEditModal })),
+                    !!staticData?.length && setEditModal(false);
+                }, callback: (data) => {
+                    setCallData(!callData);
+                    onEditCallback && onEditCallback(data);
+                }, setModal: setEditModal })),
         react_1.default.createElement(index_1.Modal, { title: "Delete Item", open: deleteModal, setOpen: setDeleteModal },
             react_1.default.createElement(material_1.Grid, { container: true, spacing: 2 },
                 react_1.default.createElement(material_1.Grid, { item: true, md: 12, lg: 12 },
@@ -156,14 +180,15 @@ const Grid = ({ dataSource, customKey, schema, actions, invisibility, formInvisi
                 react_1.default.createElement(material_1.Grid, { item: true, md: 12, lg: 12 },
                     react_1.default.createElement(material_1.Button, { fullWidth: true, type: "button", variant: "contained", onClick: () => {
                             onDeleteSubmit && onDeleteSubmit(selectedData);
-                            !!dataSource?.staticData?.length && setDeleteModal(false);
+                            !!staticData?.length && setDeleteModal(false);
                             if (!noRequest || !noDeleteRequest) {
                                 (0, Services_1.Request)({
-                                    dataSource, mode: "delete", callBack: () => {
+                                    dataSource, mode: "delete", callback: (data) => {
                                         setCallData(!callData);
                                         setDeleteModal(false);
+                                        onDeleteCallback && onDeleteCallback(data);
                                     }, dispatch,
-                                    apiUrlId: dataSource.primaryKey ? selectedData[dataSource.primaryKey] : selectedData.id
+                                    apiUrlId: customKey ? selectedData[customKey] : selectedData.id
                                 }).then();
                             }
                         } }, "Delete")))),

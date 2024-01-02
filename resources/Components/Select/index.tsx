@@ -16,31 +16,64 @@ import { Icons } from "../index";
 import useStyles from "./theme";
 
 // Interface
+interface iDataSource {
+    name?: string;
+    headers?: any;
+    apiUrl?: string;
+    baseUrl?: string;
+    requestData?: any;
+    dataPath?: string;
+    method?: "get" | "post" | "put" | "delete";
+    create?: {
+        headers?: any;
+        apiUrl?: string;
+        requestData?: any;
+        dataPath?: string;
+        method?: "get" | "post" | "put" | "delete";
+    };
+    update?: {
+        headers?: any;
+        apiUrl?: string;
+        requestData?: any;
+        dataPath?: string;
+        method?: "get" | "post" | "put" | "delete";
+    };
+    delete?: {
+        headers?: any;
+        apiUrl?: string;
+        requestData?: any;
+        dataPath?: string;
+        method?: "get" | "post" | "put" | "delete";
+    };
+}
+
 interface iSelect extends AutocompleteProps<any, any, any, any> {
-    rules?: any;
+    value?: any;
     name?: string;
     label?: string;
     onChange?: any;
     dispatch?: any;
+    callback?: any;
     error?: boolean;
-    dataSource?: any;
     inputProps?: any;
+    staticData?: any;
     required?: boolean;
     renderOption?: any;
     customKey?: string;
+    multiple?: boolean;
     customName?: string;
     helperText?: string;
     checkboxes?: boolean;
+    dataSource?: iDataSource;
     fixedOption?: (string | number)[];
     disabledOption?: (string | number)[];
 }
 
-export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, label, helperText, rules, dataSource, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, dispatch, inputProps, error, ...props }) => {
+export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, value, label, callback, staticData, helperText, dataSource, multiple, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, dispatch, inputProps, error, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [ selectedValue, setSelectedValue ] = useState<any>();
     const [ selectData, setSelectData ] = useState<any>([]);
-    const DropdownID = dataSource?.uniqueName ? dataSource.uniqueName : dataSource?.name ? dataSource.name : name;
     const { setValue, control, watch, getValues } = useFormContext() || {};
 
     // Methods Watching
@@ -51,57 +84,60 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, lab
 
     // Value
     useEffect(() => {
-        if ((props?.value || (fixedOption && props?.multiple))) {
-            if (fixedOption && props?.multiple) {
-                setSelectedValue([...fixedOption, ...(props?.value ? (props?.multiple ? props?.value : [props?.value]) : [])]);
-                control && setValue(name || "default", [...fixedOption, ...(props?.value ? (props?.multiple ? props?.value : [props?.value]) : [])]);
+        if ((value || (fixedOption && multiple))) {
+            if (fixedOption && multiple) {
+                setSelectedValue([...fixedOption, ...(value ? (multiple ? value : [value]) : [])]);
+                control && setValue(name || "default", [...fixedOption, ...(value ? (multiple ? value : [value]) : [])]);
             } else {
-                setSelectedValue(props.value);
-                control && setValue(name || "default", props.value);
+                setSelectedValue(value);
+                control && setValue(name || "default", value);
             }
         }
-    }, [control, name, setValue, props.value, fixedOption, props?.multiple]);
+    }, [control, name, setValue, value, fixedOption, multiple]);
 
     // Static Data
     useEffect(() => {
-        if (!!dataSource?.staticData && !dataSource?.apiUrl) {
-            setSelectData(dataSource.staticData);
+        if (!!staticData && !dataSource?.apiUrl) {
+            setSelectData(staticData);
         }
-    }, [dataSource?.apiUrl, dataSource?.staticData]);
+    }, [dataSource?.apiUrl, staticData]);
 
     // Dynamic Data
     useEffect(() => {
-        if (dataSource?.apiUrl && !dataSource.staticData) {
+        if (dataSource?.apiUrl && !staticData) {
             Request({
                 dataSource: { ...dataSource }, dispatch,
-                callBack: (ResponseData: any) => setSelectData(ResponseData)
+                callback: (data: any) => {
+                    callback && callback(data);
+                    setSelectData(data);
+                }
             }).then();
         }
-    }, [dataSource, dataSource?.apiUrl, dispatch]);
+    }, [dataSource, dataSource?.apiUrl, dispatch, staticData, callback]);
 
     // Master Component
     const MuiAutocomplete = () => {
         return (
-            <Autocomplete id={DropdownID} options={selectData} multiple={props?.multiple} {...props}
+            <Autocomplete options={selectData} multiple={multiple} {...props}
                 value={ !!selectData?.length && selectedValue
-                    ? props?.multiple
+                    ? multiple
                         ? selectedValue?.map((SValue: string) => selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === SValue))
-                        : props?.multiple ? [] : selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
-                    : props?.multiple ? [] : null
+                        : multiple ? [] : selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
+                    : multiple ? [] : null
                 }
                 defaultValue={ !!selectData?.length && selectedValue
-                    ? props?.multiple
+                    ? multiple
                         ? selectedValue?.map((SValue: string) => selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === SValue))
-                        : props?.multiple ? [] : selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
-                    : props?.multiple ? [] : null
+                        : multiple ? [] : selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
+                    : multiple ? [] : null
                 }
                 onChange={(event, newValue) => {
                     onChange && onChange(event, newValue, Methods);
-                    setSelectedValue(props?.multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
-                    control && setValue(name || "default", props?.multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
+                    setSelectedValue(multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
+                    control && setValue(name || "default", multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
                 }}
                 renderTags={(tagValue, getTagProps) => tagValue.map((row, index) => (
-                    <Chip {...getTagProps({ index })} label={customName ? row[`${customName}`] : row.label} disabled={(fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id ) : false} />
+                    <Chip {...getTagProps({ index })} label={customName ? row[`${customName}`] : row.label} disabled={(fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id ) : false} />
                 )) }
                 { ...(customName ? { getOptionLabel: (option: any) => option[`${customName}`] } : {}) }
                 { ...((renderOption || checkboxes) ? { renderOption: (props, row: any, { selected }) => <Box component={"li"} {...props}>
@@ -113,7 +149,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, lab
                         : renderOption(row)
                     }
                 </Box> } : {}) }
-                getOptionDisabled={(row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && props?.multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false)}
+                getOptionDisabled={(row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false)}
                 renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, ...inputProps, type: "search" }} fullWidth={!!inputProps?.fullWidth} error={error} label={label ? label : (name || "default")} required={required} />}
             />
         );
@@ -123,7 +159,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, lab
         <React.Fragment>
             <Box className={classes.root}>
                 { control
-                    ? <Controller name={name || "default"} control={control} rules={rules} render={() => <MuiAutocomplete />} />
+                    ? <Controller name={name || "default"} control={control} render={() => <MuiAutocomplete />} />
                     : <MuiAutocomplete />
                 }
                 { helperText && <FormHelperText className={classes.error}>{helperText}</FormHelperText> }

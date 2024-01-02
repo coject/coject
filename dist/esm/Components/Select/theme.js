@@ -27,11 +27,8 @@ const useStyles = makeStyles()((theme) => {
                 backgroundColor: "transparent !important"
             },
             "& .MuiFormControl-root": {
-                width: "auto",
-                minWidth: "250px",
-                "&.MuiFormControl-fullWidth": {
-                    width: "100%"
-                }
+                width: "100%",
+                minWidth: "250px"
             },
             "& .MuiAutocomplete-root": {
                 "& .MuiAutocomplete-input": {

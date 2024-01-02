@@ -1,25 +1,55 @@
-import { FC } from "react";
+import { FC, ReactNode } from 'react';
 import { GridColDef } from "@mui/x-data-grid";
 type iSchema = GridColDef & {
     component?: string;
     componentProps?: any;
     componentMedia?: any;
 };
-interface iForm {
-    style?: any;
-    mode?: string;
+interface iDataSource {
     name?: string;
+    headers?: any;
+    apiUrl?: string;
+    baseUrl?: string;
+    requestData?: any;
+    dataPath?: string;
+    method?: "get" | "post" | "put" | "delete";
+    create?: {
+        headers?: any;
+        apiUrl?: string;
+        requestData?: any;
+        dataPath?: string;
+        method?: "get" | "post" | "put" | "delete";
+    };
+    update?: {
+        headers?: any;
+        apiUrl?: string;
+        requestData?: any;
+        dataPath?: string;
+        method?: "get" | "post" | "put" | "delete";
+    };
+    delete?: {
+        headers?: any;
+        apiUrl?: string;
+        requestData?: any;
+        dataPath?: string;
+        method?: "get" | "post" | "put" | "delete";
+    };
+}
+interface iForm {
     getForm?: any;
     onSubmit?: any;
-    children?: any;
     dispatch?: any;
     setModal?: any;
-    onSuccess?: any;
-    dataSource?: any;
+    callback?: any;
+    staticData?: any;
+    customKey?: string;
     noRequest?: boolean;
+    children?: ReactNode;
     schema?: iSchema | any;
     invisibility?: string[];
     onSubmitClear?: boolean;
+    dataSource?: iDataSource;
+    mode?: "render" | "create" | "update" | "delete";
 }
 export declare const Form: FC<iForm>;
 export {};

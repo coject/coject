@@ -80,7 +80,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
     useEffect(() => {
         control && setSelectedValue(getValues(name || "default") ? getValues(name || "default") : "");
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [control, getValues, name, watch(name || "default")]);
+    }, [control, getValues, name, watch && watch(name || "default")]);
 
     // Value
     useEffect(() => {

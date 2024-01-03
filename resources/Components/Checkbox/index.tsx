@@ -30,7 +30,7 @@ export const Checkbox: FC<iCheckbox> = ({ name, value, label, onChange, trueValu
     useEffect(() => {
         control && setCheckedValue(!!getValues(name || "default") ? trueValue ? trueValue === getValues(name || "default") : !!getValues(name || "default") : false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [control, getValues, name, watch(name || "default")]);
+    }, [control, getValues, name, watch && watch(name || "default")]);
 
     // Value
     useEffect(() => {

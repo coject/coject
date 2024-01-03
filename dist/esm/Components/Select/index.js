@@ -19,7 +19,7 @@ export const Select = ({ name, value, label, callback, staticData, helperText, d
     useEffect(() => {
         control && setSelectedValue(getValues(name || "default") ? getValues(name || "default") : "");
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [control, getValues, name, watch(name || "default")]);
+    }, [control, getValues, name, watch && watch(name || "default")]);
     // Value
     useEffect(() => {
         if ((value || (fixedOption && multiple))) {

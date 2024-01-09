@@ -7,8 +7,12 @@ interface HeaderInterface {
     setSidebar?: any;
     search?: boolean;
     sidebar?: boolean;
-    languages?: ("ar" | "en" | string)[];
     mobMenus?: ("menu" | "footer" | "subMenu" | "sidebar")[];
+    languages?: {
+        name: "ar" | "en" | string;
+        logo?: string;
+        onClick?: any;
+    }[];
 }
 export declare const Header: FC<HeaderInterface>;
 export {};

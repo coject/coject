@@ -6,8 +6,12 @@ interface iDashboard {
     search?: boolean;
     children?: ReactNode;
     copyRight?: ReactNode;
-    languages?: ("ar" | "en" | string)[];
     mobMenus?: ("menu" | "footer" | "subMenu" | "sidebar")[];
+    languages?: {
+        name: "ar" | "en" | string;
+        logo?: string;
+        onClick?: any;
+    }[];
 }
 export declare const Dashboard: FC<iDashboard>;
 export {};

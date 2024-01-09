@@ -7,7 +7,11 @@ interface DskHeaderInterface {
     setSidebar?: any;
     search?: boolean;
     sidebar?: boolean;
-    languages?: ("ar" | "en" | string)[];
+    languages?: {
+        name: "ar" | "en" | string;
+        logo?: string;
+        onClick?: any;
+    }[];
 }
 export declare const DskHeader: FC<DskHeaderInterface>;
 export {};

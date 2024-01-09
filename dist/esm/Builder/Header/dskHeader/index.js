@@ -8,7 +8,7 @@ import useStyles from "../theme";
 export const DskHeader = ({ logo, icon, search, languages, menus, setMenus, sidebar, setSidebar }) => {
     const { classes } = useStyles();
     const [menuList, setMenuList] = useState({});
-    const [languageValue, setLanguageValue] = useState("en");
+    const [languageLogo, setLanguageLogo] = useState(process.env.PUBLIC_URL + '/images/lang/en.jpg');
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: classes.dskHeader },
             React.createElement(Box, { className: `${classes.dskLogo} ${!sidebar ? classes.closedDskLogo : ""}` }, sidebar
@@ -57,14 +57,28 @@ export const DskHeader = ({ logo, icon, search, languages, menus, setMenus, side
                     languages && !!languages.length &&
                         React.createElement(MenuItem, null,
                             React.createElement(Button, { onClick: (e) => setMenuList({ languages: e.currentTarget }) },
-                                React.createElement("img", { src: process.env.PUBLIC_URL + `${'/images/lang/' + languageValue + '.jpg'}`, alt: languageValue })),
+                                React.createElement("img", { src: languageLogo, alt: "Language" })),
                             React.createElement(Menu, { className: classes.subMenuList, anchorEl: menuList && Object.keys(menuList).length && menuList?.languages, open: Boolean(menuList?.languages), onClose: () => setMenuList({}), transformOrigin: { horizontal: 'right', vertical: 'top' }, anchorOrigin: { horizontal: 'right', vertical: 'bottom' } },
                                 React.createElement(Box, { className: classes.subListMenu, onMouseLeave: () => setMenuList({}) },
                                     React.createElement(Box, { className: classes.subMenuContent }, languages.map((language, index) => {
-                                        return (React.createElement(MenuItem, { key: index, component: Button, onClick: () => { setMenuList({}); setLanguageValue(language); } },
-                                            React.createElement("img", { src: process.env.PUBLIC_URL + `${'/images/lang/' + language + '.jpg'}`, alt: language }),
-                                            language === "ar" ? "Arabic" : "",
-                                            language === "en" ? "English" : ""));
+                                        if (language.name === "ar" || language.name === "en") {
+                                            return (React.createElement(MenuItem, { key: index, component: Button, onClick: (event) => {
+                                                    setMenuList({});
+                                                    language.onClick && language.onClick(event);
+                                                    setLanguageLogo(process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
+                                                } },
+                                                React.createElement("img", { src: process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`, alt: language.name === "ar" ? "Arabic" : "English" }),
+                                                language.name === "ar" ? "Arabic" : "English"));
+                                        }
+                                        else {
+                                            return (React.createElement(MenuItem, { key: index, component: Button, onClick: (event) => {
+                                                    setMenuList({});
+                                                    setLanguageLogo(language.logo || "");
+                                                    language.onClick && language.onClick(event);
+                                                } },
+                                                React.createElement("img", { src: language.logo, alt: language.name }),
+                                                language.name));
+                                        }
                                     }))))),
                     menus && !!Object.keys(menus).length && menus.subMenu && !!menus.subMenu.length && menus.subMenu.map((listItem, index) => {
                         const ItemIcon = listItem.icon && Icons[listItem.icon];

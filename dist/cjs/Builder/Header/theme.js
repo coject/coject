@@ -18,7 +18,7 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
             display: "flex",
             alignItems: "center",
             padding: "0 0 0 16px",
-            justifyContent: "space-between",
+            justifyContent: "center",
             color: theme.palette.secondary.contrastText,
             backgroundColor: theme.palette.secondary.dark,
             transition: "width 225ms cubic-bezier(0.4, 0, 0.6, 1) 0ms",

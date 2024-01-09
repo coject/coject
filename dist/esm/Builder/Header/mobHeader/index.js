@@ -10,8 +10,8 @@ export const MobHeader = ({ logo, icon, menus, setMenus, languages, search, mobM
     const { classes } = useStyles();
     const [menuList, setMenuList] = useState({});
     const [searchView, setSearchView] = useState(false);
-    const [languageValue, setLanguageValue] = useState("en");
     const [accordionState, setAccordionState] = useState("components");
+    const [languageLogo, setLanguageLogo] = useState(process.env.PUBLIC_URL + '/images/lang/en.jpg');
     // Accordion
     const accordionHandler = (Panel) => (_, isExpanded) => {
         setAccordionState(isExpanded ? Panel : false);
@@ -38,14 +38,28 @@ export const MobHeader = ({ logo, icon, menus, setMenus, languages, search, mobM
                     languages && !!languages.length &&
                         React.createElement(MenuItem, null,
                             React.createElement(Button, { onClick: (e) => setMenuList({ languages: e.currentTarget }) },
-                                React.createElement("img", { src: process.env.PUBLIC_URL + `${'/images/lang/' + languageValue + '.jpg'}`, alt: languageValue })),
+                                React.createElement("img", { src: languageLogo, alt: 'Language' })),
                             React.createElement(Menu, { className: classes.subMenuList, anchorEl: menuList && Object.keys(menuList).length && menuList?.languages, open: Boolean(menuList?.languages), onClose: () => setMenuList({}), transformOrigin: { horizontal: 'right', vertical: 'top' }, anchorOrigin: { horizontal: 'right', vertical: 'bottom' } },
                                 React.createElement(Box, { className: classes.subListMenu, onMouseLeave: () => setMenuList({}) },
                                     React.createElement(Box, { className: classes.subMenuContent }, languages.map((language, index) => {
-                                        return (React.createElement(MenuItem, { key: index, component: Button, onClick: () => { setMenuList({}); setLanguageValue(language); } },
-                                            React.createElement("img", { src: process.env.PUBLIC_URL + `${'/images/lang/' + language + '.jpg'}`, alt: language }),
-                                            language === "ar" ? "Arabic" : "",
-                                            language === "en" ? "English" : ""));
+                                        if (language.name === "ar" || language.name === "en") {
+                                            return (React.createElement(MenuItem, { key: index, component: Button, onClick: (event) => {
+                                                    setMenuList({});
+                                                    language.onClick && language.onClick(event);
+                                                    setLanguageLogo(process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
+                                                } },
+                                                React.createElement("img", { src: process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`, alt: language.name === "ar" ? "Arabic" : "English" }),
+                                                language.name === "ar" ? "Arabic" : "English"));
+                                        }
+                                        else {
+                                            return (React.createElement(MenuItem, { key: index, component: Button, onClick: (event) => {
+                                                    setMenuList({});
+                                                    setLanguageLogo(language.logo || "");
+                                                    language.onClick && language.onClick(event);
+                                                } },
+                                                React.createElement("img", { src: language.logo, alt: language.name }),
+                                                language.name));
+                                        }
                                     }))))),
                     !(!!mobMenus?.length && mobMenus.includes("subMenu")) && menus && !!Object.keys(menus).length && menus.subMenu && !!menus.subMenu.length && menus.subMenu.map((listItem, index) => {
                         const ItemIcon = listItem.icon && Icons[listItem.icon];

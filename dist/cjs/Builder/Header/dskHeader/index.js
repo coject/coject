@@ -37,7 +37,7 @@ const theme_1 = __importDefault(require("../theme"));
 const DskHeader = ({ logo, icon, search, languages, menus, setMenus, sidebar, setSidebar }) => {
     const { classes } = (0, theme_1.default)();
     const [menuList, setMenuList] = (0, react_1.useState)({});
-    const [languageValue, setLanguageValue] = (0, react_1.useState)("en");
+    const [languageLogo, setLanguageLogo] = (0, react_1.useState)(process.env.PUBLIC_URL + '/images/lang/en.jpg');
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: classes.dskHeader },
             react_1.default.createElement(material_1.Box, { className: `${classes.dskLogo} ${!sidebar ? classes.closedDskLogo : ""}` }, sidebar
@@ -86,14 +86,28 @@ const DskHeader = ({ logo, icon, search, languages, menus, setMenus, sidebar, se
                     languages && !!languages.length &&
                         react_1.default.createElement(material_1.MenuItem, null,
                             react_1.default.createElement(material_1.Button, { onClick: (e) => setMenuList({ languages: e.currentTarget }) },
-                                react_1.default.createElement("img", { src: process.env.PUBLIC_URL + `${'/images/lang/' + languageValue + '.jpg'}`, alt: languageValue })),
+                                react_1.default.createElement("img", { src: languageLogo, alt: "Language" })),
                             react_1.default.createElement(material_1.Menu, { className: classes.subMenuList, anchorEl: menuList && Object.keys(menuList).length && menuList?.languages, open: Boolean(menuList?.languages), onClose: () => setMenuList({}), transformOrigin: { horizontal: 'right', vertical: 'top' }, anchorOrigin: { horizontal: 'right', vertical: 'bottom' } },
                                 react_1.default.createElement(material_1.Box, { className: classes.subListMenu, onMouseLeave: () => setMenuList({}) },
                                     react_1.default.createElement(material_1.Box, { className: classes.subMenuContent }, languages.map((language, index) => {
-                                        return (react_1.default.createElement(material_1.MenuItem, { key: index, component: material_1.Button, onClick: () => { setMenuList({}); setLanguageValue(language); } },
-                                            react_1.default.createElement("img", { src: process.env.PUBLIC_URL + `${'/images/lang/' + language + '.jpg'}`, alt: language }),
-                                            language === "ar" ? "Arabic" : "",
-                                            language === "en" ? "English" : ""));
+                                        if (language.name === "ar" || language.name === "en") {
+                                            return (react_1.default.createElement(material_1.MenuItem, { key: index, component: material_1.Button, onClick: (event) => {
+                                                    setMenuList({});
+                                                    language.onClick && language.onClick(event);
+                                                    setLanguageLogo(process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
+                                                } },
+                                                react_1.default.createElement("img", { src: process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`, alt: language.name === "ar" ? "Arabic" : "English" }),
+                                                language.name === "ar" ? "Arabic" : "English"));
+                                        }
+                                        else {
+                                            return (react_1.default.createElement(material_1.MenuItem, { key: index, component: material_1.Button, onClick: (event) => {
+                                                    setMenuList({});
+                                                    setLanguageLogo(language.logo || "");
+                                                    language.onClick && language.onClick(event);
+                                                } },
+                                                react_1.default.createElement("img", { src: language.logo, alt: language.name }),
+                                                language.name));
+                                        }
                                     }))))),
                     menus && !!Object.keys(menus).length && menus.subMenu && !!menus.subMenu.length && menus.subMenu.map((listItem, index) => {
                         const ItemIcon = listItem.icon && Components_1.Icons[listItem.icon];

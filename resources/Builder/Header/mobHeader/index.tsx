@@ -16,8 +16,8 @@ interface iMobHeader {
     menus?: any;
     setMenus?: any;
     search?: boolean;
-    languages?: ("ar" | "en" | string)[];
     mobMenus?: ("menu" | "footer" | "subMenu" | "sidebar")[];
+    languages?: {name: "ar" | "en" | string, logo?: string, onClick?: any}[];
 }
 
 export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, languages, search, mobMenus }) => {
@@ -25,8 +25,8 @@ export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, languag
     const { classes } = useStyles();
     const [ menuList, setMenuList ] = useState<any>({});
     const [ searchView, setSearchView ] = useState<boolean>(false);
-    const [ languageValue, setLanguageValue ] = useState<string>("en");
     const [ accordionState, setAccordionState ] = useState<string | false>("components");
+    const [ languageLogo, setLanguageLogo ] = useState<string>(process.env.PUBLIC_URL + '/images/lang/en.jpg');
 
     // Accordion
     const accordionHandler = ( Panel: string ) => ( _: React.SyntheticEvent, isExpanded: boolean ) => {
@@ -65,20 +65,36 @@ export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, languag
                         }
                         { languages && !!languages.length &&
                             <MenuItem>
-                                <Button onClick={(e) => setMenuList({languages: e.currentTarget})}>
-                                    <img src={process.env.PUBLIC_URL + `${'/images/lang/' + languageValue + '.jpg'}`} alt={languageValue}/>
+                                <Button onClick={(e) => setMenuList({ languages: e.currentTarget })}>
+                                    <img src={languageLogo} alt={'Language'} />
                                 </Button>
                                 <Menu className={classes.subMenuList} anchorEl={menuList && Object.keys(menuList).length && menuList?.languages} open={Boolean(menuList?.languages)} onClose={() => setMenuList({})} transformOrigin={{horizontal: 'right', vertical: 'top'}} anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}>
                                     <Box className={classes.subListMenu} onMouseLeave={() => setMenuList({})}>
                                         <Box className={classes.subMenuContent}>
-                                            { languages.map((language: string, index: number) => {
-                                                return (
-                                                    <MenuItem key={index} component={Button} onClick={() => { setMenuList({}); setLanguageValue(language) }}>
-                                                        <img src={process.env.PUBLIC_URL + `${'/images/lang/' + language + '.jpg'}`} alt={language} />
-                                                        { language === "ar" ? "Arabic" : "" }
-                                                        { language === "en" ? "English" : "" }
-                                                    </MenuItem>
-                                                )
+                                            { languages.map((language: {name: "ar" | "en" | string, logo?: string, onClick?: any}, index: number) => {
+                                                if (language.name === "ar" || language.name === "en") {
+                                                    return (
+                                                        <MenuItem key={index} component={Button} onClick={(event) => {
+                                                            setMenuList({});
+                                                            language.onClick && language.onClick(event);
+                                                            setLanguageLogo(process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
+                                                        }}>
+                                                            <img src={process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`} alt={language.name === "ar" ? "Arabic" : "English"} />
+                                                            { language.name === "ar" ? "Arabic" : "English" }
+                                                        </MenuItem>
+                                                    )
+                                                } else {
+                                                    return (
+                                                        <MenuItem key={index} component={Button} onClick={(event) => {
+                                                            setMenuList({});
+                                                            setLanguageLogo(language.logo || "");
+                                                            language.onClick && language.onClick(event);
+                                                        }}>
+                                                            <img src={language.logo} alt={language.name} />
+                                                            { language.name }
+                                                        </MenuItem>
+                                                    )
+                                                }
                                             }) }
                                         </Box>
                                     </Box>

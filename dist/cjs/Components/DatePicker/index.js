@@ -42,19 +42,19 @@ const DateTimePicker_1 = require("@mui/x-date-pickers/DateTimePicker");
 const DatePicker_1 = require("@mui/x-date-pickers/DatePicker");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const DatePicker = ({ name, value, hijri, format, inFormat, outFormat, minDate, maxDate, error, helperText, style, withTime, textView, fullWidth, onChange, ...props }) => {
+const DatePicker = ({ name, value, hijri, viewFormat, actionFormat, minDate, maxDate, error, helperText, style, withTime, textView, fullWidth, onChange, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const DateComponent = withTime ? DateTimePicker_1.DateTimePicker : DatePicker_1.DatePicker;
     const [selectedDate, setSelectedDate] = (0, react_1.useState)(hijri ? (0, moment_hijri_1.default)(new Date()) : (0, moment_1.default)(new Date()));
     const { setValue, control, getValues, watch } = (0, react_hook_form_1.useFormContext)() || {};
     // Calendar
     const Calendar = hijri
-        ? { minDate: (0, moment_hijri_1.default)(minDate ? minDate : "14-03-1937", inFormat ? inFormat : "DD-MM-YYYY"), maxDate: (0, moment_hijri_1.default)(maxDate ? maxDate : "26-10-2076", inFormat ? inFormat : "DD-MM-YYYY") }
-        : { minDate: (0, moment_1.default)(minDate ? minDate : "01-01-1900", inFormat ? inFormat : "DD-MM-YYYY"), maxDate: (0, moment_1.default)(minDate ? minDate : "01-12-2099", inFormat ? inFormat : "DD-MM-YYYY") };
+        ? { minDate: (0, moment_hijri_1.default)(minDate ? minDate : "14-03-1937", (actionFormat && minDate) ? actionFormat : "DD-MM-YYYY"), maxDate: (0, moment_hijri_1.default)(maxDate ? maxDate : "26-10-2076", (actionFormat && maxDate) ? actionFormat : "DD-MM-YYYY") }
+        : { minDate: (0, moment_1.default)(minDate ? minDate : "01-01-1900", (actionFormat && minDate) ? actionFormat : "DD-MM-YYYY"), maxDate: (0, moment_1.default)(maxDate ? maxDate : "01-12-2099", (actionFormat && maxDate) ? actionFormat : "DD-MM-YYYY") };
     // Methods Watching
     (0, react_1.useEffect)(() => {
         if (getValues && getValues(name || "default")) {
-            const ValueFormat = hijri ? (0, moment_hijri_1.default)(getValues(name || "default"), inFormat ? inFormat : "DD-MM-YYYY") : (0, moment_1.default)(getValues(name || "default"), inFormat ? inFormat : "DD-MM-YYYY");
+            const ValueFormat = hijri ? (0, moment_hijri_1.default)(getValues(name || "default"), actionFormat ? actionFormat : "DD-MM-YYYY") : (0, moment_1.default)(getValues(name || "default"), actionFormat ? actionFormat : "DD-MM-YYYY");
             setSelectedDate(ValueFormat);
         }
         else
@@ -63,24 +63,24 @@ const DatePicker = ({ name, value, hijri, format, inFormat, outFormat, minDate, 
     }, [getValues, name, watch && watch(name || "default")]);
     // Default Value
     (0, react_1.useEffect)(() => {
-        control && setValue(name || "default", selectedDate.format(outFormat ? outFormat : "DD-MM-YYYY"));
-    }, [control, setValue, name, selectedDate, outFormat]);
+        control && setValue(name || "default", selectedDate.format(actionFormat ? actionFormat : "DD-MM-YYYY"));
+    }, [control, setValue, name, selectedDate, actionFormat]);
     // Normal Value
     (0, react_1.useEffect)(() => {
         if (value) {
-            const ValueFormat = hijri ? (0, moment_hijri_1.default)(value, inFormat ? inFormat : "DD-MM-YYYY") : (0, moment_1.default)(value, inFormat ? inFormat : "DD-MM-YYYY");
+            const ValueFormat = hijri ? (0, moment_hijri_1.default)(value, actionFormat ? actionFormat : "DD-MM-YYYY") : (0, moment_1.default)(value, actionFormat ? actionFormat : "DD-MM-YYYY");
             setSelectedDate(ValueFormat);
-            control && setValue(name || "default", ValueFormat.format(outFormat ? outFormat : "DD-MM-YYYY"));
+            control && setValue(name || "default", ValueFormat.format(actionFormat ? actionFormat : "DD-MM-YYYY"));
         }
-    }, [value, setValue, control, name, hijri, inFormat, outFormat]);
+    }, [value, setValue, control, name, hijri, actionFormat]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: `${classes.root} ${error ? classes.rootError : ""}` },
             react_1.default.createElement(LocalizationProvider_1.LocalizationProvider, { dateAdapter: hijri ? AdapterMomentHijri_1.AdapterMomentHijri : AdapterMoment_1.AdapterMoment }, textView
-                ? react_1.default.createElement(material_1.Typography, { ...style, ...props }, selectedDate.format(format ? format : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY"))
-                : react_1.default.createElement(DateComponent, { className: `${fullWidth ? "MuiFormControl-fullWidth" : ""}`, label: props.label ? props.label : name, value: selectedDate, ...style, ...Calendar, ...props, format: format ? format : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY", onChange: (newValue) => {
+                ? react_1.default.createElement(material_1.Typography, { ...style, ...props }, selectedDate.format(viewFormat ? viewFormat : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY"))
+                : react_1.default.createElement(DateComponent, { className: `${fullWidth ? "MuiFormControl-fullWidth" : ""}`, label: props.label ? props.label : name, value: selectedDate, ...style, ...Calendar, ...props, format: viewFormat ? viewFormat : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY", onChange: (newValue) => {
                         setSelectedDate(newValue);
-                        onChange && onChange(newValue.format(outFormat ? outFormat : "DD-MM-YYYY"));
-                        control && setValue(name || "default", newValue.format(outFormat ? outFormat : "DD-MM-YYYY"));
+                        onChange && onChange(newValue.format(actionFormat ? actionFormat : "DD-MM-YYYY"));
+                        control && setValue(name || "default", newValue.format(actionFormat ? actionFormat : "DD-MM-YYYY"));
                     } })),
             helperText && react_1.default.createElement(material_1.FormHelperText, { className: classes.error }, helperText))));
 };

@@ -28,7 +28,10 @@ export const Grid = ({ dataSource, staticData, callback, customKey, onAddCallbac
     // Dynamic Data
     useEffect(() => {
         if (dataSource?.apiUrl && !staticData) {
-            Request({ dataSource, dispatch, callback: (data) => setGridData(data) }).then();
+            Request({ dataSource, dispatch, callback: (data) => {
+                    setGridData(data);
+                    callback && callback(data);
+                } }).then();
         }
     }, [callData, dataSource, dataSource?.apiUrl, dispatch, staticData]);
     // Dynamic Data ( Schema )
@@ -37,7 +40,6 @@ export const Grid = ({ dataSource, staticData, callback, customKey, onAddCallbac
             schema.map((field) => {
                 if (field.component === "select" && field.componentProps?.dataSource && !field.componentProps.staticData) {
                     return Request({ dataSource: field.componentProps.dataSource, callback: (data) => {
-                            callback && callback(data);
                             setSchemaData((prev) => ({ ...prev, [field.field]: data }));
                         } }).then();
                 }
@@ -63,7 +65,7 @@ export const Grid = ({ dataSource, staticData, callback, customKey, onAddCallbac
                         columnSchema.componentProps = { label: columnSchema.headerName };
                 }
                 if (columnSchema.component === "date" && !columnSchema.renderCell) {
-                    columnSchema.renderCell = (data) => React.createElement(DatePicker, { value: data.value, textView: true });
+                    columnSchema.renderCell = (data) => React.createElement(DatePicker, { value: data.value, ...columnSchema.componentProps, textView: true });
                 }
                 if (columnSchema.component === "select" && columnSchema.componentProps?.dataSource) {
                     const customKey = columnSchema.componentProps.customKey;
@@ -137,7 +139,7 @@ export const Grid = ({ dataSource, staticData, callback, customKey, onAddCallbac
                     onAddCallback && onAddCallback(data);
                 }, setModal: setAddModal })),
         React.createElement(Modal, { title: "Update Item", open: editModal, setOpen: setEditModal },
-            React.createElement(Form, { dataSource: dataSource, staticData: staticData, schema: schema ? schema : defaultSchema, mode: "update", noRequest: noRequest || noEditRequest, ...(customKey ? { customKey: customKey } : {}), ...(invisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
+            React.createElement(Form, { dataSource: dataSource, staticData: selectedData, schema: schema ? schema : defaultSchema, mode: "update", noRequest: noRequest || noEditRequest, ...(customKey ? { customKey: customKey } : {}), ...(invisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
                     onEditSubmit && onEditSubmit(data);
                     !!staticData?.length && setEditModal(false);
                 }, callback: (data) => {

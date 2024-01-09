@@ -8,15 +8,14 @@ type iDatePicker = DateTimePickerProps<any> & DatePickerProps<any> & {
     onChange?: any;
     error?: boolean;
     hijri?: boolean;
-    format?: string;
     minDate?: string;
     maxDate?: string;
-    inFormat?: string;
-    outFormat?: string;
     withTime?: boolean;
     textView?: boolean;
     fullWidth?: boolean;
     helperText?: string;
+    viewFormat?: string;
+    actionFormat?: string;
 };
 export declare const DatePicker: FC<iDatePicker>;
 export {};

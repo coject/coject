@@ -99,7 +99,10 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
     // Dynamic Data
     useEffect(() => {
         if (dataSource?.apiUrl && !staticData) {
-            Request({ dataSource, dispatch, callback: (data: any) => setGridData(data) }).then();
+            Request({ dataSource, dispatch, callback: (data: any) => {
+                setGridData(data);
+                callback && callback(data);
+            } }).then();
         }
     }, [callData, dataSource, dataSource?.apiUrl, dispatch, staticData]);
 
@@ -109,7 +112,6 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
             schema.map((field: any) => {
                 if (field.component === "select" && field.componentProps?.dataSource && !field.componentProps.staticData) {
                     return Request({ dataSource: field.componentProps.dataSource, callback: (data: any) => {
-                        callback && callback(data);
                         setSchemaData((prev: any) => ({ ...prev, [field.field]: data }));
                     } }).then();
                 } else return null;
@@ -135,7 +137,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
                     else columnSchema.componentProps = {label: columnSchema.headerName}
                 }
                 if (columnSchema.component === "date" && !columnSchema.renderCell) {
-                    columnSchema.renderCell     = (data: any) => <DatePicker value={data.value} textView />;
+                    columnSchema.renderCell = (data: any) => <DatePicker value={data.value} {...columnSchema.componentProps} textView />;
                 }
                 if (columnSchema.component === "select" && columnSchema.componentProps?.dataSource) {
                     const customKey = columnSchema.componentProps.customKey;
@@ -224,7 +226,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
 
             {/* Update Modal */}
             <Modal title={"Update Item"} open={editModal} setOpen={setEditModal}>
-                <Form dataSource={dataSource} staticData={staticData} schema={schema ? schema : defaultSchema} mode={"update"} noRequest={noRequest || noEditRequest} {...(customKey ? {customKey: customKey} : {})} {...(invisibility ? {invisibility: formInvisibility} : {})} onSubmit={(data: any) => {
+                <Form dataSource={dataSource} staticData={selectedData} schema={schema ? schema : defaultSchema} mode={"update"} noRequest={noRequest || noEditRequest} {...(customKey ? {customKey: customKey} : {})} {...(invisibility ? {invisibility: formInvisibility} : {})} onSubmit={(data: any) => {
                     onEditSubmit && onEditSubmit(data);
                     !!staticData?.length && setEditModal(false);
                 }} callback={(data: any) => {

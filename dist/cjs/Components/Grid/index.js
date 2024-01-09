@@ -57,7 +57,10 @@ const Grid = ({ dataSource, staticData, callback, customKey, onAddCallback, onEd
     // Dynamic Data
     (0, react_1.useEffect)(() => {
         if (dataSource?.apiUrl && !staticData) {
-            (0, Services_1.Request)({ dataSource, dispatch, callback: (data) => setGridData(data) }).then();
+            (0, Services_1.Request)({ dataSource, dispatch, callback: (data) => {
+                    setGridData(data);
+                    callback && callback(data);
+                } }).then();
         }
     }, [callData, dataSource, dataSource?.apiUrl, dispatch, staticData]);
     // Dynamic Data ( Schema )
@@ -66,7 +69,6 @@ const Grid = ({ dataSource, staticData, callback, customKey, onAddCallback, onEd
             schema.map((field) => {
                 if (field.component === "select" && field.componentProps?.dataSource && !field.componentProps.staticData) {
                     return (0, Services_1.Request)({ dataSource: field.componentProps.dataSource, callback: (data) => {
-                            callback && callback(data);
                             setSchemaData((prev) => ({ ...prev, [field.field]: data }));
                         } }).then();
                 }
@@ -92,7 +94,7 @@ const Grid = ({ dataSource, staticData, callback, customKey, onAddCallback, onEd
                         columnSchema.componentProps = { label: columnSchema.headerName };
                 }
                 if (columnSchema.component === "date" && !columnSchema.renderCell) {
-                    columnSchema.renderCell = (data) => react_1.default.createElement(index_1.DatePicker, { value: data.value, textView: true });
+                    columnSchema.renderCell = (data) => react_1.default.createElement(index_1.DatePicker, { value: data.value, ...columnSchema.componentProps, textView: true });
                 }
                 if (columnSchema.component === "select" && columnSchema.componentProps?.dataSource) {
                     const customKey = columnSchema.componentProps.customKey;
@@ -166,7 +168,7 @@ const Grid = ({ dataSource, staticData, callback, customKey, onAddCallback, onEd
                     onAddCallback && onAddCallback(data);
                 }, setModal: setAddModal })),
         react_1.default.createElement(index_1.Modal, { title: "Update Item", open: editModal, setOpen: setEditModal },
-            react_1.default.createElement(index_1.Form, { dataSource: dataSource, staticData: staticData, schema: schema ? schema : defaultSchema, mode: "update", noRequest: noRequest || noEditRequest, ...(customKey ? { customKey: customKey } : {}), ...(invisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
+            react_1.default.createElement(index_1.Form, { dataSource: dataSource, staticData: selectedData, schema: schema ? schema : defaultSchema, mode: "update", noRequest: noRequest || noEditRequest, ...(customKey ? { customKey: customKey } : {}), ...(invisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
                     onEditSubmit && onEditSubmit(data);
                     !!staticData?.length && setEditModal(false);
                 }, callback: (data) => {

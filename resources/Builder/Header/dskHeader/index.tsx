@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useEffect } from "react";
 
 // Material UI
 import { Box, IconButton, List, ListItem, TextField, Button, Menu, MenuItem } from "@mui/material";
@@ -18,13 +18,25 @@ interface DskHeaderInterface {
     setSidebar?: any;
     search?: boolean;
     sidebar?: boolean;
+    defaultLanguage?: "ar" | "en" | string;
     languages?: {name: "ar" | "en" | string, logo?: string, onClick?: any}[];
 }
 
-export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, languages, menus, setMenus, sidebar, setSidebar }) => {
+export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, languages, defaultLanguage, menus, setMenus, sidebar, setSidebar }) => {
     const { classes } = useStyles();
     const [ menuList, setMenuList ] = useState<any>({});
     const [ languageLogo, setLanguageLogo ] = useState<string>(process.env.PUBLIC_URL + '/images/lang/en.jpg');
+
+    // Default Language Logo
+    useEffect(() => {
+        if (defaultLanguage) {
+            if (defaultLanguage === 'ar' || defaultLanguage === 'en') {
+                setLanguageLogo(process.env.PUBLIC_URL + `${defaultLanguage === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
+            } else if (languages?.length) {
+                setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0].logo || "");
+            }
+        }
+    }, [defaultLanguage]);
 
     return (
         <React.Fragment>

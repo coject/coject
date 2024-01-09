@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 // Material UI
 import { Box, IconButton, Menu, Typography, Button, MenuItem, TextField, Accordion, AccordionSummary, AccordionDetails, Divider, List, ListItem } from "@mui/material";
 // Material Icon
 import * as MuiIcons from "@mui/icons-material";
 // Styles
 import useStyles from "../theme";
-export const MobHeader = ({ logo, icon, menus, setMenus, languages, search, mobMenus }) => {
+export const MobHeader = ({ logo, icon, menus, setMenus, languages, defaultLanguage, search, mobMenus }) => {
     const Icons = MuiIcons;
     const { classes } = useStyles();
     const [menuList, setMenuList] = useState({});
@@ -16,6 +16,17 @@ export const MobHeader = ({ logo, icon, menus, setMenus, languages, search, mobM
     const accordionHandler = (Panel) => (_, isExpanded) => {
         setAccordionState(isExpanded ? Panel : false);
     };
+    // Default Language Logo
+    useEffect(() => {
+        if (defaultLanguage) {
+            if (defaultLanguage === 'ar' || defaultLanguage === 'en') {
+                setLanguageLogo(process.env.PUBLIC_URL + `${defaultLanguage === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
+            }
+            else if (languages?.length) {
+                setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0].logo || "");
+            }
+        }
+    }, [defaultLanguage]);
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: classes.mobHeader },
             React.createElement(Box, { className: classes.mobLogo },

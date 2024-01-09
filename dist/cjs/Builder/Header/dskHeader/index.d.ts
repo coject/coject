@@ -7,6 +7,7 @@ interface DskHeaderInterface {
     setSidebar?: any;
     search?: boolean;
     sidebar?: boolean;
+    defaultLanguage?: "ar" | "en" | string;
     languages?: {
         name: "ar" | "en" | string;
         logo?: string;

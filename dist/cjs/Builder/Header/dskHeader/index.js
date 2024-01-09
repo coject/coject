@@ -34,10 +34,21 @@ const material_1 = require("@mui/material");
 const Components_1 = require("../../../Components");
 // Styles
 const theme_1 = __importDefault(require("../theme"));
-const DskHeader = ({ logo, icon, search, languages, menus, setMenus, sidebar, setSidebar }) => {
+const DskHeader = ({ logo, icon, search, languages, defaultLanguage, menus, setMenus, sidebar, setSidebar }) => {
     const { classes } = (0, theme_1.default)();
     const [menuList, setMenuList] = (0, react_1.useState)({});
     const [languageLogo, setLanguageLogo] = (0, react_1.useState)(process.env.PUBLIC_URL + '/images/lang/en.jpg');
+    // Default Language Logo
+    (0, react_1.useEffect)(() => {
+        if (defaultLanguage) {
+            if (defaultLanguage === 'ar' || defaultLanguage === 'en') {
+                setLanguageLogo(process.env.PUBLIC_URL + `${defaultLanguage === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
+            }
+            else if (languages?.length) {
+                setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0].logo || "");
+            }
+        }
+    }, [defaultLanguage]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: classes.dskHeader },
             react_1.default.createElement(material_1.Box, { className: `${classes.dskLogo} ${!sidebar ? classes.closedDskLogo : ""}` }, sidebar

@@ -1,14 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 // Material UI
 import { Box, IconButton, List, ListItem, TextField, Button, Menu, MenuItem } from "@mui/material";
 // Coject
 import { Icons } from "../../../Components";
 // Styles
 import useStyles from "../theme";
-export const DskHeader = ({ logo, icon, search, languages, menus, setMenus, sidebar, setSidebar }) => {
+export const DskHeader = ({ logo, icon, search, languages, defaultLanguage, menus, setMenus, sidebar, setSidebar }) => {
     const { classes } = useStyles();
     const [menuList, setMenuList] = useState({});
     const [languageLogo, setLanguageLogo] = useState(process.env.PUBLIC_URL + '/images/lang/en.jpg');
+    // Default Language Logo
+    useEffect(() => {
+        if (defaultLanguage) {
+            if (defaultLanguage === 'ar' || defaultLanguage === 'en') {
+                setLanguageLogo(process.env.PUBLIC_URL + `${defaultLanguage === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
+            }
+            else if (languages?.length) {
+                setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0].logo || "");
+            }
+        }
+    }, [defaultLanguage]);
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: classes.dskHeader },
             React.createElement(Box, { className: `${classes.dskLogo} ${!sidebar ? classes.closedDskLogo : ""}` }, sidebar

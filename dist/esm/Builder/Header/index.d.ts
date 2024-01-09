@@ -7,6 +7,7 @@ interface HeaderInterface {
     setSidebar?: any;
     search?: boolean;
     sidebar?: boolean;
+    defaultLanguage?: "ar" | "en" | string;
     mobMenus?: ("menu" | "footer" | "subMenu" | "sidebar")[];
     languages?: {
         name: "ar" | "en" | string;

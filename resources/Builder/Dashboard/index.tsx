@@ -17,11 +17,12 @@ interface iDashboard {
     search?: boolean;
     children?: ReactNode;
     copyRight?: ReactNode;
+    defaultLanguage?: "ar" | "en" | string;
     mobMenus?: ("menu" | "footer" | "subMenu" | "sidebar")[];
     languages?: {name: "ar" | "en" | string, logo?: string, onClick?: any}[];
 }
 
-export const Dashboard: FC<iDashboard> = ({ menus, logo, icon, search, languages, mobMenus, copyRight, children }) => {
+export const Dashboard: FC<iDashboard> = ({ menus, logo, icon, search, languages, defaultLanguage, mobMenus, copyRight, children }) => {
     const { classes } = useStyles();
     const [ menusList, setMenusList ] = useState(menus);
     const [ sidebar, setSidebar ] = useState(true);
@@ -29,7 +30,7 @@ export const Dashboard: FC<iDashboard> = ({ menus, logo, icon, search, languages
     return (
         <React.Fragment>
             <Box className={classes.root}>
-                <Header sidebar={sidebar} setSidebar={setSidebar} menus={menusList} setMenus={setMenusList} logo={logo} icon={icon} search={search} languages={languages} mobMenus={mobMenus} />
+                <Header sidebar={sidebar} setSidebar={setSidebar} menus={menusList} setMenus={setMenusList} logo={logo} icon={icon} search={search} languages={languages} defaultLanguage={defaultLanguage} mobMenus={mobMenus} />
                 <Sidebar sidebar={sidebar} menus={menusList} setMenus={setMenusList} />
                 <Box className={`${classes.pages} ${!sidebar ? classes.closeSidebar : ""}`}>
                     {children}

@@ -5,6 +5,7 @@ interface iMobHeader {
     menus?: any;
     setMenus?: any;
     search?: boolean;
+    defaultLanguage?: "ar" | "en" | string;
     mobMenus?: ("menu" | "footer" | "subMenu" | "sidebar")[];
     languages?: {
         name: "ar" | "en" | string;

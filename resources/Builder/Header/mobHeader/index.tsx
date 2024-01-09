@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useEffect } from "react";
 
 // Material UI
 import { Box, IconButton, Menu, Typography, Button, MenuItem, TextField, Accordion, AccordionSummary, AccordionDetails, Divider, List, ListItem } from "@mui/material";
@@ -16,11 +16,12 @@ interface iMobHeader {
     menus?: any;
     setMenus?: any;
     search?: boolean;
+    defaultLanguage?: "ar" | "en" | string;
     mobMenus?: ("menu" | "footer" | "subMenu" | "sidebar")[];
     languages?: {name: "ar" | "en" | string, logo?: string, onClick?: any}[];
 }
 
-export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, languages, search, mobMenus }) => {
+export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, languages, defaultLanguage, search, mobMenus }) => {
     const Icons: any = MuiIcons;
     const { classes } = useStyles();
     const [ menuList, setMenuList ] = useState<any>({});
@@ -32,6 +33,17 @@ export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, languag
     const accordionHandler = ( Panel: string ) => ( _: React.SyntheticEvent, isExpanded: boolean ) => {
         setAccordionState(isExpanded ? Panel : false);
     };
+
+    // Default Language Logo
+    useEffect(() => {
+        if (defaultLanguage) {
+            if (defaultLanguage === 'ar' || defaultLanguage === 'en') {
+                setLanguageLogo(process.env.PUBLIC_URL + `${defaultLanguage === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
+            } else if (languages?.length) {
+                setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0].logo || "");
+            }
+        }
+    }, [defaultLanguage]);
 
     return (
         <React.Fragment>

@@ -20,4 +20,6 @@ __exportStar(require("./Builder"), exports);
 __exportStar(require("./Components"), exports);
 // Services
 __exportStar(require("./Services"), exports);
+// RTL Style
+require("./rtl_style.css");
 //# sourceMappingURL=index.js.map

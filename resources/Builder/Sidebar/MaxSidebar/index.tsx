@@ -40,7 +40,7 @@ export const MaxSidebar: FC<iMaxSidebar> = ({ menus, setMenus }) => {
                                     </AccordionSummary>
                                 </Tooltip>
                                 <AccordionDetails>
-                                    <List className={classes.accordionList}>
+                                    <List className={`${classes.accordionList} maxMenuList`}>
                                         { listItem.children.map((childListItem: any, childIndex: number) => {
                                             const ChildItemIcon = childListItem.icon && Icons[childListItem.icon];
                                             return (

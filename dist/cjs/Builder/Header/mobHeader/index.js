@@ -55,7 +55,7 @@ const MobHeader = ({ logo, icon, menus, setMenus, languages, defaultLanguage, se
                 setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0].logo || "");
             }
         }
-    }, [defaultLanguage]);
+    }, [defaultLanguage, languages]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: classes.mobHeader },
             react_1.default.createElement(material_1.Box, { className: classes.mobLogo },
@@ -72,7 +72,7 @@ const MobHeader = ({ logo, icon, menus, setMenus, languages, defaultLanguage, se
                                 react_1.default.createElement(Icons.SearchOutlined, null)),
                             searchView &&
                                 react_1.default.createElement(material_1.Box, { className: classes.mobSearch },
-                                    react_1.default.createElement(material_1.IconButton, null,
+                                    react_1.default.createElement(material_1.IconButton, { className: "mobSearchBtn" },
                                         react_1.default.createElement(Icons.Search, null)),
                                     react_1.default.createElement(material_1.TextField, { fullWidth: true, placeholder: "Search" }))),
                     languages && !!languages.length &&
@@ -130,8 +130,8 @@ const MobHeader = ({ logo, icon, menus, setMenus, languages, defaultLanguage, se
                         }
                     })),
                 menuList && !!Object.keys(menuList).length && !!mobMenus?.length &&
-                    react_1.default.createElement(material_1.Menu, { className: classes.mobMenuList, anchorEl: menuList && Object.keys(menuList).length && menuList?.mainMenu, open: Boolean(menuList?.mainMenu), onClose: () => setMenuList({}) },
-                        react_1.default.createElement(material_1.Button, { className: classes.mobMenuClose, onClick: () => setMenuList({}) },
+                    react_1.default.createElement(material_1.Menu, { className: `${classes.mobMenuList} mobMenuList`, anchorEl: menuList && Object.keys(menuList).length && menuList?.mainMenu, open: Boolean(menuList?.mainMenu), onClose: () => setMenuList({}) },
+                        react_1.default.createElement(material_1.Button, { className: `${classes.mobMenuClose} mobMenuClose`, onClick: () => setMenuList({}) },
                             react_1.default.createElement(Icons.Close, null)),
                         react_1.default.createElement(material_1.Box, { className: classes.mobMenuContent },
                             react_1.default.createElement(material_1.MenuItem, { className: classes.mobMenuImage },

@@ -33,7 +33,7 @@ export const Grid = ({ dataSource, staticData, callback, customKey, onAddCallbac
                     callback && callback(data);
                 } }).then();
         }
-    }, [callData, dataSource, dataSource?.apiUrl, dispatch, staticData]);
+    }, [callData, dataSource, dataSource?.apiUrl, dispatch, staticData, callback]);
     // Dynamic Data ( Schema )
     useEffect(() => {
         if (schema) {

@@ -43,7 +43,7 @@ export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, languag
                 setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0].logo || "");
             }
         }
-    }, [defaultLanguage]);
+    }, [defaultLanguage, languages]);
 
     return (
         <React.Fragment>
@@ -69,7 +69,7 @@ export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, languag
                                 </Button>
                                 { searchView &&
                                     <Box className={classes.mobSearch}>
-                                        <IconButton><Icons.Search/></IconButton>
+                                        <IconButton className={"mobSearchBtn"}><Icons.Search/></IconButton>
                                         <TextField fullWidth placeholder={"Search"}/>
                                     </Box>
                                 }
@@ -158,8 +158,8 @@ export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, languag
                         }) }
                     </List>
                     { menuList && !!Object.keys(menuList).length && !!mobMenus?.length &&
-                        <Menu className={classes.mobMenuList} anchorEl={menuList && Object.keys(menuList).length && menuList?.mainMenu} open={Boolean(menuList?.mainMenu)} onClose={() => setMenuList({})}>
-                            <Button className={classes.mobMenuClose} onClick={() => setMenuList({})}><Icons.Close /></Button>
+                        <Menu className={`${classes.mobMenuList} mobMenuList`} anchorEl={menuList && Object.keys(menuList).length && menuList?.mainMenu} open={Boolean(menuList?.mainMenu)} onClose={() => setMenuList({})}>
+                            <Button className={`${classes.mobMenuClose} mobMenuClose`} onClick={() => setMenuList({})}><Icons.Close /></Button>
                             <Box className={classes.mobMenuContent}>
                                 <MenuItem className={classes.mobMenuImage}>
                                     <Button href={"/"}><img src={logo} alt={"Logo"} /></Button>

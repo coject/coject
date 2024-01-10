@@ -104,7 +104,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
                 callback && callback(data);
             } }).then();
         }
-    }, [callData, dataSource, dataSource?.apiUrl, dispatch, staticData]);
+    }, [callData, dataSource, dataSource?.apiUrl, dispatch, staticData, callback]);
 
     // Dynamic Data ( Schema )
     useEffect(() => {

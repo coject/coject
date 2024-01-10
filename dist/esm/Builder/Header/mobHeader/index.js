@@ -26,7 +26,7 @@ export const MobHeader = ({ logo, icon, menus, setMenus, languages, defaultLangu
                 setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0].logo || "");
             }
         }
-    }, [defaultLanguage]);
+    }, [defaultLanguage, languages]);
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: classes.mobHeader },
             React.createElement(Box, { className: classes.mobLogo },
@@ -43,7 +43,7 @@ export const MobHeader = ({ logo, icon, menus, setMenus, languages, defaultLangu
                                 React.createElement(Icons.SearchOutlined, null)),
                             searchView &&
                                 React.createElement(Box, { className: classes.mobSearch },
-                                    React.createElement(IconButton, null,
+                                    React.createElement(IconButton, { className: "mobSearchBtn" },
                                         React.createElement(Icons.Search, null)),
                                     React.createElement(TextField, { fullWidth: true, placeholder: "Search" }))),
                     languages && !!languages.length &&
@@ -101,8 +101,8 @@ export const MobHeader = ({ logo, icon, menus, setMenus, languages, defaultLangu
                         }
                     })),
                 menuList && !!Object.keys(menuList).length && !!mobMenus?.length &&
-                    React.createElement(Menu, { className: classes.mobMenuList, anchorEl: menuList && Object.keys(menuList).length && menuList?.mainMenu, open: Boolean(menuList?.mainMenu), onClose: () => setMenuList({}) },
-                        React.createElement(Button, { className: classes.mobMenuClose, onClick: () => setMenuList({}) },
+                    React.createElement(Menu, { className: `${classes.mobMenuList} mobMenuList`, anchorEl: menuList && Object.keys(menuList).length && menuList?.mainMenu, open: Boolean(menuList?.mainMenu), onClose: () => setMenuList({}) },
+                        React.createElement(Button, { className: `${classes.mobMenuClose} mobMenuClose`, onClick: () => setMenuList({}) },
                             React.createElement(Icons.Close, null)),
                         React.createElement(Box, { className: classes.mobMenuContent },
                             React.createElement(MenuItem, { className: classes.mobMenuImage },

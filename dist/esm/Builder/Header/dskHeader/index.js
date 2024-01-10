@@ -19,7 +19,7 @@ export const DskHeader = ({ logo, icon, search, languages, defaultLanguage, menu
                 setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0].logo || "");
             }
         }
-    }, [defaultLanguage]);
+    }, [defaultLanguage, languages]);
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: classes.dskHeader },
             React.createElement(Box, { className: `${classes.dskLogo} ${!sidebar ? classes.closedDskLogo : ""}` }, sidebar

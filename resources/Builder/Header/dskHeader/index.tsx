@@ -36,7 +36,7 @@ export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, language
                 setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0].logo || "");
             }
         }
-    }, [defaultLanguage]);
+    }, [defaultLanguage, languages]);
 
     return (
         <React.Fragment>

@@ -17,7 +17,6 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
             height: "100%",
             display: "flex",
             alignItems: "center",
-            padding: "0 0 0 16px",
             justifyContent: "center",
             color: theme.palette.secondary.contrastText,
             backgroundColor: theme.palette.secondary.dark,

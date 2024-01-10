@@ -19,7 +19,7 @@ export const MinSidebar = ({ menus, setMenus }) => {
                                 listItem.image && React.createElement("img", { src: listItem.image, alt: listItem.label }),
                                 ItemIcon ? React.createElement(ItemIcon, null) : "")),
                         menuList && !!Object.keys(menuList).length &&
-                            React.createElement(Menu, { className: classes.menuList, anchorEl: menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")], open: Boolean(menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")]), onClose: () => setMenuList({}), transformOrigin: { horizontal: "right", vertical: "top" }, anchorOrigin: { horizontal: "right", vertical: "top" } }, listItem.children.map((childListItem, childIndex) => {
+                            React.createElement(Menu, { className: `${classes.menuList} minMenuList`, anchorEl: menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")], open: Boolean(menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")]), onClose: () => setMenuList({}), transformOrigin: { horizontal: "right", vertical: "top" }, anchorOrigin: { horizontal: "right", vertical: "top" } }, listItem.children.map((childListItem, childIndex) => {
                                 const ChildItemIcon = childListItem.icon && Icons[childListItem.icon];
                                 return (React.createElement(MenuItem, { key: childIndex, onClick: () => setMenuList({}) },
                                     React.createElement(Button, { ...(childListItem.link ? { href: childListItem.link } : {}), onClick: () => childListItem.onClick && childListItem.onClick(setMenus) },

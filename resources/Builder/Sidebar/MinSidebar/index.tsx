@@ -35,7 +35,7 @@ export const MinSidebar: FC<iMinSidebar> = ({ menus, setMenus }) => {
                                         </Button>
                                     </Tooltip>
                                     { menuList && !!Object.keys(menuList).length &&
-                                        <Menu className={classes.menuList} anchorEl={menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")]} open={Boolean(menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")])} onClose={() => setMenuList({})} transformOrigin={{ horizontal: "right", vertical: "top" }} anchorOrigin={{ horizontal: "right", vertical: "top" }}>
+                                        <Menu className={`${classes.menuList} minMenuList`} anchorEl={menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")]} open={Boolean(menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")])} onClose={() => setMenuList({})} transformOrigin={{ horizontal: "right", vertical: "top" }} anchorOrigin={{ horizontal: "right", vertical: "top" }}>
                                             { listItem.children.map((childListItem: any, childIndex: number) => {
                                                 const ChildItemIcon = childListItem.icon && Icons[childListItem.icon];
                                                 return (

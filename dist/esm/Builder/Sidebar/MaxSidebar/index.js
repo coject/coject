@@ -23,7 +23,7 @@ export const MaxSidebar = ({ menus, setMenus }) => {
                             ItemIcon ? React.createElement(ItemIcon, null) : "",
                             !listItem.noLabel && listItem.label)),
                     React.createElement(AccordionDetails, null,
-                        React.createElement(List, { className: classes.accordionList }, listItem.children.map((childListItem, childIndex) => {
+                        React.createElement(List, { className: `${classes.accordionList} maxMenuList` }, listItem.children.map((childListItem, childIndex) => {
                             const ChildItemIcon = childListItem.icon && Icons[childListItem.icon];
                             return (React.createElement(Tooltip, { key: childIndex, title: childListItem.label, placement: "right" },
                                 React.createElement(ListItem, null,

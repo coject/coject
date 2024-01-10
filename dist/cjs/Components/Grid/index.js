@@ -62,7 +62,7 @@ const Grid = ({ dataSource, staticData, callback, customKey, onAddCallback, onEd
                     callback && callback(data);
                 } }).then();
         }
-    }, [callData, dataSource, dataSource?.apiUrl, dispatch, staticData]);
+    }, [callData, dataSource, dataSource?.apiUrl, dispatch, staticData, callback]);
     // Dynamic Data ( Schema )
     (0, react_1.useEffect)(() => {
         if (schema) {

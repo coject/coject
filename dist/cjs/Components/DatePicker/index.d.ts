@@ -1,0 +1,21 @@
+import { FC } from "react";
+import { DateTimePickerProps } from "@mui/x-date-pickers/DateTimePicker";
+import { DatePickerProps } from "@mui/x-date-pickers/DatePicker";
+type iDatePicker = DateTimePickerProps<any> & DatePickerProps<any> & {
+    style?: any;
+    name?: string;
+    value?: string;
+    onChange?: any;
+    error?: boolean;
+    hijri?: boolean;
+    minDate?: string;
+    maxDate?: string;
+    withTime?: boolean;
+    textView?: boolean;
+    fullWidth?: boolean;
+    helperText?: string;
+    viewFormat?: string;
+    actionFormat?: string;
+};
+export declare const DatePicker: FC<iDatePicker>;
+export {};

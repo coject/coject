@@ -36,8 +36,12 @@ const Builder_1 = require("../../Builder");
 const theme_1 = __importDefault(require("./theme"));
 const Dashboard = ({ menus, logo, icon, search, languages, defaultLanguage, mobMenus, copyRight, children }) => {
     const { classes } = (0, theme_1.default)();
-    const [menusList, setMenusList] = (0, react_1.useState)(menus);
+    const [menusList, setMenusList] = (0, react_1.useState)({});
     const [sidebar, setSidebar] = (0, react_1.useState)(true);
+    // Menus
+    (0, react_1.useEffect)(() => {
+        setMenusList(menus);
+    }, [menus]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: classes.root },
             react_1.default.createElement(Builder_1.Header, { sidebar: sidebar, setSidebar: setSidebar, menus: menusList, setMenus: setMenusList, logo: logo, icon: icon, search: search, languages: languages, defaultLanguage: defaultLanguage, mobMenus: mobMenus }),

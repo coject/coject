@@ -56,6 +56,13 @@ interface iDataSource {
 interface iGrid extends DataGridProps {
     dispatch?: any;
     callback?: any;
+    localeText?: {
+        toolbarNew?: string;
+        toolbarExport?: string;
+        toolbarColumns?: string;
+        toolbarFilters?: string;
+        gridHeaderAction?: string;
+    } | any;
     staticData?: any;
     onAddSubmit?: any;
     customKey?: string;
@@ -78,7 +85,7 @@ interface iGrid extends DataGridProps {
     customActions?: { icon: string, label: string, onClick: any }[];
 }
 
-export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticData, callback, customKey, onAddCallback, onEditCallback, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const { classes } = useStyles();
     const [ gridData, setGridData ] = useState<any>([]);
     const [ schemaData, setSchemaData ] = useState<any>({});
@@ -187,7 +194,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
 
     // Columns Schema
     const columnsSchema: any = [ ...(schema ? schema : defaultSchema), ...( actions
-        ? [ { field: "actions", type: "actions", headerName: "Actions", width: 100, cellClassName: "actions", getActions: ({ row }: any) => ([ ...(gridActions(row) || []), ...(gridCustomActions(row) || []) ])} ]
+        ? [ { field: "actions", type: "actions", headerName: localeText && localeText?.gridHeaderAction || "Actions", width: 100, cellClassName: "actions", getActions: ({ row }: any) => ([ ...(gridActions(row) || []), ...(gridCustomActions(row) || []) ])} ]
         : []
     ) ];
 
@@ -204,8 +211,8 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
                 }
                 { customToolbar && customToolbar(gridData) }
                 { actions && ( actions instanceof Array
-                    ? ( actions?.includes("add") && <Button onClick={() => setAddModal(true)} type={"button"}><Icons.Add /> Add New</Button> )
-                    : <Button onClick={() => setAddModal(true)} type={"button"}><Icons.Add /> Add New</Button> )
+                    ? ( actions?.includes("add") && <Button onClick={() => setAddModal(true)} type={"button"}><Icons.Add /> {localeText && localeText?.toolbarNew || "Add New"}</Button> )
+                    : <Button onClick={() => setAddModal(true)} type={"button"}><Icons.Add /> {localeText && localeText?.toolbarNew || "Add New"}</Button> )
                 }
             </GridToolbarContainer>
         );
@@ -262,6 +269,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
             {/* Data Grid */}
             <Box className={classes.root}>
                 <DataGrid className={!gridData?.length ? classes.empty : ""}
+                    { ...(localeText ? { localeText: localeText } : {}) }
                     { ...(customKey ? { getRowId: (row : any) => row[customKey] } : {}) }
                     rows={gridData} columns={columnsSchema} density={"compact"} {...props}
                     pageSizeOptions={props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100]}

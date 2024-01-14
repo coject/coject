@@ -9,7 +9,7 @@ import { DataGrid, GridActionsCellItem, GridToolbarContainer, GridToolbarColumns
 import { Form, DatePicker, Modal, Icons } from "../index";
 // Styles
 import useStyles from "./theme";
-export const Grid = ({ dataSource, staticData, callback, customKey, onAddCallback, onEditCallback, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+export const Grid = ({ dataSource, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const { classes } = useStyles();
     const [gridData, setGridData] = useState([]);
     const [schemaData, setSchemaData] = useState({});
@@ -110,7 +110,7 @@ export const Grid = ({ dataSource, staticData, callback, customKey, onAddCallbac
     }).filter((element) => element !== undefined);
     // Columns Schema
     const columnsSchema = [...(schema ? schema : defaultSchema), ...(actions
-            ? [{ field: "actions", type: "actions", headerName: "Actions", width: 100, cellClassName: "actions", getActions: ({ row }) => ([...(gridActions(row) || []), ...(gridCustomActions(row) || [])]) }]
+            ? [{ field: "actions", type: "actions", headerName: localeText && localeText?.gridHeaderAction || "Actions", width: 100, cellClassName: "actions", getActions: ({ row }) => ([...(gridActions(row) || []), ...(gridCustomActions(row) || [])]) }]
             : [])];
     // Custom Toolbar
     const CustomToolbar = () => {
@@ -124,10 +124,12 @@ export const Grid = ({ dataSource, staticData, callback, customKey, onAddCallbac
             actions && (actions instanceof Array
                 ? (actions?.includes("add") && React.createElement(Button, { onClick: () => setAddModal(true), type: "button" },
                     React.createElement(Icons.Add, null),
-                    " Add New"))
+                    " ",
+                    localeText && localeText?.toolbarNew || "Add New"))
                 : React.createElement(Button, { onClick: () => setAddModal(true), type: "button" },
                     React.createElement(Icons.Add, null),
-                    " Add New"))));
+                    " ",
+                    localeText && localeText?.toolbarNew || "Add New"))));
     };
     return (React.createElement(React.Fragment, null,
         React.createElement(Modal, { title: "Add New Item", open: addModal, setOpen: setAddModal },
@@ -166,6 +168,6 @@ export const Grid = ({ dataSource, staticData, callback, customKey, onAddCallbac
                             }
                         } }, "Delete")))),
         React.createElement(Box, { className: classes.root },
-            React.createElement(DataGrid, { className: !gridData?.length ? classes.empty : "", ...(customKey ? { getRowId: (row) => row[customKey] } : {}), rows: gridData, columns: columnsSchema, density: "compact", ...props, pageSizeOptions: props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100], slots: props?.slots ? props?.slots : { toolbar: actions || toolbar ? CustomToolbar : null }, initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), ...(invisibility ? { columnVisibilityModel: invisibility.reduce((prev, key) => ({ ...prev, [key]: false }), {}) } : {}) }))));
+            React.createElement(DataGrid, { className: !gridData?.length ? classes.empty : "", ...(localeText ? { localeText: localeText } : {}), ...(customKey ? { getRowId: (row) => row[customKey] } : {}), rows: gridData, columns: columnsSchema, density: "compact", ...props, pageSizeOptions: props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100], slots: props?.slots ? props?.slots : { toolbar: actions || toolbar ? CustomToolbar : null }, initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), ...(invisibility ? { columnVisibilityModel: invisibility.reduce((prev, key) => ({ ...prev, [key]: false }), {}) } : {}) }))));
 };
 //# sourceMappingURL=index.js.map

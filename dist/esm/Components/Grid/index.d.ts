@@ -38,6 +38,13 @@ interface iDataSource {
 interface iGrid extends DataGridProps {
     dispatch?: any;
     callback?: any;
+    localeText?: {
+        toolbarNew?: string;
+        toolbarExport?: string;
+        toolbarColumns?: string;
+        toolbarFilters?: string;
+        gridHeaderAction?: string;
+    } | any;
     staticData?: any;
     onAddSubmit?: any;
     customKey?: string;

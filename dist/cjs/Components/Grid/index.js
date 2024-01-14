@@ -38,7 +38,7 @@ const x_data_grid_1 = require("@mui/x-data-grid");
 const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Grid = ({ dataSource, staticData, callback, customKey, onAddCallback, onEditCallback, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+const Grid = ({ dataSource, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const [gridData, setGridData] = (0, react_1.useState)([]);
     const [schemaData, setSchemaData] = (0, react_1.useState)({});
@@ -139,7 +139,7 @@ const Grid = ({ dataSource, staticData, callback, customKey, onAddCallback, onEd
     }).filter((element) => element !== undefined);
     // Columns Schema
     const columnsSchema = [...(schema ? schema : defaultSchema), ...(actions
-            ? [{ field: "actions", type: "actions", headerName: "Actions", width: 100, cellClassName: "actions", getActions: ({ row }) => ([...(gridActions(row) || []), ...(gridCustomActions(row) || [])]) }]
+            ? [{ field: "actions", type: "actions", headerName: localeText && localeText?.gridHeaderAction || "Actions", width: 100, cellClassName: "actions", getActions: ({ row }) => ([...(gridActions(row) || []), ...(gridCustomActions(row) || [])]) }]
             : [])];
     // Custom Toolbar
     const CustomToolbar = () => {
@@ -153,10 +153,12 @@ const Grid = ({ dataSource, staticData, callback, customKey, onAddCallback, onEd
             actions && (actions instanceof Array
                 ? (actions?.includes("add") && react_1.default.createElement(material_1.Button, { onClick: () => setAddModal(true), type: "button" },
                     react_1.default.createElement(index_1.Icons.Add, null),
-                    " Add New"))
+                    " ",
+                    localeText && localeText?.toolbarNew || "Add New"))
                 : react_1.default.createElement(material_1.Button, { onClick: () => setAddModal(true), type: "button" },
                     react_1.default.createElement(index_1.Icons.Add, null),
-                    " Add New"))));
+                    " ",
+                    localeText && localeText?.toolbarNew || "Add New"))));
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(index_1.Modal, { title: "Add New Item", open: addModal, setOpen: setAddModal },
@@ -195,7 +197,7 @@ const Grid = ({ dataSource, staticData, callback, customKey, onAddCallback, onEd
                             }
                         } }, "Delete")))),
         react_1.default.createElement(material_1.Box, { className: classes.root },
-            react_1.default.createElement(x_data_grid_1.DataGrid, { className: !gridData?.length ? classes.empty : "", ...(customKey ? { getRowId: (row) => row[customKey] } : {}), rows: gridData, columns: columnsSchema, density: "compact", ...props, pageSizeOptions: props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100], slots: props?.slots ? props?.slots : { toolbar: actions || toolbar ? CustomToolbar : null }, initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), ...(invisibility ? { columnVisibilityModel: invisibility.reduce((prev, key) => ({ ...prev, [key]: false }), {}) } : {}) }))));
+            react_1.default.createElement(x_data_grid_1.DataGrid, { className: !gridData?.length ? classes.empty : "", ...(localeText ? { localeText: localeText } : {}), ...(customKey ? { getRowId: (row) => row[customKey] } : {}), rows: gridData, columns: columnsSchema, density: "compact", ...props, pageSizeOptions: props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100], slots: props?.slots ? props?.slots : { toolbar: actions || toolbar ? CustomToolbar : null }, initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), ...(invisibility ? { columnVisibilityModel: invisibility.reduce((prev, key) => ({ ...prev, [key]: false }), {}) } : {}) }))));
 };
 exports.Grid = Grid;
 //# sourceMappingURL=index.js.map

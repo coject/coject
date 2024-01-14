@@ -1,4 +1,4 @@
-import React, { FC, useState, ReactNode } from "react";
+import React, { FC, useState, ReactNode, useEffect } from "react";
 
 // Material UI
 import { Box } from "@mui/material";
@@ -24,8 +24,13 @@ interface iDashboard {
 
 export const Dashboard: FC<iDashboard> = ({ menus, logo, icon, search, languages, defaultLanguage, mobMenus, copyRight, children }) => {
     const { classes } = useStyles();
-    const [ menusList, setMenusList ] = useState(menus);
+    const [ menusList, setMenusList ] = useState({});
     const [ sidebar, setSidebar ] = useState(true);
+
+    // Menus
+    useEffect(() => {
+        setMenusList(menus);
+    }, [menus]);
 
     return (
         <React.Fragment>

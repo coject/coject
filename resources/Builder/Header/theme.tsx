@@ -98,7 +98,6 @@ const useStyles = makeStyles()((theme) => {
                 "& a, & button": {
                     gap: 5,
                     padding: 0,
-                    width: "100%",
                     display: "flex",
                     fontSize: "13px",
                     minWidth: "auto",
@@ -120,7 +119,7 @@ const useStyles = makeStyles()((theme) => {
                     "& p": {
                         width: "100%",
                         overflow: "hidden",
-                        textAlign: "center",
+                        textAlign: "start",
                         whiteSpace: "nowrap",
                         textOverflow: "ellipsis"
                     }
@@ -168,7 +167,7 @@ const useStyles = makeStyles()((theme) => {
                     "& p": {
                         width: "100%",
                         overflow: "hidden",
-                        textAlign: "center",
+                        textAlign: "start",
                         whiteSpace: "nowrap",
                         textOverflow: "ellipsis"
                     }
@@ -328,7 +327,6 @@ const useStyles = makeStyles()((theme) => {
                 },
                 "& a, & button": {
                     gap: 7,
-                    width: "100%",
                     display: "flex",
                     padding: "7px 0",
                     fontSize: "15px",
@@ -350,7 +348,7 @@ const useStyles = makeStyles()((theme) => {
                     "& p": {
                         width: "100%",
                         overflow: "hidden",
-                        textAlign: "center",
+                        textAlign: "start",
                         whiteSpace: "nowrap",
                         textOverflow: "ellipsis"
                     },
@@ -442,8 +440,7 @@ const useStyles = makeStyles()((theme) => {
         },
         mobMenuBody: {
             padding: "0 15px",
-            "& a, &button": {
-                width: "100%",
+            "& a, & button": {
                 fontSize: "16px",
                 lineHeight: "16px",
                 textDecoration: "none",
@@ -451,7 +448,7 @@ const useStyles = makeStyles()((theme) => {
                 "& p": {
                     width: "100%",
                     overflow: "hidden",
-                    textAlign: "center",
+                    textAlign: "start",
                     whiteSpace: "nowrap",
                     textOverflow: "ellipsis"
                 }

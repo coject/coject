@@ -121,6 +121,7 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                     "& p": {
                         width: "100%",
                         overflow: "hidden",
+                        textAlign: "center",
                         whiteSpace: "nowrap",
                         textOverflow: "ellipsis"
                     }
@@ -168,6 +169,7 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                     "& p": {
                         width: "100%",
                         overflow: "hidden",
+                        textAlign: "center",
                         whiteSpace: "nowrap",
                         textOverflow: "ellipsis"
                     }
@@ -327,6 +329,7 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                 },
                 "& a, & button": {
                     gap: 7,
+                    width: "100%",
                     display: "flex",
                     padding: "7px 0",
                     fontSize: "15px",
@@ -344,6 +347,13 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                     "& img": {
                         width: "24px",
                         objectFit: "cover"
+                    },
+                    "& p": {
+                        width: "100%",
+                        overflow: "hidden",
+                        textAlign: "center",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis"
                     },
                     "&:hover": {
                         backgroundColor: "transparent",
@@ -433,12 +443,19 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
         },
         mobMenuBody: {
             padding: "0 15px",
-            "& a": {
+            "& a, &button": {
                 width: "100%",
                 fontSize: "16px",
                 lineHeight: "16px",
                 textDecoration: "none",
-                color: theme.palette.secondary.dark
+                color: theme.palette.secondary.dark,
+                "& p": {
+                    width: "100%",
+                    overflow: "hidden",
+                    textAlign: "center",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis"
+                }
             }
         }
     };

@@ -109,7 +109,7 @@ const MobHeader = ({ logo, icon, menus, setMenus, languages, defaultLanguage, se
                                     listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
                                     ItemIcon ? react_1.default.createElement(ItemIcon, null) : "",
                                     !listItem.noLabel && listItem.label,
-                                    !listItem.noArrow && react_1.default.createElement(Icons.ExpandMore, null)),
+                                    react_1.default.createElement(material_1.Typography, null, !listItem.noArrow && react_1.default.createElement(Icons.ExpandMore, null))),
                                 menuList && !!Object.keys(menuList).length &&
                                     react_1.default.createElement(material_1.Menu, { className: classes.subMenuList, anchorEl: menuList && Object.keys(menuList).length && menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")], open: Boolean(menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")]), onClose: () => setMenuList({}), transformOrigin: { horizontal: 'right', vertical: 'top' }, anchorOrigin: { horizontal: 'right', vertical: 'bottom' } },
                                         react_1.default.createElement(material_1.Box, { className: classes.subListMenu, onMouseLeave: () => setMenuList({}) },
@@ -118,7 +118,7 @@ const MobHeader = ({ logo, icon, menus, setMenus, languages, defaultLanguage, se
                                                 return (react_1.default.createElement(material_1.MenuItem, { key: childIndex, component: material_1.Button, ...(childListItem.link ? { href: childListItem.link } : {}), onClick: () => { setMenuList({}); childListItem.onClick && childListItem.onClick(setMenus); } },
                                                     childListItem.image && react_1.default.createElement("img", { src: childListItem.image, alt: childListItem.label }),
                                                     ChildItemIcon ? react_1.default.createElement(ChildItemIcon, null) : "",
-                                                    !childListItem.noLabel && childListItem.label));
+                                                    react_1.default.createElement(material_1.Typography, null, !childListItem.noLabel && childListItem.label)));
                                             }))))));
                         }
                         else {
@@ -126,7 +126,7 @@ const MobHeader = ({ logo, icon, menus, setMenus, languages, defaultLanguage, se
                                 react_1.default.createElement(material_1.Button, { ...(listItem.link ? { href: listItem.link } : {}), onClick: () => listItem.onClick && listItem.onClick(setMenus) },
                                     listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
                                     ItemIcon ? react_1.default.createElement(ItemIcon, null) : "",
-                                    !listItem.noLabel && listItem.label)));
+                                    react_1.default.createElement(material_1.Typography, null, !listItem.noLabel && listItem.label))));
                         }
                     })),
                 menuList && !!Object.keys(menuList).length && !!mobMenus?.length &&
@@ -148,14 +148,14 @@ const MobHeader = ({ logo, icon, menus, setMenus, languages, defaultLanguage, se
                                                     react_1.default.createElement(material_1.Typography, { variant: "h6" },
                                                         listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
                                                         ItemIcon ? react_1.default.createElement(ItemIcon, null) : "",
-                                                        !listItem.noLabel && listItem.label)),
+                                                        react_1.default.createElement(material_1.Typography, null, !listItem.noLabel && listItem.label))),
                                                 react_1.default.createElement(material_1.AccordionDetails, { className: classes.mobMenuBody }, listItem.children.map((childListItem, childIndex) => {
                                                     const ChildItemIcon = childListItem.icon && Icons[childListItem.icon];
                                                     return (react_1.default.createElement(material_1.MenuItem, { key: childIndex, title: childListItem.label, onClick: () => setMenuList({}) },
                                                         react_1.default.createElement(material_1.Button, { ...(childListItem.link ? { href: childListItem.link } : {}), onClick: () => childListItem.onClick && childListItem.onClick(setMenus) },
                                                             childListItem.image && react_1.default.createElement("img", { src: childListItem.image, alt: childListItem.label }),
                                                             ChildItemIcon ? react_1.default.createElement(ChildItemIcon, null) : "",
-                                                            !childListItem.noLabel && childListItem.label)));
+                                                            react_1.default.createElement(material_1.Typography, null, !childListItem.noLabel && childListItem.label))));
                                                 }))));
                                         }
                                         else {

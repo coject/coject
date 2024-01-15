@@ -122,7 +122,7 @@ export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, languag
                                             {listItem.image && <img src={listItem.image} alt={listItem.label} />}
                                             {ItemIcon ? <ItemIcon/> : ""}
                                             {!listItem.noLabel && listItem.label}
-                                            {!listItem.noArrow && <Icons.ExpandMore/>}
+                                            <Typography>{!listItem.noArrow && <Icons.ExpandMore/>}</Typography>
                                         </Button>
                                         { menuList && !!Object.keys(menuList).length &&
                                             <Menu className={classes.subMenuList} anchorEl={menuList && Object.keys(menuList).length && menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")]} open={Boolean(menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")])} onClose={() => setMenuList({})} transformOrigin={{ horizontal: 'right', vertical: 'top' }} anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
@@ -134,7 +134,7 @@ export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, languag
                                                                 <MenuItem key={childIndex} component={Button} {...(childListItem.link ? {href: childListItem.link} : {})} onClick={() => { setMenuList({}); childListItem.onClick && childListItem.onClick(setMenus) }}>
                                                                     {childListItem.image && <img src={childListItem.image} alt={childListItem.label} />}
                                                                     {ChildItemIcon ? <ChildItemIcon /> : ""}
-                                                                    {!childListItem.noLabel && childListItem.label}
+                                                                    <Typography>{!childListItem.noLabel && childListItem.label}</Typography>
                                                                 </MenuItem>
                                                             )
                                                         }) }
@@ -150,7 +150,7 @@ export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, languag
                                         <Button {...(listItem.link ? {href: listItem.link} : {})} onClick={() => listItem.onClick && listItem.onClick(setMenus)}>
                                             {listItem.image && <img src={listItem.image} alt={listItem.label} />}
                                             {ItemIcon ? <ItemIcon/> : ""}
-                                            {!listItem.noLabel && listItem.label}
+                                            <Typography>{!listItem.noLabel && listItem.label}</Typography>
                                         </Button>
                                     </ListItem>
                                 )
@@ -177,7 +177,7 @@ export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, languag
                                                                 <Typography variant={"h6"}>
                                                                     {listItem.image && <img src={listItem.image} alt={listItem.label} />}
                                                                     {ItemIcon ? <ItemIcon/> : ""}
-                                                                    {!listItem.noLabel && listItem.label}
+                                                                    <Typography>{!listItem.noLabel && listItem.label}</Typography>
                                                                 </Typography>
                                                             </AccordionSummary>
                                                             <AccordionDetails className={classes.mobMenuBody}>
@@ -188,7 +188,7 @@ export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, languag
                                                                             <Button {...(childListItem.link ? {href: childListItem.link} : {})} onClick={() => childListItem.onClick && childListItem.onClick(setMenus)}>
                                                                                 {childListItem.image && <img src={childListItem.image} alt={childListItem.label} />}
                                                                                 {ChildItemIcon ? <ChildItemIcon /> : ""}
-                                                                                {!childListItem.noLabel && childListItem.label}
+                                                                                <Typography>{!childListItem.noLabel && childListItem.label}</Typography>
                                                                             </Button>
                                                                         </MenuItem>
                                                                     )

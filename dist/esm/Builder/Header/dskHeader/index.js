@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 // Material UI
-import { Box, IconButton, List, ListItem, TextField, Button, Menu, MenuItem } from "@mui/material";
+import { Box, IconButton, List, ListItem, TextField, Button, Menu, MenuItem, Typography } from "@mui/material";
 // Coject
 import { Icons } from "../../../Components";
 // Styles
@@ -43,7 +43,7 @@ export const DskHeader = ({ logo, icon, search, languages, defaultLanguage, menu
                                 React.createElement(Button, { onClick: (e) => setMenuList({ [((listItem.label).toLowerCase()).replaceAll(" ", "_")]: e.currentTarget }) },
                                     listItem.image && React.createElement("img", { src: listItem.image, alt: listItem.label }),
                                     ItemIcon ? React.createElement(ItemIcon, null) : "",
-                                    !listItem.noLabel && listItem.label,
+                                    React.createElement(Typography, null, !listItem.noLabel && listItem.label),
                                     !listItem.noArrow && React.createElement(Icons.ExpandMore, null)),
                                 menuList && !!Object.keys(menuList).length &&
                                     React.createElement(Menu, { className: classes.subMenuList, anchorEl: menuList && Object.keys(menuList).length && menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")], open: Boolean(menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")]), onClose: () => setMenuList({}), transformOrigin: { horizontal: 'left', vertical: 'top' }, anchorOrigin: { horizontal: 'left', vertical: 'bottom' } },
@@ -53,7 +53,7 @@ export const DskHeader = ({ logo, icon, search, languages, defaultLanguage, menu
                                                 return (React.createElement(MenuItem, { key: childIndex, component: Button, ...(childListItem.link ? { href: childListItem.link } : {}), onClick: () => { setMenuList({}); childListItem.onClick && childListItem.onClick(setMenus); } },
                                                     childListItem.image && React.createElement("img", { src: childListItem.image, alt: childListItem.label }),
                                                     ChildItemIcon ? React.createElement(ChildItemIcon, null) : "",
-                                                    !childListItem.noLabel && childListItem.label));
+                                                    React.createElement(Typography, null, !childListItem.noLabel && childListItem.label)));
                                             }))))));
                         }
                         else {
@@ -61,7 +61,7 @@ export const DskHeader = ({ logo, icon, search, languages, defaultLanguage, menu
                                 React.createElement(Button, { ...(listItem.link ? { href: listItem.link } : {}), onClick: () => listItem.onClick && listItem.onClick(setMenus) },
                                     listItem.image && React.createElement("img", { src: listItem.image, alt: listItem.label }),
                                     ItemIcon ? React.createElement(ItemIcon, null) : "",
-                                    !listItem.noLabel && listItem.label)));
+                                    React.createElement(Typography, null, !listItem.noLabel && listItem.label))));
                         }
                     })),
                 React.createElement(List, { className: classes.menuList, style: { justifyContent: "flex-end" } },
@@ -98,7 +98,7 @@ export const DskHeader = ({ logo, icon, search, languages, defaultLanguage, menu
                                 React.createElement(Button, { onClick: (e) => setMenuList({ [((listItem.label).toLowerCase()).replaceAll(" ", "_")]: e.currentTarget }) },
                                     listItem.image && React.createElement("img", { src: listItem.image, alt: listItem.label }),
                                     ItemIcon ? React.createElement(ItemIcon, null) : "",
-                                    !listItem.noLabel && listItem.label,
+                                    React.createElement(Typography, null, !listItem.noLabel && listItem.label),
                                     !listItem.noArrow && React.createElement(Icons.ExpandMore, null)),
                                 menuList && !!Object.keys(menuList).length &&
                                     React.createElement(Menu, { className: classes.subMenuList, anchorEl: menuList && Object.keys(menuList).length && menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")], open: Boolean(menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")]), onClose: () => setMenuList({}), transformOrigin: { horizontal: 'right', vertical: 'top' }, anchorOrigin: { horizontal: 'right', vertical: 'bottom' } },
@@ -108,7 +108,7 @@ export const DskHeader = ({ logo, icon, search, languages, defaultLanguage, menu
                                                 return (React.createElement(MenuItem, { key: childIndex, component: Button, ...(childListItem.link ? { href: childListItem.link } : {}), onClick: () => { setMenuList({}); childListItem.onClick && childListItem.onClick(setMenus); } },
                                                     childListItem.image && React.createElement("img", { src: childListItem.image, alt: childListItem.label }),
                                                     ChildItemIcon ? React.createElement(ChildItemIcon, null) : "",
-                                                    !childListItem.noLabel && childListItem.label));
+                                                    React.createElement(Typography, null, !childListItem.noLabel && childListItem.label)));
                                             }))))));
                         }
                         else {
@@ -116,7 +116,7 @@ export const DskHeader = ({ logo, icon, search, languages, defaultLanguage, menu
                                 React.createElement(Button, { ...(listItem.link ? { href: listItem.link } : {}), onClick: () => listItem.onClick && listItem.onClick(setMenus) },
                                     listItem.image && React.createElement("img", { src: listItem.image, alt: listItem.label }),
                                     ItemIcon ? React.createElement(ItemIcon, null) : "",
-                                    !listItem.noLabel && listItem.label)));
+                                    React.createElement(Typography, null, !listItem.noLabel && listItem.label))));
                         }
                     }))))));
 };

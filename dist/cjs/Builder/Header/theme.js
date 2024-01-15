@@ -99,6 +99,7 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                 "& a, & button": {
                     gap: 5,
                     padding: 0,
+                    width: "100%",
                     display: "flex",
                     fontSize: "13px",
                     minWidth: "auto",
@@ -116,6 +117,12 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                     "& img": {
                         width: "22px",
                         objectFit: "cover"
+                    },
+                    "& p": {
+                        width: "100%",
+                        overflow: "hidden",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis"
                     }
                 },
                 "& svg": {
@@ -144,6 +151,7 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                 "& li, & a, & button": {
                     gap: 7,
                     padding: 0,
+                    width: "100%",
                     display: "flex",
                     fontSize: "13px",
                     minHeight: "auto",
@@ -156,6 +164,12 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                     "& img": {
                         width: "22px",
                         objectFit: "cover"
+                    },
+                    "& p": {
+                        width: "100%",
+                        overflow: "hidden",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis"
                     }
                 }
             }

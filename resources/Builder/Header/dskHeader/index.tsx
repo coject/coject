@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect } from "react";
 
 // Material UI
-import { Box, IconButton, List, ListItem, TextField, Button, Menu, MenuItem } from "@mui/material";
+import { Box, IconButton, List, ListItem, TextField, Button, Menu, MenuItem, Typography } from "@mui/material";
 
 // Coject
 import { Icons } from "../../../Components";
@@ -70,7 +70,7 @@ export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, language
                                         <Button onClick={(e) => setMenuList({[((listItem.label).toLowerCase()).replaceAll(" ", "_")]: e.currentTarget})}>
                                             {listItem.image && <img src={listItem.image} alt={listItem.label} />}
                                             {ItemIcon ? <ItemIcon/> : ""}
-                                            {!listItem.noLabel && listItem.label}
+                                            <Typography>{!listItem.noLabel && listItem.label}</Typography>
                                             {!listItem.noArrow && <Icons.ExpandMore/>}
                                         </Button>
                                         { menuList && !!Object.keys(menuList).length &&
@@ -83,7 +83,7 @@ export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, language
                                                                 <MenuItem key={childIndex} component={Button} {...(childListItem.link ? {href: childListItem.link} : {})} onClick={() => { setMenuList({}); childListItem.onClick && childListItem.onClick(setMenus) }}>
                                                                     {childListItem.image && <img src={childListItem.image} alt={childListItem.label} />}
                                                                     {ChildItemIcon ? <ChildItemIcon /> : ""}
-                                                                    {!childListItem.noLabel && childListItem.label}
+                                                                    <Typography>{!childListItem.noLabel && childListItem.label}</Typography>
                                                                 </MenuItem>
                                                             )
                                                         }) }
@@ -99,7 +99,7 @@ export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, language
                                         <Button {...(listItem.link ? {href: listItem.link} : {})} onClick={() => listItem.onClick && listItem.onClick(setMenus)}>
                                             {listItem.image && <img src={listItem.image} alt={listItem.label} />}
                                             {ItemIcon ? <ItemIcon/> : ""}
-                                            {!listItem.noLabel && listItem.label}
+                                            <Typography>{!listItem.noLabel && listItem.label}</Typography>
                                         </Button>
                                     </ListItem>
                                 )
@@ -153,7 +153,7 @@ export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, language
                                         <Button onClick={(e) => setMenuList({[((listItem.label).toLowerCase()).replaceAll(" ", "_")]: e.currentTarget})}>
                                             {listItem.image && <img src={listItem.image} alt={listItem.label} />}
                                             {ItemIcon ? <ItemIcon/> : ""}
-                                            {!listItem.noLabel && listItem.label}
+                                            <Typography>{!listItem.noLabel && listItem.label}</Typography>
                                             {!listItem.noArrow && <Icons.ExpandMore/>}
                                         </Button>
                                         { menuList && !!Object.keys(menuList).length &&
@@ -166,7 +166,7 @@ export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, language
                                                                 <MenuItem key={childIndex} component={Button} {...(childListItem.link ? {href: childListItem.link} : {})} onClick={() => { setMenuList({}); childListItem.onClick && childListItem.onClick(setMenus) }}>
                                                                     {childListItem.image && <img src={childListItem.image} alt={childListItem.label} />}
                                                                     {ChildItemIcon ? <ChildItemIcon /> : ""}
-                                                                    {!childListItem.noLabel && childListItem.label}
+                                                                    <Typography>{!childListItem.noLabel && childListItem.label}</Typography>
                                                                 </MenuItem>
                                                             )
                                                         }) }
@@ -182,7 +182,7 @@ export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, language
                                         <Button {...(listItem.link ? {href: listItem.link} : {})} onClick={() => listItem.onClick && listItem.onClick(setMenus)}>
                                             {listItem.image && <img src={listItem.image} alt={listItem.label} />}
                                             {ItemIcon ? <ItemIcon/> : ""}
-                                            {!listItem.noLabel && listItem.label}
+                                            <Typography>{!listItem.noLabel && listItem.label}</Typography>
                                         </Button>
                                     </ListItem>
                                 )

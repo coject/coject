@@ -72,7 +72,7 @@ const DskHeader = ({ logo, icon, search, languages, defaultLanguage, menus, setM
                                 react_1.default.createElement(material_1.Button, { onClick: (e) => setMenuList({ [((listItem.label).toLowerCase()).replaceAll(" ", "_")]: e.currentTarget }) },
                                     listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
                                     ItemIcon ? react_1.default.createElement(ItemIcon, null) : "",
-                                    !listItem.noLabel && listItem.label,
+                                    react_1.default.createElement(material_1.Typography, null, !listItem.noLabel && listItem.label),
                                     !listItem.noArrow && react_1.default.createElement(Components_1.Icons.ExpandMore, null)),
                                 menuList && !!Object.keys(menuList).length &&
                                     react_1.default.createElement(material_1.Menu, { className: classes.subMenuList, anchorEl: menuList && Object.keys(menuList).length && menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")], open: Boolean(menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")]), onClose: () => setMenuList({}), transformOrigin: { horizontal: 'left', vertical: 'top' }, anchorOrigin: { horizontal: 'left', vertical: 'bottom' } },
@@ -82,7 +82,7 @@ const DskHeader = ({ logo, icon, search, languages, defaultLanguage, menus, setM
                                                 return (react_1.default.createElement(material_1.MenuItem, { key: childIndex, component: material_1.Button, ...(childListItem.link ? { href: childListItem.link } : {}), onClick: () => { setMenuList({}); childListItem.onClick && childListItem.onClick(setMenus); } },
                                                     childListItem.image && react_1.default.createElement("img", { src: childListItem.image, alt: childListItem.label }),
                                                     ChildItemIcon ? react_1.default.createElement(ChildItemIcon, null) : "",
-                                                    !childListItem.noLabel && childListItem.label));
+                                                    react_1.default.createElement(material_1.Typography, null, !childListItem.noLabel && childListItem.label)));
                                             }))))));
                         }
                         else {
@@ -90,7 +90,7 @@ const DskHeader = ({ logo, icon, search, languages, defaultLanguage, menus, setM
                                 react_1.default.createElement(material_1.Button, { ...(listItem.link ? { href: listItem.link } : {}), onClick: () => listItem.onClick && listItem.onClick(setMenus) },
                                     listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
                                     ItemIcon ? react_1.default.createElement(ItemIcon, null) : "",
-                                    !listItem.noLabel && listItem.label)));
+                                    react_1.default.createElement(material_1.Typography, null, !listItem.noLabel && listItem.label))));
                         }
                     })),
                 react_1.default.createElement(material_1.List, { className: classes.menuList, style: { justifyContent: "flex-end" } },
@@ -127,7 +127,7 @@ const DskHeader = ({ logo, icon, search, languages, defaultLanguage, menus, setM
                                 react_1.default.createElement(material_1.Button, { onClick: (e) => setMenuList({ [((listItem.label).toLowerCase()).replaceAll(" ", "_")]: e.currentTarget }) },
                                     listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
                                     ItemIcon ? react_1.default.createElement(ItemIcon, null) : "",
-                                    !listItem.noLabel && listItem.label,
+                                    react_1.default.createElement(material_1.Typography, null, !listItem.noLabel && listItem.label),
                                     !listItem.noArrow && react_1.default.createElement(Components_1.Icons.ExpandMore, null)),
                                 menuList && !!Object.keys(menuList).length &&
                                     react_1.default.createElement(material_1.Menu, { className: classes.subMenuList, anchorEl: menuList && Object.keys(menuList).length && menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")], open: Boolean(menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")]), onClose: () => setMenuList({}), transformOrigin: { horizontal: 'right', vertical: 'top' }, anchorOrigin: { horizontal: 'right', vertical: 'bottom' } },
@@ -137,7 +137,7 @@ const DskHeader = ({ logo, icon, search, languages, defaultLanguage, menus, setM
                                                 return (react_1.default.createElement(material_1.MenuItem, { key: childIndex, component: material_1.Button, ...(childListItem.link ? { href: childListItem.link } : {}), onClick: () => { setMenuList({}); childListItem.onClick && childListItem.onClick(setMenus); } },
                                                     childListItem.image && react_1.default.createElement("img", { src: childListItem.image, alt: childListItem.label }),
                                                     ChildItemIcon ? react_1.default.createElement(ChildItemIcon, null) : "",
-                                                    !childListItem.noLabel && childListItem.label));
+                                                    react_1.default.createElement(material_1.Typography, null, !childListItem.noLabel && childListItem.label)));
                                             }))))));
                         }
                         else {
@@ -145,7 +145,7 @@ const DskHeader = ({ logo, icon, search, languages, defaultLanguage, menus, setM
                                 react_1.default.createElement(material_1.Button, { ...(listItem.link ? { href: listItem.link } : {}), onClick: () => listItem.onClick && listItem.onClick(setMenus) },
                                     listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
                                     ItemIcon ? react_1.default.createElement(ItemIcon, null) : "",
-                                    !listItem.noLabel && listItem.label)));
+                                    react_1.default.createElement(material_1.Typography, null, !listItem.noLabel && listItem.label))));
                         }
                     }))))));
 };

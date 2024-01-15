@@ -71,6 +71,7 @@ const useStyles = makeStyles()((theme) => {
                 lineHeight: "13px",
                 alignItems: "center",
                 margin: "0 !important",
+                textTransform: "capitalize",
                 color: theme.palette.primary.light,
                 "& svg": {
                     width: "22px",
@@ -112,6 +113,7 @@ const useStyles = makeStyles()((theme) => {
                     textAlign: "start",
                     alignItems: "center",
                     padding: "0 0 0 32px",
+                    textTransform: "capitalize",
                     justifyContent: "flex-start",
                     color: theme.palette.primary.light,
                     transition: "background-color .4s ease",

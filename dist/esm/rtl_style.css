@@ -74,7 +74,8 @@ html[dir="rtl"] .minMenuList .MuiPaper-elevation {
     right: 70px !important;
 }
 
-html[dir="rtl"] .maxMenuList li a {
+html[dir="rtl"] .maxMenuList li a,
+html[dir="rtl"] .maxMenuList li button {
     padding-left: 0;
     padding-right: 32px;
 }

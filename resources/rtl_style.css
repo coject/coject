@@ -41,6 +41,10 @@ html[dir="rtl"] .MuiDataGrid-toolbarContainer button {
     direction: rtl;
 }
 
+html[dir="rtl"] .MuiTablePagination-input {
+    margin: 0 8px 0 32px;
+}
+
 /* Select */
 html[dir="rtl"] .MuiAutocomplete-inputRoot {
     padding-left: 65px;

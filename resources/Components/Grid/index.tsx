@@ -31,6 +31,7 @@ type iLocaleText = GridLocaleText & {
     paginationLabel?: string;
     modalDeleteTitle?: string;
     gridHeaderAction?: string;
+    paginationLabelOf?: string;
     modalDeleteButton?: string;
     modalDeleteMessage?: string;
 }
@@ -283,9 +284,19 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
                     { ...(customKey ? { getRowId: (row : any) => row[customKey] } : {}) }
                     rows={gridData} columns={columnsSchema} density={"compact"} {...props}
                     pageSizeOptions={props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100]}
-                    slotProps={{...(props?.slotProps ? props.slotProps : {}), ...(localeText?.paginationLabel ? {
-                        pagination: { ...(props?.slotProps?.pagination ? props.slotProps.pagination : {}), labelRowsPerPage: localeText.paginationLabel }
-                    } : {})}}
+                    slotProps={{
+                        ...(props?.slotProps ? props.slotProps : {}),
+                        ...(localeText?.paginationLabel ? {
+                            pagination: { ...(props?.slotProps?.pagination ? props.slotProps.pagination : {}), labelRowsPerPage: localeText.paginationLabel }
+                        } : {}),
+                        ...(localeText?.paginationLabelOf ? {
+                            pagination: { ...(props?.slotProps?.pagination ? props.slotProps.pagination : {}), labelDisplayedRows: (paginationInfo) => {
+                                return (
+                                    paginationInfo.from + "-" + paginationInfo.to + " " + localeText.paginationLabelOf + " " + paginationInfo.count
+                                )
+                            }}
+                        } : {})
+                    }}
                     slots={props?.slots ? props?.slots : {toolbar: actions || toolbar ? CustomToolbar : null}}
                     initialState={props?.initialState ? props?.initialState : {pagination: {paginationModel: {pageSize: 15}}}}
                     getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "")}

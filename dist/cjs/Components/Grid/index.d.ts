@@ -14,6 +14,7 @@ type iLocaleText = GridLocaleText & {
     paginationLabel?: string;
     modalDeleteTitle?: string;
     gridHeaderAction?: string;
+    paginationLabelOf?: string;
     modalDeleteButton?: string;
     modalDeleteMessage?: string;
 };

@@ -283,7 +283,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
                     { ...(customKey ? { getRowId: (row : any) => row[customKey] } : {}) }
                     rows={gridData} columns={columnsSchema} density={"compact"} {...props}
                     pageSizeOptions={props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100]}
-                    slotProps={{...(props?.slotProps ? props.slotProps : {}), ...(localeText.paginationLabel ? {
+                    slotProps={{...(props?.slotProps ? props.slotProps : {}), ...(localeText?.paginationLabel ? {
                         pagination: { ...(props?.slotProps?.pagination ? props.slotProps.pagination : {}), labelRowsPerPage: localeText.paginationLabel }
                     } : {})}}
                     slots={props?.slots ? props?.slots : {toolbar: actions || toolbar ? CustomToolbar : null}}

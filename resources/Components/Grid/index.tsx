@@ -286,15 +286,16 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
                     pageSizeOptions={props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100]}
                     slotProps={{
                         ...(props?.slotProps ? props.slotProps : {}),
-                        ...(localeText?.paginationLabel ? {
-                            pagination: { ...(props?.slotProps?.pagination ? props.slotProps.pagination : {}), labelRowsPerPage: localeText.paginationLabel }
-                        } : {}),
-                        ...(localeText?.paginationLabelOf ? {
-                            pagination: { ...(props?.slotProps?.pagination ? props.slotProps.pagination : {}), labelDisplayedRows: (paginationInfo) => {
-                                return (
-                                    paginationInfo.from + "-" + paginationInfo.to + " " + localeText.paginationLabelOf + " " + paginationInfo.count
-                                )
-                            }}
+                        ...((localeText?.paginationLabel) || (localeText?.paginationLabelOf) ? {
+                            pagination: {
+                                ...(props?.slotProps?.pagination ? props.slotProps.pagination : {}),
+                                ...(localeText?.paginationLabel ? {labelRowsPerPage: localeText.paginationLabel} : {}),
+                                ...(localeText?.paginationLabelOf ? {labelDisplayedRows: (paginationInfo) => {
+                                    return (
+                                        paginationInfo.from + " - " + paginationInfo.to + " " + localeText.paginationLabelOf + " " + paginationInfo.count
+                                    )
+                                }} : {}),
+                            }
                         } : {})
                     }}
                     slots={props?.slots ? props?.slots : {toolbar: actions || toolbar ? CustomToolbar : null}}

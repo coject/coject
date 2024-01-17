@@ -175,13 +175,14 @@ export const Grid = ({ dataSource, staticData, callback, localeText, customKey, 
         React.createElement(Box, { className: classes.root },
             React.createElement(DataGrid, { className: !gridData?.length ? classes.empty : "", ...(localeText ? { localeText: localeText } : {}), ...(customKey ? { getRowId: (row) => row[customKey] } : {}), rows: gridData, columns: columnsSchema, density: "compact", ...props, pageSizeOptions: props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100], slotProps: {
                     ...(props?.slotProps ? props.slotProps : {}),
-                    ...(localeText?.paginationLabel ? {
-                        pagination: { ...(props?.slotProps?.pagination ? props.slotProps.pagination : {}), labelRowsPerPage: localeText.paginationLabel }
-                    } : {}),
-                    ...(localeText?.paginationLabelOf ? {
-                        pagination: { ...(props?.slotProps?.pagination ? props.slotProps.pagination : {}), labelDisplayedRows: (paginationInfo) => {
-                                return (paginationInfo.from + "-" + paginationInfo.to + " " + localeText.paginationLabelOf + " " + paginationInfo.count);
-                            } }
+                    ...((localeText?.paginationLabel) || (localeText?.paginationLabelOf) ? {
+                        pagination: {
+                            ...(props?.slotProps?.pagination ? props.slotProps.pagination : {}),
+                            ...(localeText?.paginationLabel ? { labelRowsPerPage: localeText.paginationLabel } : {}),
+                            ...(localeText?.paginationLabelOf ? { labelDisplayedRows: (paginationInfo) => {
+                                    return (paginationInfo.from + " - " + paginationInfo.to + " " + localeText.paginationLabelOf + " " + paginationInfo.count);
+                                } } : {}),
+                        }
                     } : {})
                 }, slots: props?.slots ? props?.slots : { toolbar: actions || toolbar ? CustomToolbar : null }, initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), ...(invisibility ? { columnVisibilityModel: invisibility.reduce((prev, key) => ({ ...prev, [key]: false }), {}) } : {}) }))));
 };

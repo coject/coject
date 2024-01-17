@@ -68,10 +68,13 @@ interface iForm {
     invisibility?: string[];
     onSubmitClear?: boolean;
     dataSource?: iDataSource;
+    localeText?: {
+        submitButton?: string
+    };
     mode?: "render" | "create" | "update" | "delete";
 }
 
-export const Form: FC<iForm> = ({ mode, getForm, schema, dataSource, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, noRequest, invisibility, children, ...props }) => {
+export const Form: FC<iForm> = ({ mode, getForm, schema, dataSource, localeText, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, noRequest, invisibility, children, ...props }) => {
     const Data = { ...(staticData ? staticData : {}) };
     const { classes } = useStyles();
     const Methods = useForm();
@@ -86,8 +89,8 @@ export const Form: FC<iForm> = ({ mode, getForm, schema, dataSource, staticData,
         if (dataSource && !noRequest) {
             Request({
                 dataSource, mode,
-                data: { ...(dataSource?.requestData ? dataSource.requestData(submitData) : submitData) },
                 apiUrlId: customKey ? Data[customKey] : Data.id,
+                data: { ...(dataSource?.requestData ? dataSource.requestData(submitData) : submitData) },
                 callback: (data: any) => {
                     callback && callback(data);
                     setModal && setModal(false);
@@ -131,7 +134,7 @@ export const Form: FC<iForm> = ({ mode, getForm, schema, dataSource, staticData,
                             })}
                             { !(children) &&
                                 <Grid item xs={12} sm={12} md={12} lg={12}>
-                                    <Button fullWidth type="submit" variant="outlined">Submit</Button>
+                                    <Button fullWidth type="submit" variant="outlined">{localeText?.submitButton || "Submit"}</Button>
                                 </Grid>
                             }
                         </Grid>

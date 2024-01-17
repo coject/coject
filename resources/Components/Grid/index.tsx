@@ -7,7 +7,7 @@ import { Request } from "../../Services";
 import { Box, Grid as MuiGrid, Button, Typography } from "@mui/material";
 
 // Material UI Table
-import { DataGrid, DataGridProps, GridColDef, GridActionsCellItem, GridToolbarContainer, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarExport } from "@mui/x-data-grid";
+import { DataGrid, DataGridProps, GridColDef, GridActionsCellItem, GridToolbarContainer, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarExport, GridLocaleText } from "@mui/x-data-grid";
 
 // Coject
 import { Form, DatePicker, Modal, Icons } from "../index";
@@ -20,6 +20,19 @@ type iSchema = GridColDef & {
     component?: string;
     componentProps?: any;
     componentMedia?: any;
+}
+
+type iLocaleText = GridLocaleText & {
+    toolbarNew?: string;
+    modalAddTitle?: string;
+    modalAddButton?: string;
+    modalEditTitle?: string;
+    modalEditButton?: string;
+    paginationLabel?: string;
+    modalDeleteTitle?: string;
+    gridHeaderAction?: string;
+    modalDeleteButton?: string;
+    modalDeleteMessage?: string;
 }
 
 interface iDataSource {
@@ -56,13 +69,6 @@ interface iDataSource {
 interface iGrid extends DataGridProps {
     dispatch?: any;
     callback?: any;
-    localeText?: {
-        toolbarNew?: string;
-        toolbarExport?: string;
-        toolbarColumns?: string;
-        toolbarFilters?: string;
-        gridHeaderAction?: string;
-    } | any;
     staticData?: any;
     onAddSubmit?: any;
     customKey?: string;
@@ -80,6 +86,7 @@ interface iGrid extends DataGridProps {
     dataSource?: iDataSource;
     noDeleteRequest?: boolean;
     formInvisibility?: string[];
+    localeText?: iLocaleText | any;
     actions?: boolean | ("add" | "edit" | "delete")[];
     toolbar?: boolean | ("visibility" | "filter" | "export")[];
     customActions?: { icon: string, label: string, onClick: any }[];
@@ -117,7 +124,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
     useEffect(() => {
         if (schema) {
             schema.map((field: any) => {
-                if (field.component === "select" && field.componentProps?.dataSource && !field.componentProps.staticData) {
+                if (field.component === "select" && field.componentProps?.dataSource?.apiUrl) {
                     return Request({ dataSource: field.componentProps.dataSource, callback: (data: any) => {
                         setSchemaData((prev: any) => ({ ...prev, [field.field]: data }));
                     } }).then();
@@ -146,18 +153,21 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
                 if (columnSchema.component === "date" && !columnSchema.renderCell) {
                     columnSchema.renderCell = (data: any) => <DatePicker value={data.value} {...columnSchema.componentProps} textView />;
                 }
-                if (columnSchema.component === "select" && columnSchema.componentProps?.dataSource) {
+                if (columnSchema.component === "select" && (columnSchema.componentProps?.dataSource || columnSchema.componentProps?.staticData)) {
                     const customKey = columnSchema.componentProps.customKey;
                     const customName = columnSchema.componentProps.customName;
                     columnSchema.type = "singleSelect";
                     columnSchema.getOptionValue = (value: any) => customKey ? value[customKey] : value.id;
                     columnSchema.getOptionLabel = (value: any) => customName ? value[customName] : value.label;
                     if (columnSchema.componentProps.staticData) {
-                        columnSchema.valueOptions = columnSchema.componentProps.staticData;
-                        columnSchema.componentProps.dataSource = { staticData: columnSchema.componentProps.staticData };
+                        if (columnSchema.componentProps.dataSource?.apiUrl) {
+                            columnSchema.componentProps.dataSource = {};
+                            columnSchema.valueOptions = [...columnSchema.componentProps.staticData, ...schemaData[columnSchema.field]]
+                        } else columnSchema.valueOptions = columnSchema.componentProps.staticData;
                     } else {
+                        columnSchema.componentProps.dataSource = {};
                         columnSchema.valueOptions = schemaData[columnSchema.field];
-                        columnSchema.componentProps.dataSource = { staticData: schemaData[columnSchema.field] };
+                        columnSchema.componentProps.staticData = schemaData[columnSchema.field];
                     }
                 }
                 return ({ ...columnSchema });
@@ -221,32 +231,32 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
     return (
         <React.Fragment>
             {/* Create Modal */}
-            <Modal title={"Add New Item"} open={addModal} setOpen={setAddModal}>
+            <Modal title={localeText?.modalAddTitle || "Add New Item"} open={addModal} setOpen={setAddModal}>
                 <Form dataSource={dataSource} schema={schema ? schema : defaultSchema} mode={"create"} noRequest={noRequest || noAddRequest} {...(invisibility ? {invisibility: formInvisibility} : {})} onSubmit={(data: any) => {
                     onAddSubmit && onAddSubmit(data);
                     !!staticData && setAddModal(false);
                 }} callback={(data: any) => {
                     setCallData(!callData);
                     onAddCallback && onAddCallback(data);
-                }} setModal={setAddModal} />
+                }} setModal={setAddModal} {...(localeText?.modalAddButton ? {localeText: {submitButton: localeText?.modalAddButton}} : {})} />
             </Modal>
 
             {/* Update Modal */}
-            <Modal title={"Update Item"} open={editModal} setOpen={setEditModal}>
+            <Modal title={localeText?.modalEditTitle || "Update Item"} open={editModal} setOpen={setEditModal}>
                 <Form dataSource={dataSource} staticData={selectedData} schema={schema ? schema : defaultSchema} mode={"update"} noRequest={noRequest || noEditRequest} {...(customKey ? {customKey: customKey} : {})} {...(invisibility ? {invisibility: formInvisibility} : {})} onSubmit={(data: any) => {
                     onEditSubmit && onEditSubmit(data);
                     !!staticData?.length && setEditModal(false);
                 }} callback={(data: any) => {
                     setCallData(!callData);
                     onEditCallback && onEditCallback(data);
-                }} setModal={setEditModal} />
+                }} setModal={setEditModal} {...(localeText?.modalEditButton ? {localeText: {submitButton: localeText?.modalEditButton}} : {})} />
             </Modal>
 
             {/* Delete Modal */}
-            <Modal title={"Delete Item"} open={deleteModal} setOpen={setDeleteModal}>
+            <Modal title={localeText?.modalDeleteTitle || "Delete Item"} open={deleteModal} setOpen={setDeleteModal}>
                 <MuiGrid container spacing={2}>
                     <MuiGrid item md={12} lg={12}>
-                        <Typography color={theme => theme.palette.error.main}>Are You Sure To Delete This Item?</Typography>
+                        <Typography color={theme => theme.palette.error.main}>{localeText?.modalDeleteMessage || "Are You Sure To Delete This Item?"}</Typography>
                     </MuiGrid>
                     <MuiGrid item md={12} lg={12}>
                         <Button fullWidth type={"button"} variant={"contained"} onClick={() => {
@@ -261,7 +271,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
                                     }, dispatch,
                                     apiUrlId: customKey ? selectedData[customKey] : selectedData.id
                                 }).then()
-                            } }}>Delete</Button>
+                            } }}>{localeText?.modalDeleteButton || "Delete"}</Button>
                     </MuiGrid>
                 </MuiGrid>
             </Modal>
@@ -273,6 +283,9 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
                     { ...(customKey ? { getRowId: (row : any) => row[customKey] } : {}) }
                     rows={gridData} columns={columnsSchema} density={"compact"} {...props}
                     pageSizeOptions={props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100]}
+                    slotProps={{...(props?.slotProps ? props.slotProps : {}), ...(localeText.paginationLabel ? {
+                        pagination: { ...(props?.slotProps?.pagination ? props.slotProps.pagination : {}), labelRowsPerPage: localeText.paginationLabel }
+                    } : {})}}
                     slots={props?.slots ? props?.slots : {toolbar: actions || toolbar ? CustomToolbar : null}}
                     initialState={props?.initialState ? props?.initialState : {pagination: {paginationModel: {pageSize: 15}}}}
                     getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "")}

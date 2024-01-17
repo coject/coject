@@ -64,18 +64,18 @@ const Select = ({ name, value, label, callback, staticData, helperText, dataSour
     }, [control, name, setValue, value, fixedOption, multiple]);
     // Static Data
     (0, react_1.useEffect)(() => {
-        if (!!staticData && !dataSource?.apiUrl) {
-            setSelectData(staticData);
+        if (staticData) {
+            setSelectData((prev) => ([...prev, ...staticData]));
         }
     }, [dataSource?.apiUrl, staticData]);
     // Dynamic Data
     (0, react_1.useEffect)(() => {
-        if (dataSource?.apiUrl && !staticData) {
+        if (dataSource?.apiUrl) {
             (0, Services_1.Request)({
                 dataSource: { ...dataSource }, dispatch,
                 callback: (data) => {
                     callback && callback(data);
-                    setSelectData(data);
+                    setSelectData((prev) => ([...prev, ...data]));
                 }
             }).then();
         }

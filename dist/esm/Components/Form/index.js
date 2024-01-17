@@ -9,7 +9,7 @@ import { Grid, Button } from "@mui/material";
 import { Input, Switch, Select, Checkbox, DatePicker } from "../index";
 // Styles
 import useStyles from "./theme";
-export const Form = ({ mode, getForm, schema, dataSource, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, noRequest, invisibility, children, ...props }) => {
+export const Form = ({ mode, getForm, schema, dataSource, localeText, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, noRequest, invisibility, children, ...props }) => {
     const Data = { ...(staticData ? staticData : {}) };
     const { classes } = useStyles();
     const Methods = useForm();
@@ -21,8 +21,8 @@ export const Form = ({ mode, getForm, schema, dataSource, staticData, customKey,
         if (dataSource && !noRequest) {
             Request({
                 dataSource, mode,
-                data: { ...(dataSource?.requestData ? dataSource.requestData(submitData) : submitData) },
                 apiUrlId: customKey ? Data[customKey] : Data.id,
+                data: { ...(dataSource?.requestData ? dataSource.requestData(submitData) : submitData) },
                 callback: (data) => {
                     callback && callback(data);
                     setModal && setModal(false);
@@ -72,7 +72,7 @@ export const Form = ({ mode, getForm, schema, dataSource, staticData, customKey,
                         }),
                         !(children) &&
                             React.createElement(Grid, { item: true, xs: 12, sm: 12, md: 12, lg: 12 },
-                                React.createElement(Button, { fullWidth: true, type: "submit", variant: "outlined" }, "Submit"))),
+                                React.createElement(Button, { fullWidth: true, type: "submit", variant: "outlined" }, localeText?.submitButton || "Submit"))),
                 children))));
 };
 //# sourceMappingURL=index.js.map

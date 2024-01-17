@@ -49,6 +49,9 @@ interface iForm {
     invisibility?: string[];
     onSubmitClear?: boolean;
     dataSource?: iDataSource;
+    localeText?: {
+        submitButton?: string;
+    };
     mode?: "render" | "create" | "update" | "delete";
 }
 export declare const Form: FC<iForm>;

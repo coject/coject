@@ -15,7 +15,7 @@ const material_1 = require("@mui/material");
 const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Form = ({ mode, getForm, schema, dataSource, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, noRequest, invisibility, children, ...props }) => {
+const Form = ({ mode, getForm, schema, dataSource, localeText, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, noRequest, invisibility, children, ...props }) => {
     const Data = { ...(staticData ? staticData : {}) };
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useForm)();
@@ -27,8 +27,8 @@ const Form = ({ mode, getForm, schema, dataSource, staticData, customKey, onSubm
         if (dataSource && !noRequest) {
             (0, Services_1.Request)({
                 dataSource, mode,
-                data: { ...(dataSource?.requestData ? dataSource.requestData(submitData) : submitData) },
                 apiUrlId: customKey ? Data[customKey] : Data.id,
+                data: { ...(dataSource?.requestData ? dataSource.requestData(submitData) : submitData) },
                 callback: (data) => {
                     callback && callback(data);
                     setModal && setModal(false);
@@ -78,7 +78,7 @@ const Form = ({ mode, getForm, schema, dataSource, staticData, customKey, onSubm
                         }),
                         !(children) &&
                             react_1.default.createElement(material_1.Grid, { item: true, xs: 12, sm: 12, md: 12, lg: 12 },
-                                react_1.default.createElement(material_1.Button, { fullWidth: true, type: "submit", variant: "outlined" }, "Submit"))),
+                                react_1.default.createElement(material_1.Button, { fullWidth: true, type: "submit", variant: "outlined" }, localeText?.submitButton || "Submit"))),
                 children))));
 };
 exports.Form = Form;

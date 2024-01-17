@@ -34,7 +34,7 @@ const material_1 = require("@mui/material");
 const MuiIcons = __importStar(require("@mui/icons-material"));
 // Styles
 const theme_1 = __importDefault(require("../theme"));
-const MobHeader = ({ logo, icon, menus, setMenus, languages, defaultLanguage, search, mobMenus }) => {
+const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, defaultLanguage, search, mobMenus }) => {
     const Icons = MuiIcons;
     const { classes } = (0, theme_1.default)();
     const [menuList, setMenuList] = (0, react_1.useState)({});
@@ -74,7 +74,7 @@ const MobHeader = ({ logo, icon, menus, setMenus, languages, defaultLanguage, se
                                 react_1.default.createElement(material_1.Box, { className: classes.mobSearch },
                                     react_1.default.createElement(material_1.IconButton, { className: "mobSearchBtn" },
                                         react_1.default.createElement(Icons.Search, null)),
-                                    react_1.default.createElement(material_1.TextField, { fullWidth: true, placeholder: "Search" }))),
+                                    react_1.default.createElement(material_1.TextField, { fullWidth: true, placeholder: localeText?.headerSearch || "Search" }))),
                     languages && !!languages.length &&
                         react_1.default.createElement(material_1.MenuItem, null,
                             react_1.default.createElement(material_1.Button, { onClick: (e) => setMenuList({ languages: e.currentTarget }) },
@@ -88,8 +88,8 @@ const MobHeader = ({ logo, icon, menus, setMenus, languages, defaultLanguage, se
                                                     language.onClick && language.onClick(event);
                                                     setLanguageLogo(process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
                                                 } },
-                                                react_1.default.createElement("img", { src: process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`, alt: language.name === "ar" ? "Arabic" : "English" }),
-                                                language.name === "ar" ? "Arabic" : "English"));
+                                                react_1.default.createElement("img", { src: process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`, alt: language.name === "ar" ? "العربية" : "English" }),
+                                                language.name === "ar" ? "العربية" : "English"));
                                         }
                                         else {
                                             return (react_1.default.createElement(material_1.MenuItem, { key: index, component: material_1.Button, onClick: (event) => {

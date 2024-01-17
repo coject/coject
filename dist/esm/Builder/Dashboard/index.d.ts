@@ -6,6 +6,9 @@ interface iDashboard {
     search?: boolean;
     children?: ReactNode;
     copyRight?: ReactNode;
+    localeText?: {
+        headerSearch?: string;
+    };
     defaultLanguage?: "ar" | "en" | string;
     mobMenus?: ("menu" | "footer" | "subMenu" | "sidebar")[];
     languages?: {

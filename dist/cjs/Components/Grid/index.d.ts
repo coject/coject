@@ -1,9 +1,21 @@
 import { FC } from 'react';
-import { DataGridProps, GridColDef } from "@mui/x-data-grid";
+import { DataGridProps, GridColDef, GridLocaleText } from "@mui/x-data-grid";
 type iSchema = GridColDef & {
     component?: string;
     componentProps?: any;
     componentMedia?: any;
+};
+type iLocaleText = GridLocaleText & {
+    toolbarNew?: string;
+    modalAddTitle?: string;
+    modalAddButton?: string;
+    modalEditTitle?: string;
+    modalEditButton?: string;
+    paginationLabel?: string;
+    modalDeleteTitle?: string;
+    gridHeaderAction?: string;
+    modalDeleteButton?: string;
+    modalDeleteMessage?: string;
 };
 interface iDataSource {
     name?: string;
@@ -38,13 +50,6 @@ interface iDataSource {
 interface iGrid extends DataGridProps {
     dispatch?: any;
     callback?: any;
-    localeText?: {
-        toolbarNew?: string;
-        toolbarExport?: string;
-        toolbarColumns?: string;
-        toolbarFilters?: string;
-        gridHeaderAction?: string;
-    } | any;
     staticData?: any;
     onAddSubmit?: any;
     customKey?: string;
@@ -62,6 +67,7 @@ interface iGrid extends DataGridProps {
     dataSource?: iDataSource;
     noDeleteRequest?: boolean;
     formInvisibility?: string[];
+    localeText?: iLocaleText | any;
     actions?: boolean | ("add" | "edit" | "delete")[];
     toolbar?: boolean | ("visibility" | "filter" | "export")[];
     customActions?: {

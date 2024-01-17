@@ -97,19 +97,19 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
 
     // Static Data
     useEffect(() => {
-        if (!!staticData && !dataSource?.apiUrl) {
-            setSelectData(staticData);
+        if (staticData) {
+            setSelectData((prev: any) => ([...prev, ...staticData]));
         }
     }, [dataSource?.apiUrl, staticData]);
 
     // Dynamic Data
     useEffect(() => {
-        if (dataSource?.apiUrl && !staticData) {
+        if (dataSource?.apiUrl) {
             Request({
                 dataSource: { ...dataSource }, dispatch,
                 callback: (data: any) => {
                     callback && callback(data);
-                    setSelectData(data);
+                    setSelectData((prev: any) => ([...prev, ...data]));
                 }
             }).then();
         }

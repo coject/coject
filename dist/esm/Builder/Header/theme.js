@@ -393,13 +393,9 @@ const useStyles = makeStyles()((theme) => {
             alignItems: "center !important",
             "& h6": {
                 width: "95%",
+                display: "flex",
                 fontSize: "16px",
-                overflow: "hidden",
                 lineHeight: "24px",
-                WebkitLineClamp: 1,
-                display: "-webkit-box",
-                textOverflow: "ellipsis",
-                WebkitBoxOrient: "vertical",
                 textTransform: "capitalize",
                 "& svg": {
                     marginRight: "10px",
@@ -410,6 +406,13 @@ const useStyles = makeStyles()((theme) => {
                     width: "22px",
                     objectFit: "cover",
                     marginRight: "10px"
+                },
+                "& p": {
+                    width: "100%",
+                    overflow: "hidden",
+                    textAlign: "start",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis"
                 }
             },
             "& .MuiAccordionSummary-content": {

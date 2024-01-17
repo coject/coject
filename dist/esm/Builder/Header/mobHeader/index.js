@@ -5,7 +5,7 @@ import { Box, IconButton, Menu, Typography, Button, MenuItem, TextField, Accordi
 import * as MuiIcons from "@mui/icons-material";
 // Styles
 import useStyles from "../theme";
-export const MobHeader = ({ logo, icon, menus, setMenus, languages, defaultLanguage, search, mobMenus }) => {
+export const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, defaultLanguage, search, mobMenus }) => {
     const Icons = MuiIcons;
     const { classes } = useStyles();
     const [menuList, setMenuList] = useState({});
@@ -45,7 +45,7 @@ export const MobHeader = ({ logo, icon, menus, setMenus, languages, defaultLangu
                                 React.createElement(Box, { className: classes.mobSearch },
                                     React.createElement(IconButton, { className: "mobSearchBtn" },
                                         React.createElement(Icons.Search, null)),
-                                    React.createElement(TextField, { fullWidth: true, placeholder: "Search" }))),
+                                    React.createElement(TextField, { fullWidth: true, placeholder: localeText?.headerSearch || "Search" }))),
                     languages && !!languages.length &&
                         React.createElement(MenuItem, null,
                             React.createElement(Button, { onClick: (e) => setMenuList({ languages: e.currentTarget }) },
@@ -59,8 +59,8 @@ export const MobHeader = ({ logo, icon, menus, setMenus, languages, defaultLangu
                                                     language.onClick && language.onClick(event);
                                                     setLanguageLogo(process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
                                                 } },
-                                                React.createElement("img", { src: process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`, alt: language.name === "ar" ? "Arabic" : "English" }),
-                                                language.name === "ar" ? "Arabic" : "English"));
+                                                React.createElement("img", { src: process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`, alt: language.name === "ar" ? "العربية" : "English" }),
+                                                language.name === "ar" ? "العربية" : "English"));
                                         }
                                         else {
                                             return (React.createElement(MenuItem, { key: index, component: Button, onClick: (event) => {

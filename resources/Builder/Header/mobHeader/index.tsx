@@ -16,12 +16,15 @@ interface iMobHeader {
     menus?: any;
     setMenus?: any;
     search?: boolean;
+    localeText?: {
+        headerSearch?: string
+    };
     defaultLanguage?: "ar" | "en" | string;
     mobMenus?: ("menu" | "footer" | "subMenu" | "sidebar")[];
     languages?: {name: "ar" | "en" | string, logo?: string, onClick?: any}[];
 }
 
-export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, languages, defaultLanguage, search, mobMenus }) => {
+export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, localeText, languages, defaultLanguage, search, mobMenus }) => {
     const Icons: any = MuiIcons;
     const { classes } = useStyles();
     const [ menuList, setMenuList ] = useState<any>({});
@@ -70,7 +73,7 @@ export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, languag
                                 { searchView &&
                                     <Box className={classes.mobSearch}>
                                         <IconButton className={"mobSearchBtn"}><Icons.Search/></IconButton>
-                                        <TextField fullWidth placeholder={"Search"}/>
+                                        <TextField fullWidth placeholder={localeText?.headerSearch || "Search"}/>
                                     </Box>
                                 }
                             </MenuItem>
@@ -91,8 +94,8 @@ export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, languag
                                                             language.onClick && language.onClick(event);
                                                             setLanguageLogo(process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
                                                         }}>
-                                                            <img src={process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`} alt={language.name === "ar" ? "Arabic" : "English"} />
-                                                            { language.name === "ar" ? "Arabic" : "English" }
+                                                            <img src={process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`} alt={language.name === "ar" ? "العربية" : "English"} />
+                                                            { language.name === "ar" ? "العربية" : "English" }
                                                         </MenuItem>
                                                     )
                                                 } else {

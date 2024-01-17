@@ -12,6 +12,7 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                 border: "unset"
             },
             "& .MuiDataGrid-toolbarContainer": {
+                padding: 0,
                 marginBottom: "15px",
                 "& button": {
                     padding: 0,

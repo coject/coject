@@ -18,11 +18,14 @@ interface DskHeaderInterface {
     setSidebar?: any;
     search?: boolean;
     sidebar?: boolean;
+    localeText?: {
+        headerSearch?: string
+    };
     defaultLanguage?: "ar" | "en" | string;
     languages?: {name: "ar" | "en" | string, logo?: string, onClick?: any}[];
 }
 
-export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, languages, defaultLanguage, menus, setMenus, sidebar, setSidebar }) => {
+export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, localeText, languages, defaultLanguage, menus, setMenus, sidebar, setSidebar }) => {
     const { classes } = useStyles();
     const [ menuList, setMenuList ] = useState<any>({});
     const [ languageLogo, setLanguageLogo ] = useState<string>(process.env.PUBLIC_URL + '/images/lang/en.jpg');
@@ -58,7 +61,7 @@ export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, language
                             <ListItem>
                                 <Box className={classes.dskSearch}>
                                     <IconButton><Icons.Search/></IconButton>
-                                    <TextField placeholder={"Search"}/>
+                                    <TextField placeholder={localeText?.headerSearch || "Search"}/>
                                 </Box>
                             </ListItem>
                         }
@@ -123,8 +126,8 @@ export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, language
                                                             language.onClick && language.onClick(event);
                                                             setLanguageLogo(process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
                                                         }}>
-                                                            <img src={process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`} alt={language.name === "ar" ? "Arabic" : "English"} />
-                                                            { language.name === "ar" ? "Arabic" : "English" }
+                                                            <img src={process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`} alt={language.name === "ar" ? "العربية" : "English"} />
+                                                            { language.name === "ar" ? "العربية" : "English" }
                                                         </MenuItem>
                                                     )
                                                 } else {

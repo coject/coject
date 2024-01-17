@@ -38,7 +38,7 @@ export const Grid = ({ dataSource, staticData, callback, localeText, customKey, 
     useEffect(() => {
         if (schema) {
             schema.map((field) => {
-                if (field.component === "select" && field.componentProps?.dataSource && !field.componentProps.staticData) {
+                if (field.component === "select" && field.componentProps?.dataSource?.apiUrl) {
                     return Request({ dataSource: field.componentProps.dataSource, callback: (data) => {
                             setSchemaData((prev) => ({ ...prev, [field.field]: data }));
                         } }).then();
@@ -67,19 +67,24 @@ export const Grid = ({ dataSource, staticData, callback, localeText, customKey, 
                 if (columnSchema.component === "date" && !columnSchema.renderCell) {
                     columnSchema.renderCell = (data) => React.createElement(DatePicker, { value: data.value, ...columnSchema.componentProps, textView: true });
                 }
-                if (columnSchema.component === "select" && columnSchema.componentProps?.dataSource) {
+                if (columnSchema.component === "select" && (columnSchema.componentProps?.dataSource || columnSchema.componentProps?.staticData)) {
                     const customKey = columnSchema.componentProps.customKey;
                     const customName = columnSchema.componentProps.customName;
                     columnSchema.type = "singleSelect";
                     columnSchema.getOptionValue = (value) => customKey ? value[customKey] : value.id;
                     columnSchema.getOptionLabel = (value) => customName ? value[customName] : value.label;
                     if (columnSchema.componentProps.staticData) {
-                        columnSchema.valueOptions = columnSchema.componentProps.staticData;
-                        columnSchema.componentProps.dataSource = { staticData: columnSchema.componentProps.staticData };
+                        if (columnSchema.componentProps.dataSource?.apiUrl) {
+                            columnSchema.componentProps.dataSource = {};
+                            columnSchema.valueOptions = [...columnSchema.componentProps.staticData, ...schemaData[columnSchema.field]];
+                        }
+                        else
+                            columnSchema.valueOptions = columnSchema.componentProps.staticData;
                     }
                     else {
+                        columnSchema.componentProps.dataSource = {};
                         columnSchema.valueOptions = schemaData[columnSchema.field];
-                        columnSchema.componentProps.dataSource = { staticData: schemaData[columnSchema.field] };
+                        columnSchema.componentProps.staticData = schemaData[columnSchema.field];
                     }
                 }
                 return ({ ...columnSchema });
@@ -132,26 +137,26 @@ export const Grid = ({ dataSource, staticData, callback, localeText, customKey, 
                     localeText && localeText?.toolbarNew || "Add New"))));
     };
     return (React.createElement(React.Fragment, null,
-        React.createElement(Modal, { title: "Add New Item", open: addModal, setOpen: setAddModal },
+        React.createElement(Modal, { title: localeText?.modalAddTitle || "Add New Item", open: addModal, setOpen: setAddModal },
             React.createElement(Form, { dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create", noRequest: noRequest || noAddRequest, ...(invisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
                     onAddSubmit && onAddSubmit(data);
                     !!staticData && setAddModal(false);
                 }, callback: (data) => {
                     setCallData(!callData);
                     onAddCallback && onAddCallback(data);
-                }, setModal: setAddModal })),
-        React.createElement(Modal, { title: "Update Item", open: editModal, setOpen: setEditModal },
+                }, setModal: setAddModal, ...(localeText?.modalAddButton ? { localeText: { submitButton: localeText?.modalAddButton } } : {}) })),
+        React.createElement(Modal, { title: localeText?.modalEditTitle || "Update Item", open: editModal, setOpen: setEditModal },
             React.createElement(Form, { dataSource: dataSource, staticData: selectedData, schema: schema ? schema : defaultSchema, mode: "update", noRequest: noRequest || noEditRequest, ...(customKey ? { customKey: customKey } : {}), ...(invisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
                     onEditSubmit && onEditSubmit(data);
                     !!staticData?.length && setEditModal(false);
                 }, callback: (data) => {
                     setCallData(!callData);
                     onEditCallback && onEditCallback(data);
-                }, setModal: setEditModal })),
-        React.createElement(Modal, { title: "Delete Item", open: deleteModal, setOpen: setDeleteModal },
+                }, setModal: setEditModal, ...(localeText?.modalEditButton ? { localeText: { submitButton: localeText?.modalEditButton } } : {}) })),
+        React.createElement(Modal, { title: localeText?.modalDeleteTitle || "Delete Item", open: deleteModal, setOpen: setDeleteModal },
             React.createElement(MuiGrid, { container: true, spacing: 2 },
                 React.createElement(MuiGrid, { item: true, md: 12, lg: 12 },
-                    React.createElement(Typography, { color: theme => theme.palette.error.main }, "Are You Sure To Delete This Item?")),
+                    React.createElement(Typography, { color: theme => theme.palette.error.main }, localeText?.modalDeleteMessage || "Are You Sure To Delete This Item?")),
                 React.createElement(MuiGrid, { item: true, md: 12, lg: 12 },
                     React.createElement(Button, { fullWidth: true, type: "button", variant: "contained", onClick: () => {
                             onDeleteSubmit && onDeleteSubmit(selectedData);
@@ -166,8 +171,10 @@ export const Grid = ({ dataSource, staticData, callback, localeText, customKey, 
                                     apiUrlId: customKey ? selectedData[customKey] : selectedData.id
                                 }).then();
                             }
-                        } }, "Delete")))),
+                        } }, localeText?.modalDeleteButton || "Delete")))),
         React.createElement(Box, { className: classes.root },
-            React.createElement(DataGrid, { className: !gridData?.length ? classes.empty : "", ...(localeText ? { localeText: localeText } : {}), ...(customKey ? { getRowId: (row) => row[customKey] } : {}), rows: gridData, columns: columnsSchema, density: "compact", ...props, pageSizeOptions: props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100], slots: props?.slots ? props?.slots : { toolbar: actions || toolbar ? CustomToolbar : null }, initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), ...(invisibility ? { columnVisibilityModel: invisibility.reduce((prev, key) => ({ ...prev, [key]: false }), {}) } : {}) }))));
+            React.createElement(DataGrid, { className: !gridData?.length ? classes.empty : "", ...(localeText ? { localeText: localeText } : {}), ...(customKey ? { getRowId: (row) => row[customKey] } : {}), rows: gridData, columns: columnsSchema, density: "compact", ...props, pageSizeOptions: props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100], slotProps: { ...(props?.slotProps ? props.slotProps : {}), ...(localeText.paginationLabel ? {
+                        pagination: { ...(props?.slotProps?.pagination ? props.slotProps.pagination : {}), labelRowsPerPage: localeText.paginationLabel }
+                    } : {}) }, slots: props?.slots ? props?.slots : { toolbar: actions || toolbar ? CustomToolbar : null }, initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), ...(invisibility ? { columnVisibilityModel: invisibility.reduce((prev, key) => ({ ...prev, [key]: false }), {}) } : {}) }))));
 };
 //# sourceMappingURL=index.js.map

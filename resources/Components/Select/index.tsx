@@ -110,7 +110,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
                 }
             }).then();
         }
-    }, [dataSource, callback]);
+    }, [callback]);
 
     // Master Component
     const MuiAutocomplete = () => {

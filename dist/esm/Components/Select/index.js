@@ -49,7 +49,7 @@ export const Select = ({ name, value, label, callback, staticData, helperText, d
                 }
             }).then();
         }
-    }, [dataSource, callback]);
+    }, [callback]);
     // Master Component
     const MuiAutocomplete = () => {
         return (React.createElement(Autocomplete, { options: selectData, multiple: multiple, ...props, value: !!selectData?.length && selectedValue

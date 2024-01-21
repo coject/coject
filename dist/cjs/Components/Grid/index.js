@@ -62,7 +62,7 @@ const Grid = ({ dataSource, staticData, callback, localeText, customKey, onAddCa
                     callback && callback(data);
                 } }).then();
         }
-    }, [callData, dataSource, dataSource?.apiUrl, dispatch, staticData, callback]);
+    }, [callData, dispatch, staticData, callback]);
     // Dynamic Data ( Schema )
     (0, react_1.useEffect)(() => {
         if (schema) {
@@ -96,21 +96,16 @@ const Grid = ({ dataSource, staticData, callback, localeText, customKey, onAddCa
                 if (columnSchema.component === "date" && !columnSchema.renderCell) {
                     columnSchema.renderCell = (data) => react_1.default.createElement(index_1.DatePicker, { value: data.value, ...columnSchema.componentProps, textView: true });
                 }
-                if (columnSchema.component === "select" && (columnSchema.componentProps?.dataSource || columnSchema.componentProps?.staticData)) {
+                if (columnSchema.component === "select" && columnSchema.componentProps) {
                     const customKey = columnSchema.componentProps.customKey;
                     const customName = columnSchema.componentProps.customName;
                     columnSchema.type = "singleSelect";
                     columnSchema.getOptionValue = (value) => customKey ? value[customKey] : value.id;
                     columnSchema.getOptionLabel = (value) => customName ? value[customName] : value.label;
-                    if (columnSchema.componentProps.staticData) {
-                        if (columnSchema.componentProps.dataSource?.apiUrl) {
-                            columnSchema.componentProps.dataSource = {};
-                            columnSchema.valueOptions = [...columnSchema.componentProps.staticData, ...schemaData[columnSchema.field]];
-                        }
-                        else
-                            columnSchema.valueOptions = columnSchema.componentProps.staticData;
+                    if (columnSchema.componentProps.staticData && !columnSchema.componentProps.dataSource?.apiUrl) {
+                        columnSchema.valueOptions = columnSchema.componentProps.staticData;
                     }
-                    else {
+                    else if (columnSchema.componentProps.dataSource?.apiUrl && !columnSchema.componentProps.staticData) {
                         columnSchema.componentProps.dataSource = {};
                         columnSchema.valueOptions = schemaData[columnSchema.field];
                         columnSchema.componentProps.staticData = schemaData[columnSchema.field];

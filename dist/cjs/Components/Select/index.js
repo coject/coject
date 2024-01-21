@@ -78,7 +78,7 @@ const Select = ({ name, value, label, callback, staticData, helperText, dataSour
                 }
             }).then();
         }
-    }, [dataSource, callback]);
+    }, [callback]);
     // Master Component
     const MuiAutocomplete = () => {
         return (react_1.default.createElement(material_1.Autocomplete, { options: selectData, multiple: multiple, ...props, value: !!selectData?.length && selectedValue

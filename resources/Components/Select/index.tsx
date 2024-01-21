@@ -52,7 +52,6 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     name?: string;
     label?: string;
     onChange?: any;
-    dispatch?: any;
     callback?: any;
     error?: boolean;
     inputProps?: any;
@@ -69,7 +68,7 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     disabledOption?: (string | number)[];
 }
 
-export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, value, label, callback, staticData, helperText, dataSource, multiple, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, dispatch, inputProps, error, ...props }) => {
+export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, value, label, callback, staticData, helperText, dataSource, multiple, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [ selectedValue, setSelectedValue ] = useState<any>();
@@ -97,23 +96,21 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
 
     // Static Data
     useEffect(() => {
-        if (staticData) {
-            setSelectData((prev: any) => ([...prev, ...staticData]));
-        }
+        if (staticData && !dataSource?.apiUrl) setSelectData(staticData);
     }, [dataSource?.apiUrl, staticData]);
 
     // Dynamic Data
     useEffect(() => {
         if (dataSource?.apiUrl) {
             Request({
-                dataSource: { ...dataSource }, dispatch,
+                dataSource: { ...dataSource },
                 callback: (data: any) => {
+                    setSelectData(data);
                     callback && callback(data);
-                    setSelectData((prev: any) => ([...prev, ...data]));
                 }
             }).then();
         }
-    }, [dataSource, dataSource?.apiUrl, dispatch, staticData, callback]);
+    }, [dataSource, callback]);
 
     // Master Component
     const MuiAutocomplete = () => {

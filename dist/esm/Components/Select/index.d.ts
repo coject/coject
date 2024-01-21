@@ -35,7 +35,6 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     name?: string;
     label?: string;
     onChange?: any;
-    dispatch?: any;
     callback?: any;
     error?: boolean;
     inputProps?: any;

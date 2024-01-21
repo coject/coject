@@ -9,7 +9,7 @@ import { Box, TextField, Autocomplete, Chip, Checkbox, FormHelperText } from '@m
 import { Icons } from "../index";
 // Styles
 import useStyles from "./theme";
-export const Select = ({ name, value, label, callback, staticData, helperText, dataSource, multiple, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, dispatch, inputProps, error, ...props }) => {
+export const Select = ({ name, value, label, callback, staticData, helperText, dataSource, multiple, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [selectedValue, setSelectedValue] = useState();
@@ -35,22 +35,21 @@ export const Select = ({ name, value, label, callback, staticData, helperText, d
     }, [control, name, setValue, value, fixedOption, multiple]);
     // Static Data
     useEffect(() => {
-        if (staticData) {
-            setSelectData((prev) => ([...prev, ...staticData]));
-        }
+        if (staticData && !dataSource?.apiUrl)
+            setSelectData(staticData);
     }, [dataSource?.apiUrl, staticData]);
     // Dynamic Data
     useEffect(() => {
         if (dataSource?.apiUrl) {
             Request({
-                dataSource: { ...dataSource }, dispatch,
+                dataSource: { ...dataSource },
                 callback: (data) => {
+                    setSelectData(data);
                     callback && callback(data);
-                    setSelectData((prev) => ([...prev, ...data]));
                 }
             }).then();
         }
-    }, [dataSource, dataSource?.apiUrl, dispatch, staticData, callback]);
+    }, [dataSource, callback]);
     // Master Component
     const MuiAutocomplete = () => {
         return (React.createElement(Autocomplete, { options: selectData, multiple: multiple, ...props, value: !!selectData?.length && selectedValue

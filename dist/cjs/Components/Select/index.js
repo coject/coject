@@ -38,7 +38,7 @@ const material_1 = require("@mui/material");
 const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Select = ({ name, value, label, callback, staticData, helperText, dataSource, multiple, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, dispatch, inputProps, error, ...props }) => {
+const Select = ({ name, value, label, callback, staticData, helperText, dataSource, multiple, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useFormContext)() || {};
     const [selectedValue, setSelectedValue] = (0, react_1.useState)();
@@ -64,22 +64,21 @@ const Select = ({ name, value, label, callback, staticData, helperText, dataSour
     }, [control, name, setValue, value, fixedOption, multiple]);
     // Static Data
     (0, react_1.useEffect)(() => {
-        if (staticData) {
-            setSelectData((prev) => ([...prev, ...staticData]));
-        }
+        if (staticData && !dataSource?.apiUrl)
+            setSelectData(staticData);
     }, [dataSource?.apiUrl, staticData]);
     // Dynamic Data
     (0, react_1.useEffect)(() => {
         if (dataSource?.apiUrl) {
             (0, Services_1.Request)({
-                dataSource: { ...dataSource }, dispatch,
+                dataSource: { ...dataSource },
                 callback: (data) => {
+                    setSelectData(data);
                     callback && callback(data);
-                    setSelectData((prev) => ([...prev, ...data]));
                 }
             }).then();
         }
-    }, [dataSource, dataSource?.apiUrl, dispatch, staticData, callback]);
+    }, [dataSource, callback]);
     // Master Component
     const MuiAutocomplete = () => {
         return (react_1.default.createElement(material_1.Autocomplete, { options: selectData, multiple: multiple, ...props, value: !!selectData?.length && selectedValue

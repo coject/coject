@@ -44,6 +44,9 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                 "& svg": {
                     fill: theme.palette.primary.contrastText
                 }
+            },
+            "& .MuiDataGrid-virtualScroller": {
+                minHeight: "350px"
             }
         },
         empty: {

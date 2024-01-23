@@ -53,6 +53,9 @@ const Grid = ({ dataSource, staticData, callback, localeText, customKey, onAddCa
         if (staticData && !dataSource?.apiUrl) {
             setGridData(staticData);
         }
+        return (() => {
+            setGridData([]);
+        });
     }, [dataSource?.apiUrl, staticData]);
     // Dynamic Data
     (0, react_1.useEffect)(() => {
@@ -62,6 +65,9 @@ const Grid = ({ dataSource, staticData, callback, localeText, customKey, onAddCa
                     callback && callback(data);
                 } }).then();
         }
+        return (() => {
+            setGridData([]);
+        });
     }, [callData, dispatch, staticData, callback]);
     // Dynamic Data ( Schema )
     (0, react_1.useEffect)(() => {

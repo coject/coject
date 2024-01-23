@@ -109,6 +109,9 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
         if (staticData && !dataSource?.apiUrl) {
             setGridData(staticData);
         }
+        return (() => {
+            setGridData([]);
+        })
     }, [dataSource?.apiUrl, staticData]);
 
     // Dynamic Data
@@ -119,6 +122,9 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
                 callback && callback(data);
             } }).then();
         }
+        return (() => {
+            setGridData([]);
+        })
     }, [callData, dispatch, staticData, callback]);
 
     // Dynamic Data ( Schema )

@@ -30,7 +30,7 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
             },
             "& .MuiFormControl-root": {
                 width: "100%",
-                minWidth: "250px"
+                minWidth: "auto"
             },
             "& .MuiAutocomplete-root": {
                 "& .MuiAutocomplete-input": {

@@ -109,9 +109,6 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
         if (staticData && !dataSource?.apiUrl) {
             setGridData(staticData);
         }
-        return (() => {
-            setGridData([]);
-        })
     }, [dataSource?.apiUrl, staticData]);
 
     // Dynamic Data
@@ -122,9 +119,6 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
                 callback && callback(data);
             } }).then();
         }
-        return (() => {
-            setGridData([]);
-        })
     }, [callData, dispatch, staticData, callback]);
 
     // Dynamic Data ( Schema )
@@ -207,7 +201,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
     }).filter(( element ) => element !== undefined);
 
     // Columns Schema
-    const columnsSchema: any = [ ...(schema ? schema : defaultSchema), ...( actions
+    const columnsSchema: any = [ ...(schema ? schema : defaultSchema), ...( (actions || customActions)
         ? [ { field: "actions", type: "actions", headerName: localeText && localeText?.gridHeaderAction || "Actions", width: 100, cellClassName: "actions", getActions: ({ row }: any) => ([ ...(gridActions(row) || []), ...(gridCustomActions(row) || []) ])} ]
         : []
     ) ];
@@ -301,8 +295,8 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
                             }
                         } : {})
                     }}
-                    slots={props?.slots ? props?.slots : {toolbar: actions || toolbar ? CustomToolbar : null}}
                     initialState={props?.initialState ? props?.initialState : {pagination: {paginationModel: {pageSize: 15}}}}
+                    slots={props?.slots ? props?.slots : {toolbar: actions || toolbar || customToolbar ? CustomToolbar : null}}
                     getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "")}
                     { ...(invisibility ? {columnVisibilityModel: invisibility.reduce((prev: any, key: string) => ({ ...prev, [key]: false}), {}) } : {}) }
                 />

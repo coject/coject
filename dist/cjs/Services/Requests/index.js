@@ -38,7 +38,7 @@ const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, callback })
             DataPath = dataSource && dataSource[mode]?.dataPath ? dataSource[mode]?.dataPath?.split(".") : dataSource?.dataPath?.split(".");
             APIUrl = (dataSource && dataSource[mode]?.apiUrl) ? dataSource[mode]?.apiUrl || "" : (dataSource?.apiUrl ? dataSource.apiUrl : "");
             Method = dataSource && dataSource[mode]?.method ? dataSource[mode]?.method || "" : dataSource?.method ? dataSource.method : DefaultMethod();
-            Data = { ...((dataSource && dataSource[mode]?.requestData) ? dataSource[mode]?.requestData(data) : (dataSource?.requestData ? dataSource.requestData(data) : (data ? data : {}))) };
+            Data = ((dataSource && dataSource[mode]?.requestData) ? dataSource[mode]?.requestData(data) : (dataSource?.requestData ? dataSource.requestData(data) : (data ? data : {})));
             break;
         default:
             Headers = dataSource?.headers;
@@ -47,7 +47,7 @@ const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, callback })
             DataPath = dataSource?.dataPath?.split(".");
             Name = dataSource?.name ? dataSource.name : "default";
             Method = dataSource?.method ? dataSource.method : DefaultMethod();
-            Data = { ...(dataSource?.requestData ? dataSource.requestData(data) : (data ? data : {})) };
+            Data = (dataSource?.requestData ? dataSource.requestData(data) : (data ? data : {}));
             break;
     }
     // Loading State

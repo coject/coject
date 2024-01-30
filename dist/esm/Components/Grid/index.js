@@ -24,9 +24,6 @@ export const Grid = ({ dataSource, staticData, callback, localeText, customKey, 
         if (staticData && !dataSource?.apiUrl) {
             setGridData(staticData);
         }
-        return (() => {
-            setGridData([]);
-        });
     }, [dataSource?.apiUrl, staticData]);
     // Dynamic Data
     useEffect(() => {
@@ -36,9 +33,6 @@ export const Grid = ({ dataSource, staticData, callback, localeText, customKey, 
                     callback && callback(data);
                 } }).then();
         }
-        return (() => {
-            setGridData([]);
-        });
     }, [callData, dispatch, staticData, callback]);
     // Dynamic Data ( Schema )
     useEffect(() => {
@@ -115,7 +109,7 @@ export const Grid = ({ dataSource, staticData, callback, localeText, customKey, 
         return (React.createElement(GridActionsCellItem, { key: index, label: action.label, icon: React.createElement(ActionIcon, null), onClick: (event) => action.onClick(event, row) }));
     }).filter((element) => element !== undefined);
     // Columns Schema
-    const columnsSchema = [...(schema ? schema : defaultSchema), ...(actions
+    const columnsSchema = [...(schema ? schema : defaultSchema), ...((actions || customActions)
             ? [{ field: "actions", type: "actions", headerName: localeText && localeText?.gridHeaderAction || "Actions", width: 100, cellClassName: "actions", getActions: ({ row }) => ([...(gridActions(row) || []), ...(gridCustomActions(row) || [])]) }]
             : [])];
     // Custom Toolbar
@@ -185,6 +179,6 @@ export const Grid = ({ dataSource, staticData, callback, localeText, customKey, 
                                 } } : {}),
                         }
                     } : {})
-                }, slots: props?.slots ? props?.slots : { toolbar: actions || toolbar ? CustomToolbar : null }, initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), ...(invisibility ? { columnVisibilityModel: invisibility.reduce((prev, key) => ({ ...prev, [key]: false }), {}) } : {}) }))));
+                }, initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, slots: props?.slots ? props?.slots : { toolbar: actions || toolbar || customToolbar ? CustomToolbar : null }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), ...(invisibility ? { columnVisibilityModel: invisibility.reduce((prev, key) => ({ ...prev, [key]: false }), {}) } : {}) }))));
 };
 //# sourceMappingURL=index.js.map

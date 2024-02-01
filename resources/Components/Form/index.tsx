@@ -132,6 +132,7 @@ export const Form: FC<iForm> = ({ mode, getForm, schema, dataSource, localeText,
                                         return null;
                                 } else return null;
                             })}
+                            { children }
                             { !(children) &&
                                 <Grid item xs={12} sm={12} md={12} lg={12}>
                                     <Button fullWidth type="submit" variant="outlined">{localeText?.submitButton || "Submit"}</Button>
@@ -139,7 +140,7 @@ export const Form: FC<iForm> = ({ mode, getForm, schema, dataSource, localeText,
                             }
                         </Grid>
                     }
-                    { children }
+                    { (children && !schema) && children }
                 </form>
             </FormProvider>
         </React.Fragment>

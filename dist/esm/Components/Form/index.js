@@ -70,9 +70,10 @@ export const Form = ({ mode, getForm, schema, dataSource, localeText, staticData
                             else
                                 return null;
                         }),
+                        children,
                         !(children) &&
                             React.createElement(Grid, { item: true, xs: 12, sm: 12, md: 12, lg: 12 },
                                 React.createElement(Button, { fullWidth: true, type: "submit", variant: "outlined" }, localeText?.submitButton || "Submit"))),
-                children))));
+                (children && !schema) && children))));
 };
 //# sourceMappingURL=index.js.map

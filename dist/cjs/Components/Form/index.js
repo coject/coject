@@ -76,10 +76,11 @@ const Form = ({ mode, getForm, schema, dataSource, localeText, staticData, custo
                             else
                                 return null;
                         }),
+                        children,
                         !(children) &&
                             react_1.default.createElement(material_1.Grid, { item: true, xs: 12, sm: 12, md: 12, lg: 12 },
                                 react_1.default.createElement(material_1.Button, { fullWidth: true, type: "submit", variant: "outlined" }, localeText?.submitButton || "Submit"))),
-                children))));
+                (children && !schema) && children))));
 };
 exports.Form = Form;
 //# sourceMappingURL=index.js.map

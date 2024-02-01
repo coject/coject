@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import { DataGridProps, GridColDef, GridLocaleText } from "@mui/x-data-grid";
 type iSchema = GridColDef & {
     component?: string;
@@ -63,10 +63,13 @@ interface iGrid extends DataGridProps {
     schema?: iSchema | any;
     noAddRequest?: boolean;
     onDeleteCallback?: any;
+    editFormChildren?: any;
     invisibility?: string[];
     noEditRequest?: boolean;
     dataSource?: iDataSource;
+    noRenderRequest?: boolean;
     noDeleteRequest?: boolean;
+    addFormChildren?: ReactNode;
     formInvisibility?: string[];
     localeText?: iLocaleText | any;
     actions?: boolean | ("add" | "edit" | "delete")[];

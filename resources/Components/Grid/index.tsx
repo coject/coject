@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState, useReducer } from 'react';
+import React, { FC, useEffect, useState, useReducer, ReactNode } from 'react';
 
 // Request
 import { Request } from "../../Services";
@@ -82,10 +82,13 @@ interface iGrid extends DataGridProps {
     schema?: iSchema | any;
     noAddRequest?: boolean;
     onDeleteCallback?: any;
+    editFormChildren?: any;
     invisibility?: string[];
     noEditRequest?: boolean;
     dataSource?: iDataSource;
+    noRenderRequest?: boolean;
     noDeleteRequest?: boolean;
+    addFormChildren?: ReactNode;
     formInvisibility?: string[];
     localeText?: iLocaleText | any;
     actions?: boolean | ("add" | "edit" | "delete")[];
@@ -93,7 +96,7 @@ interface iGrid extends DataGridProps {
     customActions?: { icon: string, label: string, onClick: any }[];
 }
 
-export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRenderRequest, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const { classes } = useStyles();
     const [ gridData, setGridData ] = useState<any>([]);
     const [ schemaData, setSchemaData ] = useState<any>({});
@@ -106,20 +109,20 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
 
     // Static Data
     useEffect(() => {
-        if (staticData && !dataSource?.apiUrl) {
+        if (staticData) {
             setGridData(staticData);
         }
-    }, [dataSource?.apiUrl, staticData]);
+    }, [staticData]);
 
     // Dynamic Data
     useEffect(() => {
-        if (dataSource?.apiUrl && !staticData) {
+        if (dataSource?.apiUrl && !staticData && !noRenderRequest) {
             Request({ dataSource, dispatch, callback: (data: any) => {
                 setGridData(data);
                 callback && callback(data);
             } }).then();
         }
-    }, [callData, dispatch, staticData, callback]);
+    }, [callData, dispatch, staticData, callback, noRenderRequest]);
 
     // Dynamic Data ( Schema )
     useEffect(() => {
@@ -236,7 +239,9 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
                 }} callback={(data: any) => {
                     setCallData(!callData);
                     onAddCallback && onAddCallback(data);
-                }} setModal={setAddModal} {...(localeText?.modalAddButton ? {localeText: {submitButton: localeText?.modalAddButton}} : {})} />
+                }} setModal={setAddModal} {...(localeText?.modalAddButton ? {localeText: {submitButton: localeText?.modalAddButton}} : {})}>
+                    {addFormChildren && addFormChildren}
+                </Form>
             </Modal>
 
             {/* Update Modal */}
@@ -247,7 +252,9 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
                 }} callback={(data: any) => {
                     setCallData(!callData);
                     onEditCallback && onEditCallback(data);
-                }} setModal={setEditModal} {...(localeText?.modalEditButton ? {localeText: {submitButton: localeText?.modalEditButton}} : {})} />
+                }} setModal={setEditModal} {...(localeText?.modalEditButton ? {localeText: {submitButton: localeText?.modalEditButton}} : {})}>
+                    {editFormChildren && editFormChildren(selectedData)}
+                </Form>
             </Modal>
 
             {/* Delete Modal */}

@@ -38,7 +38,7 @@ const x_data_grid_1 = require("@mui/x-data-grid");
 const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Grid = ({ dataSource, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+const Grid = ({ dataSource, noRenderRequest, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const [gridData, setGridData] = (0, react_1.useState)([]);
     const [schemaData, setSchemaData] = (0, react_1.useState)({});
@@ -50,19 +50,19 @@ const Grid = ({ dataSource, staticData, callback, localeText, customKey, onAddCa
     const [deleteModal, setDeleteModal] = (0, react_1.useState)(false);
     // Static Data
     (0, react_1.useEffect)(() => {
-        if (staticData && !dataSource?.apiUrl) {
+        if (staticData) {
             setGridData(staticData);
         }
-    }, [dataSource?.apiUrl, staticData]);
+    }, [staticData]);
     // Dynamic Data
     (0, react_1.useEffect)(() => {
-        if (dataSource?.apiUrl && !staticData) {
+        if (dataSource?.apiUrl && !staticData && !noRenderRequest) {
             (0, Services_1.Request)({ dataSource, dispatch, callback: (data) => {
                     setGridData(data);
                     callback && callback(data);
                 } }).then();
         }
-    }, [callData, dispatch, staticData, callback]);
+    }, [callData, dispatch, staticData, callback, noRenderRequest]);
     // Dynamic Data ( Schema )
     (0, react_1.useEffect)(() => {
         if (schema) {
@@ -168,7 +168,7 @@ const Grid = ({ dataSource, staticData, callback, localeText, customKey, onAddCa
                 }, callback: (data) => {
                     setCallData(!callData);
                     onAddCallback && onAddCallback(data);
-                }, setModal: setAddModal, ...(localeText?.modalAddButton ? { localeText: { submitButton: localeText?.modalAddButton } } : {}) })),
+                }, setModal: setAddModal, ...(localeText?.modalAddButton ? { localeText: { submitButton: localeText?.modalAddButton } } : {}) }, addFormChildren && addFormChildren)),
         react_1.default.createElement(index_1.Modal, { title: localeText?.modalEditTitle || "Update Item", open: editModal, setOpen: setEditModal },
             react_1.default.createElement(index_1.Form, { dataSource: dataSource, staticData: selectedData, schema: schema ? schema : defaultSchema, mode: "update", noRequest: (noRequest || noEditRequest) && !!dataSource, ...(customKey ? { customKey: customKey } : {}), ...(formInvisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
                     onEditSubmit && onEditSubmit(data);
@@ -176,7 +176,7 @@ const Grid = ({ dataSource, staticData, callback, localeText, customKey, onAddCa
                 }, callback: (data) => {
                     setCallData(!callData);
                     onEditCallback && onEditCallback(data);
-                }, setModal: setEditModal, ...(localeText?.modalEditButton ? { localeText: { submitButton: localeText?.modalEditButton } } : {}) })),
+                }, setModal: setEditModal, ...(localeText?.modalEditButton ? { localeText: { submitButton: localeText?.modalEditButton } } : {}) }, editFormChildren && editFormChildren(selectedData))),
         react_1.default.createElement(index_1.Modal, { title: localeText?.modalDeleteTitle || "Delete Item", open: deleteModal, setOpen: setDeleteModal },
             react_1.default.createElement(material_1.Grid, { container: true, spacing: 2 },
                 react_1.default.createElement(material_1.Grid, { item: true, md: 12, lg: 12 },

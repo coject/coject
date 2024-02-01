@@ -9,7 +9,7 @@ import { DataGrid, GridActionsCellItem, GridToolbarContainer, GridToolbarColumns
 import { Form, DatePicker, Modal, Icons } from "../index";
 // Styles
 import useStyles from "./theme";
-export const Grid = ({ dataSource, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+export const Grid = ({ dataSource, noRenderRequest, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const { classes } = useStyles();
     const [gridData, setGridData] = useState([]);
     const [schemaData, setSchemaData] = useState({});
@@ -21,19 +21,19 @@ export const Grid = ({ dataSource, staticData, callback, localeText, customKey, 
     const [deleteModal, setDeleteModal] = useState(false);
     // Static Data
     useEffect(() => {
-        if (staticData && !dataSource?.apiUrl) {
+        if (staticData) {
             setGridData(staticData);
         }
-    }, [dataSource?.apiUrl, staticData]);
+    }, [staticData]);
     // Dynamic Data
     useEffect(() => {
-        if (dataSource?.apiUrl && !staticData) {
+        if (dataSource?.apiUrl && !staticData && !noRenderRequest) {
             Request({ dataSource, dispatch, callback: (data) => {
                     setGridData(data);
                     callback && callback(data);
                 } }).then();
         }
-    }, [callData, dispatch, staticData, callback]);
+    }, [callData, dispatch, staticData, callback, noRenderRequest]);
     // Dynamic Data ( Schema )
     useEffect(() => {
         if (schema) {
@@ -139,7 +139,7 @@ export const Grid = ({ dataSource, staticData, callback, localeText, customKey, 
                 }, callback: (data) => {
                     setCallData(!callData);
                     onAddCallback && onAddCallback(data);
-                }, setModal: setAddModal, ...(localeText?.modalAddButton ? { localeText: { submitButton: localeText?.modalAddButton } } : {}) })),
+                }, setModal: setAddModal, ...(localeText?.modalAddButton ? { localeText: { submitButton: localeText?.modalAddButton } } : {}) }, addFormChildren && addFormChildren)),
         React.createElement(Modal, { title: localeText?.modalEditTitle || "Update Item", open: editModal, setOpen: setEditModal },
             React.createElement(Form, { dataSource: dataSource, staticData: selectedData, schema: schema ? schema : defaultSchema, mode: "update", noRequest: (noRequest || noEditRequest) && !!dataSource, ...(customKey ? { customKey: customKey } : {}), ...(formInvisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
                     onEditSubmit && onEditSubmit(data);
@@ -147,7 +147,7 @@ export const Grid = ({ dataSource, staticData, callback, localeText, customKey, 
                 }, callback: (data) => {
                     setCallData(!callData);
                     onEditCallback && onEditCallback(data);
-                }, setModal: setEditModal, ...(localeText?.modalEditButton ? { localeText: { submitButton: localeText?.modalEditButton } } : {}) })),
+                }, setModal: setEditModal, ...(localeText?.modalEditButton ? { localeText: { submitButton: localeText?.modalEditButton } } : {}) }, editFormChildren && editFormChildren(selectedData))),
         React.createElement(Modal, { title: localeText?.modalDeleteTitle || "Delete Item", open: deleteModal, setOpen: setDeleteModal },
             React.createElement(MuiGrid, { container: true, spacing: 2 },
                 React.createElement(MuiGrid, { item: true, md: 12, lg: 12 },

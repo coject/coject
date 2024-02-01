@@ -230,7 +230,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
         <React.Fragment>
             {/* Create Modal */}
             <Modal title={localeText?.modalAddTitle || "Add New Item"} open={addModal} setOpen={setAddModal}>
-                <Form dataSource={dataSource} schema={schema ? schema : defaultSchema} mode={"create"} noRequest={noRequest || noAddRequest} {...(invisibility ? {invisibility: formInvisibility} : {})} onSubmit={(data: any) => {
+                <Form dataSource={dataSource} schema={schema ? schema : defaultSchema} mode={"create"} noRequest={(noRequest || noAddRequest) && !!dataSource} {...(formInvisibility ? {invisibility: formInvisibility} : {})} onSubmit={(data: any) => {
                     onAddSubmit && onAddSubmit(data);
                     !!staticData && setAddModal(false);
                 }} callback={(data: any) => {
@@ -241,7 +241,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
 
             {/* Update Modal */}
             <Modal title={localeText?.modalEditTitle || "Update Item"} open={editModal} setOpen={setEditModal}>
-                <Form dataSource={dataSource} staticData={selectedData} schema={schema ? schema : defaultSchema} mode={"update"} noRequest={noRequest || noEditRequest} {...(customKey ? {customKey: customKey} : {})} {...(invisibility ? {invisibility: formInvisibility} : {})} onSubmit={(data: any) => {
+                <Form dataSource={dataSource} staticData={selectedData} schema={schema ? schema : defaultSchema} mode={"update"} noRequest={(noRequest || noEditRequest) && !!dataSource} {...(customKey ? {customKey: customKey} : {})} {...(formInvisibility ? {invisibility: formInvisibility} : {})} onSubmit={(data: any) => {
                     onEditSubmit && onEditSubmit(data);
                     !!staticData?.length && setEditModal(false);
                 }} callback={(data: any) => {
@@ -260,7 +260,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, staticDa
                         <Button fullWidth type={"button"} variant={"contained"} onClick={() => {
                             onDeleteSubmit && onDeleteSubmit(selectedData);
                             !!staticData?.length && setDeleteModal(false);
-                            if (!noRequest || !noDeleteRequest) {
+                            if (!(noRequest || noDeleteRequest) && !!dataSource) {
                                 Request({
                                     dataSource, mode: "delete", callback: (data: any) => {
                                         setCallData(!callData);

@@ -133,7 +133,7 @@ export const Grid = ({ dataSource, staticData, callback, localeText, customKey, 
     };
     return (React.createElement(React.Fragment, null,
         React.createElement(Modal, { title: localeText?.modalAddTitle || "Add New Item", open: addModal, setOpen: setAddModal },
-            React.createElement(Form, { dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create", noRequest: noRequest || noAddRequest, ...(invisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
+            React.createElement(Form, { dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create", noRequest: (noRequest || noAddRequest) && !!dataSource, ...(formInvisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
                     onAddSubmit && onAddSubmit(data);
                     !!staticData && setAddModal(false);
                 }, callback: (data) => {
@@ -141,7 +141,7 @@ export const Grid = ({ dataSource, staticData, callback, localeText, customKey, 
                     onAddCallback && onAddCallback(data);
                 }, setModal: setAddModal, ...(localeText?.modalAddButton ? { localeText: { submitButton: localeText?.modalAddButton } } : {}) })),
         React.createElement(Modal, { title: localeText?.modalEditTitle || "Update Item", open: editModal, setOpen: setEditModal },
-            React.createElement(Form, { dataSource: dataSource, staticData: selectedData, schema: schema ? schema : defaultSchema, mode: "update", noRequest: noRequest || noEditRequest, ...(customKey ? { customKey: customKey } : {}), ...(invisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
+            React.createElement(Form, { dataSource: dataSource, staticData: selectedData, schema: schema ? schema : defaultSchema, mode: "update", noRequest: (noRequest || noEditRequest) && !!dataSource, ...(customKey ? { customKey: customKey } : {}), ...(formInvisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
                     onEditSubmit && onEditSubmit(data);
                     !!staticData?.length && setEditModal(false);
                 }, callback: (data) => {
@@ -156,7 +156,7 @@ export const Grid = ({ dataSource, staticData, callback, localeText, customKey, 
                     React.createElement(Button, { fullWidth: true, type: "button", variant: "contained", onClick: () => {
                             onDeleteSubmit && onDeleteSubmit(selectedData);
                             !!staticData?.length && setDeleteModal(false);
-                            if (!noRequest || !noDeleteRequest) {
+                            if (!(noRequest || noDeleteRequest) && !!dataSource) {
                                 Request({
                                     dataSource, mode: "delete", callback: (data) => {
                                         setCallData(!callData);

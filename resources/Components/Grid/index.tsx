@@ -135,7 +135,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                 } else return null;
             })
         }
-    }, [schema, callback]);
+    }, []);
 
     // Default Schema
     const defaultSchema: any = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => (

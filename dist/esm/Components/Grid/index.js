@@ -47,7 +47,7 @@ export const Grid = ({ dataSource, noRenderRequest, staticData, callback, locale
                     return null;
             });
         }
-    }, [schema, callback]);
+    }, []);
     // Default Schema
     const defaultSchema = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => ({
         field: columnKey,

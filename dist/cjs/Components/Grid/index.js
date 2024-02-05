@@ -114,9 +114,8 @@ const Grid = ({ dataSource, noRenderRequest, staticData, callback, localeText, c
                 return ({ ...columnSchema });
             });
         }
-        console.log({ schemaData });
         forceUpdate();
-    }, [forceUpdate, schema, schemaData]);
+    }, [schema, schemaData]);
     // Grid Actions
     const gridActions = (row) => actions && (actions instanceof Array
         ? actions?.map((label, index) => {

@@ -174,9 +174,8 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                 return ({ ...columnSchema });
             })
         }
-        console.log({ schemaData });
         forceUpdate();
-    }, [forceUpdate, schema, schemaData]);
+    }, [schema, schemaData]);
 
     // Grid Actions
     const gridActions = (row: any) => actions && ( actions instanceof Array

@@ -64,9 +64,9 @@ const Select = ({ name, value, label, callback, staticData, helperText, dataSour
     }, [control, name, setValue, value, fixedOption, multiple]);
     // Static Data
     (0, react_1.useEffect)(() => {
-        if (staticData && !dataSource?.apiUrl)
+        if (staticData)
             setSelectData(staticData);
-    }, [dataSource?.apiUrl, staticData]);
+    }, [staticData]);
     // Dynamic Data
     (0, react_1.useEffect)(() => {
         if (dataSource?.apiUrl && !staticData) {
@@ -78,7 +78,7 @@ const Select = ({ name, value, label, callback, staticData, helperText, dataSour
                 }
             }).then();
         }
-    }, [callback]);
+    }, [callback, staticData]);
     // Master Component
     const MuiAutocomplete = () => {
         return (react_1.default.createElement(material_1.Autocomplete, { options: selectData, multiple: multiple, ...props, value: !!selectData?.length && selectedValue

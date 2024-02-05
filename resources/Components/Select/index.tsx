@@ -96,8 +96,8 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
 
     // Static Data
     useEffect(() => {
-        if (staticData && !dataSource?.apiUrl) setSelectData(staticData);
-    }, [dataSource?.apiUrl, staticData]);
+        if (staticData) setSelectData(staticData);
+    }, [staticData]);
 
     // Dynamic Data
     useEffect(() => {
@@ -110,7 +110,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
                 }
             }).then();
         }
-    }, [callback]);
+    }, [callback, staticData]);
 
     // Master Component
     const MuiAutocomplete = () => {

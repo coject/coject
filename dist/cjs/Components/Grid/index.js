@@ -108,14 +108,8 @@ const Grid = ({ dataSource, noRenderRequest, staticData, callback, localeText, c
                     columnSchema.type = "singleSelect";
                     columnSchema.getOptionValue = (value) => customKey ? value[customKey] : value.id;
                     columnSchema.getOptionLabel = (value) => customName ? value[customName] : value.label;
-                    if (columnSchema.componentProps.staticData && !columnSchema.componentProps.dataSource?.apiUrl) {
-                        columnSchema.valueOptions = columnSchema.componentProps.staticData;
-                    }
-                    else if (columnSchema.componentProps.dataSource?.apiUrl && !columnSchema.componentProps.staticData) {
-                        columnSchema.componentProps.dataSource = {};
-                        columnSchema.valueOptions = schemaData[columnSchema.field];
-                        columnSchema.componentProps.staticData = schemaData[columnSchema.field];
-                    }
+                    columnSchema.valueOptions = schemaData[columnSchema.field];
+                    columnSchema.componentProps.staticData = schemaData[columnSchema.field];
                 }
                 return ({ ...columnSchema });
             });

@@ -112,9 +112,6 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
         if (staticData) {
             setGridData(staticData);
         }
-        return(() => {
-            setGridData([]);
-        })
     }, [staticData]);
 
     // Dynamic Data
@@ -125,9 +122,6 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                 callback && callback(data);
             } }).then();
         }
-        return(() => {
-            setGridData([]);
-        })
     }, [callData, dispatch, staticData, callback, noRenderRequest]);
 
     // Dynamic Data ( Schema )
@@ -169,8 +163,15 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                     columnSchema.type = "singleSelect";
                     columnSchema.getOptionValue = (value: any) => customKey ? value[customKey] : value.id;
                     columnSchema.getOptionLabel = (value: any) => customName ? value[customName] : value.label;
+                    if (columnSchema.componentProps.staticData && !columnSchema.componentProps.dataSource?.apiUrl) {
+                        console.log("Test 1");
+                        columnSchema.valueOptions = columnSchema.componentProps.staticData;
+                    } else if (columnSchema.componentProps.dataSource?.apiUrl && !columnSchema.componentProps.staticData) {
+                        console.log("Test 2");
+                        columnSchema.componentProps.dataSource = {};
                         columnSchema.valueOptions = schemaData[columnSchema.field];
                         columnSchema.componentProps.staticData = schemaData[columnSchema.field];
+                    }
                 }
                 return ({ ...columnSchema });
             })

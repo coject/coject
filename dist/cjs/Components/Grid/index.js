@@ -53,9 +53,6 @@ const Grid = ({ dataSource, noRenderRequest, staticData, callback, localeText, c
         if (staticData) {
             setGridData(staticData);
         }
-        return (() => {
-            setGridData([]);
-        });
     }, [staticData]);
     // Dynamic Data
     (0, react_1.useEffect)(() => {
@@ -65,9 +62,6 @@ const Grid = ({ dataSource, noRenderRequest, staticData, callback, localeText, c
                     callback && callback(data);
                 } }).then();
         }
-        return (() => {
-            setGridData([]);
-        });
     }, [callData, dispatch, staticData, callback, noRenderRequest]);
     // Dynamic Data ( Schema )
     (0, react_1.useEffect)(() => {
@@ -108,8 +102,16 @@ const Grid = ({ dataSource, noRenderRequest, staticData, callback, localeText, c
                     columnSchema.type = "singleSelect";
                     columnSchema.getOptionValue = (value) => customKey ? value[customKey] : value.id;
                     columnSchema.getOptionLabel = (value) => customName ? value[customName] : value.label;
-                    columnSchema.valueOptions = schemaData[columnSchema.field];
-                    columnSchema.componentProps.staticData = schemaData[columnSchema.field];
+                    if (columnSchema.componentProps.staticData && !columnSchema.componentProps.dataSource?.apiUrl) {
+                        console.log("Test 1");
+                        columnSchema.valueOptions = columnSchema.componentProps.staticData;
+                    }
+                    else if (columnSchema.componentProps.dataSource?.apiUrl && !columnSchema.componentProps.staticData) {
+                        console.log("Test 2");
+                        columnSchema.componentProps.dataSource = {};
+                        columnSchema.valueOptions = schemaData[columnSchema.field];
+                        columnSchema.componentProps.staticData = schemaData[columnSchema.field];
+                    }
                 }
                 return ({ ...columnSchema });
             });

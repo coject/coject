@@ -24,9 +24,6 @@ export const Grid = ({ dataSource, noRenderRequest, staticData, callback, locale
         if (staticData) {
             setGridData(staticData);
         }
-        return (() => {
-            setGridData([]);
-        });
     }, [staticData]);
     // Dynamic Data
     useEffect(() => {
@@ -36,9 +33,6 @@ export const Grid = ({ dataSource, noRenderRequest, staticData, callback, locale
                     callback && callback(data);
                 } }).then();
         }
-        return (() => {
-            setGridData([]);
-        });
     }, [callData, dispatch, staticData, callback, noRenderRequest]);
     // Dynamic Data ( Schema )
     useEffect(() => {
@@ -79,8 +73,16 @@ export const Grid = ({ dataSource, noRenderRequest, staticData, callback, locale
                     columnSchema.type = "singleSelect";
                     columnSchema.getOptionValue = (value) => customKey ? value[customKey] : value.id;
                     columnSchema.getOptionLabel = (value) => customName ? value[customName] : value.label;
-                    columnSchema.valueOptions = schemaData[columnSchema.field];
-                    columnSchema.componentProps.staticData = schemaData[columnSchema.field];
+                    if (columnSchema.componentProps.staticData && !columnSchema.componentProps.dataSource?.apiUrl) {
+                        console.log("Test 1");
+                        columnSchema.valueOptions = columnSchema.componentProps.staticData;
+                    }
+                    else if (columnSchema.componentProps.dataSource?.apiUrl && !columnSchema.componentProps.staticData) {
+                        console.log("Test 2");
+                        columnSchema.componentProps.dataSource = {};
+                        columnSchema.valueOptions = schemaData[columnSchema.field];
+                        columnSchema.componentProps.staticData = schemaData[columnSchema.field];
+                    }
                 }
                 return ({ ...columnSchema });
             });

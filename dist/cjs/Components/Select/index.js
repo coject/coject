@@ -69,7 +69,7 @@ const Select = ({ name, value, label, callback, staticData, helperText, dataSour
     }, [dataSource?.apiUrl, staticData]);
     // Dynamic Data
     (0, react_1.useEffect)(() => {
-        if (dataSource?.apiUrl) {
+        if (dataSource?.apiUrl && !staticData) {
             (0, Services_1.Request)({
                 dataSource: { ...dataSource },
                 callback: (data) => {

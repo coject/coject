@@ -49,11 +49,7 @@ export const Grid = ({ dataSource, noRenderRequest, staticData, callback, locale
         }
     }, []);
     // Default Schema
-    const defaultSchema = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => ({
-        field: columnKey,
-        component: "input",
-        flex: (columnKey === (customKey ? customKey : "id") ? 0 : 1)
-    })) : [];
+    const defaultSchema = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => ({ field: columnKey, component: "input", flex: (columnKey === (customKey ? customKey : "id") ? 0 : 1) })) : [];
     // Custom Schema
     useEffect(() => {
         if (schema) {
@@ -77,8 +73,6 @@ export const Grid = ({ dataSource, noRenderRequest, staticData, callback, locale
                         columnSchema.valueOptions = columnSchema.componentProps.staticData;
                     }
                     else if (columnSchema.componentProps.dataSource?.apiUrl && !columnSchema.componentProps.staticData) {
-                        console.log(schemaData);
-                        // columnSchema.componentProps.dataSource = {};
                         columnSchema.valueOptions = schemaData[columnSchema.field];
                         columnSchema.componentProps.staticData = schemaData[columnSchema.field];
                     }

@@ -139,11 +139,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
 
     // Default Schema
     const defaultSchema: any = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => (
-        {
-            field: columnKey,
-            component: "input",
-            flex: (columnKey === (customKey ? customKey : "id") ? 0 : 1)
-        }
+        { field: columnKey, component: "input", flex: (columnKey === (customKey ? customKey : "id") ? 0 : 1) }
     )) : [];
 
     // Custom Schema
@@ -166,8 +162,6 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                     if (columnSchema.componentProps.staticData && !columnSchema.componentProps.dataSource?.apiUrl) {
                         columnSchema.valueOptions = columnSchema.componentProps.staticData;
                     } else if (columnSchema.componentProps.dataSource?.apiUrl && !columnSchema.componentProps.staticData) {
-                        console.log(schemaData);
-                        // columnSchema.componentProps.dataSource = {};
                         columnSchema.valueOptions = schemaData[columnSchema.field];
                         columnSchema.componentProps.staticData = schemaData[columnSchema.field];
                     }

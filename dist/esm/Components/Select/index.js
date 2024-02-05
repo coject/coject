@@ -40,7 +40,7 @@ export const Select = ({ name, value, label, callback, staticData, helperText, d
     }, [dataSource?.apiUrl, staticData]);
     // Dynamic Data
     useEffect(() => {
-        if (dataSource?.apiUrl) {
+        if (dataSource?.apiUrl && !staticData) {
             Request({
                 dataSource: { ...dataSource },
                 callback: (data) => {

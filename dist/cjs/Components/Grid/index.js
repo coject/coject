@@ -114,6 +114,7 @@ const Grid = ({ dataSource, noRenderRequest, staticData, callback, localeText, c
                 return ({ ...columnSchema });
             });
         }
+        console.log("Test");
         forceUpdate();
     }, [forceUpdate, schema, schemaData]);
     // Grid Actions

@@ -164,11 +164,10 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                     columnSchema.getOptionValue = (value: any) => customKey ? value[customKey] : value.id;
                     columnSchema.getOptionLabel = (value: any) => customName ? value[customName] : value.label;
                     if (columnSchema.componentProps.staticData && !columnSchema.componentProps.dataSource?.apiUrl) {
-                        console.log("Test 1");
                         columnSchema.valueOptions = columnSchema.componentProps.staticData;
                     } else if (columnSchema.componentProps.dataSource?.apiUrl && !columnSchema.componentProps.staticData) {
-                        console.log("Test 2");
-                        columnSchema.componentProps.dataSource = {};
+                        console.log(schemaData);
+                        // columnSchema.componentProps.dataSource = {};
                         columnSchema.valueOptions = schemaData[columnSchema.field];
                         columnSchema.componentProps.staticData = schemaData[columnSchema.field];
                     }

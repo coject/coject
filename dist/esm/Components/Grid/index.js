@@ -47,6 +47,7 @@ export const Grid = ({ dataSource, noRenderRequest, staticData, callback, locale
                     return null;
             });
         }
+        forceUpdate();
     }, []);
     // Default Schema
     const defaultSchema = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => ({
@@ -85,9 +86,8 @@ export const Grid = ({ dataSource, noRenderRequest, staticData, callback, locale
                 return ({ ...columnSchema });
             });
         }
-        console.log(schemaData);
         forceUpdate();
-    }, [schema, schemaData]);
+    }, [forceUpdate, schema, schemaData]);
     // Grid Actions
     const gridActions = (row) => actions && (actions instanceof Array
         ? actions?.map((label, index) => {

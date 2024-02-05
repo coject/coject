@@ -135,6 +135,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                 } else return null;
             })
         }
+        forceUpdate();
     }, []);
 
     // Default Schema
@@ -174,9 +175,8 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                 return ({ ...columnSchema });
             })
         }
-        console.log(schemaData);
         forceUpdate();
-    }, [schema, schemaData]);
+    }, [forceUpdate, schema, schemaData]);
 
     // Grid Actions
     const gridActions = (row: any) => actions && ( actions instanceof Array

@@ -112,6 +112,9 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
         if (staticData) {
             setGridData(staticData);
         }
+        return(() => {
+            setGridData([]);
+        })
     }, [staticData]);
 
     // Dynamic Data
@@ -122,6 +125,9 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                 callback && callback(data);
             } }).then();
         }
+        return(() => {
+            setGridData([]);
+        })
     }, [callData, dispatch, staticData, callback, noRenderRequest]);
 
     // Dynamic Data ( Schema )
@@ -135,7 +141,6 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                 } else return null;
             })
         }
-        forceUpdate();
     }, []);
 
     // Default Schema

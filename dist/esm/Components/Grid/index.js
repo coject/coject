@@ -24,6 +24,9 @@ export const Grid = ({ dataSource, noRenderRequest, staticData, callback, locale
         if (staticData) {
             setGridData(staticData);
         }
+        return (() => {
+            setGridData([]);
+        });
     }, [staticData]);
     // Dynamic Data
     useEffect(() => {
@@ -33,6 +36,9 @@ export const Grid = ({ dataSource, noRenderRequest, staticData, callback, locale
                     callback && callback(data);
                 } }).then();
         }
+        return (() => {
+            setGridData([]);
+        });
     }, [callData, dispatch, staticData, callback, noRenderRequest]);
     // Dynamic Data ( Schema )
     useEffect(() => {
@@ -47,7 +53,6 @@ export const Grid = ({ dataSource, noRenderRequest, staticData, callback, locale
                     return null;
             });
         }
-        forceUpdate();
     }, []);
     // Default Schema
     const defaultSchema = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => ({

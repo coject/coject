@@ -38,6 +38,7 @@ type iDatePicker = DateTimePickerProps<any> & DatePickerProps<any> & {
 
 export const DatePicker: FC<iDatePicker> = ({ name, value, hijri, viewFormat, actionFormat, minDate, maxDate, error, helperText, style, withTime, textView, fullWidth, onChange, ...props }) => {
     const { classes } = useStyles();
+    const Methods = useFormContext() || {};
     const DateComponent: any = withTime ? DateTimePicker : MuiDatePicker;
     const [ selectedDate, setSelectedDate ] = useState<any>(hijri ? MomentHijri(new Date()) : Moment(new Date()));
     const { setValue, control, getValues, watch } = useFormContext() || {};
@@ -80,7 +81,7 @@ export const DatePicker: FC<iDatePicker> = ({ name, value, hijri, viewFormat, ac
                             format={viewFormat ? viewFormat : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY"}
                             onChange={(newValue: any) => {
                                 setSelectedDate(newValue);
-                                onChange && onChange(newValue.format(actionFormat ? actionFormat : "DD-MM-YYYY"));
+                                onChange && onChange(newValue.format(actionFormat ? actionFormat : "DD-MM-YYYY"), Methods);
                                 control && setValue(name || "default", newValue.format(actionFormat ? actionFormat : "DD-MM-YYYY"));
                             }
                         } />

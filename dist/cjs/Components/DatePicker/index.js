@@ -44,6 +44,7 @@ const DatePicker_1 = require("@mui/x-date-pickers/DatePicker");
 const theme_1 = __importDefault(require("./theme"));
 const DatePicker = ({ name, value, hijri, viewFormat, actionFormat, minDate, maxDate, error, helperText, style, withTime, textView, fullWidth, onChange, ...props }) => {
     const { classes } = (0, theme_1.default)();
+    const Methods = (0, react_hook_form_1.useFormContext)() || {};
     const DateComponent = withTime ? DateTimePicker_1.DateTimePicker : DatePicker_1.DatePicker;
     const [selectedDate, setSelectedDate] = (0, react_1.useState)(hijri ? (0, moment_hijri_1.default)(new Date()) : (0, moment_1.default)(new Date()));
     const { setValue, control, getValues, watch } = (0, react_hook_form_1.useFormContext)() || {};
@@ -79,7 +80,7 @@ const DatePicker = ({ name, value, hijri, viewFormat, actionFormat, minDate, max
                 ? react_1.default.createElement(material_1.Typography, { ...style, ...props }, selectedDate.format(viewFormat ? viewFormat : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY"))
                 : react_1.default.createElement(DateComponent, { className: `${fullWidth ? "MuiFormControl-fullWidth" : ""}`, label: props.label ? props.label : name, value: selectedDate, ...style, ...Calendar, ...props, format: viewFormat ? viewFormat : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY", onChange: (newValue) => {
                         setSelectedDate(newValue);
-                        onChange && onChange(newValue.format(actionFormat ? actionFormat : "DD-MM-YYYY"));
+                        onChange && onChange(newValue.format(actionFormat ? actionFormat : "DD-MM-YYYY"), Methods);
                         control && setValue(name || "default", newValue.format(actionFormat ? actionFormat : "DD-MM-YYYY"));
                     } })),
             helperText && react_1.default.createElement(material_1.FormHelperText, { className: classes.error }, helperText))));

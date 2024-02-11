@@ -15,6 +15,7 @@ import { DatePicker as MuiDatePicker } from "@mui/x-date-pickers/DatePicker";
 import useStyles from "./theme";
 export const DatePicker = ({ name, value, hijri, viewFormat, actionFormat, minDate, maxDate, error, helperText, style, withTime, textView, fullWidth, onChange, ...props }) => {
     const { classes } = useStyles();
+    const Methods = useFormContext() || {};
     const DateComponent = withTime ? DateTimePicker : MuiDatePicker;
     const [selectedDate, setSelectedDate] = useState(hijri ? MomentHijri(new Date()) : Moment(new Date()));
     const { setValue, control, getValues, watch } = useFormContext() || {};
@@ -50,7 +51,7 @@ export const DatePicker = ({ name, value, hijri, viewFormat, actionFormat, minDa
                 ? React.createElement(Typography, { ...style, ...props }, selectedDate.format(viewFormat ? viewFormat : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY"))
                 : React.createElement(DateComponent, { className: `${fullWidth ? "MuiFormControl-fullWidth" : ""}`, label: props.label ? props.label : name, value: selectedDate, ...style, ...Calendar, ...props, format: viewFormat ? viewFormat : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY", onChange: (newValue) => {
                         setSelectedDate(newValue);
-                        onChange && onChange(newValue.format(actionFormat ? actionFormat : "DD-MM-YYYY"));
+                        onChange && onChange(newValue.format(actionFormat ? actionFormat : "DD-MM-YYYY"), Methods);
                         control && setValue(name || "default", newValue.format(actionFormat ? actionFormat : "DD-MM-YYYY"));
                     } })),
             helperText && React.createElement(FormHelperText, { className: classes.error }, helperText))));

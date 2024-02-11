@@ -7,6 +7,7 @@ import { Box, FormControlLabel, Checkbox as MuiCheckbox, FormHelperText } from "
 import useStyles from "./theme";
 export const Checkbox = ({ name, value, label, onChange, trueValue, falseValue, helperText, error, ...props }) => {
     const { classes } = useStyles();
+    const Methods = useFormContext() || {};
     const [checkedValue, setCheckedValue] = useState(false);
     const { setValue, control, getValues, watch } = useFormContext() || {};
     // Methods Watching
@@ -25,7 +26,7 @@ export const Checkbox = ({ name, value, label, onChange, trueValue, falseValue, 
     }, [control, name, setValue, value, falseValue, trueValue]);
     // Change Value
     const changeValue = (event) => {
-        onChange && onChange(event, ((event.target.checked) ? (trueValue ? trueValue : true) : (falseValue ? falseValue : false)));
+        onChange && onChange(event, ((event.target.checked) ? (trueValue ? trueValue : true) : (falseValue ? falseValue : false)), Methods);
         if (event.target.checked) {
             setCheckedValue(true);
             control && setValue(name || "default", (trueValue ? trueValue : true));

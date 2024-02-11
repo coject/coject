@@ -12,12 +12,14 @@ import useStyles from "./theme";
 // Interfaces
 type iInput = Omit<TextFieldProps, "helperText"> & {
     name?: string;
+    onChange?: any;
     helperText?: string;
     value?: string | number;
 }
 
 export const Input: FC<iInput> = ({ name, value, helperText, onChange, ...props }) => {
     const { classes } = useStyles();
+    const Methods = useFormContext() || {};
     const [ selectedValue, setSelectedValue ] = useState<string | number>("");
     const { setValue, control, getValues, watch } = useFormContext() || {};
 
@@ -37,7 +39,7 @@ export const Input: FC<iInput> = ({ name, value, helperText, onChange, ...props 
 
     // Change Value
     const changeValue = (event: any) => {
-        onChange && onChange(event);
+        onChange && onChange(event, event.target.value, Methods);
         setSelectedValue(event.target.value);
         control && setValue(name || "default", event.target.value);
     }

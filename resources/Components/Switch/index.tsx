@@ -23,6 +23,7 @@ interface iSwitch extends Omit<SwitchProps, "onChange" | "defaultChecked"> {
 
 export const Switch: FC<iSwitch> = ({ name, value, onChange, trueValue, falseValue, label, helperText, error, ...props }) => {
     const { classes } = useStyles();
+    const Methods = useFormContext() || {};
     const [ checkedValue, setCheckedValue ] = useState<boolean>(false);
     const { setValue, control, getValues, watch } = useFormContext() || {};
 
@@ -42,7 +43,7 @@ export const Switch: FC<iSwitch> = ({ name, value, onChange, trueValue, falseVal
 
     // Change Value
     const changeValue = (event: any) => {
-        onChange && onChange(event, ((event.target.checked) ? (trueValue ? trueValue : true) : (falseValue ? falseValue : false)));
+        onChange && onChange(event, ((event.target.checked) ? (trueValue ? trueValue : true) : (falseValue ? falseValue : false)), Methods);
         if (event.target.checked) {
             setCheckedValue(true);
             control && setValue(name || "default", (trueValue ? trueValue : true));

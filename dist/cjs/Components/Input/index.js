@@ -36,6 +36,7 @@ const material_1 = require("@mui/material");
 const theme_1 = __importDefault(require("./theme"));
 const Input = ({ name, value, helperText, onChange, ...props }) => {
     const { classes } = (0, theme_1.default)();
+    const Methods = (0, react_hook_form_1.useFormContext)() || {};
     const [selectedValue, setSelectedValue] = (0, react_1.useState)("");
     const { setValue, control, getValues, watch } = (0, react_hook_form_1.useFormContext)() || {};
     // Methods Watching
@@ -54,7 +55,7 @@ const Input = ({ name, value, helperText, onChange, ...props }) => {
     }, [control, name, setValue, value]);
     // Change Value
     const changeValue = (event) => {
-        onChange && onChange(event);
+        onChange && onChange(event, event.target.value, Methods);
         setSelectedValue(event.target.value);
         control && setValue(name || "default", event.target.value);
     };

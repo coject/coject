@@ -7,6 +7,7 @@ import { Box, TextField, FormHelperText } from "@mui/material";
 import useStyles from "./theme";
 export const Input = ({ name, value, helperText, onChange, ...props }) => {
     const { classes } = useStyles();
+    const Methods = useFormContext() || {};
     const [selectedValue, setSelectedValue] = useState("");
     const { setValue, control, getValues, watch } = useFormContext() || {};
     // Methods Watching
@@ -25,7 +26,7 @@ export const Input = ({ name, value, helperText, onChange, ...props }) => {
     }, [control, name, setValue, value]);
     // Change Value
     const changeValue = (event) => {
-        onChange && onChange(event);
+        onChange && onChange(event, event.target.value, Methods);
         setSelectedValue(event.target.value);
         control && setValue(name || "default", event.target.value);
     };

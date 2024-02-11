@@ -36,6 +36,7 @@ const material_1 = require("@mui/material");
 const theme_1 = __importDefault(require("./theme"));
 const Checkbox = ({ name, value, label, onChange, trueValue, falseValue, helperText, error, ...props }) => {
     const { classes } = (0, theme_1.default)();
+    const Methods = (0, react_hook_form_1.useFormContext)() || {};
     const [checkedValue, setCheckedValue] = (0, react_1.useState)(false);
     const { setValue, control, getValues, watch } = (0, react_hook_form_1.useFormContext)() || {};
     // Methods Watching
@@ -54,7 +55,7 @@ const Checkbox = ({ name, value, label, onChange, trueValue, falseValue, helperT
     }, [control, name, setValue, value, falseValue, trueValue]);
     // Change Value
     const changeValue = (event) => {
-        onChange && onChange(event, ((event.target.checked) ? (trueValue ? trueValue : true) : (falseValue ? falseValue : false)));
+        onChange && onChange(event, ((event.target.checked) ? (trueValue ? trueValue : true) : (falseValue ? falseValue : false)), Methods);
         if (event.target.checked) {
             setCheckedValue(true);
             control && setValue(name || "default", (trueValue ? trueValue : true));

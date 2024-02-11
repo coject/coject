@@ -23,6 +23,7 @@ interface iCheckbox extends Omit<CheckboxProps, "onChange" | "defaultChecked"> {
 
 export const Checkbox: FC<iCheckbox> = ({ name, value, label, onChange, trueValue, falseValue, helperText, error, ...props }) => {
     const { classes } = useStyles();
+    const Methods = useFormContext() || {};
     const [ checkedValue, setCheckedValue ] = useState<boolean>(false);
     const { setValue, control, getValues, watch } = useFormContext() || {};
 
@@ -42,7 +43,7 @@ export const Checkbox: FC<iCheckbox> = ({ name, value, label, onChange, trueValu
 
     // Change Value
     const changeValue = (event: any) => {
-        onChange && onChange(event, ((event.target.checked) ? (trueValue ? trueValue : true) : (falseValue ? falseValue : false)));
+        onChange && onChange(event, ((event.target.checked) ? (trueValue ? trueValue : true) : (falseValue ? falseValue : false)), Methods);
         if (event.target.checked) {
             setCheckedValue(true);
             control && setValue(name || "default", (trueValue ? trueValue : true));

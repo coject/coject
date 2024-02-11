@@ -7,6 +7,7 @@ import { Box, FormControlLabel, Switch as MuiSwitch, FormHelperText } from "@mui
 import useStyles from "./theme";
 export const Switch = ({ name, value, onChange, trueValue, falseValue, label, helperText, error, ...props }) => {
     const { classes } = useStyles();
+    const Methods = useFormContext() || {};
     const [checkedValue, setCheckedValue] = useState(false);
     const { setValue, control, getValues, watch } = useFormContext() || {};
     // Methods Watching
@@ -25,7 +26,7 @@ export const Switch = ({ name, value, onChange, trueValue, falseValue, label, he
     }, [control, name, setValue, value, falseValue, trueValue]);
     // Change Value
     const changeValue = (event) => {
-        onChange && onChange(event, ((event.target.checked) ? (trueValue ? trueValue : true) : (falseValue ? falseValue : false)));
+        onChange && onChange(event, ((event.target.checked) ? (trueValue ? trueValue : true) : (falseValue ? falseValue : false)), Methods);
         if (event.target.checked) {
             setCheckedValue(true);
             control && setValue(name || "default", (trueValue ? trueValue : true));

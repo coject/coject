@@ -122,6 +122,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                 callback && callback(data);
             } }).then();
         }
+        // eslint-disable-next-line
     }, [callData, dispatch, staticData, callback, noRenderRequest]);
 
     // Dynamic Data ( Schema )
@@ -135,7 +136,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                 } else return null;
             })
         }
-    }, []);
+    }, [schema]);
 
     // Default Schema
     const defaultSchema: any = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => (
@@ -200,7 +201,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
 
     // Columns Schema
     const columnsSchema: any = [ ...(schema ? schema : defaultSchema), ...( (actions || customActions)
-        ? [ { field: "actions", type: "actions", headerName: localeText && localeText?.gridHeaderAction || "Actions", width: 100, cellClassName: "actions", getActions: ({ row }: any) => ([ ...(gridActions(row) || []), ...(gridCustomActions(row) || []) ])} ]
+        ? [ { field: "actions", type: "actions", headerName: (localeText && localeText?.gridHeaderAction) || "Actions", width: 100, cellClassName: "actions", getActions: ({ row }: any) => ([ ...(gridActions(row) || []), ...(gridCustomActions(row) || []) ])} ]
         : []
     ) ];
 
@@ -217,8 +218,8 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                 }
                 { customToolbar && customToolbar(gridData) }
                 { actions && ( actions instanceof Array
-                    ? ( actions?.includes("add") && <Button onClick={() => setAddModal(true)} type={"button"}><Icons.Add /> {localeText && localeText?.toolbarNew || "Add New"}</Button> )
-                    : <Button onClick={() => setAddModal(true)} type={"button"}><Icons.Add /> {localeText && localeText?.toolbarNew || "Add New"}</Button> )
+                    ? ( actions?.includes("add") && <Button onClick={() => setAddModal(true)} type={"button"}><Icons.Add /> {(localeText && localeText?.toolbarNew) || "Add New"}</Button> )
+                    : <Button onClick={() => setAddModal(true)} type={"button"}><Icons.Add /> {(localeText && localeText?.toolbarNew) || "Add New"}</Button> )
                 }
             </GridToolbarContainer>
         );

@@ -14,12 +14,12 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// RTL Style
+require("./rtl_style.css");
 // Builder
 __exportStar(require("./Builder"), exports);
 // Components
 __exportStar(require("./Components"), exports);
 // Services
 __exportStar(require("./Services"), exports);
-// RTL Style
-require("./rtl_style.css");
 //# sourceMappingURL=index.js.map

@@ -18,6 +18,8 @@ export { Switch } from "./Switch";
 export { Checkbox } from "./Checkbox";
 // Date
 export { DatePicker } from "./DatePicker";
+// Date
+export { Upload } from "./Upload";
 // Icons
 export const Icons = MuiIcons;
 //# sourceMappingURL=index.js.map

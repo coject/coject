@@ -1,3 +1,6 @@
+// RTL Style
+import "./rtl_style.css";
+
 // Builder
 export * from "./Builder";
 
@@ -6,6 +9,3 @@ export * from "./Components";
 
 // Services
 export * from "./Services";
-
-// RTL Style
-import "./rtl_style.css";

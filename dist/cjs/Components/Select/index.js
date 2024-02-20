@@ -78,6 +78,7 @@ const Select = ({ name, value, label, callback, staticData, helperText, dataSour
                 }
             }).then();
         }
+        // eslint-disable-next-line
     }, [callback, staticData]);
     // Master Component
     const MuiAutocomplete = () => {

@@ -28,5 +28,8 @@ export { Checkbox } from "./Checkbox";
 // Date
 export { DatePicker } from "./DatePicker";
 
+// Date
+export { Upload } from "./Upload";
+
 // Icons
 export const Icons: any = MuiIcons;

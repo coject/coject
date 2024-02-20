@@ -62,6 +62,7 @@ const Grid = ({ dataSource, noRenderRequest, staticData, callback, localeText, c
                     callback && callback(data);
                 } }).then();
         }
+        // eslint-disable-next-line
     }, [callData, dispatch, staticData, callback, noRenderRequest]);
     // Dynamic Data ( Schema )
     (0, react_1.useEffect)(() => {
@@ -76,7 +77,7 @@ const Grid = ({ dataSource, noRenderRequest, staticData, callback, localeText, c
                     return null;
             });
         }
-    }, []);
+    }, [schema]);
     // Default Schema
     const defaultSchema = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => ({ field: columnKey, component: "input", flex: (columnKey === (customKey ? customKey : "id") ? 0 : 1) })) : [];
     // Custom Schema
@@ -134,7 +135,7 @@ const Grid = ({ dataSource, noRenderRequest, staticData, callback, localeText, c
     }).filter((element) => element !== undefined);
     // Columns Schema
     const columnsSchema = [...(schema ? schema : defaultSchema), ...((actions || customActions)
-            ? [{ field: "actions", type: "actions", headerName: localeText && localeText?.gridHeaderAction || "Actions", width: 100, cellClassName: "actions", getActions: ({ row }) => ([...(gridActions(row) || []), ...(gridCustomActions(row) || [])]) }]
+            ? [{ field: "actions", type: "actions", headerName: (localeText && localeText?.gridHeaderAction) || "Actions", width: 100, cellClassName: "actions", getActions: ({ row }) => ([...(gridActions(row) || []), ...(gridCustomActions(row) || [])]) }]
             : [])];
     // Custom Toolbar
     const CustomToolbar = () => {
@@ -149,11 +150,11 @@ const Grid = ({ dataSource, noRenderRequest, staticData, callback, localeText, c
                 ? (actions?.includes("add") && react_1.default.createElement(material_1.Button, { onClick: () => setAddModal(true), type: "button" },
                     react_1.default.createElement(index_1.Icons.Add, null),
                     " ",
-                    localeText && localeText?.toolbarNew || "Add New"))
+                    (localeText && localeText?.toolbarNew) || "Add New"))
                 : react_1.default.createElement(material_1.Button, { onClick: () => setAddModal(true), type: "button" },
                     react_1.default.createElement(index_1.Icons.Add, null),
                     " ",
-                    localeText && localeText?.toolbarNew || "Add New"))));
+                    (localeText && localeText?.toolbarNew) || "Add New"))));
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(index_1.Modal, { title: localeText?.modalAddTitle || "Add New Item", open: addModal, setOpen: setAddModal },

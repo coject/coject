@@ -7,4 +7,5 @@ export { Button } from "./Button";
 export { Switch } from "./Switch";
 export { Checkbox } from "./Checkbox";
 export { DatePicker } from "./DatePicker";
+export { Upload } from "./Upload";
 export declare const Icons: any;

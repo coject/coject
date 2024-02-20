@@ -110,6 +110,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
                 }
             }).then();
         }
+        // eslint-disable-next-line
     }, [callback, staticData]);
 
     // Master Component

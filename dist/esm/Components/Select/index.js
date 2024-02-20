@@ -49,6 +49,7 @@ export const Select = ({ name, value, label, callback, staticData, helperText, d
                 }
             }).then();
         }
+        // eslint-disable-next-line
     }, [callback, staticData]);
     // Master Component
     const MuiAutocomplete = () => {

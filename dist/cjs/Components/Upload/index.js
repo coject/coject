@@ -33,7 +33,7 @@ const react_hook_form_1 = require("react-hook-form");
 // Material UI
 const material_1 = require("@mui/material");
 // Coject
-const index_1 = require("../../index");
+const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
 const Upload = ({ name, helperText, multiple, onChange, ...props }) => {

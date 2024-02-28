@@ -4,7 +4,7 @@ import { useFormContext } from "react-hook-form";
 // Material UI
 import { Box, TextField, FormHelperText, Typography, IconButton } from "@mui/material";
 // Coject
-import { Icons } from "../../index";
+import { Icons } from "../index";
 // Styles
 import useStyles from "./theme";
 export const Upload = ({ name, helperText, multiple, onChange, ...props }) => {

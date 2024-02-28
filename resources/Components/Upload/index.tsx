@@ -7,7 +7,7 @@ import { useFormContext } from "react-hook-form";
 import { Box, TextField, TextFieldProps, FormHelperText, Typography, IconButton } from "@mui/material";
 
 // Coject
-import { Icons } from "../../index";
+import { Icons } from "../index";
 
 // Styles
 import useStyles from "./theme";

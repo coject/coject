@@ -34,11 +34,11 @@ const react_hook_form_1 = require("react-hook-form");
 const material_1 = require("@mui/material");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Input = ({ name, value, helperText, onChange, ...props }) => {
+const Input = ({ name, value, helperText, validation, required, onChange, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useFormContext)() || {};
     const [selectedValue, setSelectedValue] = (0, react_1.useState)("");
-    const { setValue, control, getValues, watch } = (0, react_hook_form_1.useFormContext)() || {};
+    const { setValue, control, getValues, watch, register, formState: { errors } } = (0, react_hook_form_1.useFormContext)() || {};
     // Methods Watching
     (0, react_1.useEffect)(() => {
         control && setSelectedValue(getValues(name || "default") ? getValues(name || "default") : "");
@@ -61,8 +61,19 @@ const Input = ({ name, value, helperText, onChange, ...props }) => {
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: classes.root },
-            react_1.default.createElement(material_1.TextField, { name: name || "default", value: selectedValue, onChange: changeValue, label: props?.label ? props?.label : (name || "default"), ...props }, props?.children),
-            helperText && react_1.default.createElement(material_1.FormHelperText, { className: classes.error }, helperText))));
+            react_1.default.createElement(material_1.TextField, { ...(control ? register(name || "default", { ...(validation ?
+                        {
+                            ...(validation?.required ? { required: validation.required.toString() === "true" ? "This Field Is Required" : validation.required } : {}),
+                            ...(validation?.arabic ? { pattern: { value: /^[أ-ي]+$/i, message: validation.arabic.toString() === "true" ? "Enter Just Arabic" : validation.arabic } } : {}),
+                            ...(validation?.number ? { pattern: { value: /^[0-9]+$/i, message: validation.number.toString() === "true" ? "Enter Just Numbers" : validation.number } } : {}),
+                            ...(validation?.english ? { pattern: { value: /^[A-Za-z]+$/i, message: validation.english.toString() === "true" ? "Enter Just English" : validation.english } } : {}),
+                            ...validation
+                        }
+                        : (required ? { required: required.toString() === "true" ? "This Field Is Required" : required } : {}))
+                }) : { name: name || "default" }), value: selectedValue, onChange: changeValue, label: props?.label ? props?.label : (name || "default"), ...props }, props?.children),
+            (helperText || (errors && errors[name || "default"])) && react_1.default.createElement(material_1.FormHelperText, { className: classes.error },
+                errors && errors[name || "default"]?.message,
+                helperText && helperText))));
 };
 exports.Input = Input;
 //# sourceMappingURL=index.js.map

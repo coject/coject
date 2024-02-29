@@ -35,15 +35,15 @@ export const Input = ({ name, value, helperText, validation, required, onChange,
             React.createElement(TextField, { ...(control ? register(name || "default", { ...(validation ?
                         {
                             ...(validation?.required ? { required: validation.required.toString() === "true" ? "This Field Is Required" : validation.required } : {}),
-                            ...(validation?.arabic ? { pattern: { value: /^[أ-ي]+$/i, message: validation.arabic.toString() === "true" ? "Enter Just Arabic" : validation.arabic } } : {}),
-                            ...(validation?.number ? { pattern: { value: /^[0-9]+$/i, message: validation.number.toString() === "true" ? "Enter Just Numbers" : validation.number } } : {}),
-                            ...(validation?.english ? { pattern: { value: /^[A-Za-z]+$/i, message: validation.english.toString() === "true" ? "Enter Just English" : validation.english } } : {}),
+                            ...(validation?.arabic ? { pattern: { value: /^[ أ-ي]+$/i, message: validation.arabic.toString() === "true" ? "Enter Just Arabic" : validation.arabic } } : {}),
+                            ...(validation?.number ? { pattern: { value: /^[0-9,.]+$/i, message: validation.number.toString() === "true" ? "Enter Just Numbers" : validation.number } } : {}),
+                            ...(validation?.english ? { pattern: { value: /^[A-Za-z ]+$/i, message: validation.english.toString() === "true" ? "Enter Just English" : validation.english } } : {}),
                             ...validation
                         }
                         : (required ? { required: required.toString() === "true" ? "This Field Is Required" : required } : {}))
                 }) : { name: name || "default" }), value: selectedValue, onChange: changeValue, label: props?.label ? props?.label : (name || "default"), ...props }, props?.children),
             (helperText || (errors && errors[name || "default"])) && React.createElement(FormHelperText, { className: classes.error },
                 errors && errors[name || "default"]?.message,
-                helperText && helperText))));
+                helperText && !(errors && errors[name || "default"]) && helperText))));
 };
 //# sourceMappingURL=index.js.map

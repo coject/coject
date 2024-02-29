@@ -33,7 +33,7 @@ export const Input: FC<iInput> = ({ name, value, helperText, validation, require
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [ selectedValue, setSelectedValue ] = useState<string | number>("");
-    const { setValue, control, getValues, watch, register, formState: { errors} } = useFormContext() || {};
+    const { setValue, control, getValues, watch, register, formState: { errors } } = useFormContext() || {};
 
     // Methods Watching
     useEffect(() => {
@@ -62,16 +62,16 @@ export const Input: FC<iInput> = ({ name, value, helperText, validation, require
                 <TextField {...(control ? register(name || "default", { ...(validation ?
                     {
                         ...(validation?.required ? { required: validation.required.toString() === "true" ? "This Field Is Required" : validation.required } : {}),
-                        ...(validation?.arabic ? { pattern: { value: /^[أ-ي]+$/i, message: validation.arabic.toString() === "true" ? "Enter Just Arabic" : validation.arabic } } : {}),
-                        ...(validation?.number ? { pattern: { value: /^[0-9]+$/i, message: validation.number.toString() === "true" ? "Enter Just Numbers" : validation.number } } : {}),
-                        ...(validation?.english ? { pattern: { value: /^[A-Za-z]+$/i, message: validation.english.toString() === "true" ? "Enter Just English" : validation.english } } : {}),
+                        ...(validation?.arabic ? { pattern: { value: /^[ أ-ي]+$/i, message: validation.arabic.toString() === "true" ? "Enter Just Arabic" : validation.arabic } } : {}),
+                        ...(validation?.number ? { pattern: { value: /^[0-9,.]+$/i, message: validation.number.toString() === "true" ? "Enter Just Numbers" : validation.number } } : {}),
+                        ...(validation?.english ? { pattern: { value: /^[A-Za-z ]+$/i, message: validation.english.toString() === "true" ? "Enter Just English" : validation.english } } : {}),
                         ...validation
                     }
                     : (required ? { required: required.toString() === "true" ? "This Field Is Required" : required } : {}))
                 }) : {name: name || "default"})} value={selectedValue} onChange={changeValue} label={props?.label ? props?.label : (name || "default")} {...props}>
                     {props?.children}
                 </TextField>
-                { (helperText || (errors && errors[name || "default"])) && <FormHelperText className={classes.error}>{errors && errors[name || "default"]?.message as string}{helperText && helperText}</FormHelperText> }
+                { (helperText || (errors && errors[name || "default"])) && <FormHelperText className={classes.error}>{errors && errors[name || "default"]?.message as string}{helperText && !(errors && errors[name || "default"]) && helperText}</FormHelperText> }
             </Box>
         </React.Fragment>
     )

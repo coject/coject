@@ -33,23 +33,38 @@ const react_hook_form_1 = require("react-hook-form");
 // Material UI
 const material_1 = require("@mui/material");
 // Coject
-const index_1 = require("../index");
+const index_1 = require("../../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Upload = ({ name, helperText, multiple, onChange, ...props }) => {
+const Upload = ({ value, name, helperText, multiple, onChange, onRemove, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useFormContext)() || {};
     const [files, setFiles] = (0, react_1.useState)(multiple ? [] : {});
     const [, forceUpdate] = (0, react_1.useReducer)(x => x + 1, 0);
     const { setValue, control } = (0, react_hook_form_1.useFormContext)() || {};
+    // Set Value
+    (0, react_1.useEffect)(() => {
+        if (value) {
+            if (multiple && value instanceof Array) {
+                for (let index = 0; index < value.length; index++) {
+                    const fileName = value[index]?.split("/");
+                    setFiles((prev) => [...prev, { image: value[index], file: { name: fileName[fileName?.length - 1] } }]);
+                }
+            }
+            else {
+                const fileName = !(value instanceof Array) ? value?.split("/") : [];
+                setFiles({ image: value, file: { name: fileName[fileName?.length - 1] } });
+            }
+        }
+    }, [value]);
     // Change Value
     const changeValue = (event) => {
         const multiFiles = [];
         for (let index = 0; index < Object.keys(event.target.files).length; index++) {
             multiFiles.push(event.target.files[index]);
         }
-        onChange && onChange((multiple ? [...(files?.map((file) => file.file)), ...multiFiles] : event.target.files[0]), Methods);
-        control && setValue(name || "default", multiple ? [...(files?.map((file) => file.file)), ...multiFiles] : event.target.files[0]);
+        onChange && onChange((multiple ? ([...(files?.map((file) => !(file instanceof Object) && file.file)), ...multiFiles].filter(Boolean)) : event.target.files[0]), Methods);
+        control && setValue(name || "default", multiple ? ([...(files?.map((file) => !(file instanceof Object) && file.file)), ...multiFiles].filter(Boolean)) : event.target.files[0]);
         if (event.target.files.length > 0) {
             for (let Index = 0; Index < event.target.files.length; Index++) {
                 const Reader = new FileReader();
@@ -62,10 +77,11 @@ const Upload = ({ name, helperText, multiple, onChange, ...props }) => {
     const removeFile = (index) => {
         const filesValue = files;
         const file = multiple && filesValue[index];
-        file && filesValue.splice(file, 1);
+        onRemove && onRemove(multiple ? file : filesValue);
+        file && filesValue?.splice(file, 1);
         setFiles(multiple ? filesValue : {});
-        onChange && onChange(multiple ? filesValue?.map((fileValue) => fileValue.file) : {}, Methods);
-        control && setValue(name || "default", multiple ? filesValue?.map((fileValue) => fileValue.file) : {});
+        onChange && onChange(multiple ? filesValue?.map((fileValue) => !Object.keys(fileValue.file)?.length && fileValue.file).filter(Boolean) : {}, Methods);
+        control && setValue(name || "default", multiple ? filesValue?.map((fileValue) => !Object.keys(fileValue.file)?.length && fileValue.file).filter(Boolean) : {});
         forceUpdate();
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,

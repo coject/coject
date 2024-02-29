@@ -1,4 +1,4 @@
-import React, { FC, useState, useReducer } from "react";
+import React, { FC, useState, useReducer, useEffect } from "react";
 
 // React Hook Form
 import { useFormContext } from "react-hook-form";
@@ -7,7 +7,7 @@ import { useFormContext } from "react-hook-form";
 import { Box, TextField, TextFieldProps, FormHelperText, Typography, IconButton } from "@mui/material";
 
 // Coject
-import { Icons } from "../index";
+import { Icons } from "../../index";
 
 // Styles
 import useStyles from "./theme";
@@ -16,16 +16,33 @@ import useStyles from "./theme";
 type iUpload = Omit<TextFieldProps, "onChange" | "helperText"> & {
     name?: string;
     onChange?: any;
+    onRemove?: any;
     multiple?: boolean;
     helperText?: string;
+    value?: string | string[];
 }
 
-export const Upload: FC<iUpload> = ({ name, helperText, multiple, onChange, ...props }) => {
+export const Upload: FC<iUpload> = ({ value, name, helperText, multiple, onChange, onRemove, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [ files, setFiles ] = useState<any>(multiple ? [] : {});
     const [ , forceUpdate ] = useReducer(x => x + 1, 0);
     const { setValue, control } = useFormContext() || {};
+
+    // Set Value
+    useEffect(() => {
+        if (value) {
+            if (multiple && value instanceof Array) {
+                for (let index = 0; index < value.length; index++) {
+                    const fileName: string[] = value[index]?.split("/");
+                    setFiles((prev: any) => [...prev, {image: value[index], file: {name: fileName[fileName?.length - 1]}}]);
+                }
+            } else {
+                const fileName: string[] = !(value instanceof Array) ? value?.split("/") : [];
+                setFiles({image: value, file: {name: fileName[fileName?.length - 1]}});
+            }
+        }
+    }, [value]);
 
     // Change Value
     const changeValue = (event: any) => {
@@ -33,8 +50,8 @@ export const Upload: FC<iUpload> = ({ name, helperText, multiple, onChange, ...p
         for (let index = 0; index < Object.keys(event.target.files).length; index++) {
             multiFiles.push(event.target.files[index])
         }
-        onChange && onChange((multiple ? [...(files?.map((file: any) => file.file)), ...multiFiles] : event.target.files[0]), Methods);
-        control && setValue(name || "default", multiple ? [...(files?.map((file: any) => file.file)), ...multiFiles] : event.target.files[0]);
+        onChange && onChange((multiple ? ([...(files?.map((file: any) => !(file instanceof Object) && file.file)), ...multiFiles].filter(Boolean)) : event.target.files[0]), Methods);
+        control && setValue(name || "default", multiple ? ([...(files?.map((file: any) => !(file instanceof Object) && file.file)), ...multiFiles].filter(Boolean)) : event.target.files[0]);
         if ( event.target.files.length > 0 ) {
             for ( let Index = 0; Index < event.target.files.length; Index++ ) {
                 const Reader = new FileReader();
@@ -48,10 +65,11 @@ export const Upload: FC<iUpload> = ({ name, helperText, multiple, onChange, ...p
     const removeFile = (index: any) => {
         const filesValue = files;
         const file = multiple && filesValue[index];
-        file && filesValue.splice(file, 1);
+        onRemove && onRemove(multiple ? file : filesValue);
+        file && filesValue?.splice(file, 1);
         setFiles(multiple ? filesValue : {});
-        onChange && onChange(multiple ? filesValue?.map((fileValue: any) => fileValue.file) : {}, Methods);
-        control && setValue(name || "default", multiple ? filesValue?.map((fileValue: any) => fileValue.file) : {});
+        onChange && onChange(multiple ? filesValue?.map((fileValue: any) => !Object.keys(fileValue.file)?.length && fileValue.file).filter(Boolean) : {}, Methods);
+        control && setValue(name || "default", multiple ? filesValue?.map((fileValue: any) => !Object.keys(fileValue.file)?.length && fileValue.file).filter(Boolean) : {});
         forceUpdate();
     }
 

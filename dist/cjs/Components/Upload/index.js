@@ -33,7 +33,7 @@ const react_hook_form_1 = require("react-hook-form");
 // Material UI
 const material_1 = require("@mui/material");
 // Coject
-const index_1 = require("../../index");
+const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
 const Upload = ({ value, name, helperText, multiple, onChange, onRemove, ...props }) => {
@@ -47,13 +47,11 @@ const Upload = ({ value, name, helperText, multiple, onChange, onRemove, ...prop
         if (value) {
             if (multiple && value instanceof Array) {
                 for (let index = 0; index < value.length; index++) {
-                    const fileName = value[index]?.split("/");
-                    setFiles((prev) => [...prev, { image: value[index], file: { name: fileName[fileName?.length - 1] } }]);
+                    setFiles((prev) => [...prev, { image: value[index]?.image, file: { name: value[index]?.name } }]);
                 }
             }
             else {
-                const fileName = !(value instanceof Array) ? value?.split("/") : [];
-                setFiles({ image: value, file: { name: fileName[fileName?.length - 1] } });
+                setFiles({ image: value?.image, file: { name: value?.name } });
             }
         }
     }, [value]);

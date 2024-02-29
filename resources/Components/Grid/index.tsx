@@ -79,6 +79,7 @@ interface iGrid extends DataGridProps {
     onAddCallback?: any;
     onDeleteSubmit?: any;
     onEditCallback?: any;
+    actionsControl?: any;
     schema?: iSchema | any;
     noAddRequest?: boolean;
     onDeleteCallback?: any;
@@ -96,7 +97,7 @@ interface iGrid extends DataGridProps {
     customActions?: { icon: string, label: string, onClick: any }[];
 }
 
-export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRenderRequest, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRenderRequest, actionsControl, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const { classes } = useStyles();
     const [ gridData, setGridData ] = useState<any>([]);
     const [ schemaData, setSchemaData ] = useState<any>({});
@@ -136,8 +137,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                 } else return null;
             })
         }
-        // eslint-disable-next-line
-    }, []);
+    }, [schema]);
 
     // Default Schema
     const defaultSchema: any = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => (
@@ -187,16 +187,19 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
             ) } else return undefined;
         }).filter(( element ) => element !== undefined)
         : [
-            <GridActionsCellItem label={"edit"} icon={<Icons.Edit />} onClick={() => { setEditModal(true); setSelectedData(row); }} />,
-            <GridActionsCellItem label={"delete"} icon={<Icons.Delete />} onClick={() => { setDeleteModal(true); setSelectedData(row); }} />
+            (actionsControl?.edit instanceof Function ? actionsControl?.edit(row) : true) ? <GridActionsCellItem label={"edit"} icon={<Icons.Edit />} onClick={() => { setEditModal(true); setSelectedData(row); }} /> : <></>,
+            (actionsControl?.delete instanceof Function ? actionsControl?.delete(row) : true) ? <GridActionsCellItem label={"delete"} icon={<Icons.Delete />} onClick={() => { setDeleteModal(true); setSelectedData(row); }} /> : <></>
         ]
     );
 
     // Grid Custom Actions
     const gridCustomActions = (row: any) => customActions?.map((action: { icon: string, label: string, onClick: any }, index: any) => {
         const ActionIcon = Icons[action.icon];
+        const ActionLabel = action.label;
         return (
-            <GridActionsCellItem key={index} label={action.label} icon={<ActionIcon />} onClick={(event) => action.onClick(event, row)} />
+            ((actionsControl && actionsControl[ActionLabel] instanceof Function) ? actionsControl[ActionLabel](row) : true)
+            ? <GridActionsCellItem key={index} label={action.label} icon={<ActionIcon />} onClick={(event) => action.onClick(event, row)} />
+            : <></>
         )
     }).filter(( element ) => element !== undefined);
 

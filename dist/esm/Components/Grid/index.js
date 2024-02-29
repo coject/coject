@@ -9,7 +9,7 @@ import { DataGrid, GridActionsCellItem, GridToolbarContainer, GridToolbarColumns
 import { Form, DatePicker, Modal, Icons } from "../index";
 // Styles
 import useStyles from "./theme";
-export const Grid = ({ dataSource, noRenderRequest, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+export const Grid = ({ dataSource, noRenderRequest, actionsControl, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const { classes } = useStyles();
     const [gridData, setGridData] = useState([]);
     const [schemaData, setSchemaData] = useState({});
@@ -48,8 +48,7 @@ export const Grid = ({ dataSource, noRenderRequest, staticData, callback, locale
                     return null;
             });
         }
-        // eslint-disable-next-line
-    }, []);
+    }, [schema]);
     // Default Schema
     const defaultSchema = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => ({ field: columnKey, component: "input", flex: (columnKey === (customKey ? customKey : "id") ? 0 : 1) })) : [];
     // Custom Schema
@@ -97,13 +96,16 @@ export const Grid = ({ dataSource, noRenderRequest, staticData, callback, locale
                 return undefined;
         }).filter((element) => element !== undefined)
         : [
-            React.createElement(GridActionsCellItem, { label: "edit", icon: React.createElement(Icons.Edit, null), onClick: () => { setEditModal(true); setSelectedData(row); } }),
-            React.createElement(GridActionsCellItem, { label: "delete", icon: React.createElement(Icons.Delete, null), onClick: () => { setDeleteModal(true); setSelectedData(row); } })
+            (actionsControl?.edit instanceof Function ? actionsControl?.edit(row) : true) ? React.createElement(GridActionsCellItem, { label: "edit", icon: React.createElement(Icons.Edit, null), onClick: () => { setEditModal(true); setSelectedData(row); } }) : React.createElement(React.Fragment, null),
+            (actionsControl?.delete instanceof Function ? actionsControl?.delete(row) : true) ? React.createElement(GridActionsCellItem, { label: "delete", icon: React.createElement(Icons.Delete, null), onClick: () => { setDeleteModal(true); setSelectedData(row); } }) : React.createElement(React.Fragment, null)
         ]);
     // Grid Custom Actions
     const gridCustomActions = (row) => customActions?.map((action, index) => {
         const ActionIcon = Icons[action.icon];
-        return (React.createElement(GridActionsCellItem, { key: index, label: action.label, icon: React.createElement(ActionIcon, null), onClick: (event) => action.onClick(event, row) }));
+        const ActionLabel = action.label;
+        return (((actionsControl && actionsControl[ActionLabel] instanceof Function) ? actionsControl[ActionLabel](row) : true)
+            ? React.createElement(GridActionsCellItem, { key: index, label: action.label, icon: React.createElement(ActionIcon, null), onClick: (event) => action.onClick(event, row) })
+            : React.createElement(React.Fragment, null));
     }).filter((element) => element !== undefined);
     // Columns Schema
     const columnsSchema = [...(schema ? schema : defaultSchema), ...((actions || customActions)

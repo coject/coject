@@ -18,11 +18,10 @@ type iInput = Omit<TextFieldProps, "helperText" | "required"> & {
         arabic?: boolean | string;
         english?: boolean | string;
         required?: boolean | string;
-        pattern?: any | { value: any, message: string };
         min?: number | { value: number, message: string };
         max?: number | { value: number, message: string };
-        minLingth?: number | { value: number, message: string };
-        maxLingth?: number | { value: number, message: string };
+        minLength?: number | { value: number, message: string };
+        maxLength?: number | { value: number, message: string };
     };
     helperText?: string;
     value?: string | number;
@@ -32,19 +31,19 @@ type iInput = Omit<TextFieldProps, "helperText" | "required"> & {
 export const Input: FC<iInput> = ({ name, value, helperText, validation, required, onChange, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
-    const [ selectedValue, setSelectedValue ] = useState<string | number>("");
-    const { setValue, control, getValues, watch, register, formState: { errors } } = useFormContext() || {};
+    const [ inputValue, setInputValue ] = useState<string | number>("");
+    const { setValue, control, getValues, watch, setError, clearErrors, formState: { errors } } = useFormContext() || {};
 
     // Methods Watching
     useEffect(() => {
-        control && setSelectedValue(getValues(name || "default") ? getValues(name || "default") : "");
+        control && setInputValue(getValues(name || "default") ? getValues(name || "default") : "");
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [control, getValues, name, watch && watch(name || "default")]);
 
     // Value
     useEffect(() => {
         if (value) {
-            setSelectedValue(value);
+            setInputValue(value);
             control && setValue(name || "default", value);
         } else control && setValue(name || "default", "");
     }, [control, name, setValue, value]);
@@ -52,23 +51,56 @@ export const Input: FC<iInput> = ({ name, value, helperText, validation, require
     // Change Value
     const changeValue = (event: any) => {
         onChange && onChange(event, event.target.value, Methods);
-        setSelectedValue(event.target.value);
+        setInputValue(event.target.value);
         control && setValue(name || "default", event.target.value);
     }
+
+    // Error Handling
+    useEffect(() => {
+        const Required: boolean = (!!required || !!validation?.required) && !inputValue;
+        const Numbers: boolean = !!validation?.number && !!inputValue && !(/^[0-9,.]+$/i.test(`${inputValue}`));
+        const Arabic: boolean = !!validation?.arabic && !!inputValue && !(/^[ أ-ي]+$/i.test(`${inputValue}`));
+        const English: boolean = !!validation?.english && !!inputValue && !(/^[A-Za-z ]+$/i.test(`${inputValue}`));
+        const MinNumber: boolean = !!validation?.min && !!inputValue && Number(inputValue) < Number((validation.min instanceof Object) ? validation.min.value : validation.min);
+        const MaxNumber: boolean = !!validation?.max && !!inputValue && Number(inputValue) > Number((validation.max instanceof Object) ? validation.max.value : validation.max);
+        const MinLength: boolean = !!validation?.minLength && !!inputValue && (`${inputValue}`).length < Number((validation.minLength instanceof Object) ? validation.minLength.value : validation.minLength);
+        const MaxLength: boolean = !!validation?.maxLength && !!inputValue && (`${inputValue}`).length > Number((validation.maxLength instanceof Object) ? validation.maxLength.value : validation.maxLength);
+
+        // Clear Errors
+        if ( !Required && !Numbers && !Arabic && !English && !MinNumber && !MaxNumber && !MinLength && !MaxLength ) clearErrors(name || "default");
+
+        // Set Errors
+        else {
+            // Required
+            if (Required) setError(name || "default", { type: "required", message: ((required?.toString() === "true") || (validation?.required?.toString() === "true")) ? "This Field Is Required" : `${required ? required : ""}${validation?.required ? validation?.required : ""}` });
+
+            // Numbers
+            if (Numbers) setError(name || "default", { type: "pattern", message: (validation?.number?.toString() === "true") ? "This Field Just Numbers" : `${validation?.number}` });
+
+            // Arabic
+            if (Arabic) setError(name || "default", { type: "pattern", message: (validation?.arabic?.toString() === "true") ? "This Field Just Arabic" : `${validation?.arabic}` });
+
+            // English
+            if (English) setError(name || "default", { type: "pattern", message: (validation?.english?.toString() === "true") ? "This Field Just English" : `${validation?.english}` });
+
+            // MinNumber
+            if (MinNumber) setError(name || "default", { type: "min", message: (validation?.min instanceof Object) ? `${validation.min.message}` : "Less Than The Minimum" });
+
+            // MaxNumber
+            if (MaxNumber) setError(name || "default", { type: "max", message: (validation?.max instanceof Object) ? `${validation.max.message}` : "Greater Than The Maximum" });
+
+            // MinLength
+            if (MinLength) setError(name || "default", { type: "minLength", message: (validation?.minLength instanceof Object) ? `${validation.minLength.message}` : "Less Than The Minimum Length" });
+
+            // MaxLength
+            if (MaxLength) setError(name || "default", { type: "maxLength", message: (validation?.maxLength instanceof Object) ? `${validation.maxLength.message}` : "Greater Than The Maximum Length" });
+        }
+    }, [inputValue, required, name, setError, clearErrors, validation]);
 
     return (
         <React.Fragment>
             <Box className={classes.root}>
-                <TextField {...(control ? register(name || "default", { ...(validation ?
-                    {
-                        ...(validation?.required ? { required: validation.required.toString() === "true" ? "This Field Is Required" : validation.required } : {}),
-                        ...(validation?.arabic ? { pattern: { value: /^[ أ-ي]+$/i, message: validation.arabic.toString() === "true" ? "Enter Just Arabic" : validation.arabic } } : {}),
-                        ...(validation?.number ? { pattern: { value: /^[0-9,.]+$/i, message: validation.number.toString() === "true" ? "Enter Just Numbers" : validation.number } } : {}),
-                        ...(validation?.english ? { pattern: { value: /^[A-Za-z ]+$/i, message: validation.english.toString() === "true" ? "Enter Just English" : validation.english } } : {}),
-                        ...validation
-                    }
-                    : (required ? { required: required.toString() === "true" ? "This Field Is Required" : required } : {}))
-                }) : {name: name || "default"})} value={selectedValue} onChange={changeValue} label={props?.label ? props?.label : (name || "default")} {...props}>
+                <TextField name={name || "default"} value={inputValue} onChange={changeValue} label={props?.label ? props?.label : (name || "default")} {...props}>
                     {props?.children}
                 </TextField>
                 { (helperText || (errors && errors[name || "default"])) && <FormHelperText className={classes.error}>{errors && errors[name || "default"]?.message as string}{helperText && !(errors && errors[name || "default"]) && helperText}</FormHelperText> }

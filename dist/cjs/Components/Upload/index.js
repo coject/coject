@@ -54,7 +54,7 @@ const Upload = ({ value, name, helperText, multiple, onChange, onRemove, ...prop
                 setFiles({ image: value?.image, file: { name: value?.name } });
             }
         }
-    }, [value]);
+    }, [value, multiple]);
     // Change Value
     const changeValue = (event) => {
         const multiFiles = [];

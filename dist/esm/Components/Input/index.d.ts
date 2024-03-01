@@ -8,10 +8,6 @@ type iInput = Omit<TextFieldProps, "helperText" | "required"> & {
         arabic?: boolean | string;
         english?: boolean | string;
         required?: boolean | string;
-        pattern?: any | {
-            value: any;
-            message: string;
-        };
         min?: number | {
             value: number;
             message: string;
@@ -20,11 +16,11 @@ type iInput = Omit<TextFieldProps, "helperText" | "required"> & {
             value: number;
             message: string;
         };
-        minLingth?: number | {
+        minLength?: number | {
             value: number;
             message: string;
         };
-        maxLingth?: number | {
+        maxLength?: number | {
             value: number;
             message: string;
         };

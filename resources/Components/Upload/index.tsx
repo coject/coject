@@ -40,7 +40,7 @@ export const Upload: FC<iUpload> = ({ value, name, helperText, multiple, onChang
                 setFiles({image: value?.image, file: {name: value?.name}});
             }
         }
-    }, [value]);
+    }, [value, multiple]);
 
     // Change Value
     const changeValue = (event: any) => {

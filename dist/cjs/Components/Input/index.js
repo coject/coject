@@ -37,17 +37,17 @@ const theme_1 = __importDefault(require("./theme"));
 const Input = ({ name, value, helperText, validation, required, onChange, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useFormContext)() || {};
-    const [selectedValue, setSelectedValue] = (0, react_1.useState)("");
-    const { setValue, control, getValues, watch, register, formState: { errors } } = (0, react_hook_form_1.useFormContext)() || {};
+    const [inputValue, setInputValue] = (0, react_1.useState)("");
+    const { setValue, control, getValues, watch, setError, clearErrors, formState: { errors } } = (0, react_hook_form_1.useFormContext)() || {};
     // Methods Watching
     (0, react_1.useEffect)(() => {
-        control && setSelectedValue(getValues(name || "default") ? getValues(name || "default") : "");
+        control && setInputValue(getValues(name || "default") ? getValues(name || "default") : "");
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [control, getValues, name, watch && watch(name || "default")]);
     // Value
     (0, react_1.useEffect)(() => {
         if (value) {
-            setSelectedValue(value);
+            setInputValue(value);
             control && setValue(name || "default", value);
         }
         else
@@ -56,21 +56,53 @@ const Input = ({ name, value, helperText, validation, required, onChange, ...pro
     // Change Value
     const changeValue = (event) => {
         onChange && onChange(event, event.target.value, Methods);
-        setSelectedValue(event.target.value);
+        setInputValue(event.target.value);
         control && setValue(name || "default", event.target.value);
     };
+    // Error Handling
+    (0, react_1.useEffect)(() => {
+        const Required = (!!required || !!validation?.required) && !inputValue;
+        const Numbers = !!validation?.number && !!inputValue && !(/^[0-9,.]+$/i.test(`${inputValue}`));
+        const Arabic = !!validation?.arabic && !!inputValue && !(/^[ أ-ي]+$/i.test(`${inputValue}`));
+        const English = !!validation?.english && !!inputValue && !(/^[A-Za-z ]+$/i.test(`${inputValue}`));
+        const MinNumber = !!validation?.min && !!inputValue && Number(inputValue) < Number((validation.min instanceof Object) ? validation.min.value : validation.min);
+        const MaxNumber = !!validation?.max && !!inputValue && Number(inputValue) > Number((validation.max instanceof Object) ? validation.max.value : validation.max);
+        const MinLength = !!validation?.minLength && !!inputValue && (`${inputValue}`).length < Number((validation.minLength instanceof Object) ? validation.minLength.value : validation.minLength);
+        const MaxLength = !!validation?.maxLength && !!inputValue && (`${inputValue}`).length > Number((validation.maxLength instanceof Object) ? validation.maxLength.value : validation.maxLength);
+        // Clear Errors
+        if (!Required && !Numbers && !Arabic && !English && !MinNumber && !MaxNumber && !MinLength && !MaxLength)
+            clearErrors(name || "default");
+        // Set Errors
+        else {
+            // Required
+            if (Required)
+                setError(name || "default", { type: "required", message: ((required?.toString() === "true") || (validation?.required?.toString() === "true")) ? "This Field Is Required" : `${required ? required : ""}${validation?.required ? validation?.required : ""}` });
+            // Numbers
+            if (Numbers)
+                setError(name || "default", { type: "pattern", message: (validation?.number?.toString() === "true") ? "This Field Just Numbers" : `${validation?.number}` });
+            // Arabic
+            if (Arabic)
+                setError(name || "default", { type: "pattern", message: (validation?.arabic?.toString() === "true") ? "This Field Just Arabic" : `${validation?.arabic}` });
+            // English
+            if (English)
+                setError(name || "default", { type: "pattern", message: (validation?.english?.toString() === "true") ? "This Field Just English" : `${validation?.english}` });
+            // MinNumber
+            if (MinNumber)
+                setError(name || "default", { type: "min", message: (validation?.min instanceof Object) ? `${validation.min.message}` : "Less Than The Minimum" });
+            // MaxNumber
+            if (MaxNumber)
+                setError(name || "default", { type: "max", message: (validation?.max instanceof Object) ? `${validation.max.message}` : "Greater Than The Maximum" });
+            // MinLength
+            if (MinLength)
+                setError(name || "default", { type: "minLength", message: (validation?.minLength instanceof Object) ? `${validation.minLength.message}` : "Less Than The Minimum Length" });
+            // MaxLength
+            if (MaxLength)
+                setError(name || "default", { type: "maxLength", message: (validation?.maxLength instanceof Object) ? `${validation.maxLength.message}` : "Greater Than The Maximum Length" });
+        }
+    }, [inputValue, required, name, setError, clearErrors, validation]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: classes.root },
-            react_1.default.createElement(material_1.TextField, { ...(control ? register(name || "default", { ...(validation ?
-                        {
-                            ...(validation?.required ? { required: validation.required.toString() === "true" ? "This Field Is Required" : validation.required } : {}),
-                            ...(validation?.arabic ? { pattern: { value: /^[ أ-ي]+$/i, message: validation.arabic.toString() === "true" ? "Enter Just Arabic" : validation.arabic } } : {}),
-                            ...(validation?.number ? { pattern: { value: /^[0-9,.]+$/i, message: validation.number.toString() === "true" ? "Enter Just Numbers" : validation.number } } : {}),
-                            ...(validation?.english ? { pattern: { value: /^[A-Za-z ]+$/i, message: validation.english.toString() === "true" ? "Enter Just English" : validation.english } } : {}),
-                            ...validation
-                        }
-                        : (required ? { required: required.toString() === "true" ? "This Field Is Required" : required } : {}))
-                }) : { name: name || "default" }), value: selectedValue, onChange: changeValue, label: props?.label ? props?.label : (name || "default"), ...props }, props?.children),
+            react_1.default.createElement(material_1.TextField, { name: name || "default", value: inputValue, onChange: changeValue, label: props?.label ? props?.label : (name || "default"), ...props }, props?.children),
             (helperText || (errors && errors[name || "default"])) && react_1.default.createElement(material_1.FormHelperText, { className: classes.error },
                 errors && errors[name || "default"]?.message,
                 helperText && !(errors && errors[name || "default"]) && helperText))));

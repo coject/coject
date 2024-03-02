@@ -5,8 +5,12 @@ type iUpload = Omit<TextFieldProps, "onChange" | "helperText"> & {
     name?: string;
     onChange?: any;
     onRemove?: any;
+    validation?: {
+        required?: boolean | string;
+    };
     multiple?: boolean;
     helperText?: string;
+    required?: boolean | string;
 };
 export declare const Upload: FC<iUpload>;
 export {};

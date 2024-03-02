@@ -18,16 +18,26 @@ type iUpload = Omit<TextFieldProps, "onChange" | "helperText"> & {
     name?: string;
     onChange?: any;
     onRemove?: any;
+    validation?: {
+        required?: boolean | string;
+    };
     multiple?: boolean;
     helperText?: string;
+    required?: boolean | string;
 }
 
-export const Upload: FC<iUpload> = ({ value, name, helperText, multiple, onChange, onRemove, ...props }) => {
+export const Upload: FC<iUpload> = ({ value, name, helperText, multiple, onChange, onRemove, required, validation, ...props }) => {
     const { classes } = useStyles();
+    const [ files, setFiles ] = useState<any>();
     const Methods = useFormContext() || {};
-    const [ files, setFiles ] = useState<any>(multiple ? [] : {});
     const [ , forceUpdate ] = useReducer(x => x + 1, 0);
-    const { setValue, control } = useFormContext() || {};
+    const { setValue, control, getValues, watch, setError, clearErrors, formState: { errors } } = useFormContext() || {};
+
+    // Methods Watching
+    useEffect(() => {
+        control && setFiles(getValues(name || "default") ? getValues(name || "default") : undefined);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [control, getValues, name, watch && watch(name || "default")]);
 
     // Set Value
     useEffect(() => {
@@ -48,13 +58,13 @@ export const Upload: FC<iUpload> = ({ value, name, helperText, multiple, onChang
         for (let index = 0; index < Object.keys(event.target.files).length; index++) {
             multiFiles.push(event.target.files[index])
         }
-        onChange && onChange((multiple ? ([...(files?.map((file: any) => !(file instanceof Object) && file.file)), ...multiFiles].filter(Boolean)) : event.target.files[0]), Methods);
-        control && setValue(name || "default", multiple ? ([...(files?.map((file: any) => !(file instanceof Object) && file.file)), ...multiFiles].filter(Boolean)) : event.target.files[0]);
+        onChange && onChange((multiple ? ([...(files ? files.map((file: any) => !(file instanceof Object) && file.file) : []), ...multiFiles].filter(Boolean)) : event.target.files[0]), Methods);
+        control && setValue(name || "default", multiple ? ([...(files ? files.map((file: any) => !(file instanceof Object) && file.file) : []), ...multiFiles].filter(Boolean)) : event.target.files[0]);
         if ( event.target.files.length > 0 ) {
             for ( let Index = 0; Index < event.target.files.length; Index++ ) {
                 const Reader = new FileReader();
                 Reader.readAsDataURL(event.target.files[Index]);
-                Reader.onload = () => setFiles((prev: any) => multiple ? [...prev, {file: event.target.files[Index], image: Reader.result}] : {file: event.target.files[Index], image: Reader.result});
+                Reader.onload = () => setFiles((prev: any) => multiple ? [...(prev ? prev : []), {file: event.target.files[Index], image: Reader.result}] : {file: event.target.files[Index], image: Reader.result});
             }
         }
     }
@@ -65,11 +75,28 @@ export const Upload: FC<iUpload> = ({ value, name, helperText, multiple, onChang
         const file = multiple && filesValue[index];
         onRemove && onRemove(multiple ? file : filesValue);
         file && filesValue?.splice(file, 1);
-        setFiles(multiple ? filesValue : {});
+        setFiles(multiple ? (filesValue?.length ? filesValue : undefined) : undefined);
         onChange && onChange(multiple ? filesValue?.map((fileValue: any) => !Object.keys(fileValue.file)?.length && fileValue.file).filter(Boolean) : {}, Methods);
         control && setValue(name || "default", multiple ? filesValue?.map((fileValue: any) => !Object.keys(fileValue.file)?.length && fileValue.file).filter(Boolean) : {});
+        const element: any = document.getElementsByName(name || "default")[0];
+        try { element && (element.value = null) } catch(ex) { }
+        if (element?.value) { element.parentNode.replaceChild(element.cloneNode(true), element) }
         forceUpdate();
     }
+
+    // Error Handling
+    useEffect(() => {
+        const Required: boolean = (!!required || !!validation?.required) && !(files instanceof Array ? files?.length : (files instanceof Object && Object.keys(files).length));
+
+        // Clear Errors
+        if ( !Required ) clearErrors(name || "default");
+
+        // Set Errors
+        else {
+            // Required
+            if (Required) setError(name || "default", {type: "required", message: ((required?.toString() === "true") || (validation?.required?.toString() === "true")) ? "This Field Is Required" : `${required ? required : ""}${validation?.required ? validation?.required : ""}`});
+        }
+    }, [files, required, name, setError, clearErrors, validation])
 
     return (
         <React.Fragment>
@@ -108,7 +135,7 @@ export const Upload: FC<iUpload> = ({ value, name, helperText, multiple, onChang
                     </React.Fragment>
                 }
             </Box>
-            { helperText && <FormHelperText className={classes.error}>{helperText}</FormHelperText> }
+            { (helperText || (errors && errors[name || "default"])) && <FormHelperText className={classes.error}>{errors && errors[name || "default"]?.message as string}{helperText && !(errors && errors[name || "default"]) && helperText}</FormHelperText> }
         </React.Fragment>
     );
 };

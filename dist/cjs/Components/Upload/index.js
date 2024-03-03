@@ -44,7 +44,22 @@ const Upload = ({ value, name, helperText, multiple, onChange, onRemove, require
     const { setValue, control, getValues, watch, setError, clearErrors, formState: { errors } } = (0, react_hook_form_1.useFormContext)() || {};
     // Methods Watching
     (0, react_1.useEffect)(() => {
-        control && setFiles(getValues(name || "default") ? getValues(name || "default") : undefined);
+        if (control) {
+            !getValues(name || "default") && setFiles(undefined);
+            // if (getValues(name || "default")) {
+            //     if (getValues(name || "default") instanceof Array) {
+            //         for (let index = 0; index < getValues(name || "default").length; index++) {
+            //             const Reader = new FileReader();
+            //             Reader.readAsDataURL(getValues(name || "default")[index]);
+            //             Reader.onload = () => setFiles((prev: any) => [...(prev ? prev : []), {file: getValues(name || "default")[index], image: Reader.result}]);
+            //         }
+            //     } else {
+            //         const Reader = new FileReader();
+            //         Reader.readAsDataURL(getValues(name || "default"));
+            //         Reader.onload = () => setFiles({file: getValues(name || "default"), image: Reader.result});
+            //     }
+            // } else setFiles(undefined);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [control, getValues, name, watch && watch(name || "default")]);
     // Set Value
@@ -52,7 +67,7 @@ const Upload = ({ value, name, helperText, multiple, onChange, onRemove, require
         if (value) {
             if (multiple && value instanceof Array) {
                 for (let index = 0; index < value.length; index++) {
-                    setFiles((prev) => [...prev, { image: value[index]?.image, file: { name: value[index]?.name } }]);
+                    setFiles((prev) => [...(prev ? prev : []), { image: value[index]?.image, file: { name: value[index]?.name } }]);
                 }
             }
             else {
@@ -66,8 +81,6 @@ const Upload = ({ value, name, helperText, multiple, onChange, onRemove, require
         for (let index = 0; index < Object.keys(event.target.files).length; index++) {
             multiFiles.push(event.target.files[index]);
         }
-        onChange && onChange((multiple ? ([...(files ? files.map((file) => !(file instanceof Object) && file.file) : []), ...multiFiles].filter(Boolean)) : event.target.files[0]), Methods);
-        control && setValue(name || "default", multiple ? ([...(files ? files.map((file) => !(file instanceof Object) && file.file) : []), ...multiFiles].filter(Boolean)) : event.target.files[0]);
         if (event.target.files.length > 0) {
             for (let Index = 0; Index < event.target.files.length; Index++) {
                 const Reader = new FileReader();
@@ -75,6 +88,8 @@ const Upload = ({ value, name, helperText, multiple, onChange, onRemove, require
                 Reader.onload = () => setFiles((prev) => multiple ? [...(prev ? prev : []), { file: event.target.files[Index], image: Reader.result }] : { file: event.target.files[Index], image: Reader.result });
             }
         }
+        onChange && onChange((multiple ? ([...(files ? files.map((file) => file.file) : []), ...multiFiles].filter((file) => file?.type)) : event.target.files[0]), Methods);
+        control && setValue(name || "default", multiple ? ([...(files ? files.map((file) => file.file) : []), ...multiFiles].filter((file) => file?.type)) : event.target.files[0]);
     };
     // Remove File
     const removeFile = (index) => {

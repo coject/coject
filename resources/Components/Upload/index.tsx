@@ -35,7 +35,22 @@ export const Upload: FC<iUpload> = ({ value, name, helperText, multiple, onChang
 
     // Methods Watching
     useEffect(() => {
-        control && setFiles(getValues(name || "default") ? getValues(name || "default") : undefined);
+        if (control) {
+            !getValues(name || "default") && setFiles(undefined);
+            // if (getValues(name || "default")) {
+            //     if (getValues(name || "default") instanceof Array) {
+            //         for (let index = 0; index < getValues(name || "default").length; index++) {
+            //             const Reader = new FileReader();
+            //             Reader.readAsDataURL(getValues(name || "default")[index]);
+            //             Reader.onload = () => setFiles((prev: any) => [...(prev ? prev : []), {file: getValues(name || "default")[index], image: Reader.result}]);
+            //         }
+            //     } else {
+            //         const Reader = new FileReader();
+            //         Reader.readAsDataURL(getValues(name || "default"));
+            //         Reader.onload = () => setFiles({file: getValues(name || "default"), image: Reader.result});
+            //     }
+            // } else setFiles(undefined);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [control, getValues, name, watch && watch(name || "default")]);
 
@@ -44,7 +59,7 @@ export const Upload: FC<iUpload> = ({ value, name, helperText, multiple, onChang
         if (value) {
             if (multiple && value instanceof Array) {
                 for (let index = 0; index < value.length; index++) {
-                    setFiles((prev: any) => [...prev, {image: value[index]?.image, file: {name: value[index]?.name}}]);
+                    setFiles((prev: any) => [...(prev ? prev : []), {image: value[index]?.image, file: {name: value[index]?.name}}]);
                 }
             } else {
                 setFiles({image: value?.image, file: {name: value?.name}});
@@ -58,8 +73,6 @@ export const Upload: FC<iUpload> = ({ value, name, helperText, multiple, onChang
         for (let index = 0; index < Object.keys(event.target.files).length; index++) {
             multiFiles.push(event.target.files[index])
         }
-        onChange && onChange((multiple ? ([...(files ? files.map((file: any) => !(file instanceof Object) && file.file) : []), ...multiFiles].filter(Boolean)) : event.target.files[0]), Methods);
-        control && setValue(name || "default", multiple ? ([...(files ? files.map((file: any) => !(file instanceof Object) && file.file) : []), ...multiFiles].filter(Boolean)) : event.target.files[0]);
         if ( event.target.files.length > 0 ) {
             for ( let Index = 0; Index < event.target.files.length; Index++ ) {
                 const Reader = new FileReader();
@@ -67,6 +80,8 @@ export const Upload: FC<iUpload> = ({ value, name, helperText, multiple, onChang
                 Reader.onload = () => setFiles((prev: any) => multiple ? [...(prev ? prev : []), {file: event.target.files[Index], image: Reader.result}] : {file: event.target.files[Index], image: Reader.result});
             }
         }
+        onChange && onChange((multiple ? ([...(files ? files.map((file: any) => file.file) : []), ...multiFiles].filter((file: any) => file?.type)) : event.target.files[0]), Methods);
+        control && setValue(name || "default", multiple ? ([...(files ? files.map((file: any) => file.file) : []), ...multiFiles].filter((file: any) => file?.type)) : event.target.files[0]);
     }
 
     // Remove File

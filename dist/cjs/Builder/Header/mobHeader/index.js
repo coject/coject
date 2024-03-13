@@ -52,7 +52,7 @@ const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, default
                 setLanguageLogo(process.env.PUBLIC_URL + `${defaultLanguage === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
             }
             else if (languages?.length) {
-                setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0].logo || "");
+                setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0]?.logo || "");
             }
         }
     }, [defaultLanguage, languages]);
@@ -94,10 +94,10 @@ const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, default
                                         else {
                                             return (react_1.default.createElement(material_1.MenuItem, { key: index, component: material_1.Button, onClick: (event) => {
                                                     setMenuList({});
-                                                    setLanguageLogo(language.logo || "");
+                                                    setLanguageLogo(language?.logo || "");
                                                     language.onClick && language.onClick(event);
                                                 } },
-                                                react_1.default.createElement("img", { src: language.logo, alt: language.name }),
+                                                react_1.default.createElement("img", { src: language?.logo, alt: language.name }),
                                                 language.name));
                                         }
                                     }))))),

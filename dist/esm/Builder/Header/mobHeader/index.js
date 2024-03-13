@@ -23,7 +23,7 @@ export const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, 
                 setLanguageLogo(process.env.PUBLIC_URL + `${defaultLanguage === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
             }
             else if (languages?.length) {
-                setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0].logo || "");
+                setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0]?.logo || "");
             }
         }
     }, [defaultLanguage, languages]);
@@ -65,10 +65,10 @@ export const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, 
                                         else {
                                             return (React.createElement(MenuItem, { key: index, component: Button, onClick: (event) => {
                                                     setMenuList({});
-                                                    setLanguageLogo(language.logo || "");
+                                                    setLanguageLogo(language?.logo || "");
                                                     language.onClick && language.onClick(event);
                                                 } },
-                                                React.createElement("img", { src: language.logo, alt: language.name }),
+                                                React.createElement("img", { src: language?.logo, alt: language.name }),
                                                 language.name));
                                         }
                                     }))))),

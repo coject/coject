@@ -36,7 +36,7 @@ export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, localeTe
             if (defaultLanguage === 'ar' || defaultLanguage === 'en') {
                 setLanguageLogo(process.env.PUBLIC_URL + `${defaultLanguage === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
             } else if (languages?.length) {
-                setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0].logo || "");
+                setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0]?.logo || "");
             }
         }
     }, [defaultLanguage, languages]);
@@ -134,10 +134,10 @@ export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, localeTe
                                                     return (
                                                         <MenuItem key={index} component={Button} onClick={(event) => {
                                                             setMenuList({});
-                                                            setLanguageLogo(language.logo || "");
+                                                            setLanguageLogo(language?.logo || "");
                                                             language.onClick && language.onClick(event);
                                                         }}>
-                                                            <img src={language.logo} alt={language.name} />
+                                                            <img src={language?.logo} alt={language.name} />
                                                             { language.name }
                                                         </MenuItem>
                                                     )

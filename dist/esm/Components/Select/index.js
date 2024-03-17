@@ -14,12 +14,12 @@ export const Select = ({ name, value, label, callback, staticData, helperText, d
     const Methods = useFormContext() || {};
     const [selectedValue, setSelectedValue] = useState();
     const [selectData, setSelectData] = useState([]);
-    const { setValue, control, watch, getValues } = useFormContext() || {};
+    const { setValue, control } = useFormContext() || {};
     // Methods Watching
-    useEffect(() => {
-        // control && setSelectedValue(getValues(name || "default") ? getValues(name || "default") : "");
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [control, getValues, name, watch && watch(name || "default")]);
+    // useEffect(() => {
+    //     control && setSelectedValue(getValues(name || "default") ? getValues(name || "default") : "");
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [control, getValues, name, watch && watch(name || "default")]);
     // Value
     useEffect(() => {
         if ((value || (fixedOption && multiple))) {

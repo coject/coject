@@ -73,13 +73,13 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
     const Methods = useFormContext() || {};
     const [ selectedValue, setSelectedValue ] = useState<any>();
     const [ selectData, setSelectData ] = useState<any>([]);
-    const { setValue, control, watch, getValues } = useFormContext() || {};
+    const { setValue, control } = useFormContext() || {};
 
     // Methods Watching
-    useEffect(() => {
-        // control && setSelectedValue(getValues(name || "default") ? getValues(name || "default") : "");
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [control, getValues, name, watch && watch(name || "default")]);
+    // useEffect(() => {
+    //     control && setSelectedValue(getValues(name || "default") ? getValues(name || "default") : "");
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [control, getValues, name, watch && watch(name || "default")]);
 
     // Value
     useEffect(() => {

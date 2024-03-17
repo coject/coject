@@ -46,7 +46,7 @@ const Select = ({ name, value, label, callback, staticData, helperText, dataSour
     const { setValue, control, watch, getValues } = (0, react_hook_form_1.useFormContext)() || {};
     // Methods Watching
     (0, react_1.useEffect)(() => {
-        control && setSelectedValue(getValues(name || "default") ? getValues(name || "default") : "");
+        // control && setSelectedValue(getValues(name || "default") ? getValues(name || "default") : "");
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [control, getValues, name, watch && watch(name || "default")]);
     // Value

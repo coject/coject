@@ -43,13 +43,12 @@ const Select = ({ name, value, label, callback, staticData, helperText, dataSour
     const Methods = (0, react_hook_form_1.useFormContext)() || {};
     const [selectedValue, setSelectedValue] = (0, react_1.useState)();
     const [selectData, setSelectData] = (0, react_1.useState)([]);
-    const { setValue, control, getValues } = (0, react_hook_form_1.useFormContext)() || {};
-    console.log(value, staticData);
+    const { setValue, control, watch, getValues } = (0, react_hook_form_1.useFormContext)() || {};
     // Methods Watching
     (0, react_1.useEffect)(() => {
         control && setSelectedValue(getValues(name || "default") ? getValues(name || "default") : "");
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [control, getValues, name, watch && watch(name || "default")]);
     // Value
     (0, react_1.useEffect)(() => {
         if ((value || (fixedOption && multiple))) {
@@ -62,12 +61,12 @@ const Select = ({ name, value, label, callback, staticData, helperText, dataSour
                 control && setValue(name || "default", value);
             }
         }
-    }, []);
+    }, [control, name, setValue, value, fixedOption, multiple]);
     // Static Data
     (0, react_1.useEffect)(() => {
         if (staticData)
             setSelectData(staticData);
-    }, []);
+    }, [staticData]);
     // Dynamic Data
     (0, react_1.useEffect)(() => {
         if (dataSource?.apiUrl && !staticData) {
@@ -80,7 +79,7 @@ const Select = ({ name, value, label, callback, staticData, helperText, dataSour
             }).then();
         }
         // eslint-disable-next-line
-    }, []);
+    }, [callback, staticData]);
     // Master Component
     const MuiAutocomplete = () => {
         return (react_1.default.createElement(material_1.Autocomplete, { options: selectData, multiple: multiple, ...props, value: !!selectData?.length && selectedValue

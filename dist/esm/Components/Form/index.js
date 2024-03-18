@@ -67,8 +67,6 @@ export const Form = ({ mode, getForm, schema, dataSource, localeText, staticData
                                     default:
                                         return null;
                                 }
-                            else
-                                return null;
                         }),
                         children,
                         !(children) &&

@@ -73,8 +73,6 @@ const Form = ({ mode, getForm, schema, dataSource, localeText, staticData, custo
                                     default:
                                         return null;
                                 }
-                            else
-                                return null;
                         }),
                         children,
                         !(children) &&

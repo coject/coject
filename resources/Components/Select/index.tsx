@@ -73,15 +73,13 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
     const Methods = useFormContext() || {};
     const [ selectedValue, setSelectedValue ] = useState<any>();
     const [ selectData, setSelectData ] = useState<any>([]);
-    const { setValue, control, getValues } = useFormContext() || {};
-
-    console.log(value, staticData)
+    const { setValue, control, watch, getValues } = useFormContext() || {};
 
     // Methods Watching
     useEffect(() => {
         control && setSelectedValue(getValues(name || "default") ? getValues(name || "default") : "");
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [control, getValues, name, watch && watch(name || "default")]);
 
     // Value
     useEffect(() => {
@@ -94,12 +92,12 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
                 control && setValue(name || "default", value);
             }
         }
-    }, []);
+    }, [control, name, setValue, value, fixedOption, multiple]);
 
     // Static Data
     useEffect(() => {
         if (staticData) setSelectData(staticData);
-    }, []);
+    }, [staticData]);
 
     // Dynamic Data
     useEffect(() => {
@@ -113,7 +111,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
             }).then();
         }
         // eslint-disable-next-line
-    }, []);
+    }, [callback, staticData]);
 
     // Master Component
     const MuiAutocomplete = () => {

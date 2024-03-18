@@ -130,7 +130,7 @@ export const Form: FC<iForm> = ({ mode, getForm, schema, dataSource, localeText,
                                             : ( <Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><Select fullWidth name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid> );
                                     default:
                                         return null;
-                                } else return null;
+                                }
                             })}
                             { children }
                             { !(children) &&

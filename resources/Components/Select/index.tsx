@@ -71,8 +71,8 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
 export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, value, label, callback, staticData, helperText, dataSource, multiple, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
-    const [ selectedValue, setSelectedValue ] = useState<any>();
-    const [ selectData, setSelectData ] = useState<any>([]);
+    const [selectedValue, setSelectedValue] = useState<any>();
+    const [selectData, setSelectData] = useState<any>([]);
     const { setValue, control, watch, getValues } = useFormContext() || {};
 
     // Methods Watching
@@ -113,54 +113,50 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
         // eslint-disable-next-line
     }, [callback, staticData]);
 
-    // Master Component
-    const MuiAutocomplete = () => {
-        return (
-            <Autocomplete options={selectData} multiple={multiple} {...props}
-                value={ !!selectData?.length && selectedValue
-                    ? multiple
-                        ? selectedValue?.map((SValue: string) => selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === SValue))
-                        : multiple ? [] : selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
-                    : multiple ? [] : null
-                }
-                defaultValue={ !!selectData?.length && selectedValue
-                    ? multiple
-                        ? selectedValue?.map((SValue: string) => selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === SValue))
-                        : multiple ? [] : selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
-                    : multiple ? [] : null
-                }
-                onChange={(event, newValue) => {
-                    onChange && onChange(event, newValue, Methods);
-                    setSelectedValue(multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
-                    control && setValue(name || "default", multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
-                }}
-                renderTags={(tagValue, getTagProps) => tagValue.map((row, index) => (
-                    <Chip {...getTagProps({ index })} label={customName ? row[`${customName}`] : row.label} disabled={(fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id ) : false} />
-                )) }
-                { ...(customName ? { getOptionLabel: (option: any) => option[`${customName}`] } : {}) }
-                { ...((renderOption || checkboxes) ? { renderOption: (props, row: any, { selected }) => <Box component={"li"} {...props}>
-                    { checkboxes
-                        ? <React.Fragment>
-                            <Checkbox icon={<Icons.CheckBoxOutlineBlank fontSize="small" />} checkedIcon={<Icons.CheckBox fontSize="small" />} style={{ marginRight: 5 }} checked={selected} />
-                            {customName ? row[`${customName}`] : row.label}
-                          </React.Fragment>
-                        : renderOption(row)
-                    }
-                </Box> } : {}) }
-                getOptionDisabled={(row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false)}
-                renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, ...inputProps, type: "search" }} fullWidth={!!inputProps?.fullWidth} error={error} label={label ? label : (name || "default")} required={required} />}
-            />
-        );
-    };
-
     return (
         <React.Fragment>
             <Box className={classes.root}>
-                { control
-                    ? <Controller name={name || "default"} control={control} render={() => <MuiAutocomplete />} />
-                    : <MuiAutocomplete />
-                }
-                { helperText && <FormHelperText className={classes.error}>{helperText}</FormHelperText> }
+                <Controller name={name || "default"} control={control} render={() => {
+                    return (
+                        <Autocomplete options={selectData} multiple={multiple} {...props}
+                            value={!!selectData?.length && selectedValue
+                                ? multiple
+                                    ? selectedValue?.map((SValue: string) => selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === SValue))
+                                    : multiple ? [] : selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
+                                : multiple ? [] : null
+                            }
+                            defaultValue={!!selectData?.length && selectedValue
+                                ? multiple
+                                    ? selectedValue?.map((SValue: string) => selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === SValue))
+                                    : multiple ? [] : selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
+                                : multiple ? [] : null
+                            }
+                            onChange={(event, newValue) => {
+                                onChange && onChange(event, newValue, Methods);
+                                setSelectedValue(multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
+                                control && setValue(name || "default", multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
+                            }}
+                            renderTags={(tagValue, getTagProps) => tagValue.map((row, index) => (
+                                <Chip {...getTagProps({ index })} label={customName ? row[`${customName}`] : row.label} disabled={(fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false} />
+                            ))}
+                            {...(customName ? { getOptionLabel: (option: any) => option[`${customName}`] } : {})}
+                            {...((renderOption || checkboxes) ? {
+                                renderOption: (props, row: any, { selected }) => <Box component={"li"} {...props}>
+                                    {checkboxes
+                                        ? <React.Fragment>
+                                            <Checkbox icon={<Icons.CheckBoxOutlineBlank fontSize="small" />} checkedIcon={<Icons.CheckBox fontSize="small" />} style={{ marginRight: 5 }} checked={selected} />
+                                            {customName ? row[`${customName}`] : row.label}
+                                        </React.Fragment>
+                                        : renderOption(row)
+                                    }
+                                </Box>
+                            } : {})}
+                            getOptionDisabled={(row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false)}
+                            renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, ...inputProps, type: "search" }} fullWidth={!!inputProps?.fullWidth} error={error} label={label ? label : (name || "default")} required={required} />}
+                        />
+                    )
+                }} />
+                {helperText && <FormHelperText className={classes.error}>{helperText}</FormHelperText>}
             </Box>
         </React.Fragment>
     )

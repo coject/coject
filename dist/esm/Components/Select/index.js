@@ -51,31 +51,29 @@ export const Select = ({ name, value, label, callback, staticData, helperText, d
         }
         // eslint-disable-next-line
     }, [callback, staticData]);
-    // Master Component
-    const MuiAutocomplete = () => {
-        return (React.createElement(Autocomplete, { options: selectData, multiple: multiple, ...props, value: !!selectData?.length && selectedValue
-                ? multiple
-                    ? selectedValue?.map((SValue) => selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === SValue))
-                    : multiple ? [] : selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
-                : multiple ? [] : null, defaultValue: !!selectData?.length && selectedValue
-                ? multiple
-                    ? selectedValue?.map((SValue) => selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === SValue))
-                    : multiple ? [] : selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
-                : multiple ? [] : null, onChange: (event, newValue) => {
-                onChange && onChange(event, newValue, Methods);
-                setSelectedValue(multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
-                control && setValue(name || "default", multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
-            }, renderTags: (tagValue, getTagProps) => tagValue.map((row, index) => (React.createElement(Chip, { ...getTagProps({ index }), label: customName ? row[`${customName}`] : row.label, disabled: (fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false }))), ...(customName ? { getOptionLabel: (option) => option[`${customName}`] } : {}), ...((renderOption || checkboxes) ? { renderOption: (props, row, { selected }) => React.createElement(Box, { component: "li", ...props }, checkboxes
-                    ? React.createElement(React.Fragment, null,
-                        React.createElement(Checkbox, { icon: React.createElement(Icons.CheckBoxOutlineBlank, { fontSize: "small" }), checkedIcon: React.createElement(Icons.CheckBox, { fontSize: "small" }), style: { marginRight: 5 }, checked: selected }),
-                        customName ? row[`${customName}`] : row.label)
-                    : renderOption(row)) } : {}), getOptionDisabled: (row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false), renderInput: (params) => React.createElement(TextField, { ...params, InputProps: { ...params.InputProps, ...inputProps, type: "search" }, fullWidth: !!inputProps?.fullWidth, error: error, label: label ? label : (name || "default"), required: required }) }));
-    };
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: classes.root },
-            control
-                ? React.createElement(Controller, { name: name || "default", control: control, render: () => React.createElement(MuiAutocomplete, null) })
-                : React.createElement(MuiAutocomplete, null),
+            React.createElement(Controller, { name: name || "default", control: control, render: () => {
+                    return (React.createElement(Autocomplete, { options: selectData, multiple: multiple, ...props, value: !!selectData?.length && selectedValue
+                            ? multiple
+                                ? selectedValue?.map((SValue) => selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === SValue))
+                                : multiple ? [] : selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
+                            : multiple ? [] : null, defaultValue: !!selectData?.length && selectedValue
+                            ? multiple
+                                ? selectedValue?.map((SValue) => selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === SValue))
+                                : multiple ? [] : selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
+                            : multiple ? [] : null, onChange: (event, newValue) => {
+                            onChange && onChange(event, newValue, Methods);
+                            setSelectedValue(multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
+                            control && setValue(name || "default", multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
+                        }, renderTags: (tagValue, getTagProps) => tagValue.map((row, index) => (React.createElement(Chip, { ...getTagProps({ index }), label: customName ? row[`${customName}`] : row.label, disabled: (fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false }))), ...(customName ? { getOptionLabel: (option) => option[`${customName}`] } : {}), ...((renderOption || checkboxes) ? {
+                            renderOption: (props, row, { selected }) => React.createElement(Box, { component: "li", ...props }, checkboxes
+                                ? React.createElement(React.Fragment, null,
+                                    React.createElement(Checkbox, { icon: React.createElement(Icons.CheckBoxOutlineBlank, { fontSize: "small" }), checkedIcon: React.createElement(Icons.CheckBox, { fontSize: "small" }), style: { marginRight: 5 }, checked: selected }),
+                                    customName ? row[`${customName}`] : row.label)
+                                : renderOption(row))
+                        } : {}), getOptionDisabled: (row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false), renderInput: (params) => React.createElement(TextField, { ...params, InputProps: { ...params.InputProps, ...inputProps, type: "search" }, fullWidth: !!inputProps?.fullWidth, error: error, label: label ? label : (name || "default"), required: required }) }));
+                } }),
             helperText && React.createElement(FormHelperText, { className: classes.error }, helperText))));
 };
 //# sourceMappingURL=index.js.map

@@ -116,46 +116,84 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
     return (
         <React.Fragment>
             <Box className={classes.root}>
-                <Controller name={name || "default"} control={control} render={() => {
-                    return (
-                        <Autocomplete options={selectData} multiple={multiple} {...props}
-                            value={!!selectData?.length && selectedValue
-                                ? multiple
-                                    ? selectedValue?.map((SValue: string) => selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === SValue))
-                                    : multiple ? [] : selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
-                                : multiple ? [] : null
-                            }
-                            defaultValue={!!selectData?.length && selectedValue
-                                ? multiple
-                                    ? selectedValue?.map((SValue: string) => selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === SValue))
-                                    : multiple ? [] : selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
-                                : multiple ? [] : null
-                            }
-                            onChange={(event, newValue) => {
-                                onChange && onChange(event, newValue, Methods);
-                                setSelectedValue(multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
-                                control && setValue(name || "default", multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
-                            }}
-                            renderTags={(tagValue, getTagProps) => tagValue.map((row, index) => (
-                                <Chip {...getTagProps({ index })} label={customName ? row[`${customName}`] : row.label} disabled={(fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false} />
-                            ))}
-                            {...(customName ? { getOptionLabel: (option: any) => option[`${customName}`] } : {})}
-                            {...((renderOption || checkboxes) ? {
-                                renderOption: (props, row: any, { selected }) => <Box component={"li"} {...props}>
-                                    {checkboxes
-                                        ? <React.Fragment>
-                                            <Checkbox icon={<Icons.CheckBoxOutlineBlank fontSize="small" />} checkedIcon={<Icons.CheckBox fontSize="small" />} style={{ marginRight: 5 }} checked={selected} />
-                                            {customName ? row[`${customName}`] : row.label}
-                                        </React.Fragment>
-                                        : renderOption(row)
-                                    }
-                                </Box>
-                            } : {})}
-                            getOptionDisabled={(row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false)}
-                            renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, ...inputProps, type: "search" }} fullWidth={!!inputProps?.fullWidth} error={error} label={label ? label : (name || "default")} required={required} />}
-                        />
-                    )
-                }} />
+                {control ?
+                    <Controller name={name || "default"} control={control} render={() => {
+                        return (
+                            <Autocomplete options={selectData} multiple={multiple} {...props}
+                                value={!!selectData?.length && selectedValue
+                                    ? multiple
+                                        ? selectedValue?.map((SValue: string) => selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === SValue))
+                                        : multiple ? [] : selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
+                                    : multiple ? [] : null
+                                }
+                                defaultValue={!!selectData?.length && selectedValue
+                                    ? multiple
+                                        ? selectedValue?.map((SValue: string) => selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === SValue))
+                                        : multiple ? [] : selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
+                                    : multiple ? [] : null
+                                }
+                                onChange={(event, newValue) => {
+                                    onChange && onChange(event, newValue, Methods);
+                                    setSelectedValue(multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
+                                    control && setValue(name || "default", multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
+                                }}
+                                renderTags={(tagValue, getTagProps) => tagValue.map((row, index) => (
+                                    <Chip {...getTagProps({ index })} label={customName ? row[`${customName}`] : row.label} disabled={(fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false} />
+                                ))}
+                                {...(customName ? { getOptionLabel: (option: any) => option[`${customName}`] } : {})}
+                                {...((renderOption || checkboxes) ? {
+                                    renderOption: (props, row: any, { selected }) => <Box component={"li"} {...props}>
+                                        {checkboxes
+                                            ? <React.Fragment>
+                                                <Checkbox icon={<Icons.CheckBoxOutlineBlank fontSize="small" />} checkedIcon={<Icons.CheckBox fontSize="small" />} style={{ marginRight: 5 }} checked={selected} />
+                                                {customName ? row[`${customName}`] : row.label}
+                                            </React.Fragment>
+                                            : renderOption(row)
+                                        }
+                                    </Box>
+                                } : {})}
+                                getOptionDisabled={(row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false)}
+                                renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, ...inputProps, type: "search" }} fullWidth={!!inputProps?.fullWidth} error={error} label={label ? label : (name || "default")} required={required} />}
+                            />
+                        )
+                    }} />
+                    : <Autocomplete options={selectData} multiple={multiple} {...props}
+                        value={!!selectData?.length && selectedValue
+                            ? multiple
+                                ? selectedValue?.map((SValue: string) => selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === SValue))
+                                : multiple ? [] : selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
+                            : multiple ? [] : null
+                        }
+                        defaultValue={!!selectData?.length && selectedValue
+                            ? multiple
+                                ? selectedValue?.map((SValue: string) => selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === SValue))
+                                : multiple ? [] : selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
+                            : multiple ? [] : null
+                        }
+                        onChange={(event, newValue) => {
+                            onChange && onChange(event, newValue, Methods);
+                            setSelectedValue(multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
+                            control && setValue(name || "default", multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
+                        }}
+                        renderTags={(tagValue, getTagProps) => tagValue.map((row, index) => (
+                            <Chip {...getTagProps({ index })} label={customName ? row[`${customName}`] : row.label} disabled={(fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false} />
+                        ))}
+                        {...(customName ? { getOptionLabel: (option: any) => option[`${customName}`] } : {})}
+                        {...((renderOption || checkboxes) ? {
+                            renderOption: (props, row: any, { selected }) => <Box component={"li"} {...props}>
+                                {checkboxes
+                                    ? <React.Fragment>
+                                        <Checkbox icon={<Icons.CheckBoxOutlineBlank fontSize="small" />} checkedIcon={<Icons.CheckBox fontSize="small" />} style={{ marginRight: 5 }} checked={selected} />
+                                        {customName ? row[`${customName}`] : row.label}
+                                    </React.Fragment>
+                                    : renderOption(row)
+                                }
+                            </Box>
+                        } : {})}
+                        getOptionDisabled={(row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false)}
+                        renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, ...inputProps, type: "search" }} fullWidth={!!inputProps?.fullWidth} error={error} label={label ? label : (name || "default")} required={required} />}
+                    />
+                }
                 {helperText && <FormHelperText className={classes.error}>{helperText}</FormHelperText>}
             </Box>
         </React.Fragment>

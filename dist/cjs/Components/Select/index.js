@@ -115,7 +115,6 @@ const Select = ({ name, value, label, callback, staticData, helperText, dataSour
                         : multiple ? [] : null, onChange: (event, newValue) => {
                         onChange && onChange(event, newValue, Methods);
                         setSelectedValue(multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
-                        control && setValue(name || "default", multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
                     }, renderTags: (tagValue, getTagProps) => tagValue.map((row, index) => (react_1.default.createElement(material_1.Chip, { ...getTagProps({ index }), label: customName ? row[`${customName}`] : row.label, disabled: (fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false }))), ...(customName ? { getOptionLabel: (option) => option[`${customName}`] } : {}), ...((renderOption || checkboxes) ? {
                         renderOption: (props, row, { selected }) => react_1.default.createElement(material_1.Box, { component: "li", ...props }, checkboxes
                             ? react_1.default.createElement(react_1.default.Fragment, null,

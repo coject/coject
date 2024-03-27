@@ -103,7 +103,7 @@ export const Input: FC<iInput> = ({ name, value, helperText, validation, require
                 <TextField name={name || "default"} value={inputValue} onChange={changeValue} label={props?.label ? props?.label : (name || "default")} {...props}>
                     {props?.children}
                 </TextField>
-                { (helperText || (errors && errors[name || "default"])) && <FormHelperText className={classes.error}>{errors && errors[name || "default"]?.message as string}{helperText && !(errors && errors[name || "default"]) && helperText}</FormHelperText> }
+                { (helperText || (control && errors && errors[name || "default"])) && <FormHelperText className={classes.error}>{control && errors && errors[name || "default"]?.message as string}{helperText && !(control && errors && errors[name || "default"]) && helperText}</FormHelperText> }
             </Box>
         </React.Fragment>
     )

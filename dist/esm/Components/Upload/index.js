@@ -121,8 +121,8 @@ export const Upload = ({ value, name, helperText, multiple, onChange, onRemove, 
                     React.createElement(Icons.CloudUploadOutlined, null),
                     React.createElement(Typography, null, props.placeholder || name || "default"),
                     React.createElement(TextField, { name: name || "default", type: "file", onChange: changeValue, label: props?.label ? props?.label : (name || "default"), inputProps: { ...props.inputProps, multiple: multiple }, ...props })))),
-        (helperText || (errors && errors[name || "default"])) && React.createElement(FormHelperText, { className: classes.error },
-            errors && errors[name || "default"]?.message,
-            helperText && !(errors && errors[name || "default"]) && helperText)));
+        (helperText || (control && errors && errors[name || "default"])) && React.createElement(FormHelperText, { className: classes.error },
+            control && errors && errors[name || "default"]?.message,
+            helperText && !(control && errors && errors[name || "default"]) && helperText)));
 };
 //# sourceMappingURL=index.js.map

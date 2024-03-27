@@ -150,9 +150,9 @@ const Upload = ({ value, name, helperText, multiple, onChange, onRemove, require
                     react_1.default.createElement(index_1.Icons.CloudUploadOutlined, null),
                     react_1.default.createElement(material_1.Typography, null, props.placeholder || name || "default"),
                     react_1.default.createElement(material_1.TextField, { name: name || "default", type: "file", onChange: changeValue, label: props?.label ? props?.label : (name || "default"), inputProps: { ...props.inputProps, multiple: multiple }, ...props })))),
-        (helperText || (errors && errors[name || "default"])) && react_1.default.createElement(material_1.FormHelperText, { className: classes.error },
-            errors && errors[name || "default"]?.message,
-            helperText && !(errors && errors[name || "default"]) && helperText)));
+        (helperText || (control && errors && errors[name || "default"])) && react_1.default.createElement(material_1.FormHelperText, { className: classes.error },
+            control && errors && errors[name || "default"]?.message,
+            helperText && !(control && errors && errors[name || "default"]) && helperText)));
 };
 exports.Upload = Upload;
 //# sourceMappingURL=index.js.map

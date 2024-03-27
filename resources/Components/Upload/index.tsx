@@ -150,7 +150,7 @@ export const Upload: FC<iUpload> = ({ value, name, helperText, multiple, onChang
                     </React.Fragment>
                 }
             </Box>
-            { (helperText || (errors && errors[name || "default"])) && <FormHelperText className={classes.error}>{errors && errors[name || "default"]?.message as string}{helperText && !(errors && errors[name || "default"]) && helperText}</FormHelperText> }
+            { (helperText || (control && errors && errors[name || "default"])) && <FormHelperText className={classes.error}>{control && errors && errors[name || "default"]?.message as string}{helperText && !(control && errors && errors[name || "default"]) && helperText}</FormHelperText> }
         </React.Fragment>
     );
 };

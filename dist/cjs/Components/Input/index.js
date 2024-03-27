@@ -103,9 +103,9 @@ const Input = ({ name, value, helperText, validation, required, onChange, ...pro
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: classes.root },
             react_1.default.createElement(material_1.TextField, { name: name || "default", value: inputValue, onChange: changeValue, label: props?.label ? props?.label : (name || "default"), ...props }, props?.children),
-            (helperText || (errors && errors[name || "default"])) && react_1.default.createElement(material_1.FormHelperText, { className: classes.error },
-                errors && errors[name || "default"]?.message,
-                helperText && !(errors && errors[name || "default"]) && helperText))));
+            (helperText || (control && errors && errors[name || "default"])) && react_1.default.createElement(material_1.FormHelperText, { className: classes.error },
+                control && errors && errors[name || "default"]?.message,
+                helperText && !(control && errors && errors[name || "default"]) && helperText))));
 };
 exports.Input = Input;
 //# sourceMappingURL=index.js.map

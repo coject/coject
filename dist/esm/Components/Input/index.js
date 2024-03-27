@@ -74,8 +74,8 @@ export const Input = ({ name, value, helperText, validation, required, onChange,
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: classes.root },
             React.createElement(TextField, { name: name || "default", value: inputValue, onChange: changeValue, label: props?.label ? props?.label : (name || "default"), ...props }, props?.children),
-            (helperText || (errors && errors[name || "default"])) && React.createElement(FormHelperText, { className: classes.error },
-                errors && errors[name || "default"]?.message,
-                helperText && !(errors && errors[name || "default"]) && helperText))));
+            (helperText || (control && errors && errors[name || "default"])) && React.createElement(FormHelperText, { className: classes.error },
+                control && errors && errors[name || "default"]?.message,
+                helperText && !(control && errors && errors[name || "default"]) && helperText))));
 };
 //# sourceMappingURL=index.js.map

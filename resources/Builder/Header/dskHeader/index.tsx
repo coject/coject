@@ -28,13 +28,13 @@ interface DskHeaderInterface {
 export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, localeText, languages, defaultLanguage, menus, setMenus, sidebar, setSidebar }) => {
     const { classes } = useStyles();
     const [ menuList, setMenuList ] = useState<any>({});
-    const [ languageLogo, setLanguageLogo ] = useState<string>(process.env.PUBLIC_URL + '/images/lang/en.jpg');
+    const [ languageLogo, setLanguageLogo ] = useState<string>('/images/lang/en.jpg');
 
     // Default Language Logo
     useEffect(() => {
         if (defaultLanguage) {
             if (defaultLanguage === 'ar' || defaultLanguage === 'en') {
-                setLanguageLogo(process.env.PUBLIC_URL + `${defaultLanguage === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
+                setLanguageLogo(`${defaultLanguage === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
             } else if (languages?.length) {
                 setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0]?.logo || "");
             }
@@ -124,9 +124,9 @@ export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, localeTe
                                                         <MenuItem key={index} component={Button} onClick={(event) => {
                                                             setMenuList({});
                                                             language.onClick && language.onClick(event);
-                                                            setLanguageLogo(process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
+                                                            setLanguageLogo(`${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
                                                         }}>
-                                                            <img src={process.env.PUBLIC_URL + `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`} alt={language.name === "ar" ? "العربية" : "English"} />
+                                                            <img src={`${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`} alt={language.name === "ar" ? "العربية" : "English"} />
                                                             { language.name === "ar" ? "العربية" : "English" }
                                                         </MenuItem>
                                                     )

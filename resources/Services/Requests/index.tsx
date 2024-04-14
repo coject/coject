@@ -110,11 +110,11 @@ export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, call
 
     // Request Actions
     if (Method.toLowerCase() === "get" || Method.toLowerCase() === "delete")
-        await RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl || ""}${APIUrlId ? "/" + APIUrlId : ""}`, { "headers": Headers })
+        await RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : import.meta.env.VITE_URL}${APIUrl || ""}${APIUrlId ? "/" + APIUrlId : ""}`, { "headers": Headers })
             .then((Response: any) => SuccessAction(Response))
             .catch((Error: any) => CatchAction(Error));
     else
-        await RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : process.env.REACT_APP_URL}${APIUrl || ""}${APIUrlId ? "/" + APIUrlId : ""}`, Data, { "headers": Headers })
+        await RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : import.meta.env.VITE_URL}${APIUrl || ""}${APIUrlId ? "/" + APIUrlId : ""}`, Data, { "headers": Headers })
             .then((Response: any) => SuccessAction(Response))
             .catch((Error: any) => CatchAction(Error));
 };

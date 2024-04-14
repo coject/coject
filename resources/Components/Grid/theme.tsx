@@ -31,10 +31,12 @@ const useStyles = makeStyles()((theme) => {
                 }
             },
             "& .MuiDataGrid-columnHeaders": {
-                minHeight: "45px !important",
+                minHeight: "39px !important",
                 borderRadius: "unset",
                 backgroundColor: theme.palette.primary.main,
-                borderBottom: "1px solid" + theme.palette.grey[400],
+                "& .MuiDataGrid-columnHeader": {
+                    backgroundColor: theme.palette.primary.main,
+                },
                 "& .MuiDataGrid-columnHeaderTitle": {
                     fontWeight: "bold",
                     textTransform: "capitalize",

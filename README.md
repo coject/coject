@@ -18,7 +18,7 @@
 
 </div>
 
-## Coject v1.4
+## Coject v2.0
 
 The [Coject](https://coject.com/) library exported as [React.js](https://react.dev/) components.
 All Component Is Dependency On [Material UI](https://mui.com/) Library.
@@ -37,10 +37,10 @@ $ yarn add coject
 ### Dependency npm [For JavaScript/TypeScript Project]:
 ```shell
 // npm install
-$ npm i @emotion/react @emotion/styled @mui/icons-material @mui/material @mui/x-data-grid @mui/x-date-pickers coject moment moment-hijri react-hook-form react-toastify tss-react axios
+$ npm i @emotion/react @emotion/styled @mui/icons-material @mui/material @mui/x-data-grid @mui/x-date-pickers coject moment coject-hijri react-hook-form react-toastify tss-react axios
 
 // yarn install
-$ yarn add @emotion/react @emotion/styled @mui/icons-material @mui/material @mui/x-data-grid @mui/x-date-pickers coject moment moment-hijri react-hook-form react-toastify tss-react axios
+$ yarn add @emotion/react @emotion/styled @mui/icons-material @mui/material @mui/x-data-grid @mui/x-date-pickers coject moment coject-hijri react-hook-form react-toastify tss-react axios
 ```
 ```html
 <!-- Add Font In /public/index.html Head -->

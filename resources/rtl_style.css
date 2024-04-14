@@ -33,10 +33,6 @@ html[dir="rtl"] .MuiTablePagination-actions svg {
     transform: scaleX(-1);
 }
 
-html[dir="rtl"] .MuiDataGrid-toolbarContainer {
-    direction: ltr;
-}
-
 html[dir="rtl"] .MuiDataGrid-toolbarContainer button {
     direction: rtl;
 }

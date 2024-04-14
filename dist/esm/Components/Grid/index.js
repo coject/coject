@@ -48,7 +48,7 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, staticData, 
                     return null;
             });
         }
-    }, [schema]);
+    }, []);
     // Default Schema
     const defaultSchema = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => ({ field: columnKey, component: "input", flex: (columnKey === (customKey ? customKey : "id") ? 0 : 1) })) : [];
     // Custom Schema

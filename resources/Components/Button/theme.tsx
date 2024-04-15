@@ -1,6 +1,6 @@
 import { makeStyles } from "tss-react/mui";
 
-const useStyles = makeStyles()((theme) => {
+const useStyles = makeStyles()(() => {
     return {
         root: {
             margin: 0,

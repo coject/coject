@@ -1,19 +1,27 @@
 {
-  "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "declaration": true,
-    "esModuleInterop": true,
-    "jsx": "react",
-    "lib": ["es5", "es2015", "es2016", "dom", "esnext"],
-    "types": ["node"],
-    "module": "es2015",
-    "moduleResolution": "node",
-    "noImplicitAny": true,
-    "noUnusedLocals": true,
-    "outDir": "dist/esm",
-    "sourceMap": true,
-    "strict": true,
-    "target": "ES2020"
-  },
-  "include": ["resources/**/*.ts", "resources/**/*.tsx"]
+    "compilerOptions": {
+        "target": "ES2021",
+        "allowSyntheticDefaultImports": true,
+        "declaration": true,
+        "esModuleInterop": true,
+        "jsx": "react",
+        "lib": [
+            "ES2021",
+            "DOM",
+            "DOM.Iterable"
+        ],
+        "types": [
+            "node"
+        ],
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "noUnusedLocals": true,
+        "outDir": "dist/esm",
+        "sourceMap": true,
+        "strict": true,
+    },
+    "include": [
+        "resources"
+    ]
 }

@@ -13,7 +13,6 @@ import { Adapter } from "coject-hijri/adapter";
 // Material UI
 import { Box, Typography, FormHelperText } from "@mui/material";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-// import { AdapterMomentHijri } from "@mui/x-date-pickers/AdapterMomentHijri";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker, DateTimePickerProps } from "@mui/x-date-pickers/DateTimePicker";
 import { DatePicker as MuiDatePicker, DatePickerProps } from "@mui/x-date-pickers/DatePicker";
@@ -77,7 +76,7 @@ export const DatePicker: FC<iDatePicker> = ({ name, value, hijri, viewFormat, ac
     return (
         <React.Fragment>
             <Box className={`${classes.root} ${error ? classes.rootError : ""}`}>
-                <LocalizationProvider dateAdapter={hijri ? Adapter : AdapterMoment}>
+                <LocalizationProvider dateAdapter={(hijri ? Adapter : AdapterMoment) as any}>
                     { textView
                         ? <Typography {...style} {...props}>{selectedDate.format(viewFormat ? viewFormat : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY")}</Typography>
                         : <DateComponent className={`${fullWidth ? "MuiFormControl-fullWidth" : ""}`} label={props.label ? props.label : name} value={selectedDate} {...style} {...Calendar} {...props}

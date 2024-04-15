@@ -32,12 +32,10 @@ export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, localeTe
 
     // Default Language Logo
     useEffect(() => {
-        if (defaultLanguage) {
+        if (defaultLanguage && languages?.length) {
             if (defaultLanguage === 'ar' || defaultLanguage === 'en') {
                 setLanguageLogo(`${defaultLanguage === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
-            } else if (languages?.length) {
-                setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0]?.logo || "");
-            }
+            } else setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0]?.logo || "");
         }
     }, [defaultLanguage, languages]);
 

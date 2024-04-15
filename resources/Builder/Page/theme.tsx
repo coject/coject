@@ -1,11 +1,11 @@
 import { makeStyles } from "tss-react/mui";
 
-const useStyles = makeStyles()((theme) => {
+const useStyles = makeStyles()(() => {
     return {
         root: {
             flexGrow: 1,
             width: "100%",
-            padding: "22px",
+            padding: "24px",
             flex: "1 0 calc(100% - 50px)"
         },
         header: {

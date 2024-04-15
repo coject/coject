@@ -1,6 +1,6 @@
 {
     "name": "coject",
-    "version": "2.0.0",
+    "version": "2.1.1",
     "description": "React Library",
     "main": "dist/cjs/index.js",
     "module": "dist/esm/index.js",
@@ -39,10 +39,11 @@
         "@mui/material": "^5.15.0",
         "@mui/x-data-grid": "^6.18.5",
         "@mui/x-date-pickers": "^6.18.5",
-        "@types/node": "^20.6.0",
+        "@types/node": "^20.12.7",
         "@types/react": "^18.2.21",
         "@types/react-dom": "^18.2.7",
         "axios": "^1.6.0",
+        "coject-hijri": "^1.8.0",
         "moment": "^2.29.4",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
@@ -54,8 +55,5 @@
     "peerDependencies": {
         "react": "^18.2.0",
         "react-dom": "^18.2.0"
-    },
-    "dependencies": {
-        "coject-hijri": "^1.4.0"
     }
 }

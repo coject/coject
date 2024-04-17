@@ -31,7 +31,6 @@ const useStyles = makeStyles()((theme) => {
                 }
             },
             "& .MuiDataGrid-columnHeaders": {
-                minHeight: "39px !important",
                 borderRadius: "unset",
                 backgroundColor: theme.palette.primary.main,
                 "& .MuiDataGrid-columnHeader": {

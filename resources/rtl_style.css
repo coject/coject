@@ -29,10 +29,6 @@ html[dir="rtl"] .MuiTablePagination-actions {
     margin-right: 20px;
 }
 
-html[dir="rtl"] .MuiTablePagination-actions svg {
-    transform: scaleX(-1);
-}
-
 html[dir="rtl"] .MuiDataGrid-toolbarContainer button {
     direction: rtl;
 }
@@ -56,10 +52,6 @@ html[dir="rtl"] .MuiAutocomplete-endAdornment {
 html[dir="rtl"] .MuiPickersCalendarHeader-labelContainer {
     margin-left: auto;
     margin-right: 0 !important;
-}
-
-html[dir="rtl"] .MuiPickersArrowSwitcher-root svg {
-    transform: scaleX(-1);
 }
 
 /* Checkbox & Switch */

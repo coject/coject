@@ -15,7 +15,7 @@ const material_1 = require("@mui/material");
 const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Form = ({ mode, getForm, schema, dataSource, localeText, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, noRequest, invisibility, children, ...props }) => {
+const Form = ({ mode, getForm, schema, dataSource, localeText, className, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, noRequest, invisibility, children, ...props }) => {
     const Data = { ...(staticData ? staticData : {}) };
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useForm)();
@@ -39,7 +39,7 @@ const Form = ({ mode, getForm, schema, dataSource, localeText, staticData, custo
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_hook_form_1.FormProvider, { ...Methods },
-            react_1.default.createElement("form", { className: classes.root, onSubmit: Methods.handleSubmit(onFormSubmit), ...props },
+            react_1.default.createElement("form", { className: `${classes.root} ${className}`, onSubmit: Methods.handleSubmit(onFormSubmit), ...props },
                 schema &&
                     react_1.default.createElement(material_1.Grid, { container: true, spacing: 2 },
                         schema && !!schema?.length && schema.map((field, index) => {

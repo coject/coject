@@ -9,7 +9,7 @@ import { Grid, Button } from "@mui/material";
 import { Input, Switch, Select, Checkbox, DatePicker } from "../index";
 // Styles
 import useStyles from "./theme";
-export const Form = ({ mode, getForm, schema, dataSource, localeText, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, noRequest, invisibility, children, ...props }) => {
+export const Form = ({ mode, getForm, schema, dataSource, localeText, className, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, noRequest, invisibility, children, ...props }) => {
     const Data = { ...(staticData ? staticData : {}) };
     const { classes } = useStyles();
     const Methods = useForm();
@@ -33,7 +33,7 @@ export const Form = ({ mode, getForm, schema, dataSource, localeText, staticData
     };
     return (React.createElement(React.Fragment, null,
         React.createElement(FormProvider, { ...Methods },
-            React.createElement("form", { className: classes.root, onSubmit: Methods.handleSubmit(onFormSubmit), ...props },
+            React.createElement("form", { className: `${classes.root} ${className}`, onSubmit: Methods.handleSubmit(onFormSubmit), ...props },
                 schema &&
                     React.createElement(Grid, { container: true, spacing: 2 },
                         schema && !!schema?.length && schema.map((field, index) => {

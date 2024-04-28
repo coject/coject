@@ -86,7 +86,7 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, staticData, 
     // Grid Actions
     const gridActions = (row) => actions && (actions instanceof Array
         ? actions?.map((label, index) => {
-            if (label === "edit" || label === "delete") {
+            if (((label === "edit") && (actionsControl?.edit instanceof Function ? actionsControl?.edit(row) : true)) || ((label === "delete") && (actionsControl?.delete instanceof Function ? actionsControl?.delete(row) : true))) {
                 return (React.createElement(GridActionsCellItem, { key: index, label: label, icon: label === "edit" ? React.createElement(Icons.Edit, null) : React.createElement(Icons.Delete, null), onClick: () => {
                         (label === "edit") ? setEditModal(true) : setDeleteModal(true);
                         setSelectedData(row);
@@ -118,7 +118,7 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, staticData, 
                 React.createElement(React.Fragment, null,
                     toolbar instanceof Array ? (toolbar?.includes("visibility") && React.createElement(GridToolbarColumnsButton, null)) : React.createElement(GridToolbarColumnsButton, null),
                     toolbar instanceof Array ? (toolbar?.includes("filter") && React.createElement(GridToolbarFilterButton, null)) : React.createElement(GridToolbarFilterButton, null),
-                    toolbar instanceof Array ? (toolbar?.includes("export") && React.createElement(GridToolbarExport, null)) : React.createElement(GridToolbarExport, null)),
+                    toolbar instanceof Array ? (toolbar?.includes("export") && React.createElement(GridToolbarExport, { csvOptions: { utf8WithBom: true } })) : React.createElement(GridToolbarExport, { csvOptions: { utf8WithBom: true } })),
             customToolbar && customToolbar(gridData),
             actions && (actions instanceof Array
                 ? (actions?.includes("add") && React.createElement(Button, { onClick: () => setAddModal(true), type: "button" },

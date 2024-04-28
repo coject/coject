@@ -41,6 +41,7 @@ interface iForm {
     dispatch?: any;
     setModal?: any;
     callback?: any;
+    className?: any;
     staticData?: any;
     customKey?: string;
     noRequest?: boolean;

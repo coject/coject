@@ -115,7 +115,7 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, staticData, callbac
     // Grid Actions
     const gridActions = (row) => actions && (actions instanceof Array
         ? actions?.map((label, index) => {
-            if (label === "edit" || label === "delete") {
+            if (((label === "edit") && (actionsControl?.edit instanceof Function ? actionsControl?.edit(row) : true)) || ((label === "delete") && (actionsControl?.delete instanceof Function ? actionsControl?.delete(row) : true))) {
                 return (react_1.default.createElement(x_data_grid_1.GridActionsCellItem, { key: index, label: label, icon: label === "edit" ? react_1.default.createElement(index_1.Icons.Edit, null) : react_1.default.createElement(index_1.Icons.Delete, null), onClick: () => {
                         (label === "edit") ? setEditModal(true) : setDeleteModal(true);
                         setSelectedData(row);
@@ -147,7 +147,7 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, staticData, callbac
                 react_1.default.createElement(react_1.default.Fragment, null,
                     toolbar instanceof Array ? (toolbar?.includes("visibility") && react_1.default.createElement(x_data_grid_1.GridToolbarColumnsButton, null)) : react_1.default.createElement(x_data_grid_1.GridToolbarColumnsButton, null),
                     toolbar instanceof Array ? (toolbar?.includes("filter") && react_1.default.createElement(x_data_grid_1.GridToolbarFilterButton, null)) : react_1.default.createElement(x_data_grid_1.GridToolbarFilterButton, null),
-                    toolbar instanceof Array ? (toolbar?.includes("export") && react_1.default.createElement(x_data_grid_1.GridToolbarExport, null)) : react_1.default.createElement(x_data_grid_1.GridToolbarExport, null)),
+                    toolbar instanceof Array ? (toolbar?.includes("export") && react_1.default.createElement(x_data_grid_1.GridToolbarExport, { csvOptions: { utf8WithBom: true } })) : react_1.default.createElement(x_data_grid_1.GridToolbarExport, { csvOptions: { utf8WithBom: true } })),
             customToolbar && customToolbar(gridData),
             actions && (actions instanceof Array
                 ? (actions?.includes("add") && react_1.default.createElement(material_1.Button, { onClick: () => setAddModal(true), type: "button" },

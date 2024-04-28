@@ -177,7 +177,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
     // Grid Actions
     const gridActions = (row: any) => actions && ( actions instanceof Array
         ? actions?.map((label: ("add" | "edit" | "delete"), index: any) => {
-            if (label === "edit" || label === "delete") { return (
+            if (((label === "edit") && (actionsControl?.edit instanceof Function ? actionsControl?.edit(row) : true)) || ((label === "delete") && (actionsControl?.delete instanceof Function ? actionsControl?.delete(row) : true))) { return (
                 <GridActionsCellItem key={index} label={label} icon={label === "edit" ? <Icons.Edit /> : <Icons.Delete />}
                     onClick={() => {
                         (label === "edit") ? setEditModal(true) : setDeleteModal(true);
@@ -217,9 +217,9 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                     <React.Fragment>
                         { toolbar instanceof Array ? (toolbar?.includes("visibility") && <GridToolbarColumnsButton />) : <GridToolbarColumnsButton /> }
                         { toolbar instanceof Array ? (toolbar?.includes("filter") && <GridToolbarFilterButton />) : <GridToolbarFilterButton /> }
-                        { toolbar instanceof Array ? (toolbar?.includes("export") && <GridToolbarExport />) : <GridToolbarExport /> }
+                        { toolbar instanceof Array ? (toolbar?.includes("export") && <GridToolbarExport csvOptions={{utf8WithBom: true}} />) : <GridToolbarExport csvOptions={{utf8WithBom: true}} /> }
                     </React.Fragment>
-                }
+                } 
                 { customToolbar && customToolbar(gridData) }
                 { actions && ( actions instanceof Array
                     ? ( actions?.includes("add") && <Button onClick={() => setAddModal(true)} type={"button"}><Icons.Add /> {(localeText && localeText?.toolbarNew) || "Add New"}</Button> )

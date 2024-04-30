@@ -74,6 +74,7 @@ interface iGrid extends DataGridProps {
     onAddSubmit?: any;
     customKey?: string;
     onEditSubmit?: any;
+    resizable?: boolean;
     noRequest?: boolean;
     customToolbar?: any;
     onAddCallback?: any;
@@ -97,7 +98,7 @@ interface iGrid extends DataGridProps {
     customActions?: { icon: string, label: string, onClick: any }[];
 }
 
-export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRenderRequest, actionsControl, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRenderRequest, actionsControl, resizable, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const { classes } = useStyles();
     const [ gridData, setGridData ] = useState<any>([]);
     const [ schemaData, setSchemaData ] = useState<any>({});
@@ -302,6 +303,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                             }
                         } : {})
                     }}
+                    disableColumnResize={!resizable}
                     initialState={props?.initialState ? props?.initialState : {pagination: {paginationModel: {pageSize: 15}}}}
                     slots={props?.slots ? props?.slots : {toolbar: actions || toolbar || customToolbar ? CustomToolbar : null}}
                     getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "")}

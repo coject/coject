@@ -55,6 +55,7 @@ interface iGrid extends DataGridProps {
     onAddSubmit?: any;
     customKey?: string;
     onEditSubmit?: any;
+    resizable?: boolean;
     noRequest?: boolean;
     customToolbar?: any;
     onAddCallback?: any;

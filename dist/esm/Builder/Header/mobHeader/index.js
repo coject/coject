@@ -75,7 +75,7 @@ export const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, 
                         const ItemIcon = listItem.icon && Icons[listItem.icon];
                         if (listItem.children && !!listItem.children.length) {
                             return (React.createElement(ListItem, { key: index },
-                                React.createElement(Button, { onClick: (e) => setMenuList({ [((listItem.label).toLowerCase()).replaceAll(" ", "_")]: e.currentTarget }) },
+                                React.createElement(Button, { className: classes.mobProfile, onClick: (e) => setMenuList({ [((listItem.label).toLowerCase()).replaceAll(" ", "_")]: e.currentTarget }) },
                                     listItem.image && React.createElement("img", { src: listItem.image, alt: listItem.label }),
                                     ItemIcon ? React.createElement(ItemIcon, null) : "",
                                     !listItem.noLabel && listItem.label,

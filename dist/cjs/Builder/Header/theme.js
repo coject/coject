@@ -122,6 +122,7 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                         overflow: "hidden",
                         textAlign: "start",
                         whiteSpace: "nowrap",
+                        display: "inline-block",
                         textOverflow: "ellipsis"
                     }
                 },
@@ -456,6 +457,16 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                     whiteSpace: "nowrap",
                     textOverflow: "ellipsis"
                 }
+            }
+        },
+        mobProfile: {
+            "& p": {
+                width: "50px",
+                overflow: "hidden",
+                textAlign: "start",
+                whiteSpace: "nowrap",
+                display: "inline-block",
+                textOverflow: "ellipsis"
             }
         }
     };

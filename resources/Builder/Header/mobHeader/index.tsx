@@ -119,7 +119,7 @@ export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, localeT
                             if (listItem.children && !!listItem.children.length) {
                                 return (
                                     <ListItem key={index}>
-                                        <Button onClick={(e) => setMenuList({[((listItem.label).toLowerCase()).replaceAll(" ", "_")]: e.currentTarget})}>
+                                        <Button className={classes.mobProfile} onClick={(e) => setMenuList({[((listItem.label).toLowerCase()).replaceAll(" ", "_")]: e.currentTarget})}>
                                             {listItem.image && <img src={listItem.image} alt={listItem.label} />}
                                             {ItemIcon ? <ItemIcon/> : ""}
                                             {!listItem.noLabel && listItem.label}

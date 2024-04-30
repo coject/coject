@@ -104,7 +104,7 @@ const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, default
                         const ItemIcon = listItem.icon && Icons[listItem.icon];
                         if (listItem.children && !!listItem.children.length) {
                             return (react_1.default.createElement(material_1.ListItem, { key: index },
-                                react_1.default.createElement(material_1.Button, { onClick: (e) => setMenuList({ [((listItem.label).toLowerCase()).replaceAll(" ", "_")]: e.currentTarget }) },
+                                react_1.default.createElement(material_1.Button, { className: classes.mobProfile, onClick: (e) => setMenuList({ [((listItem.label).toLowerCase()).replaceAll(" ", "_")]: e.currentTarget }) },
                                     listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
                                     ItemIcon ? react_1.default.createElement(ItemIcon, null) : "",
                                     !listItem.noLabel && listItem.label,

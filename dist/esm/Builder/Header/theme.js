@@ -120,6 +120,7 @@ const useStyles = makeStyles()((theme) => {
                         overflow: "hidden",
                         textAlign: "start",
                         whiteSpace: "nowrap",
+                        display: "inline-block",
                         textOverflow: "ellipsis"
                     }
                 },
@@ -454,6 +455,16 @@ const useStyles = makeStyles()((theme) => {
                     whiteSpace: "nowrap",
                     textOverflow: "ellipsis"
                 }
+            }
+        },
+        mobProfile: {
+            "& p": {
+                width: "50px",
+                overflow: "hidden",
+                textAlign: "start",
+                whiteSpace: "nowrap",
+                display: "inline-block",
+                textOverflow: "ellipsis"
             }
         }
     };

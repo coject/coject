@@ -122,8 +122,8 @@ export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, localeT
                                         <Button className={classes.mobProfile} onClick={(e) => setMenuList({[((listItem.label).toLowerCase()).replaceAll(" ", "_")]: e.currentTarget})}>
                                             {listItem.image && <img src={listItem.image} alt={listItem.label} />}
                                             {ItemIcon ? <ItemIcon/> : ""}
-                                            {!listItem.noLabel && listItem.label}
-                                            <Typography>{!listItem.noArrow && <Icons.ExpandMore/>}</Typography>
+                                            <Typography>{!listItem.noLabel && listItem.label}</Typography>
+                                            {!listItem.noArrow && <Icons.ExpandMore/>}
                                         </Button>
                                         { menuList && !!Object.keys(menuList).length &&
                                             <Menu className={classes.subMenuList} anchorEl={menuList && Object.keys(menuList).length && menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")]} open={Boolean(menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")])} onClose={() => setMenuList({})} transformOrigin={{ horizontal: 'right', vertical: 'top' }} anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>

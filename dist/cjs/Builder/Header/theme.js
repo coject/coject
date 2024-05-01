@@ -460,14 +460,7 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
             }
         },
         mobProfile: {
-            "& p": {
-                width: "50px",
-                overflow: "hidden",
-                textAlign: "start",
-                whiteSpace: "nowrap",
-                display: "inline-block",
-                textOverflow: "ellipsis"
-            }
+            width: "125px !important"
         }
     };
 });

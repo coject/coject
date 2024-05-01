@@ -107,8 +107,8 @@ const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, default
                                 react_1.default.createElement(material_1.Button, { className: classes.mobProfile, onClick: (e) => setMenuList({ [((listItem.label).toLowerCase()).replaceAll(" ", "_")]: e.currentTarget }) },
                                     listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
                                     ItemIcon ? react_1.default.createElement(ItemIcon, null) : "",
-                                    !listItem.noLabel && listItem.label,
-                                    react_1.default.createElement(material_1.Typography, null, !listItem.noArrow && react_1.default.createElement(Icons.ExpandMore, null))),
+                                    react_1.default.createElement(material_1.Typography, null, !listItem.noLabel && listItem.label),
+                                    !listItem.noArrow && react_1.default.createElement(Icons.ExpandMore, null)),
                                 menuList && !!Object.keys(menuList).length &&
                                     react_1.default.createElement(material_1.Menu, { className: classes.subMenuList, anchorEl: menuList && Object.keys(menuList).length && menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")], open: Boolean(menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")]), onClose: () => setMenuList({}), transformOrigin: { horizontal: 'right', vertical: 'top' }, anchorOrigin: { horizontal: 'right', vertical: 'bottom' } },
                                         react_1.default.createElement(material_1.Box, { className: classes.subListMenu, onMouseLeave: () => setMenuList({}) },

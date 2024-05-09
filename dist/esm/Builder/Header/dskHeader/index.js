@@ -5,7 +5,7 @@ import { Box, IconButton, List, ListItem, TextField, Button, Menu, MenuItem, Typ
 import { Icons } from "../../../Components";
 // Styles
 import useStyles from "../theme";
-export const DskHeader = ({ logo, icon, search, localeText, languages, customList, defaultLanguage, menus, setMenus, sidebar, setSidebar }) => {
+export const DskHeader = ({ logo, icon, search, localeText, languages, defaultLanguage, menus, setMenus, sidebar, setSidebar }) => {
     const { classes } = useStyles();
     const [menuList, setMenuList] = useState({});
     const [languageLogo, setLanguageLogo] = useState('/images/lang/en.jpg');
@@ -24,7 +24,6 @@ export const DskHeader = ({ logo, icon, search, localeText, languages, customLis
             React.createElement(Box, { className: `${classes.dskLogo} ${!sidebar ? classes.closedDskLogo : ""}` }, sidebar
                 ? React.createElement("img", { onClick: () => window.location.href = "/", src: logo, alt: "Logo" })
                 : React.createElement("img", { onClick: () => window.location.href = "/", src: icon, alt: "Logo" })),
-            customList,
             React.createElement(Box, { className: `${classes.dskMenu} ${!sidebar ? classes.closedDskMenu : ""}` },
                 React.createElement(List, { className: classes.menuList },
                     React.createElement(ListItem, null,

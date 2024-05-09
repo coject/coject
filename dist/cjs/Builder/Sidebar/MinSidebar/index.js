@@ -34,7 +34,7 @@ const material_1 = require("@mui/material");
 const Components_1 = require("../../../Components");
 // Styles
 const theme_1 = __importDefault(require("../theme"));
-const MinSidebar = ({ menus, setMenus }) => {
+const MinSidebar = ({ menus, setMenus, customList }) => {
     const { classes } = (0, theme_1.default)();
     const [menuList, setMenuList] = (0, react_1.useState)({});
     return (react_1.default.createElement(react_1.default.Fragment, null,
@@ -47,6 +47,7 @@ const MinSidebar = ({ menus, setMenus }) => {
                             react_1.default.createElement(material_1.Button, { onClick: (e) => setMenuList({ [((listItem.label).toLowerCase()).replaceAll(" ", "_")]: e.currentTarget }) },
                                 listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
                                 ItemIcon ? react_1.default.createElement(ItemIcon, null) : "")),
+                        customList,
                         menuList && !!Object.keys(menuList).length &&
                             react_1.default.createElement(material_1.Menu, { className: `${classes.menuList} minMenuList`, anchorEl: menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")], open: Boolean(menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")]), onClose: () => setMenuList({}), transformOrigin: { horizontal: "right", vertical: "top" }, anchorOrigin: { horizontal: "right", vertical: "top" } }, listItem.children.map((childListItem, childIndex) => {
                                 const ChildItemIcon = childListItem.icon && Components_1.Icons[childListItem.icon];
@@ -58,11 +59,13 @@ const MinSidebar = ({ menus, setMenus }) => {
                             }))));
                 }
                 else {
-                    return (react_1.default.createElement(material_1.ListItem, { key: index, className: classes.listItem },
-                        react_1.default.createElement(material_1.Tooltip, { title: listItem.label, placement: "right" },
-                            react_1.default.createElement(material_1.Button, { fullWidth: true, className: classes.button, ...(listItem.link ? { href: listItem.link } : {}), onClick: () => listItem.onClick && listItem.onClick(setMenus) },
-                                listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
-                                ItemIcon ? react_1.default.createElement(ItemIcon, null) : ""))));
+                    return (react_1.default.createElement(react_1.default.Fragment, null,
+                        react_1.default.createElement(material_1.ListItem, { key: index, className: classes.listItem },
+                            react_1.default.createElement(material_1.Tooltip, { title: listItem.label, placement: "right" },
+                                react_1.default.createElement(material_1.Button, { fullWidth: true, className: classes.button, ...(listItem.link ? { href: listItem.link } : {}), onClick: () => listItem.onClick && listItem.onClick(setMenus) },
+                                    listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
+                                    ItemIcon ? react_1.default.createElement(ItemIcon, null) : ""))),
+                        customList));
                 }
             })))));
 };

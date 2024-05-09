@@ -3,8 +3,9 @@ interface iDashboard {
     logo?: any;
     icon?: any;
     menus?: any;
-    customList?: any;
     search?: boolean;
+    customMobList?: any;
+    customSideList?: any;
     children?: ReactNode;
     copyRight?: ReactNode;
     localeText?: {

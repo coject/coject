@@ -5,7 +5,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Box, Button, List, ListI
 import { Icons } from "../../../Components";
 // Styles
 import useStyles from "../theme";
-export const MaxSidebar = ({ menus, setMenus }) => {
+export const MaxSidebar = ({ menus, setMenus, customList }) => {
     const { classes } = useStyles();
     const [accordionState, setAccordionState] = useState();
     // Accordion
@@ -22,6 +22,7 @@ export const MaxSidebar = ({ menus, setMenus }) => {
                             listItem.image && React.createElement("img", { src: listItem.image, alt: listItem.label }),
                             ItemIcon ? React.createElement(ItemIcon, null) : "",
                             !listItem.noLabel && listItem.label)),
+                    customList,
                     React.createElement(AccordionDetails, null,
                         React.createElement(List, { className: `${classes.accordionList} maxMenuList` }, listItem.children.map((childListItem, childIndex) => {
                             const ChildItemIcon = childListItem.icon && Icons[childListItem.icon];
@@ -34,11 +35,13 @@ export const MaxSidebar = ({ menus, setMenus }) => {
                         })))));
             }
             else {
-                return (React.createElement(Tooltip, { key: index, title: listItem.label, placement: "right" },
-                    React.createElement(Button, { fullWidth: true, className: classes.button, ...(listItem.link ? { href: listItem.link } : {}), onClick: () => listItem.onClick && listItem.onClick(setMenus) },
-                        listItem.image && React.createElement("img", { src: listItem.image, alt: listItem.label }),
-                        ItemIcon ? React.createElement(ItemIcon, null) : "",
-                        !listItem.noLabel && listItem.label)));
+                return (React.createElement(React.Fragment, null,
+                    React.createElement(Tooltip, { key: index, title: listItem.label, placement: "right" },
+                        React.createElement(Button, { fullWidth: true, className: classes.button, ...(listItem.link ? { href: listItem.link } : {}), onClick: () => listItem.onClick && listItem.onClick(setMenus) },
+                            listItem.image && React.createElement("img", { src: listItem.image, alt: listItem.label }),
+                            ItemIcon ? React.createElement(ItemIcon, null) : "",
+                            !listItem.noLabel && listItem.label)),
+                    customList));
             }
         }))));
 };

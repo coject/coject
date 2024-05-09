@@ -13,9 +13,10 @@ import useStyles from "../theme";
 interface iMinSidebar {
     menus?: any;
     setMenus?: any;
+    customList?: any;
 }
 
-export const MinSidebar: FC<iMinSidebar> = ({ menus, setMenus }) => {
+export const MinSidebar: FC<iMinSidebar> = ({ menus, setMenus, customList }) => {
     const { classes } = useStyles();
     const [ menuList, setMenuList ] = useState<any>({});
 
@@ -34,6 +35,7 @@ export const MinSidebar: FC<iMinSidebar> = ({ menus, setMenus }) => {
                                             {ItemIcon ? <ItemIcon/> : ""}
                                         </Button>
                                     </Tooltip>
+                                    {customList}
                                     { menuList && !!Object.keys(menuList).length &&
                                         <Menu className={`${classes.menuList} minMenuList`} anchorEl={menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")]} open={Boolean(menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")])} onClose={() => setMenuList({})} transformOrigin={{ horizontal: "right", vertical: "top" }} anchorOrigin={{ horizontal: "right", vertical: "top" }}>
                                             { listItem.children.map((childListItem: any, childIndex: number) => {
@@ -54,14 +56,17 @@ export const MinSidebar: FC<iMinSidebar> = ({ menus, setMenus }) => {
                             )
                         } else {
                             return (
-                                <ListItem key={index} className={classes.listItem}>
-                                    <Tooltip title={listItem.label} placement="right">
-                                        <Button fullWidth className={classes.button} {...(listItem.link ? {href: listItem.link} : {})} onClick={() => listItem.onClick && listItem.onClick(setMenus)}>
-                                            {listItem.image && <img src={listItem.image} alt={listItem.label} />}
-                                            {ItemIcon ? <ItemIcon/> : ""}
-                                        </Button>
-                                    </Tooltip>
-                                </ListItem>
+                                <React.Fragment>
+                                    <ListItem key={index} className={classes.listItem}>
+                                        <Tooltip title={listItem.label} placement="right">
+                                            <Button fullWidth className={classes.button} {...(listItem.link ? {href: listItem.link} : {})} onClick={() => listItem.onClick && listItem.onClick(setMenus)}>
+                                                {listItem.image && <img src={listItem.image} alt={listItem.label} />}
+                                                {ItemIcon ? <ItemIcon/> : ""}
+                                            </Button>
+                                        </Tooltip>
+                                    </ListItem>
+                                    {customList}
+                                </React.Fragment>
                             )
                         }
                     }) }

@@ -13,9 +13,10 @@ import useStyles from "../theme";
 interface iMaxSidebar {
     menus?: any;
     setMenus?: any;
+    customList?: any;
 }
 
-export const MaxSidebar: FC<iMaxSidebar> = ({ menus, setMenus }) => {
+export const MaxSidebar: FC<iMaxSidebar> = ({ menus, setMenus, customList }) => {
     const { classes } = useStyles();
     const [ accordionState, setAccordionState ] = useState<any>();
 
@@ -39,6 +40,7 @@ export const MaxSidebar: FC<iMaxSidebar> = ({ menus, setMenus }) => {
                                         {!listItem.noLabel && listItem.label}
                                     </AccordionSummary>
                                 </Tooltip>
+                                {customList}
                                 <AccordionDetails>
                                     <List className={`${classes.accordionList} maxMenuList`}>
                                         { listItem.children.map((childListItem: any, childIndex: number) => {
@@ -61,13 +63,16 @@ export const MaxSidebar: FC<iMaxSidebar> = ({ menus, setMenus }) => {
                         )
                     } else {
                         return (
-                            <Tooltip key={index} title={listItem.label} placement="right">
-                                <Button fullWidth className={classes.button} {...(listItem.link ? {href: listItem.link} : {})} onClick={() => listItem.onClick && listItem.onClick(setMenus)}>
-                                    {listItem.image && <img src={listItem.image} alt={listItem.label} />}
-                                    {ItemIcon ? <ItemIcon /> : ""}
-                                    {!listItem.noLabel && listItem.label}
-                                </Button>
-                            </Tooltip>
+                            <React.Fragment>
+                                <Tooltip key={index} title={listItem.label} placement="right">
+                                    <Button fullWidth className={classes.button} {...(listItem.link ? {href: listItem.link} : {})} onClick={() => listItem.onClick && listItem.onClick(setMenus)}>
+                                        {listItem.image && <img src={listItem.image} alt={listItem.label} />}
+                                        {ItemIcon ? <ItemIcon /> : ""}
+                                        {!listItem.noLabel && listItem.label}
+                                    </Button>
+                                </Tooltip>
+                                {customList}
+                            </React.Fragment>
                         )
                     }
                 }) }

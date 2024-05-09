@@ -317,9 +317,8 @@ const useStyles = makeStyles()((theme) => {
                 "& p": {
                     padding: 0,
                     width: "95%",
-                    fontSize: "14px",
-                    overflow: "hidden",
-                    lineHeight: "16px",
+                    fontSize: "15px",
+                    lineHeight: "15px",
                     WebkitLineClamp: 1,
                     display: "-webkit-box",
                     textOverflow: "ellipsis",
@@ -330,9 +329,9 @@ const useStyles = makeStyles()((theme) => {
                     gap: 7,
                     display: "flex",
                     padding: "7px 0",
-                    fontSize: "14px",
+                    fontSize: "15px",
                     textAlign: "start",
-                    lineHeight: "16px",
+                    lineHeight: "15px",
                     alignItems: "center",
                     textTransform: "capitalize",
                     justifyContent: "flex-start",
@@ -348,7 +347,6 @@ const useStyles = makeStyles()((theme) => {
                     },
                     "& p": {
                         width: "100%",
-                        overflow: "hidden",
                         textAlign: "start",
                         whiteSpace: "nowrap",
                         textOverflow: "ellipsis"

@@ -4,7 +4,6 @@ interface DskHeaderInterface {
     icon?: any;
     menus?: any;
     setMenus?: any;
-    customList?: any;
     setSidebar?: any;
     search?: boolean;
     sidebar?: boolean;

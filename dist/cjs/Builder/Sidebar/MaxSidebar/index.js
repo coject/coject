@@ -34,7 +34,7 @@ const material_1 = require("@mui/material");
 const Components_1 = require("../../../Components");
 // Styles
 const theme_1 = __importDefault(require("../theme"));
-const MaxSidebar = ({ menus, setMenus }) => {
+const MaxSidebar = ({ menus, setMenus, customList }) => {
     const { classes } = (0, theme_1.default)();
     const [accordionState, setAccordionState] = (0, react_1.useState)();
     // Accordion
@@ -51,6 +51,7 @@ const MaxSidebar = ({ menus, setMenus }) => {
                             listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
                             ItemIcon ? react_1.default.createElement(ItemIcon, null) : "",
                             !listItem.noLabel && listItem.label)),
+                    customList,
                     react_1.default.createElement(material_1.AccordionDetails, null,
                         react_1.default.createElement(material_1.List, { className: `${classes.accordionList} maxMenuList` }, listItem.children.map((childListItem, childIndex) => {
                             const ChildItemIcon = childListItem.icon && Components_1.Icons[childListItem.icon];
@@ -63,11 +64,13 @@ const MaxSidebar = ({ menus, setMenus }) => {
                         })))));
             }
             else {
-                return (react_1.default.createElement(material_1.Tooltip, { key: index, title: listItem.label, placement: "right" },
-                    react_1.default.createElement(material_1.Button, { fullWidth: true, className: classes.button, ...(listItem.link ? { href: listItem.link } : {}), onClick: () => listItem.onClick && listItem.onClick(setMenus) },
-                        listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
-                        ItemIcon ? react_1.default.createElement(ItemIcon, null) : "",
-                        !listItem.noLabel && listItem.label)));
+                return (react_1.default.createElement(react_1.default.Fragment, null,
+                    react_1.default.createElement(material_1.Tooltip, { key: index, title: listItem.label, placement: "right" },
+                        react_1.default.createElement(material_1.Button, { fullWidth: true, className: classes.button, ...(listItem.link ? { href: listItem.link } : {}), onClick: () => listItem.onClick && listItem.onClick(setMenus) },
+                            listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
+                            ItemIcon ? react_1.default.createElement(ItemIcon, null) : "",
+                            !listItem.noLabel && listItem.label)),
+                    customList));
             }
         }))));
 };

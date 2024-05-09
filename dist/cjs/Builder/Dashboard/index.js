@@ -34,7 +34,7 @@ const material_1 = require("@mui/material");
 const Builder_1 = require("../../Builder");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Dashboard = ({ menus, logo, icon, customList, search, localeText, languages, defaultLanguage, mobMenus, copyRight, children }) => {
+const Dashboard = ({ menus, logo, icon, customMobList, customSideList, search, localeText, languages, defaultLanguage, mobMenus, copyRight, children }) => {
     const { classes } = (0, theme_1.default)();
     const [menusList, setMenusList] = (0, react_1.useState)({});
     const [sidebar, setSidebar] = (0, react_1.useState)(true);
@@ -44,8 +44,8 @@ const Dashboard = ({ menus, logo, icon, customList, search, localeText, language
     }, [menus]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: classes.root },
-            react_1.default.createElement(Builder_1.Header, { sidebar: sidebar, setSidebar: setSidebar, customList: customList, menus: menusList, setMenus: setMenusList, logo: logo, icon: icon, search: search, languages: languages, defaultLanguage: defaultLanguage, mobMenus: mobMenus, localeText: localeText }),
-            react_1.default.createElement(Builder_1.Sidebar, { sidebar: sidebar, menus: menusList, setMenus: setMenusList }),
+            react_1.default.createElement(Builder_1.Header, { sidebar: sidebar, setSidebar: setSidebar, customList: customMobList, menus: menusList, setMenus: setMenusList, logo: logo, icon: icon, search: search, languages: languages, defaultLanguage: defaultLanguage, mobMenus: mobMenus, localeText: localeText }),
+            react_1.default.createElement(Builder_1.Sidebar, { sidebar: sidebar, menus: menusList, setMenus: setMenusList, customList: customSideList }),
             react_1.default.createElement(material_1.Box, { className: `${classes.pages} ${!sidebar ? classes.closeSidebar : ""}` },
                 children,
                 react_1.default.createElement(Builder_1.Footer, { menus: menusList, setMenus: setMenusList, copyRight: copyRight })))));

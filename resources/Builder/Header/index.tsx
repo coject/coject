@@ -29,7 +29,7 @@ export const Header: FC<HeaderInterface> = ({ logo, icon, search, localeText, cu
     return (
         <React.Fragment>
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
-                <DskHeader sidebar={sidebar} setSidebar={setSidebar} customList={customList} menus={menus} logo={logo} icon={icon} search={search} languages={languages} defaultLanguage={defaultLanguage} setMenus={setMenus} localeText={localeText} />
+                <DskHeader sidebar={sidebar} setSidebar={setSidebar} menus={menus} logo={logo} icon={icon} search={search} languages={languages} defaultLanguage={defaultLanguage} setMenus={setMenus} localeText={localeText} />
             </Box>
             <Box sx={{ display: { xs: "flex", md: "none" } }}>
                 <MobHeader logo={logo} icon={icon} search={search} customList={customList} languages={languages} defaultLanguage={defaultLanguage} mobMenus={mobMenus} setMenus={setMenus} menus={menus} localeText={localeText} />

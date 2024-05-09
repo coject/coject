@@ -14,10 +14,11 @@ import useStyles from "./theme";
 interface SidebarInterface {
     menus?: any;
     setMenus?: any;
-    sidebar?: boolean
+    customList?: any;
+    sidebar?: boolean;
 }
 
-export const Sidebar: FC<SidebarInterface> = ({ menus, setMenus, sidebar }) => {
+export const Sidebar: FC<SidebarInterface> = ({ menus, setMenus, customList, sidebar }) => {
     const { classes } = useStyles();
 
     return (
@@ -25,8 +26,8 @@ export const Sidebar: FC<SidebarInterface> = ({ menus, setMenus, sidebar }) => {
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
                 <Box className={`${classes.root} ${!sidebar ? classes.closedSidebar : ""}`}>
                     { sidebar
-                        ? <MaxSidebar menus={menus} setMenus={setMenus} />
-                        : <MinSidebar menus={menus} setMenus={setMenus} />
+                        ? <MaxSidebar menus={menus} customList={customList} setMenus={setMenus} />
+                        : <MinSidebar menus={menus} customList={customList} setMenus={setMenus} />
                     }
                 </Box>
             </Box>

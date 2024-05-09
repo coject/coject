@@ -3,6 +3,7 @@ interface iDashboard {
     logo?: any;
     icon?: any;
     menus?: any;
+    customList?: any;
     search?: boolean;
     children?: ReactNode;
     copyRight?: ReactNode;

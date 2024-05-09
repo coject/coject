@@ -317,7 +317,7 @@ const useStyles = makeStyles()((theme) => {
                 "& p": {
                     padding: 0,
                     width: "95%",
-                    fontSize: "15px",
+                    fontSize: "14px",
                     overflow: "hidden",
                     lineHeight: "16px",
                     WebkitLineClamp: 1,
@@ -330,7 +330,7 @@ const useStyles = makeStyles()((theme) => {
                     gap: 7,
                     display: "flex",
                     padding: "7px 0",
-                    fontSize: "15px",
+                    fontSize: "14px",
                     textAlign: "start",
                     lineHeight: "16px",
                     alignItems: "center",

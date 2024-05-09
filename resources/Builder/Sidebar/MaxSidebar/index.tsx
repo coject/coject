@@ -28,6 +28,7 @@ export const MaxSidebar: FC<iMaxSidebar> = ({ menus, setMenus, customList }) => 
     return (
         <React.Fragment>
             <Box className={classes.sidebarList}>
+                {customList}
                 { menus && !!Object.keys(menus).length && menus.sidebar && !!menus.sidebar.length && menus.sidebar.map((listItem: any, index: number) => {
                     const ItemIcon = listItem.icon && Icons[listItem.icon];
                     if (listItem.children && !!listItem.children.length) {
@@ -40,7 +41,6 @@ export const MaxSidebar: FC<iMaxSidebar> = ({ menus, setMenus, customList }) => 
                                         {!listItem.noLabel && listItem.label}
                                     </AccordionSummary>
                                 </Tooltip>
-                                {customList}
                                 <AccordionDetails>
                                     <List className={`${classes.accordionList} maxMenuList`}>
                                         { listItem.children.map((childListItem: any, childIndex: number) => {
@@ -63,16 +63,13 @@ export const MaxSidebar: FC<iMaxSidebar> = ({ menus, setMenus, customList }) => 
                         )
                     } else {
                         return (
-                            <React.Fragment>
-                                <Tooltip key={index} title={listItem.label} placement="right">
-                                    <Button fullWidth className={classes.button} {...(listItem.link ? {href: listItem.link} : {})} onClick={() => listItem.onClick && listItem.onClick(setMenus)}>
-                                        {listItem.image && <img src={listItem.image} alt={listItem.label} />}
-                                        {ItemIcon ? <ItemIcon /> : ""}
-                                        {!listItem.noLabel && listItem.label}
-                                    </Button>
-                                </Tooltip>
-                                {customList}
-                            </React.Fragment>
+                            <Tooltip key={index} title={listItem.label} placement="right">
+                                <Button fullWidth className={classes.button} {...(listItem.link ? {href: listItem.link} : {})} onClick={() => listItem.onClick && listItem.onClick(setMenus)}>
+                                    {listItem.image && <img src={listItem.image} alt={listItem.label} />}
+                                    {ItemIcon ? <ItemIcon /> : ""}
+                                    {!listItem.noLabel && listItem.label}
+                                </Button>
+                            </Tooltip>
                         )
                     }
                 }) }

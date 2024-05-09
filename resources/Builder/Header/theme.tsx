@@ -449,7 +449,6 @@ const useStyles = makeStyles()((theme) => {
                 color: theme.palette.secondary.dark,
                 "& p": {
                     width: "100%",
-                    overflow: "hidden",
                     textAlign: "start",
                     whiteSpace: "nowrap",
                     textOverflow: "ellipsis"

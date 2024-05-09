@@ -39,35 +39,34 @@ const MinSidebar = ({ menus, setMenus, customList }) => {
     const [menuList, setMenuList] = (0, react_1.useState)({});
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: classes.sidebarList },
-            react_1.default.createElement(material_1.List, { className: classes.list }, menus && !!Object.keys(menus).length && menus.sidebar && !!menus.sidebar.length && menus.sidebar.map((listItem, index) => {
-                const ItemIcon = listItem.icon && Components_1.Icons[listItem.icon];
-                if (listItem.children && !!listItem.children.length) {
-                    return (react_1.default.createElement(material_1.ListItem, { key: index, className: classes.listItem },
-                        react_1.default.createElement(material_1.Tooltip, { title: listItem.label, placement: "right" },
-                            react_1.default.createElement(material_1.Button, { onClick: (e) => setMenuList({ [((listItem.label).toLowerCase()).replaceAll(" ", "_")]: e.currentTarget }) },
-                                listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
-                                ItemIcon ? react_1.default.createElement(ItemIcon, null) : "")),
-                        customList,
-                        menuList && !!Object.keys(menuList).length &&
-                            react_1.default.createElement(material_1.Menu, { className: `${classes.menuList} minMenuList`, anchorEl: menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")], open: Boolean(menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")]), onClose: () => setMenuList({}), transformOrigin: { horizontal: "right", vertical: "top" }, anchorOrigin: { horizontal: "right", vertical: "top" } }, listItem.children.map((childListItem, childIndex) => {
-                                const ChildItemIcon = childListItem.icon && Components_1.Icons[childListItem.icon];
-                                return (react_1.default.createElement(material_1.MenuItem, { key: childIndex, onClick: () => setMenuList({}) },
-                                    react_1.default.createElement(material_1.Button, { ...(childListItem.link ? { href: childListItem.link } : {}), onClick: () => childListItem.onClick && childListItem.onClick(setMenus) },
-                                        childListItem.image && react_1.default.createElement("img", { src: childListItem.image, alt: childListItem.label }),
-                                        ChildItemIcon ? react_1.default.createElement(ChildItemIcon, null) : "",
-                                        !childListItem.noLabel && childListItem.label)));
-                            }))));
-                }
-                else {
-                    return (react_1.default.createElement(react_1.default.Fragment, null,
-                        react_1.default.createElement(material_1.ListItem, { key: index, className: classes.listItem },
+            react_1.default.createElement(material_1.List, { className: classes.list },
+                customList,
+                menus && !!Object.keys(menus).length && menus.sidebar && !!menus.sidebar.length && menus.sidebar.map((listItem, index) => {
+                    const ItemIcon = listItem.icon && Components_1.Icons[listItem.icon];
+                    if (listItem.children && !!listItem.children.length) {
+                        return (react_1.default.createElement(material_1.ListItem, { key: index, className: classes.listItem },
+                            react_1.default.createElement(material_1.Tooltip, { title: listItem.label, placement: "right" },
+                                react_1.default.createElement(material_1.Button, { onClick: (e) => setMenuList({ [((listItem.label).toLowerCase()).replaceAll(" ", "_")]: e.currentTarget }) },
+                                    listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
+                                    ItemIcon ? react_1.default.createElement(ItemIcon, null) : "")),
+                            menuList && !!Object.keys(menuList).length &&
+                                react_1.default.createElement(material_1.Menu, { className: `${classes.menuList} minMenuList`, anchorEl: menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")], open: Boolean(menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")]), onClose: () => setMenuList({}), transformOrigin: { horizontal: "right", vertical: "top" }, anchorOrigin: { horizontal: "right", vertical: "top" } }, listItem.children.map((childListItem, childIndex) => {
+                                    const ChildItemIcon = childListItem.icon && Components_1.Icons[childListItem.icon];
+                                    return (react_1.default.createElement(material_1.MenuItem, { key: childIndex, onClick: () => setMenuList({}) },
+                                        react_1.default.createElement(material_1.Button, { ...(childListItem.link ? { href: childListItem.link } : {}), onClick: () => childListItem.onClick && childListItem.onClick(setMenus) },
+                                            childListItem.image && react_1.default.createElement("img", { src: childListItem.image, alt: childListItem.label }),
+                                            ChildItemIcon ? react_1.default.createElement(ChildItemIcon, null) : "",
+                                            !childListItem.noLabel && childListItem.label)));
+                                }))));
+                    }
+                    else {
+                        return (react_1.default.createElement(material_1.ListItem, { key: index, className: classes.listItem },
                             react_1.default.createElement(material_1.Tooltip, { title: listItem.label, placement: "right" },
                                 react_1.default.createElement(material_1.Button, { fullWidth: true, className: classes.button, ...(listItem.link ? { href: listItem.link } : {}), onClick: () => listItem.onClick && listItem.onClick(setMenus) },
                                     listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
-                                    ItemIcon ? react_1.default.createElement(ItemIcon, null) : ""))),
-                        customList));
-                }
-            })))));
+                                    ItemIcon ? react_1.default.createElement(ItemIcon, null) : ""))));
+                    }
+                })))));
 };
 exports.MinSidebar = MinSidebar;
 //# sourceMappingURL=index.js.map

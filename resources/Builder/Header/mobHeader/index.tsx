@@ -126,7 +126,6 @@ export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, localeT
                                             <Typography>{!listItem.noLabel && listItem.label}</Typography>
                                             {!listItem.noArrow && <Icons.ExpandMore/>}
                                         </Button>
-                                        {customList}
                                         { menuList && !!Object.keys(menuList).length &&
                                             <Menu className={classes.subMenuList} anchorEl={menuList && Object.keys(menuList).length && menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")]} open={Boolean(menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")])} onClose={() => setMenuList({})} transformOrigin={{ horizontal: 'right', vertical: 'top' }} anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
                                                 <Box className={classes.subListMenu} onMouseLeave={() => setMenuList({})}>
@@ -149,16 +148,13 @@ export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, localeT
                                 )
                             } else {
                                 return (
-                                    <React.Fragment>
-                                        <ListItem key={index}>
-                                            <Button {...(listItem.link ? {href: listItem.link} : {})} onClick={() => listItem.onClick && listItem.onClick(setMenus)}>
-                                                {listItem.image && <img src={listItem.image} alt={listItem.label} />}
-                                                {ItemIcon ? <ItemIcon/> : ""}
-                                                <Typography>{!listItem.noLabel && listItem.label}</Typography>
-                                            </Button>
-                                        </ListItem>
-                                        {customList}
-                                    </React.Fragment>
+                                    <ListItem key={index}>
+                                        <Button {...(listItem.link ? {href: listItem.link} : {})} onClick={() => listItem.onClick && listItem.onClick(setMenus)}>
+                                            {listItem.image && <img src={listItem.image} alt={listItem.label} />}
+                                            {ItemIcon ? <ItemIcon/> : ""}
+                                            <Typography>{!listItem.noLabel && listItem.label}</Typography>
+                                        </Button>
+                                    </ListItem>
                                 )
                             }
                         }) }
@@ -170,11 +166,11 @@ export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, localeT
                                 <MenuItem className={classes.mobMenuImage}>
                                     <Button href={"/"}><img src={logo} alt={"Logo"} /></Button>
                                 </MenuItem>
+                                {customList}
                                 { mobMenus.map((menu: string, index: number) => {
                                     return (
                                         <React.Fragment key={index}>
                                             { index !== 0 && <Divider /> }
-                                            {customList}
                                             { menus && !!Object.keys(menus).length && menus[menu] && !!menus[menu].length && menus[menu].map((listItem: any, index: number) => {
                                                 const ItemIcon = listItem.icon && Icons[listItem.icon];
                                                 if (listItem.children && !!listItem.children.length) {
@@ -205,16 +201,13 @@ export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, localeT
                                                     )
                                                 } else {
                                                     return (
-                                                        <React.Fragment>
-                                                            <MenuItem key={index} title={listItem.label} onClick={() => { setMenuList({}); listItem.onClick && listItem.onClick(setMenus) }}>
-                                                                <Button fullWidth type={"button"} {...(listItem.link ? {href: listItem.link} : {})}>
-                                                                    {listItem.image && <img src={listItem.image} alt={listItem.label} />}
-                                                                    {ItemIcon ? <ItemIcon/> : ""}
-                                                                    {!listItem.noLabel && <Typography>{listItem.label}</Typography>}
-                                                                </Button>
-                                                            </MenuItem>
-                                                            {customList}
-                                                        </React.Fragment>
+                                                        <MenuItem key={index} title={listItem.label} onClick={() => { setMenuList({}); listItem.onClick && listItem.onClick(setMenus) }}>
+                                                            <Button fullWidth type={"button"} {...(listItem.link ? {href: listItem.link} : {})}>
+                                                                {listItem.image && <img src={listItem.image} alt={listItem.label} />}
+                                                                {ItemIcon ? <ItemIcon/> : ""}
+                                                                {!listItem.noLabel && <Typography>{listItem.label}</Typography>}
+                                                            </Button>
+                                                        </MenuItem>
                                                     )
                                                 }
                                             }) }

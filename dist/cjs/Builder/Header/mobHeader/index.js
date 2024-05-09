@@ -109,7 +109,6 @@ const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, customL
                                     ItemIcon ? react_1.default.createElement(ItemIcon, null) : "",
                                     react_1.default.createElement(material_1.Typography, null, !listItem.noLabel && listItem.label),
                                     !listItem.noArrow && react_1.default.createElement(Icons.ExpandMore, null)),
-                                customList,
                                 menuList && !!Object.keys(menuList).length &&
                                     react_1.default.createElement(material_1.Menu, { className: classes.subMenuList, anchorEl: menuList && Object.keys(menuList).length && menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")], open: Boolean(menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")]), onClose: () => setMenuList({}), transformOrigin: { horizontal: 'right', vertical: 'top' }, anchorOrigin: { horizontal: 'right', vertical: 'bottom' } },
                                         react_1.default.createElement(material_1.Box, { className: classes.subListMenu, onMouseLeave: () => setMenuList({}) },
@@ -122,13 +121,11 @@ const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, customL
                                             }))))));
                         }
                         else {
-                            return (react_1.default.createElement(react_1.default.Fragment, null,
-                                react_1.default.createElement(material_1.ListItem, { key: index },
-                                    react_1.default.createElement(material_1.Button, { ...(listItem.link ? { href: listItem.link } : {}), onClick: () => listItem.onClick && listItem.onClick(setMenus) },
-                                        listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
-                                        ItemIcon ? react_1.default.createElement(ItemIcon, null) : "",
-                                        react_1.default.createElement(material_1.Typography, null, !listItem.noLabel && listItem.label))),
-                                customList));
+                            return (react_1.default.createElement(material_1.ListItem, { key: index },
+                                react_1.default.createElement(material_1.Button, { ...(listItem.link ? { href: listItem.link } : {}), onClick: () => listItem.onClick && listItem.onClick(setMenus) },
+                                    listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
+                                    ItemIcon ? react_1.default.createElement(ItemIcon, null) : "",
+                                    react_1.default.createElement(material_1.Typography, null, !listItem.noLabel && listItem.label))));
                         }
                     })),
                 menuList && !!Object.keys(menuList).length && !!mobMenus?.length &&
@@ -139,10 +136,10 @@ const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, customL
                             react_1.default.createElement(material_1.MenuItem, { className: classes.mobMenuImage },
                                 react_1.default.createElement(material_1.Button, { href: "/" },
                                     react_1.default.createElement("img", { src: logo, alt: "Logo" }))),
+                            customList,
                             mobMenus.map((menu, index) => {
                                 return (react_1.default.createElement(react_1.default.Fragment, { key: index },
                                     index !== 0 && react_1.default.createElement(material_1.Divider, null),
-                                    customList,
                                     menus && !!Object.keys(menus).length && menus[menu] && !!menus[menu].length && menus[menu].map((listItem, index) => {
                                         const ItemIcon = listItem.icon && Icons[listItem.icon];
                                         if (listItem.children && !!listItem.children.length) {
@@ -162,13 +159,11 @@ const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, customL
                                                 }))));
                                         }
                                         else {
-                                            return (react_1.default.createElement(react_1.default.Fragment, null,
-                                                react_1.default.createElement(material_1.MenuItem, { key: index, title: listItem.label, onClick: () => { setMenuList({}); listItem.onClick && listItem.onClick(setMenus); } },
-                                                    react_1.default.createElement(material_1.Button, { fullWidth: true, type: "button", ...(listItem.link ? { href: listItem.link } : {}) },
-                                                        listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
-                                                        ItemIcon ? react_1.default.createElement(ItemIcon, null) : "",
-                                                        !listItem.noLabel && react_1.default.createElement(material_1.Typography, null, listItem.label))),
-                                                customList));
+                                            return (react_1.default.createElement(material_1.MenuItem, { key: index, title: listItem.label, onClick: () => { setMenuList({}); listItem.onClick && listItem.onClick(setMenus); } },
+                                                react_1.default.createElement(material_1.Button, { fullWidth: true, type: "button", ...(listItem.link ? { href: listItem.link } : {}) },
+                                                    listItem.image && react_1.default.createElement("img", { src: listItem.image, alt: listItem.label }),
+                                                    ItemIcon ? react_1.default.createElement(ItemIcon, null) : "",
+                                                    !listItem.noLabel && react_1.default.createElement(material_1.Typography, null, listItem.label))));
                                         }
                                     })));
                             })))))));

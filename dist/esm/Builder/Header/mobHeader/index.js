@@ -80,7 +80,6 @@ export const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, 
                                     ItemIcon ? React.createElement(ItemIcon, null) : "",
                                     React.createElement(Typography, null, !listItem.noLabel && listItem.label),
                                     !listItem.noArrow && React.createElement(Icons.ExpandMore, null)),
-                                customList,
                                 menuList && !!Object.keys(menuList).length &&
                                     React.createElement(Menu, { className: classes.subMenuList, anchorEl: menuList && Object.keys(menuList).length && menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")], open: Boolean(menuList[((listItem.label).toLowerCase()).replaceAll(" ", "_")]), onClose: () => setMenuList({}), transformOrigin: { horizontal: 'right', vertical: 'top' }, anchorOrigin: { horizontal: 'right', vertical: 'bottom' } },
                                         React.createElement(Box, { className: classes.subListMenu, onMouseLeave: () => setMenuList({}) },
@@ -93,13 +92,11 @@ export const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, 
                                             }))))));
                         }
                         else {
-                            return (React.createElement(React.Fragment, null,
-                                React.createElement(ListItem, { key: index },
-                                    React.createElement(Button, { ...(listItem.link ? { href: listItem.link } : {}), onClick: () => listItem.onClick && listItem.onClick(setMenus) },
-                                        listItem.image && React.createElement("img", { src: listItem.image, alt: listItem.label }),
-                                        ItemIcon ? React.createElement(ItemIcon, null) : "",
-                                        React.createElement(Typography, null, !listItem.noLabel && listItem.label))),
-                                customList));
+                            return (React.createElement(ListItem, { key: index },
+                                React.createElement(Button, { ...(listItem.link ? { href: listItem.link } : {}), onClick: () => listItem.onClick && listItem.onClick(setMenus) },
+                                    listItem.image && React.createElement("img", { src: listItem.image, alt: listItem.label }),
+                                    ItemIcon ? React.createElement(ItemIcon, null) : "",
+                                    React.createElement(Typography, null, !listItem.noLabel && listItem.label))));
                         }
                     })),
                 menuList && !!Object.keys(menuList).length && !!mobMenus?.length &&
@@ -110,10 +107,10 @@ export const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, 
                             React.createElement(MenuItem, { className: classes.mobMenuImage },
                                 React.createElement(Button, { href: "/" },
                                     React.createElement("img", { src: logo, alt: "Logo" }))),
+                            customList,
                             mobMenus.map((menu, index) => {
                                 return (React.createElement(React.Fragment, { key: index },
                                     index !== 0 && React.createElement(Divider, null),
-                                    customList,
                                     menus && !!Object.keys(menus).length && menus[menu] && !!menus[menu].length && menus[menu].map((listItem, index) => {
                                         const ItemIcon = listItem.icon && Icons[listItem.icon];
                                         if (listItem.children && !!listItem.children.length) {
@@ -133,13 +130,11 @@ export const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, 
                                                 }))));
                                         }
                                         else {
-                                            return (React.createElement(React.Fragment, null,
-                                                React.createElement(MenuItem, { key: index, title: listItem.label, onClick: () => { setMenuList({}); listItem.onClick && listItem.onClick(setMenus); } },
-                                                    React.createElement(Button, { fullWidth: true, type: "button", ...(listItem.link ? { href: listItem.link } : {}) },
-                                                        listItem.image && React.createElement("img", { src: listItem.image, alt: listItem.label }),
-                                                        ItemIcon ? React.createElement(ItemIcon, null) : "",
-                                                        !listItem.noLabel && React.createElement(Typography, null, listItem.label))),
-                                                customList));
+                                            return (React.createElement(MenuItem, { key: index, title: listItem.label, onClick: () => { setMenuList({}); listItem.onClick && listItem.onClick(setMenus); } },
+                                                React.createElement(Button, { fullWidth: true, type: "button", ...(listItem.link ? { href: listItem.link } : {}) },
+                                                    listItem.image && React.createElement("img", { src: listItem.image, alt: listItem.label }),
+                                                    ItemIcon ? React.createElement(ItemIcon, null) : "",
+                                                    !listItem.noLabel && React.createElement(Typography, null, listItem.label))));
                                         }
                                     })));
                             })))))));

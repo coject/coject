@@ -450,7 +450,6 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                 color: theme.palette.secondary.dark,
                 "& p": {
                     width: "100%",
-                    overflow: "hidden",
                     textAlign: "start",
                     whiteSpace: "nowrap",
                     textOverflow: "ellipsis"

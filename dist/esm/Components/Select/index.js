@@ -73,7 +73,7 @@ export const Select = ({ name, value, label, callback, staticData, helperText, d
                                         React.createElement(Checkbox, { icon: React.createElement(Icons.CheckBoxOutlineBlank, { fontSize: "small" }), checkedIcon: React.createElement(Icons.CheckBox, { fontSize: "small" }), style: { marginRight: 5 }, checked: selected }),
                                         customName ? row[`${customName}`] : row.label)
                                     : renderOption(row))
-                            } : {}), getOptionDisabled: (row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false), renderInput: (params) => React.createElement(TextField, { ...params, InputProps: { ...params.InputProps, ...inputProps, type: "search" }, fullWidth: !!inputProps?.fullWidth, error: error, label: label ? label : (name || "default"), required: required }) }));
+                            } : {}), getOptionDisabled: (row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false), renderInput: (params) => React.createElement(TextField, { ...params, InputProps: { ...params.InputProps, ...inputProps }, fullWidth: !!inputProps?.fullWidth, error: error, label: label ? label : (name || "default"), required: required }) }));
                     } })
                 : React.createElement(Autocomplete, { options: selectData, multiple: multiple, ...props, value: !!selectData?.length && selectedValue
                         ? multiple
@@ -92,7 +92,7 @@ export const Select = ({ name, value, label, callback, staticData, helperText, d
                                 React.createElement(Checkbox, { icon: React.createElement(Icons.CheckBoxOutlineBlank, { fontSize: "small" }), checkedIcon: React.createElement(Icons.CheckBox, { fontSize: "small" }), style: { marginRight: 5 }, checked: selected }),
                                 customName ? row[`${customName}`] : row.label)
                             : renderOption(row))
-                    } : {}), getOptionDisabled: (row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false), renderInput: (params) => React.createElement(TextField, { ...params, InputProps: { ...params.InputProps, ...inputProps, type: "search" }, fullWidth: !!inputProps?.fullWidth, error: error, label: label ? label : (name || "default"), required: required }) }),
+                    } : {}), getOptionDisabled: (row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false), renderInput: (params) => React.createElement(TextField, { ...params, InputProps: { ...params.InputProps, ...inputProps }, fullWidth: !!inputProps?.fullWidth, error: error, label: label ? label : (name || "default"), required: required }) }),
             helperText && React.createElement(FormHelperText, { className: classes.error }, helperText))));
 };
 //# sourceMappingURL=index.js.map

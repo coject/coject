@@ -34,7 +34,7 @@ const material_1 = require("@mui/material");
 const MuiIcons = __importStar(require("@mui/icons-material"));
 // Styles
 const theme_1 = __importDefault(require("../theme"));
-const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, defaultLanguage, search, mobMenus }) => {
+const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, customList, defaultLanguage, search, mobMenus }) => {
     const Icons = MuiIcons;
     const { classes } = (0, theme_1.default)();
     const [menuList, setMenuList] = (0, react_1.useState)({});
@@ -59,6 +59,7 @@ const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, default
         react_1.default.createElement(material_1.Box, { className: classes.mobHeader },
             react_1.default.createElement(material_1.Box, { className: classes.mobLogo },
                 react_1.default.createElement("img", { onClick: () => window.location.href = '/', src: icon, alt: "Logo" })),
+            customList,
             react_1.default.createElement(material_1.Box, { className: classes.mobMenu },
                 react_1.default.createElement(material_1.List, { className: classes.menuList }, !!mobMenus?.length &&
                     react_1.default.createElement(material_1.ListItem, null,

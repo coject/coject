@@ -40,8 +40,9 @@ export const Input = ({ name, value, helperText, validation, required, onChange,
         const MaxNumber = !!validation?.max && !!inputValue && Number(inputValue) > Number((validation.max instanceof Object) ? validation.max.value : validation.max);
         const MinLength = !!validation?.minLength && !!inputValue && (`${inputValue}`).length < Number((validation.minLength instanceof Object) ? validation.minLength.value : validation.minLength);
         const MaxLength = !!validation?.maxLength && !!inputValue && (`${inputValue}`).length > Number((validation.maxLength instanceof Object) ? validation.maxLength.value : validation.maxLength);
+        const Pattern = !!validation?.pattern && !!inputValue && ((validation.pattern instanceof Object) ? !((validation?.pattern?.value).test(`${inputValue}`)) : !((validation?.pattern).test(`${inputValue}`)));
         // Clear Errors
-        if (!Required && !Numbers && !Arabic && !English && !MinNumber && !MaxNumber && !MinLength && !MaxLength)
+        if (!Required && !Numbers && !Arabic && !English && !MinNumber && !MaxNumber && !MinLength && !MaxLength && !Pattern)
             clearErrors(name || "default");
         // Set Errors
         else {
@@ -69,6 +70,9 @@ export const Input = ({ name, value, helperText, validation, required, onChange,
             // MaxLength
             if (MaxLength)
                 setError(name || "default", { type: "maxLength", message: (validation?.maxLength instanceof Object) ? `${validation.maxLength.message}` : "Greater Than The Maximum Length" });
+            // Pattern
+            if (Pattern)
+                setError(name || "default", { type: "pattern", message: (validation?.pattern instanceof Object) ? `${validation.pattern.message}` : "This Field Required" });
         }
     }, [inputValue, required, name, setError, clearErrors, validation]);
     return (React.createElement(React.Fragment, null,

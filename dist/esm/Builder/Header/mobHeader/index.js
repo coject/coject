@@ -5,7 +5,7 @@ import { Box, IconButton, Menu, Typography, Button, MenuItem, TextField, Accordi
 import * as MuiIcons from "@mui/icons-material";
 // Styles
 import useStyles from "../theme";
-export const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, defaultLanguage, search, mobMenus }) => {
+export const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, customList, defaultLanguage, search, mobMenus }) => {
     const Icons = MuiIcons;
     const { classes } = useStyles();
     const [menuList, setMenuList] = useState({});
@@ -30,6 +30,7 @@ export const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, 
         React.createElement(Box, { className: classes.mobHeader },
             React.createElement(Box, { className: classes.mobLogo },
                 React.createElement("img", { onClick: () => window.location.href = '/', src: icon, alt: "Logo" })),
+            customList,
             React.createElement(Box, { className: classes.mobMenu },
                 React.createElement(List, { className: classes.menuList }, !!mobMenus?.length &&
                     React.createElement(ListItem, null,

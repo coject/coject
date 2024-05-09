@@ -153,7 +153,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
                                     </Box>
                                 } : {})}
                                 getOptionDisabled={(row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false)}
-                                renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, ...inputProps, type: "search" }} fullWidth={!!inputProps?.fullWidth} error={error} label={label ? label : (name || "default")} required={required} />}
+                                renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, ...inputProps }} fullWidth={!!inputProps?.fullWidth} error={error} label={label ? label : (name || "default")} required={required} />}
                             />
                         )
                     }} />
@@ -190,7 +190,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
                             </Box>
                         } : {})}
                         getOptionDisabled={(row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false)}
-                        renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, ...inputProps, type: "search" }} fullWidth={!!inputProps?.fullWidth} error={error} label={label ? label : (name || "default")} required={required} />}
+                        renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, ...inputProps }} fullWidth={!!inputProps?.fullWidth} error={error} label={label ? label : (name || "default")} required={required} />}
                     />
                 }
                 {helperText && <FormHelperText className={classes.error}>{helperText}</FormHelperText>}

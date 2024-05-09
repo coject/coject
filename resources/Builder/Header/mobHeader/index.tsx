@@ -15,6 +15,7 @@ interface iMobHeader {
     icon?: any;
     menus?: any;
     setMenus?: any;
+    customList?: any;
     search?: boolean;
     localeText?: {
         headerSearch?: string
@@ -24,7 +25,7 @@ interface iMobHeader {
     languages?: {name: "ar" | "en" | string, logo?: string, onClick?: any}[];
 }
 
-export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, localeText, languages, defaultLanguage, search, mobMenus }) => {
+export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, localeText, languages, customList, defaultLanguage, search, mobMenus }) => {
     const Icons: any = MuiIcons;
     const { classes } = useStyles();
     const [ menuList, setMenuList ] = useState<any>({});
@@ -52,6 +53,7 @@ export const MobHeader: FC<iMobHeader> = ({ logo, icon, menus, setMenus, localeT
                 <Box className={classes.mobLogo}>
                     <img onClick={() => window.location.href='/'} src={icon} alt="Logo"/>
                 </Box>
+                {customList}
                 <Box className={classes.mobMenu}>
                     <List className={classes.menuList}>
                         { !!mobMenus?.length &&

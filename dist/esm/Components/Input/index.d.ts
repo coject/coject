@@ -8,6 +8,10 @@ type iInput = Omit<TextFieldProps, "helperText" | "required"> & {
         arabic?: boolean | string;
         english?: boolean | string;
         required?: boolean | string;
+        pattern?: any | {
+            value: any;
+            message: string;
+        };
         min?: number | {
             value: number;
             message: string;

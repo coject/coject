@@ -34,7 +34,7 @@ const material_1 = require("@mui/material");
 const Components_1 = require("../../../Components");
 // Styles
 const theme_1 = __importDefault(require("../theme"));
-const DskHeader = ({ logo, icon, search, localeText, languages, defaultLanguage, menus, setMenus, sidebar, setSidebar }) => {
+const DskHeader = ({ logo, icon, search, localeText, languages, customList, defaultLanguage, menus, setMenus, sidebar, setSidebar }) => {
     const { classes } = (0, theme_1.default)();
     const [menuList, setMenuList] = (0, react_1.useState)({});
     const [languageLogo, setLanguageLogo] = (0, react_1.useState)('/images/lang/en.jpg');
@@ -53,6 +53,7 @@ const DskHeader = ({ logo, icon, search, localeText, languages, defaultLanguage,
             react_1.default.createElement(material_1.Box, { className: `${classes.dskLogo} ${!sidebar ? classes.closedDskLogo : ""}` }, sidebar
                 ? react_1.default.createElement("img", { onClick: () => window.location.href = "/", src: logo, alt: "Logo" })
                 : react_1.default.createElement("img", { onClick: () => window.location.href = "/", src: icon, alt: "Logo" })),
+            customList,
             react_1.default.createElement(material_1.Box, { className: `${classes.dskMenu} ${!sidebar ? classes.closedDskMenu : ""}` },
                 react_1.default.createElement(material_1.List, { className: classes.menuList },
                     react_1.default.createElement(material_1.ListItem, null,

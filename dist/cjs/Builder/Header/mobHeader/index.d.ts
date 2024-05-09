@@ -4,6 +4,7 @@ interface iMobHeader {
     icon?: any;
     menus?: any;
     setMenus?: any;
+    customList?: any;
     search?: boolean;
     localeText?: {
         headerSearch?: string;

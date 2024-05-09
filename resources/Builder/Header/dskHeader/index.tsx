@@ -15,6 +15,7 @@ interface DskHeaderInterface {
     icon?: any;
     menus?: any;
     setMenus?: any;
+    customList?: any;
     setSidebar?: any;
     search?: boolean;
     sidebar?: boolean;
@@ -25,7 +26,7 @@ interface DskHeaderInterface {
     languages?: {name: "ar" | "en" | string, logo?: string, onClick?: any}[];
 }
 
-export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, localeText, languages, defaultLanguage, menus, setMenus, sidebar, setSidebar }) => {
+export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, localeText, languages, customList, defaultLanguage, menus, setMenus, sidebar, setSidebar }) => {
     const { classes } = useStyles();
     const [ menuList, setMenuList ] = useState<any>({});
     const [ languageLogo, setLanguageLogo ] = useState<string>('/images/lang/en.jpg');
@@ -48,6 +49,7 @@ export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, localeTe
                         : <img onClick={() => window.location.href="/"} src={icon} alt="Logo"/>
                     }
                 </Box>
+                {customList}
                 <Box className={`${classes.dskMenu} ${!sidebar ? classes.closedDskMenu : ""}`}>
                     <List className={classes.menuList}>
                         <ListItem>

@@ -39,14 +39,16 @@ const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
 const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+    const apiRef = (0, x_data_grid_1.useGridApiRef)();
     const { classes } = (0, theme_1.default)();
     const [gridData, setGridData] = (0, react_1.useState)([]);
-    const [schemaData, setSchemaData] = (0, react_1.useState)({});
-    const [selectedData, setSelectedData] = (0, react_1.useState)(null);
     const [, forceUpdate] = (0, react_1.useReducer)(x => x + 1, 0);
+    const [schemaData, setSchemaData] = (0, react_1.useState)({});
+    const [openPdf, setOpenPdf] = (0, react_1.useState)(false);
     const [callData, setCallData] = (0, react_1.useState)(false);
     const [addModal, setAddModal] = (0, react_1.useState)(false);
     const [editModal, setEditModal] = (0, react_1.useState)(false);
+    const [selectedData, setSelectedData] = (0, react_1.useState)(null);
     const [deleteModal, setDeleteModal] = (0, react_1.useState)(false);
     // Static Data
     (0, react_1.useEffect)(() => {
@@ -140,6 +142,84 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, staticDa
     const columnsSchema = [...(schema ? schema : defaultSchema), ...((actions || customActions)
             ? [{ field: "actions", type: "actions", headerName: (localeText && localeText?.gridHeaderAction) || "Actions", flex: 1, cellClassName: "actions", getActions: ({ row }) => ([...(gridActions(row) || []), ...(gridCustomActions(row) || [])]) }]
             : [])];
+    // Printing
+    const Printing = () => {
+        setOpenPdf(true);
+        setTimeout(() => {
+            const iFrame = (document?.querySelector("#iFrame"));
+            iFrame?.contentDocument?.open();
+            iFrame?.contentDocument?.write(`
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+                    <style>
+                        @media print{
+                            .table { background-color: #f5f5f5; text-align: center; width: 100% }
+                            .table thead { background-color: #00b366; color:#f5f5f5 }
+                            @page { margin-top: 8px }
+                        }
+                        table {
+                            width: 100%;
+                            direction: ${localStorage.language === 'ar' ? 'rtl' : 'ltr'};
+                        }
+                        td, th {
+                            padding: 8px;
+                            text-align: center;
+                            border: 1px solid #dddddd;
+                        }
+                        tr:nth-child(even) {
+                            background-color: #dddddd;
+                        }
+                    </style>
+            `);
+            const printData = `
+            <table>
+                <thead>
+                    <tr>
+                        ${(() => {
+                let result = '';
+                if (schema) {
+                    for (let index = 0; index < schema.length; index++) {
+                        if (!invisibility?.find((column) => column === schema[index].field)) {
+                            const item = schema[index];
+                            result += `<th key=${index}>${item.headerName}</th>`;
+                        }
+                    }
+                }
+                return result;
+            })()}
+                    </tr>
+                </thead>
+                <tbody>
+                ${(() => {
+                let rowsResult = '';
+                const allRows = apiRef?.current?.getAllRowIds();
+                if (allRows.length > 0) {
+                    for (let index = 0; index < allRows.length; index++) {
+                        const element = allRows[index];
+                        const rowElement = apiRef?.current?.getRowElement(element);
+                        const dataFieldElements = rowElement?.querySelectorAll('[data-field]');
+                        let row = '<tr>';
+                        for (let i = 0; i < dataFieldElements?.length - 1; i++) {
+                            const dataFieldElement = dataFieldElements[i];
+                            row += `<td key=${i}>${dataFieldElement.innerText}</td>`;
+                        }
+                        row += '</tr>';
+                        rowsResult += row;
+                    }
+                }
+                return rowsResult;
+            })()}
+                </tbody>
+            </table>`;
+            iFrame?.contentDocument?.write(printData);
+            iFrame?.contentDocument?.close();
+            iFrame?.contentWindow?.focus();
+            iFrame?.contentWindow?.print();
+        }, 1000);
+        setTimeout(() => {
+            setOpenPdf(false);
+        }, 1000);
+    };
     // Custom Toolbar
     const CustomToolbar = () => {
         return (react_1.default.createElement(x_data_grid_1.GridToolbarContainer, null,
@@ -147,7 +227,12 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, staticDa
                 react_1.default.createElement(react_1.default.Fragment, null,
                     toolbar instanceof Array ? (toolbar?.includes("visibility") && react_1.default.createElement(x_data_grid_1.GridToolbarColumnsButton, null)) : react_1.default.createElement(x_data_grid_1.GridToolbarColumnsButton, null),
                     toolbar instanceof Array ? (toolbar?.includes("filter") && react_1.default.createElement(x_data_grid_1.GridToolbarFilterButton, null)) : react_1.default.createElement(x_data_grid_1.GridToolbarFilterButton, null),
-                    toolbar instanceof Array ? (toolbar?.includes("export") && react_1.default.createElement(x_data_grid_1.GridToolbarExport, { csvOptions: { utf8WithBom: true } })) : react_1.default.createElement(x_data_grid_1.GridToolbarExport, { csvOptions: { utf8WithBom: true } })),
+                    toolbar instanceof Array ? (toolbar?.includes("export") && react_1.default.createElement(x_data_grid_1.GridToolbarExport, { csvOptions: { utf8WithBom: true }, printOptions: { disableToolbarButton: true } })) : react_1.default.createElement(x_data_grid_1.GridToolbarExport, { csvOptions: { utf8WithBom: true }, printOptions: { disableToolbarButton: true } }),
+                    toolbar instanceof Array ? (toolbar?.includes("print") && react_1.default.createElement(material_1.Button, { onClick: Printing },
+                        react_1.default.createElement(index_1.Icons.SimCardDownloadOutlined, null),
+                        localeText?.toolbarExportPrint || "Print")) : react_1.default.createElement(material_1.Button, { onClick: Printing },
+                        react_1.default.createElement(index_1.Icons.SimCardDownloadOutlined, null),
+                        localeText?.toolbarExportPrint || "Print")),
             customToolbar && customToolbar(gridData),
             actions && (actions instanceof Array
                 ? (actions?.includes("add") && react_1.default.createElement(material_1.Button, { onClick: () => setAddModal(true), type: "button" },
@@ -196,7 +281,7 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, staticDa
                             }
                         } }, localeText?.modalDeleteButton || "Delete")))),
         react_1.default.createElement(material_1.Box, { className: classes.root },
-            react_1.default.createElement(x_data_grid_1.DataGrid, { className: !gridData?.length ? classes.empty : "", ...(localeText ? { localeText: localeText } : {}), ...(customKey ? { getRowId: (row) => row[customKey] } : {}), rows: gridData, columns: columnsSchema, density: "compact", ...props, pageSizeOptions: props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100], slotProps: {
+            react_1.default.createElement(x_data_grid_1.DataGrid, { apiRef: apiRef, className: !gridData?.length ? classes.empty : "", ...(localeText ? { localeText: localeText } : {}), ...(customKey ? { getRowId: (row) => row[customKey] } : {}), rows: gridData, columns: columnsSchema, density: "compact", ...props, pageSizeOptions: props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100], slotProps: {
                     ...(props?.slotProps ? props.slotProps : {}),
                     ...((localeText?.paginationLabel) || (localeText?.paginationLabelOf) ? {
                         pagination: {
@@ -207,7 +292,8 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, staticDa
                                 } } : {}),
                         }
                     } : {})
-                }, disableColumnResize: !resizable, initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, slots: props?.slots ? props?.slots : { toolbar: actions || toolbar || customToolbar ? CustomToolbar : null }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), ...(invisibility ? { columnVisibilityModel: invisibility.reduce((prev, key) => ({ ...prev, [key]: false }), {}) } : {}) }))));
+                }, disableColumnResize: !resizable, paginationMode: openPdf ? 'server' : 'client', ...(openPdf ? { rowCount: gridData?.length } : {}), initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, slots: props?.slots ? props?.slots : { toolbar: actions || toolbar || customToolbar ? CustomToolbar : null }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), ...(invisibility ? { columnVisibilityModel: invisibility.reduce((prev, key) => ({ ...prev, [key]: false }), {}) } : {}) })),
+        react_1.default.createElement("iframe", { id: 'iFrame', title: 'iFrame', style: { position: 'absolute', width: 0, height: 0 } })));
 };
 exports.Grid = Grid;
 //# sourceMappingURL=index.js.map

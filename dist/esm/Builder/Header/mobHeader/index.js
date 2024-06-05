@@ -11,7 +11,7 @@ export const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, 
     const [menuList, setMenuList] = useState({});
     const [searchView, setSearchView] = useState(false);
     const [accordionState, setAccordionState] = useState("components");
-    const [languageLogo, setLanguageLogo] = useState("/images/lang/en.jpg");
+    const [languageLogo, setLanguageLogo] = useState("images/lang/en.jpg");
     // Accordion
     const accordionHandler = (Panel) => (_, isExpanded) => {
         setAccordionState(isExpanded ? Panel : false);
@@ -20,7 +20,7 @@ export const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, 
     useEffect(() => {
         if (defaultLanguage && languages?.length) {
             if (defaultLanguage === 'ar' || defaultLanguage === 'en') {
-                setLanguageLogo(`${defaultLanguage === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
+                setLanguageLogo(`${defaultLanguage === "ar" ? "images/lang/ar.jpg" : "images/lang/en.jpg"}`);
             }
             else
                 setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0]?.logo || "");
@@ -56,9 +56,9 @@ export const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, 
                                             return (React.createElement(MenuItem, { key: index, component: Button, onClick: (event) => {
                                                     setMenuList({});
                                                     language.onClick && language.onClick(event);
-                                                    setLanguageLogo(`${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
+                                                    setLanguageLogo(`${language.name === "ar" ? "images/lang/ar.jpg" : "images/lang/en.jpg"}`);
                                                 } },
-                                                React.createElement("img", { src: `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`, alt: language.name === "ar" ? "العربية" : "English" }),
+                                                React.createElement("img", { src: `${language.name === "ar" ? "images/lang/ar.jpg" : "images/lang/en.jpg"}`, alt: language.name === "ar" ? "العربية" : "English" }),
                                                 language.name === "ar" ? "العربية" : "English"));
                                         }
                                         else {

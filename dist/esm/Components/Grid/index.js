@@ -4,20 +4,22 @@ import { Request } from "../../Services";
 // Material UI
 import { Box, Grid as MuiGrid, Button, Typography } from "@mui/material";
 // Material UI Table
-import { DataGrid, GridActionsCellItem, GridToolbarContainer, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarExport } from "@mui/x-data-grid";
+import { useGridApiRef, DataGrid, GridActionsCellItem, GridToolbarContainer, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarExport } from "@mui/x-data-grid";
 // Coject
 import { Form, DatePicker, Modal, Icons } from "../index";
 // Styles
 import useStyles from "./theme";
 export const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+    const apiRef = useGridApiRef();
     const { classes } = useStyles();
     const [gridData, setGridData] = useState([]);
-    const [schemaData, setSchemaData] = useState({});
-    const [selectedData, setSelectedData] = useState(null);
     const [, forceUpdate] = useReducer(x => x + 1, 0);
+    const [schemaData, setSchemaData] = useState({});
+    const [openPdf, setOpenPdf] = useState(false);
     const [callData, setCallData] = useState(false);
     const [addModal, setAddModal] = useState(false);
     const [editModal, setEditModal] = useState(false);
+    const [selectedData, setSelectedData] = useState(null);
     const [deleteModal, setDeleteModal] = useState(false);
     // Static Data
     useEffect(() => {
@@ -111,6 +113,84 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, s
     const columnsSchema = [...(schema ? schema : defaultSchema), ...((actions || customActions)
             ? [{ field: "actions", type: "actions", headerName: (localeText && localeText?.gridHeaderAction) || "Actions", flex: 1, cellClassName: "actions", getActions: ({ row }) => ([...(gridActions(row) || []), ...(gridCustomActions(row) || [])]) }]
             : [])];
+    // Printing
+    const Printing = () => {
+        setOpenPdf(true);
+        setTimeout(() => {
+            const iFrame = (document?.querySelector("#iFrame"));
+            iFrame?.contentDocument?.open();
+            iFrame?.contentDocument?.write(`
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+                    <style>
+                        @media print{
+                            .table { background-color: #f5f5f5; text-align: center; width: 100% }
+                            .table thead { background-color: #00b366; color:#f5f5f5 }
+                            @page { margin-top: 8px }
+                        }
+                        table {
+                            width: 100%;
+                            direction: ${localStorage.language === 'ar' ? 'rtl' : 'ltr'};
+                        }
+                        td, th {
+                            padding: 8px;
+                            text-align: center;
+                            border: 1px solid #dddddd;
+                        }
+                        tr:nth-child(even) {
+                            background-color: #dddddd;
+                        }
+                    </style>
+            `);
+            const printData = `
+            <table>
+                <thead>
+                    <tr>
+                        ${(() => {
+                let result = '';
+                if (schema) {
+                    for (let index = 0; index < schema.length; index++) {
+                        if (!invisibility?.find((column) => column === schema[index].field)) {
+                            const item = schema[index];
+                            result += `<th key=${index}>${item.headerName}</th>`;
+                        }
+                    }
+                }
+                return result;
+            })()}
+                    </tr>
+                </thead>
+                <tbody>
+                ${(() => {
+                let rowsResult = '';
+                const allRows = apiRef?.current?.getAllRowIds();
+                if (allRows.length > 0) {
+                    for (let index = 0; index < allRows.length; index++) {
+                        const element = allRows[index];
+                        const rowElement = apiRef?.current?.getRowElement(element);
+                        const dataFieldElements = rowElement?.querySelectorAll('[data-field]');
+                        let row = '<tr>';
+                        for (let i = 0; i < dataFieldElements?.length - 1; i++) {
+                            const dataFieldElement = dataFieldElements[i];
+                            row += `<td key=${i}>${dataFieldElement.innerText}</td>`;
+                        }
+                        row += '</tr>';
+                        rowsResult += row;
+                    }
+                }
+                return rowsResult;
+            })()}
+                </tbody>
+            </table>`;
+            iFrame?.contentDocument?.write(printData);
+            iFrame?.contentDocument?.close();
+            iFrame?.contentWindow?.focus();
+            iFrame?.contentWindow?.print();
+        }, 1000);
+        setTimeout(() => {
+            setOpenPdf(false);
+        }, 1000);
+    };
     // Custom Toolbar
     const CustomToolbar = () => {
         return (React.createElement(GridToolbarContainer, null,
@@ -118,7 +198,12 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, s
                 React.createElement(React.Fragment, null,
                     toolbar instanceof Array ? (toolbar?.includes("visibility") && React.createElement(GridToolbarColumnsButton, null)) : React.createElement(GridToolbarColumnsButton, null),
                     toolbar instanceof Array ? (toolbar?.includes("filter") && React.createElement(GridToolbarFilterButton, null)) : React.createElement(GridToolbarFilterButton, null),
-                    toolbar instanceof Array ? (toolbar?.includes("export") && React.createElement(GridToolbarExport, { csvOptions: { utf8WithBom: true } })) : React.createElement(GridToolbarExport, { csvOptions: { utf8WithBom: true } })),
+                    toolbar instanceof Array ? (toolbar?.includes("export") && React.createElement(GridToolbarExport, { csvOptions: { utf8WithBom: true }, printOptions: { disableToolbarButton: true } })) : React.createElement(GridToolbarExport, { csvOptions: { utf8WithBom: true }, printOptions: { disableToolbarButton: true } }),
+                    toolbar instanceof Array ? (toolbar?.includes("print") && React.createElement(Button, { onClick: Printing },
+                        React.createElement(Icons.SimCardDownloadOutlined, null),
+                        localeText?.toolbarExportPrint || "Print")) : React.createElement(Button, { onClick: Printing },
+                        React.createElement(Icons.SimCardDownloadOutlined, null),
+                        localeText?.toolbarExportPrint || "Print")),
             customToolbar && customToolbar(gridData),
             actions && (actions instanceof Array
                 ? (actions?.includes("add") && React.createElement(Button, { onClick: () => setAddModal(true), type: "button" },
@@ -167,7 +252,7 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, s
                             }
                         } }, localeText?.modalDeleteButton || "Delete")))),
         React.createElement(Box, { className: classes.root },
-            React.createElement(DataGrid, { className: !gridData?.length ? classes.empty : "", ...(localeText ? { localeText: localeText } : {}), ...(customKey ? { getRowId: (row) => row[customKey] } : {}), rows: gridData, columns: columnsSchema, density: "compact", ...props, pageSizeOptions: props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100], slotProps: {
+            React.createElement(DataGrid, { apiRef: apiRef, className: !gridData?.length ? classes.empty : "", ...(localeText ? { localeText: localeText } : {}), ...(customKey ? { getRowId: (row) => row[customKey] } : {}), rows: gridData, columns: columnsSchema, density: "compact", ...props, pageSizeOptions: props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100], slotProps: {
                     ...(props?.slotProps ? props.slotProps : {}),
                     ...((localeText?.paginationLabel) || (localeText?.paginationLabelOf) ? {
                         pagination: {
@@ -178,6 +263,7 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, s
                                 } } : {}),
                         }
                     } : {})
-                }, disableColumnResize: !resizable, initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, slots: props?.slots ? props?.slots : { toolbar: actions || toolbar || customToolbar ? CustomToolbar : null }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), ...(invisibility ? { columnVisibilityModel: invisibility.reduce((prev, key) => ({ ...prev, [key]: false }), {}) } : {}) }))));
+                }, disableColumnResize: !resizable, paginationMode: openPdf ? 'server' : 'client', ...(openPdf ? { rowCount: gridData?.length } : {}), initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, slots: props?.slots ? props?.slots : { toolbar: actions || toolbar || customToolbar ? CustomToolbar : null }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), ...(invisibility ? { columnVisibilityModel: invisibility.reduce((prev, key) => ({ ...prev, [key]: false }), {}) } : {}) })),
+        React.createElement("iframe", { id: 'iFrame', title: 'iFrame', style: { position: 'absolute', width: 0, height: 0 } })));
 };
 //# sourceMappingURL=index.js.map

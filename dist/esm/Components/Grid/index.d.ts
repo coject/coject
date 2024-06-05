@@ -75,7 +75,7 @@ interface iGrid extends DataGridProps {
     formInvisibility?: string[];
     localeText?: iLocaleText | any;
     actions?: boolean | ("add" | "edit" | "delete")[];
-    toolbar?: boolean | ("visibility" | "filter" | "export")[];
+    toolbar?: boolean | ("visibility" | "filter" | "export" | "print")[];
     customActions?: {
         icon: string;
         label: string;

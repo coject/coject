@@ -2,11 +2,60 @@ import { makeStyles } from "tss-react/mui";
 const useStyles = makeStyles()((theme) => {
     return {
         root: {
-            gap: 8,
-            padding: "4px",
+            margin: 0,
+            width: "100%",
+            "& label": {
+                display: "block",
+                fontSize: "13px",
+                marginBottom: "7px"
+            },
+            "& .MuiFormHelperText-root": {
+                marginLeft: 0,
+                marginRight: 0,
+                color: theme.palette.error.dark
+            }
+        },
+        container: {
+            width: "100%",
+            padding: "7px",
+            display: "flex",
+            border: "1px solid" + theme.palette.grey[400]
+        },
+        error: {
+            borderColor: theme.palette.error.dark
+        },
+        files: {
+            gap: 7,
+            width: "100%",
             display: "flex",
             alignItems: "center",
+            flexWrap: "wrap",
+            justifyContent: "center"
+        },
+        file: {
+            width: "100%",
+            display: "flex",
+            overflow: "hidden",
             position: "relative",
+            alignItems: "center",
+            justifyContent: "center",
+            border: "1px solid" + theme.palette.grey[400],
+            "& img": {
+                minWidth: "100%",
+                minHeight: "100%",
+                objectFit: "cover"
+            }
+        },
+        inputContainer: {
+            gap: 3,
+            width: "100%",
+            padding: "7px",
+            display: "flex",
+            cursor: "pointer",
+            overflow: "hidden",
+            position: "relative",
+            alignItems: "center",
+            flexDirection: "column",
             justifyContent: "center",
             border: "1px solid" + theme.palette.grey[400],
             "& .MuiFormControl-root": {
@@ -15,81 +64,105 @@ const useStyles = makeStyles()((theme) => {
                 opacity: 0,
                 width: "100%",
                 height: "100%",
+                cursor: "pointer",
                 position: "absolute",
                 "& .MuiInputBase-root, & input": {
                     padding: 0,
                     height: "100%",
                     cursor: "pointer"
                 }
-            }
-        },
-        imageBox: {
-            width: "100%",
-            display: "flex",
-            position: "relative",
-            alignItems: "center",
-            boxSizing: "border-box",
-            border: "1px solid" + theme.palette.grey[400],
-            "& img": {
-                width: "32px",
-                height: "32px",
-                objectFit: "cover"
+            },
+            "& svg": {
+                fill: theme.palette.grey[500]
             },
             "& p": {
-                fontWeight: 400,
                 fontSize: "13px",
-                overflow: "hidden",
                 lineHeight: "13px",
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis",
                 textTransform: "capitalize",
-                padding: "5.5px 20px 5.5px 5.5px"
+                color: theme.palette.grey[500]
+            }
+        },
+        remove: {
+            top: 0,
+            left: 0,
+            opacity: 0,
+            width: "100%",
+            height: "100%",
+            transition: "0.4s",
+            position: "absolute",
+            "&:hover": {
+                opacity: 1
             },
-            "& button": {
-                top: "50%",
+            "& button, & a": {
+                top: "7px",
                 padding: 0,
-                right: "2.5px",
-                minWidth: "auto",
+                right: "7px",
+                opacity: 0.85,
+                width: "20px",
+                height: "20px",
                 position: "absolute",
-                transform: "translateY(-50%)",
+                backgroundColor: theme.palette.grey[200],
+                border: "1px solid" + theme.palette.grey[500],
+                "&:hover": {
+                    opacity: 1,
+                    color: theme.palette.grey[100],
+                    backgroundColor: theme.palette.grey[500]
+                },
                 "& svg": {
                     width: "15px",
-                    height: "15px"
+                    height: "15px",
+                    fill: theme.palette.secondary.dark
                 }
             }
         },
-        multiImageBox: {
-            maxWidth: "calc(100% - 48px)"
-        },
-        moreMultiImageBox: {
-            maxWidth: "calc(100% - 77px)"
-        },
-        emptyValue: {
-            gap: 4,
+        viewer: {
+            top: 0,
+            left: 0,
+            opacity: 0.2,
             width: "100%",
-            padding: "8px",
-            display: "flex",
-            position: "relative",
-            alignItems: "center",
-            justifyContent: "center",
-            border: "1px dashed" + theme.palette.grey[400],
-            "& svg": {
-                width: "18px",
-                height: "16px",
-                fill: "rgba(0, 0, 0, 0.6)"
-            },
-            "& p": {
-                fontSize: "14px",
-                lineHeight: "14px",
-                textTransform: "capitalize",
-                color: "rgba(0, 0, 0, 0.6)"
-            }
+            height: "100%",
+            cursor: "pointer",
+            position: "absolute",
+            backgroundColor: theme.palette.primary.contrastText
         },
-        error: {
-            fontSize: "11px",
-            lineHeight: "16px",
-            textTransform: "capitalize",
-            color: theme.palette.error.main
+        imageViewer: {
+            width: "100%"
+        },
+        download: {
+            top: 0,
+            left: 0,
+            opacity: 0,
+            width: "100%",
+            height: "100%",
+            transition: "0.4s",
+            position: "absolute",
+            "&:hover": {
+                opacity: 1
+            },
+            "& button, & a": {
+                top: "50%",
+                padding: 0,
+                right: "50%",
+                opacity: 0.85,
+                width: "50px",
+                height: "50px",
+                position: "absolute",
+                backgroundColor: theme.palette.grey[200],
+                border: "1px solid" + theme.palette.grey[500],
+                transform: "translate(calc(50% - 100%), -50%)",
+                "&:hover": {
+                    color: theme.palette.grey[100],
+                    backgroundColor: theme.palette.grey[500],
+                    "& svg": {
+                        fill: theme.palette.primary.contrastText
+                    }
+                },
+                "& svg": {
+                    width: "25px",
+                    height: "25px",
+                    fill: theme.palette.secondary.dark
+                }
+            }
         }
     };
 });

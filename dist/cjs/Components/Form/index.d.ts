@@ -36,6 +36,7 @@ interface iDataSource {
     };
 }
 interface iForm {
+    id?: string;
     getForm?: any;
     onSubmit?: any;
     dispatch?: any;

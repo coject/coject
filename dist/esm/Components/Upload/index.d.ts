@@ -1,16 +1,24 @@
 import { FC } from "react";
 import { TextFieldProps } from "@mui/material";
-type iUpload = Omit<TextFieldProps, "onChange" | "helperText"> & {
-    value?: any;
+type iUpload = Omit<TextFieldProps, "onChange"> & {
+    error?: any;
     name?: string;
+    label?: string;
     onChange?: any;
     onRemove?: any;
-    validation?: {
-        required?: boolean | string;
-    };
+    disabled?: boolean;
     multiple?: boolean;
-    helperText?: string;
+    imagePath?: string;
+    value?: any | any[];
+    imageHeight?: number;
+    placeholder?: string;
     required?: boolean | string;
+    imageWidth?: {
+        lg?: number;
+        md?: number;
+        sm?: number;
+        xs?: number;
+    };
 };
 export declare const Upload: FC<iUpload>;
 export {};

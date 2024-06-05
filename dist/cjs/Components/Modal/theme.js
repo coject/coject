@@ -13,24 +13,30 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
             textAlign: "center",
             position: "absolute",
             transform: "translate(-50%, -50%)",
-            backgroundColor: theme.palette.primary.contrastText
+            backgroundColor: theme.palette.primary.contrastText,
+            "&:focus-visible": {
+                outline: "none !important"
+            }
         },
         header: {
             display: "flex",
-            padding: "10px 25px",
+            padding: "15px",
             alignItems: "center",
             justifyContent: "space-between",
             backgroundColor: theme.palette.grey[200],
+            "& button": {
+                padding: 0
+            },
             "& h5": {
                 margin: 0,
-                fontWeight: 600,
+                fontWeight: 400,
                 fontSize: "16px",
                 lineHeight: "16px",
                 color: theme.palette.primary.main
             }
         },
         body: {
-            padding: "25px",
+            padding: "10px",
             overflow: "auto",
             maxHeight: "calc(90vh - 60px)"
         }

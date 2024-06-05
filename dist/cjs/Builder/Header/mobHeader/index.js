@@ -40,7 +40,7 @@ const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, customL
     const [menuList, setMenuList] = (0, react_1.useState)({});
     const [searchView, setSearchView] = (0, react_1.useState)(false);
     const [accordionState, setAccordionState] = (0, react_1.useState)("components");
-    const [languageLogo, setLanguageLogo] = (0, react_1.useState)("/images/lang/en.jpg");
+    const [languageLogo, setLanguageLogo] = (0, react_1.useState)("images/lang/en.jpg");
     // Accordion
     const accordionHandler = (Panel) => (_, isExpanded) => {
         setAccordionState(isExpanded ? Panel : false);
@@ -49,7 +49,7 @@ const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, customL
     (0, react_1.useEffect)(() => {
         if (defaultLanguage && languages?.length) {
             if (defaultLanguage === 'ar' || defaultLanguage === 'en') {
-                setLanguageLogo(`${defaultLanguage === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
+                setLanguageLogo(`${defaultLanguage === "ar" ? "images/lang/ar.jpg" : "images/lang/en.jpg"}`);
             }
             else
                 setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0]?.logo || "");
@@ -85,9 +85,9 @@ const MobHeader = ({ logo, icon, menus, setMenus, localeText, languages, customL
                                             return (react_1.default.createElement(material_1.MenuItem, { key: index, component: material_1.Button, onClick: (event) => {
                                                     setMenuList({});
                                                     language.onClick && language.onClick(event);
-                                                    setLanguageLogo(`${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
+                                                    setLanguageLogo(`${language.name === "ar" ? "images/lang/ar.jpg" : "images/lang/en.jpg"}`);
                                                 } },
-                                                react_1.default.createElement("img", { src: `${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`, alt: language.name === "ar" ? "العربية" : "English" }),
+                                                react_1.default.createElement("img", { src: `${language.name === "ar" ? "images/lang/ar.jpg" : "images/lang/en.jpg"}`, alt: language.name === "ar" ? "العربية" : "English" }),
                                                 language.name === "ar" ? "العربية" : "English"));
                                         }
                                         else {

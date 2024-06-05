@@ -7,7 +7,7 @@ import { Request } from "../../Services";
 import { Box, Grid as MuiGrid, Button, Typography } from "@mui/material";
 
 // Material UI Table
-import { DataGrid, DataGridProps, GridColDef, GridActionsCellItem, GridToolbarContainer, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarExport, GridLocaleText } from "@mui/x-data-grid";
+import { useGridApiRef, DataGrid, DataGridProps, GridColDef, GridActionsCellItem, GridToolbarContainer, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarExport, GridLocaleText } from "@mui/x-data-grid";
 
 // Coject
 import { Form, DatePicker, Modal, Icons } from "../index";
@@ -94,19 +94,21 @@ interface iGrid extends DataGridProps {
     formInvisibility?: string[];
     localeText?: iLocaleText | any;
     actions?: boolean | ("add" | "edit" | "delete")[];
-    toolbar?: boolean | ("visibility" | "filter" | "export")[];
+    toolbar?: boolean | ("visibility" | "filter" | "export" | "print")[];
     customActions?: { icon: string, label: string, onClick: any }[];
 }
 
 export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRenderRequest, actionsControl, resizable, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+    const apiRef = useGridApiRef();
     const { classes } = useStyles();
     const [ gridData, setGridData ] = useState<any>([]);
-    const [ schemaData, setSchemaData ] = useState<any>({});
-    const [ selectedData, setSelectedData ] = useState<any>(null);
     const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+    const [ schemaData, setSchemaData ] = useState<any>({});
+    const [ openPdf, setOpenPdf ] = useState<boolean>(false);
     const [ callData, setCallData ] = useState<boolean>(false);
     const [ addModal, setAddModal ] = useState<boolean>(false);
     const [ editModal, setEditModal ] = useState<boolean>(false);
+    const [ selectedData, setSelectedData ] = useState<any>(null);
     const [ deleteModal, setDeleteModal ] = useState<boolean>(false);
 
     // Static Data
@@ -210,6 +212,85 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
         : []
     ) ];
 
+    // Printing
+    const Printing = () => {
+        setOpenPdf(true);
+        setTimeout(() => {
+            const iFrame = (document?.querySelector<any>("#iFrame"));
+            iFrame?.contentDocument?.open();
+            iFrame?.contentDocument?.write(`
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+                    <style>
+                        @media print{
+                            .table { background-color: #f5f5f5; text-align: center; width: 100% }
+                            .table thead { background-color: #00b366; color:#f5f5f5 }
+                            @page { margin-top: 8px }
+                        }
+                        table {
+                            width: 100%;
+                            direction: ${localStorage.language === 'ar' ? 'rtl' : 'ltr'};
+                        }
+                        td, th {
+                            padding: 8px;
+                            text-align: center;
+                            border: 1px solid #dddddd;
+                        }
+                        tr:nth-child(even) {
+                            background-color: #dddddd;
+                        }
+                    </style>
+            `);
+            const printData: any = `
+            <table>
+                <thead>
+                    <tr>
+                        ${(() => {
+                            let result = '';
+                            if (schema) {
+                                for (let index = 0; index < schema.length; index++) {
+                                    if (!invisibility?.find((column: any) => column === schema[index].field)) {
+                                        const item = schema[index];
+                                        result += `<th key=${index}>${item.headerName}</th>`;
+                                    }
+                                }
+                            }
+                            return result;
+                        })()}
+                    </tr>
+                </thead>
+                <tbody>
+                ${(() => {
+                    let rowsResult = '';
+                    const allRows = apiRef?.current?.getAllRowIds();
+                    if (allRows.length > 0) {
+                        for (let index = 0; index < allRows.length; index++) {
+                            const element = allRows[index];
+                            const rowElement = apiRef?.current?.getRowElement(element);
+                            const dataFieldElements: any = rowElement?.querySelectorAll('[data-field]');
+                            let row = '<tr>';
+                            for (let i = 0; i < dataFieldElements?.length - 1; i++) {
+                                const dataFieldElement = dataFieldElements[i];
+                                row += `<td key=${i}>${dataFieldElement.innerText}</td>`;
+                            }
+                            row += '</tr>';
+                            rowsResult += row;
+                        }
+                    }
+                    return rowsResult;
+                })()}
+                </tbody>
+            </table>`;
+            iFrame?.contentDocument?.write(printData);
+            iFrame?.contentDocument?.close();
+            iFrame?.contentWindow?.focus();
+            iFrame?.contentWindow?.print();
+        }, 1000);
+        setTimeout(() => {
+            setOpenPdf(false);
+        }, 1000);
+    }
+
     // Custom Toolbar
     const CustomToolbar = () => {
         return (
@@ -218,7 +299,8 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                     <React.Fragment>
                         { toolbar instanceof Array ? (toolbar?.includes("visibility") && <GridToolbarColumnsButton />) : <GridToolbarColumnsButton /> }
                         { toolbar instanceof Array ? (toolbar?.includes("filter") && <GridToolbarFilterButton />) : <GridToolbarFilterButton /> }
-                        { toolbar instanceof Array ? (toolbar?.includes("export") && <GridToolbarExport csvOptions={{utf8WithBom: true}} />) : <GridToolbarExport csvOptions={{utf8WithBom: true}} /> }
+                        { toolbar instanceof Array ? (toolbar?.includes("export") && <GridToolbarExport csvOptions={{utf8WithBom: true}} printOptions={{ disableToolbarButton: true }} />) : <GridToolbarExport csvOptions={{utf8WithBom: true}} printOptions={{ disableToolbarButton: true }} /> }
+                        { toolbar instanceof Array ? (toolbar?.includes("print") && <Button onClick={Printing}><Icons.SimCardDownloadOutlined />{localeText?.toolbarExportPrint || "Print"}</Button>) : <Button onClick={Printing}><Icons.SimCardDownloadOutlined />{localeText?.toolbarExportPrint || "Print"}</Button>}
                     </React.Fragment>
                 } 
                 { customToolbar && customToolbar(gridData) }
@@ -284,7 +366,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
 
             {/* Data Grid */}
             <Box className={classes.root}>
-                <DataGrid className={!gridData?.length ? classes.empty : ""}
+                <DataGrid apiRef={apiRef} className={!gridData?.length ? classes.empty : ""}
                     { ...(localeText ? { localeText: localeText } : {}) }
                     { ...(customKey ? { getRowId: (row : any) => row[customKey] } : {}) }
                     rows={gridData} columns={columnsSchema} density={"compact"} {...props}
@@ -304,12 +386,17 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                         } : {})
                     }}
                     disableColumnResize={!resizable}
+                    paginationMode={openPdf ? 'server' : 'client'}
+                    {...(openPdf ? {rowCount: gridData?.length} : {})}
                     initialState={props?.initialState ? props?.initialState : {pagination: {paginationModel: {pageSize: 15}}}}
                     slots={props?.slots ? props?.slots : {toolbar: actions || toolbar || customToolbar ? CustomToolbar : null}}
                     getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "")}
                     { ...(invisibility ? {columnVisibilityModel: invisibility.reduce((prev: any, key: string) => ({ ...prev, [key]: false}), {}) } : {}) }
                 />
             </Box>
+            
+            {/* Printing */}
+            <iframe id={'iFrame'} title={'iFrame'} style={{ position: 'absolute', width: 0, height: 0 }} />
         </React.Fragment>
     );
 };

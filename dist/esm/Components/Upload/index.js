@@ -1,77 +1,23 @@
-import React, { useState, useReducer, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 // React Hook Form
 import { useFormContext } from "react-hook-form";
 // Material UI
-import { Box, TextField, FormHelperText, Typography, IconButton } from "@mui/material";
+import { Box, Grid, FormHelperText, TextField, Typography, IconButton } from "@mui/material";
 // Coject
-import { Icons } from "../index";
+import { Icons, Modal } from "../index";
 // Styles
 import useStyles from "./theme";
-export const Upload = ({ value, name, helperText, multiple, onChange, onRemove, required, validation, ...props }) => {
+export const Upload = ({ value, name, multiple, onChange, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, error }) => {
     const { classes } = useStyles();
-    const [files, setFiles] = useState();
     const Methods = useFormContext() || {};
+    const [files, setFiles] = useState([]);
+    const [viewer, setViewer] = useState(false);
     const [, forceUpdate] = useReducer(x => x + 1, 0);
-    const { setValue, control, getValues, watch, setError, clearErrors, formState: { errors } } = useFormContext() || {};
-    // Methods Watching
-    useEffect(() => {
-        if (control) {
-            !getValues(name || "default") && setFiles(undefined);
-            // if (getValues(name || "default")) {
-            //     if (getValues(name || "default") instanceof Array) {
-            //         for (let index = 0; index < getValues(name || "default").length; index++) {
-            //             const Reader = new FileReader();
-            //             Reader.readAsDataURL(getValues(name || "default")[index]);
-            //             Reader.onload = () => setFiles((prev: any) => [...(prev ? prev : []), {file: getValues(name || "default")[index], image: Reader.result}]);
-            //         }
-            //     } else {
-            //         const Reader = new FileReader();
-            //         Reader.readAsDataURL(getValues(name || "default"));
-            //         Reader.onload = () => setFiles({file: getValues(name || "default"), image: Reader.result});
-            //     }
-            // } else setFiles(undefined);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [control, getValues, name, watch && watch(name || "default")]);
-    // Set Value
-    useEffect(() => {
-        if (value) {
-            if (multiple && value instanceof Array) {
-                for (let index = 0; index < value.length; index++) {
-                    setFiles((prev) => [...(prev ? prev : []), { image: value[index]?.image, file: { name: value[index]?.name } }]);
-                }
-            }
-            else {
-                setFiles({ image: value?.image, file: { name: value?.name } });
-            }
-        }
-    }, [value, multiple]);
-    // Change Value
-    const changeValue = (event) => {
-        const multiFiles = [];
-        for (let index = 0; index < Object.keys(event.target.files).length; index++) {
-            multiFiles.push(event.target.files[index]);
-        }
-        if (event.target.files.length > 0) {
-            for (let Index = 0; Index < event.target.files.length; Index++) {
-                const Reader = new FileReader();
-                Reader.readAsDataURL(event.target.files[Index]);
-                Reader.onload = () => setFiles((prev) => multiple ? [...(prev ? prev : []), { file: event.target.files[Index], image: Reader.result }] : { file: event.target.files[Index], image: Reader.result });
-            }
-        }
-        onChange && onChange((multiple ? ([...(files ? files.map((file) => file.file) : []), ...multiFiles].filter((file) => file?.type)) : event.target.files[0]), Methods);
-        control && setValue(name || "default", multiple ? ([...(files ? files.map((file) => file.file) : []), ...multiFiles].filter((file) => file?.type)) : event.target.files[0]);
-    };
-    // Remove File
-    const removeFile = (index) => {
-        const filesValue = files;
-        const file = multiple && filesValue[index];
-        onRemove && onRemove(multiple ? file : filesValue);
-        file && filesValue?.splice(file, 1);
-        setFiles(multiple ? (filesValue?.length ? filesValue : undefined) : undefined);
-        onChange && onChange(multiple ? filesValue?.map((fileValue) => !Object.keys(fileValue.file)?.length && fileValue.file).filter(Boolean) : {}, Methods);
-        control && setValue(name || "default", multiple ? filesValue?.map((fileValue) => !Object.keys(fileValue.file)?.length && fileValue.file).filter(Boolean) : {});
-        const element = document.getElementsByName(name || "default")[0];
+    const [initValue, setInitValue] = useState([]);
+    const element = document.getElementsByName(name || "default")[0];
+    const { setValue, setError, clearErrors, formState: { errors } } = useFormContext() || {};
+    // Clear Files History
+    const clearHistory = () => {
         try {
             element && (element.value = null);
         }
@@ -79,50 +25,94 @@ export const Upload = ({ value, name, helperText, multiple, onChange, onRemove, 
         if (element?.value) {
             element.parentNode.replaceChild(element.cloneNode(true), element);
         }
+    };
+    // Initial Value
+    useEffect(() => {
+        if (value) {
+            if (multiple && value instanceof Array) {
+                const images = [];
+                for (let index = 0; index < value.length; index++) {
+                    images.push(value[index]);
+                }
+                setInitValue(images);
+            }
+            else
+                setInitValue([value]);
+        }
+    }, [value]);
+    // File Change
+    const fileChange = (event) => {
+        const newFiles = [];
+        for (let index = 0; index < Object.keys(event.target.files).length; index++) {
+            newFiles.push(event.target.files[index]);
+        }
+        if (event.target.files.length > 0) {
+            for (let index = 0; index < event.target.files.length; index++) {
+                const Reader = new FileReader();
+                Reader.readAsDataURL(event.target.files[index]);
+                Reader.onload = () => setFiles((prev) => ([...(multiple ? prev : []), { file: event.target.files[index], image: Reader.result }]));
+            }
+        }
+        if (!multiple)
+            setInitValue([]);
+        onChange && onChange((multiple ? [...(files?.map((file) => file.file)), ...newFiles] : event.target.files[0]), Methods);
+        setValue(name || "default", (multiple ? [...(files?.map((file) => file.file)), ...newFiles] : event.target.files[0]));
+    };
+    // File Remove
+    const removeFile = (index) => {
+        const allFiles = files;
+        allFiles.splice(index, 1);
+        setFiles(!!allFiles?.length ? allFiles : []);
+        onChange && onChange(!!allFiles?.length ? (multiple ? (allFiles.map((file) => file.file)) : allFiles[0].file) : undefined);
+        setValue(name || "default", !!allFiles?.length ? (multiple ? (allFiles.map((file) => file.file)) : allFiles[0].file) : undefined);
+        clearHistory();
+        forceUpdate();
+    };
+    // Initial File Remove
+    const removeInitFile = (index) => {
+        onRemove && onRemove(initValue[index]);
+        const allFiles = initValue;
+        allFiles.splice(index, 1);
+        setInitValue(!!allFiles?.length ? allFiles : []);
         forceUpdate();
     };
     // Error Handling
     useEffect(() => {
-        const Required = (!!required || !!validation?.required) && !(files instanceof Array ? files?.length : (files instanceof Object && Object.keys(files).length));
-        // Clear Errors
-        if (!Required)
-            clearErrors(name || "default");
-        // Set Errors
-        else {
-            // Required
-            if (Required)
-                setError(name || "default", { type: "required", message: ((required?.toString() === "true") || (validation?.required?.toString() === "true")) ? "This Field Is Required" : `${required ? required : ""}${validation?.required ? validation?.required : ""}` });
-        }
-    }, [files, required, name, setError, clearErrors, validation]);
+        if (required)
+            (!!files?.length) ? clearErrors(name || "default") : setError(name || "default", { type: "required", message: "This Field Is Required" });
+    }, [required, files]);
     return (React.createElement(React.Fragment, null,
-        React.createElement(Box, { className: classes.root }, multiple ?
-            React.createElement(React.Fragment, null,
-                !!files?.length && files.map((file, index) => {
-                    return (React.createElement(Box, { key: index, className: `${classes.imageBox} ${classes.multiImageBox} ${files?.length > 1 ? classes.moreMultiImageBox : ""}` },
-                        React.createElement("img", { src: file?.image, alt: file?.file?.name }),
-                        React.createElement(Typography, null, file?.file?.name),
-                        React.createElement(IconButton, { type: "button", onClick: () => removeFile(index) },
-                            React.createElement(Icons.Close, null))));
-                })[0],
-                !!files?.length && files?.length > 1 && React.createElement(Typography, null,
-                    "+",
-                    files?.length - 1),
-                React.createElement(Box, { className: classes.emptyValue, style: !!files?.length ? { width: "auto" } : {} },
-                    React.createElement(Icons.CloudUploadOutlined, null),
-                    !files?.length && React.createElement(Typography, null, props.placeholder || name || "default"),
-                    React.createElement(TextField, { name: name || "default", type: "file", onChange: changeValue, label: props?.label ? props?.label : (name || "default"), inputProps: { ...props.inputProps, multiple: multiple }, ...props }))) :
-            React.createElement(React.Fragment, null, files && !!Object.keys(files)?.length ?
-                React.createElement(Box, { className: classes.imageBox },
-                    React.createElement("img", { src: files?.image, alt: files?.file?.name }),
-                    React.createElement(Typography, null, files?.file?.name),
-                    React.createElement(IconButton, { type: "button", onClick: removeFile },
-                        React.createElement(Icons.Close, null))) :
-                React.createElement(Box, { className: classes.emptyValue },
-                    React.createElement(Icons.CloudUploadOutlined, null),
-                    React.createElement(Typography, null, props.placeholder || name || "default"),
-                    React.createElement(TextField, { name: name || "default", type: "file", onChange: changeValue, label: props?.label ? props?.label : (name || "default"), inputProps: { ...props.inputProps, multiple: multiple }, ...props })))),
-        (helperText || (control && errors && errors[name || "default"])) && React.createElement(FormHelperText, { className: classes.error },
-            control && errors && errors[name || "default"]?.message,
-            helperText && !(control && errors && errors[name || "default"]) && helperText)));
+        React.createElement(Box, { className: classes.root },
+            label && React.createElement("label", null, label),
+            React.createElement(Box, { className: `${classes.container} ${((errors && errors[name || "default"]) || (error?.errors && error?.errors[name || "default"])) ? classes.error : ""}` },
+                React.createElement(Grid, { spacing: 1, container: true },
+                    !!files?.length && files.map((file, index) => (React.createElement(Grid, { key: index, xs: (imageWidth?.xs ? imageWidth.xs : 12), sm: (imageWidth?.sm ? imageWidth.sm : 12), md: (imageWidth?.md ? imageWidth.md : 12), lg: (imageWidth?.lg ? imageWidth.lg : 12), item: true },
+                        React.createElement(Box, { className: classes.file, style: { height: imageHeight ? `${imageHeight}px` : "80px" } },
+                            React.createElement("img", { src: file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg", alt: "File" }),
+                            React.createElement(Box, { className: classes.remove },
+                                React.createElement(Box, { onClick: () => setViewer(file.image), className: classes.viewer }),
+                                React.createElement(IconButton, { onClick: () => removeFile(index) },
+                                    React.createElement(Icons.Close, null))))))),
+                    !!initValue?.length && initValue.map((file, index) => (React.createElement(Grid, { key: index, xs: (imageWidth?.xs ? imageWidth.xs : 12), sm: (imageWidth?.sm ? imageWidth.sm : 12), md: (imageWidth?.md ? imageWidth.md : 12), lg: (imageWidth?.lg ? imageWidth.lg : 12), item: true },
+                        React.createElement(Box, { className: classes.file, style: { height: imageHeight ? `${imageHeight}px` : "80px" } },
+                            React.createElement("img", { src: imagePath ? file[`${imagePath}`] : file || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg", alt: "File" }),
+                            React.createElement(Box, { className: classes.remove },
+                                React.createElement(Box, { onClick: () => setViewer(imagePath ? file[`${imagePath}`] : file), className: classes.viewer }),
+                                React.createElement(IconButton, { onClick: () => removeInitFile(index) },
+                                    React.createElement(Icons.Close, null))))))),
+                    ((!multiple && !(files?.length) && !(initValue?.length)) || multiple) &&
+                        React.createElement(Grid, { xs: true, sm: true, md: true, lg: true, item: true },
+                            React.createElement(Box, { className: classes.inputContainer, style: { height: imageHeight ? `${imageHeight}px` : "80px" } },
+                                React.createElement(Icons.BackupOutlined, null),
+                                React.createElement(Typography, null, placeholder ? placeholder : "Upload Your Files"),
+                                React.createElement(TextField, { name: name || "default", type: "file", onChange: fileChange, ...(disabled ? { disabled } : {}), inputProps: { multiple: multiple } }))))),
+            viewer &&
+                React.createElement(Modal, { open: !!viewer, setOpen: setViewer, title: "File Preview" },
+                    React.createElement(Box, { className: classes.file },
+                        React.createElement("img", { className: classes.imageViewer, src: viewer, alt: "File", style: { display: "block" } }),
+                        React.createElement(Box, { className: classes.download },
+                            React.createElement(IconButton, { href: viewer, download: viewer },
+                                React.createElement(Icons.SaveOutlined, null))))),
+            (errors && errors[name || "default"]) ? React.createElement(FormHelperText, null, "This Field Is Required") : ((error?.errors && error?.errors[name || "default"]) ? React.createElement(FormHelperText, null, error.errors[name || "default"][0]) : ""))));
 };
 //# sourceMappingURL=index.js.map

@@ -5,6 +5,9 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
     return {
         root: {
             width: "100%",
+            '& .MuiDataGrid-filler': {
+                height: '1px !important'
+            },
             "& .dark": {
                 backgroundColor: theme.palette.grey[200]
             },
@@ -15,6 +18,7 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                 padding: 0,
                 marginBottom: "15px",
                 "& button": {
+                    gap: '3px',
                     padding: 0,
                     width: "100px",
                     height: "35px",

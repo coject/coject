@@ -55,6 +55,7 @@ interface iDataSource {
 }
 
 interface iForm {
+    id?: string;
     getForm?: any;
     onSubmit?: any;
     dispatch?: any;
@@ -75,7 +76,7 @@ interface iForm {
     mode?: "render" | "create" | "update" | "delete";
 }
 
-export const Form: FC<iForm> = ({ mode, getForm, schema, dataSource, localeText, className, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, noRequest, invisibility, children, ...props }) => {
+export const Form: FC<iForm> = ({ mode, id, getForm, schema, dataSource, localeText, className, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, noRequest, invisibility, children, ...props }) => {
     const Data = { ...(staticData ? staticData : {}) };
     const { classes } = useStyles();
     const Methods = useForm();
@@ -104,7 +105,7 @@ export const Form: FC<iForm> = ({ mode, getForm, schema, dataSource, localeText,
     return (
         <React.Fragment>
             <FormProvider {...Methods}>
-                <form className={`${classes.root} ${className}`} onSubmit={Methods.handleSubmit(onFormSubmit)} {...props}>
+                <form id={id} className={`${classes.root} ${className}`} onSubmit={Methods.handleSubmit(onFormSubmit)} {...props}>
                     { schema &&
                         <Grid container spacing={2}>
                             { schema && !!schema?.length && schema.map((field: any, index: number) => {

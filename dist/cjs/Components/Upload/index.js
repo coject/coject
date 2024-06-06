@@ -140,7 +140,7 @@ const Upload = ({ value, name, multiple, onChange, onRemove, required, label, im
                     react_1.default.createElement(material_1.Box, { className: classes.file },
                         react_1.default.createElement("img", { className: classes.imageViewer, src: viewer, alt: "File", style: { display: "block" } }),
                         react_1.default.createElement(material_1.Box, { className: classes.download },
-                            react_1.default.createElement(material_1.IconButton, { href: viewer, download: viewer },
+                            react_1.default.createElement(material_1.IconButton, { href: viewer, download: "file" },
                                 react_1.default.createElement(index_1.Icons.SaveOutlined, null))))),
             (errors && errors[name || "default"]) ? react_1.default.createElement(material_1.FormHelperText, null, "This Field Is Required") : ((error?.errors && error?.errors[name || "default"]) ? react_1.default.createElement(material_1.FormHelperText, null, error.errors[name || "default"][0]) : ""))));
 };

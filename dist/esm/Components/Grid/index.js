@@ -170,9 +170,17 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, s
                         const rowElement = apiRef?.current?.getRowElement(element);
                         const dataFieldElements = rowElement?.querySelectorAll('[data-field]');
                         let row = '<tr>';
-                        for (let i = 0; i < dataFieldElements?.length - 1; i++) {
-                            const dataFieldElement = dataFieldElements[i];
-                            row += `<td key=${i}>${dataFieldElement.innerText}</td>`;
+                        if (actions || customActions) {
+                            for (let i = 0; i < dataFieldElements?.length - 1; i++) {
+                                const dataFieldElement = dataFieldElements[i];
+                                row += `<td key=${i}>${dataFieldElement.innerText}</td>`;
+                            }
+                        }
+                        else {
+                            for (let i = 0; i < dataFieldElements?.length; i++) {
+                                const dataFieldElement = dataFieldElements[i];
+                                row += `<td key=${i}>${dataFieldElement.innerText}</td>`;
+                            }
                         }
                         row += '</tr>';
                         rowsResult += row;
@@ -263,7 +271,7 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, s
                                 } } : {}),
                         }
                     } : {})
-                }, disableColumnResize: !resizable, paginationMode: openPdf ? 'server' : 'client', ...(openPdf ? { rowCount: gridData?.length } : {}), initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, slots: props?.slots ? props?.slots : { toolbar: actions || toolbar || customToolbar ? CustomToolbar : null }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), ...(invisibility ? { columnVisibilityModel: invisibility.reduce((prev, key) => ({ ...prev, [key]: false }), {}) } : {}) })),
+                }, disableVirtualization: true, disableColumnResize: !resizable, paginationMode: openPdf ? 'server' : 'client', ...(openPdf ? { rowCount: gridData?.length } : {}), initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, slots: props?.slots ? props?.slots : { toolbar: actions || toolbar || customToolbar ? CustomToolbar : null }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), ...(invisibility ? { columnVisibilityModel: invisibility.reduce((prev, key) => ({ ...prev, [key]: false }), {}) } : {}) })),
         React.createElement("iframe", { id: 'iFrame', title: 'iFrame', style: { position: 'absolute', width: 0, height: 0 } })));
 };
 //# sourceMappingURL=index.js.map

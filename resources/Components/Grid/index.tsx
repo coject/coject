@@ -269,9 +269,16 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                             const rowElement = apiRef?.current?.getRowElement(element);
                             const dataFieldElements: any = rowElement?.querySelectorAll('[data-field]');
                             let row = '<tr>';
-                            for (let i = 0; i < dataFieldElements?.length - 1; i++) {
-                                const dataFieldElement = dataFieldElements[i];
-                                row += `<td key=${i}>${dataFieldElement.innerText}</td>`;
+                            if (actions || customActions) {
+                                for (let i = 0; i < dataFieldElements?.length - 1; i++) {
+                                    const dataFieldElement = dataFieldElements[i];
+                                    row += `<td key=${i}>${dataFieldElement.innerText}</td>`;
+                                }
+                            } else {
+                                for (let i = 0; i < dataFieldElements?.length; i++) {
+                                    const dataFieldElement = dataFieldElements[i];
+                                    row += `<td key=${i}>${dataFieldElement.innerText}</td>`;
+                                }
                             }
                             row += '</tr>';
                             rowsResult += row;
@@ -385,6 +392,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                             }
                         } : {})
                     }}
+                    disableVirtualization
                     disableColumnResize={!resizable}
                     paginationMode={openPdf ? 'server' : 'client'}
                     {...(openPdf ? {rowCount: gridData?.length} : {})}

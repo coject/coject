@@ -145,7 +145,7 @@ export const Upload: FC<iUpload> = ({ value, name, multiple, onChange, onRemove,
                         <Box className={classes.file}>
                             <img className={classes.imageViewer} src={viewer} alt={"File"} style={{display: "block"}} />
                             <Box className={classes.download}>
-                                <IconButton href={viewer} download={viewer}><Icons.SaveOutlined /></IconButton>
+                                <IconButton href={viewer} download={"file"}><Icons.SaveOutlined /></IconButton>
                             </Box>
                         </Box>
                     </Modal>

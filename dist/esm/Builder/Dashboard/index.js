@@ -5,7 +5,7 @@ import { Box } from "@mui/material";
 import { Header, Sidebar, Footer } from "../../Builder";
 // Styles
 import useStyles from "./theme";
-export const Dashboard = ({ menus, logo, icon, customMobList, customSideList, search, localeText, languages, defaultLanguage, mobMenus, copyRight, children }) => {
+export const Dashboard = ({ menus, logo, icon, customMobList, customSideList, search, localeText, languages, defaultLanguage, mobMenus, copyRight, versionName, children }) => {
     const { classes } = useStyles();
     const [menusList, setMenusList] = useState({});
     const [sidebar, setSidebar] = useState(true);
@@ -19,6 +19,6 @@ export const Dashboard = ({ menus, logo, icon, customMobList, customSideList, se
             React.createElement(Sidebar, { sidebar: sidebar, menus: menusList, setMenus: setMenusList, customList: customSideList }),
             React.createElement(Box, { className: `${classes.pages} ${!sidebar ? classes.closeSidebar : ""}` },
                 children,
-                React.createElement(Footer, { menus: menusList, setMenus: setMenusList, copyRight: copyRight })))));
+                React.createElement(Footer, { menus: menusList, setMenus: setMenusList, copyRight: copyRight, versionName: versionName })))));
 };
 //# sourceMappingURL=index.js.map

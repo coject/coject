@@ -13,6 +13,7 @@ export const Upload = ({ value, name, multiple, onChange, onRemove, required, la
     const [files, setFiles] = useState([]);
     const [viewer, setViewer] = useState(false);
     const [, forceUpdate] = useReducer(x => x + 1, 0);
+    const [viewerType, setViewerType] = useState(false);
     const [initValue, setInitValue] = useState([]);
     const element = document.getElementsByName(name || "default")[0];
     const { setValue, setError, clearErrors, formState: { errors } } = useFormContext() || {};
@@ -88,9 +89,14 @@ export const Upload = ({ value, name, multiple, onChange, onRemove, required, la
                 React.createElement(Grid, { spacing: 1, container: true },
                     !!files?.length && files.map((file, index) => (React.createElement(Grid, { key: index, xs: (imageWidth?.xs ? imageWidth.xs : 12), sm: (imageWidth?.sm ? imageWidth.sm : 12), md: (imageWidth?.md ? imageWidth.md : 12), lg: (imageWidth?.lg ? imageWidth.lg : 12), item: true },
                         React.createElement(Box, { className: classes.file, style: { height: imageHeight ? `${imageHeight}px` : "80px" } },
-                            React.createElement("img", { src: file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg", alt: "File" }),
+                            file?.file?.type === "application/pdf"
+                                ? React.createElement(Icons.PictureAsPdfOutlined, null)
+                                : React.createElement("img", { src: file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg", alt: "File" }),
                             React.createElement(Box, { className: classes.remove },
-                                React.createElement(Box, { onClick: () => setViewer(file.image), className: classes.viewer }),
+                                React.createElement(Box, { onClick: () => {
+                                        setViewer(file.image);
+                                        setViewerType(file.file.type);
+                                    }, className: classes.viewer }),
                                 React.createElement(IconButton, { onClick: () => removeFile(index) },
                                     React.createElement(Icons.Close, null))))))),
                     !!initValue?.length && initValue.map((file, index) => (React.createElement(Grid, { key: index, xs: (imageWidth?.xs ? imageWidth.xs : 12), sm: (imageWidth?.sm ? imageWidth.sm : 12), md: (imageWidth?.md ? imageWidth.md : 12), lg: (imageWidth?.lg ? imageWidth.lg : 12), item: true },
@@ -109,7 +115,9 @@ export const Upload = ({ value, name, multiple, onChange, onRemove, required, la
             viewer &&
                 React.createElement(Modal, { open: !!viewer, setOpen: setViewer, title: "File Preview" },
                     React.createElement(Box, { className: classes.file },
-                        React.createElement("img", { className: classes.imageViewer, src: viewer, alt: "File", style: { display: "block" } }),
+                        viewerType === "application/pdf"
+                            ? React.createElement(Icons.PictureAsPdfOutlined, null)
+                            : React.createElement("img", { className: classes.imageViewer, src: viewer, alt: "File", style: { display: "block" } }),
                         React.createElement(Box, { className: classes.download },
                             React.createElement(IconButton, { href: viewer, download: "file" },
                                 React.createElement(Icons.SaveOutlined, null))))),

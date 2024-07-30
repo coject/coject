@@ -5,12 +5,14 @@ import { Box, List, ListItem, Button } from "@mui/material";
 import { Icons } from "../../Components";
 // Styles
 import useStyles from "./theme";
-export const Footer = ({ menus, setMenus, copyRight }) => {
+export const Footer = ({ menus, setMenus, copyRight, versionName }) => {
     const { classes } = useStyles();
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: classes.root },
             copyRight &&
                 React.createElement(Box, { className: classes.copyRight }, copyRight),
+            versionName &&
+                React.createElement(Box, { className: classes.copyRight }, versionName),
             menus && !!Object.keys(menus).length && menus.footer && !!menus.footer.length &&
                 React.createElement(List, { className: classes.menuList, sx: { display: { xs: "none", md: "flex" } } }, menus.footer.map((listItem, index) => {
                     const ItemIcon = listItem.icon && Icons[listItem.icon];

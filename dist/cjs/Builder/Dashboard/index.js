@@ -34,7 +34,7 @@ const material_1 = require("@mui/material");
 const Builder_1 = require("../../Builder");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Dashboard = ({ menus, logo, icon, customMobList, customSideList, search, localeText, languages, defaultLanguage, mobMenus, copyRight, children }) => {
+const Dashboard = ({ menus, logo, icon, customMobList, customSideList, search, localeText, languages, defaultLanguage, mobMenus, copyRight, versionName, children }) => {
     const { classes } = (0, theme_1.default)();
     const [menusList, setMenusList] = (0, react_1.useState)({});
     const [sidebar, setSidebar] = (0, react_1.useState)(true);
@@ -48,7 +48,7 @@ const Dashboard = ({ menus, logo, icon, customMobList, customSideList, search, l
             react_1.default.createElement(Builder_1.Sidebar, { sidebar: sidebar, menus: menusList, setMenus: setMenusList, customList: customSideList }),
             react_1.default.createElement(material_1.Box, { className: `${classes.pages} ${!sidebar ? classes.closeSidebar : ""}` },
                 children,
-                react_1.default.createElement(Builder_1.Footer, { menus: menusList, setMenus: setMenusList, copyRight: copyRight })))));
+                react_1.default.createElement(Builder_1.Footer, { menus: menusList, setMenus: setMenusList, copyRight: copyRight, versionName: versionName })))));
 };
 exports.Dashboard = Dashboard;
 //# sourceMappingURL=index.js.map

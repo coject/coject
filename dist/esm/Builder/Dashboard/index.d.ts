@@ -8,6 +8,7 @@ interface iDashboard {
     customSideList?: any;
     children?: ReactNode;
     copyRight?: ReactNode;
+    versionName?: ReactNode;
     localeText?: {
         headerSearch?: string;
     };

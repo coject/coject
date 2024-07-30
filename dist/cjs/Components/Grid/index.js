@@ -140,7 +140,7 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, staticDa
     }).filter((element) => element !== undefined);
     // Columns Schema
     const columnsSchema = [...(schema ? schema : defaultSchema), ...((actions || customActions)
-            ? [{ field: "actions", type: "actions", headerName: (localeText && localeText?.gridHeaderAction) || "Actions", flex: 1, cellClassName: "actions", getActions: ({ row }) => ([...(gridActions(row) || []), ...(gridCustomActions(row) || [])]) }]
+            ? [{ field: "actions", type: "actions", minWidth: '100', headerName: (localeText && localeText?.gridHeaderAction) || "Actions", flex: 1, cellClassName: "actions", getActions: ({ row }) => ([...(gridActions(row) || []), ...(gridCustomActions(row) || [])]) }]
             : [])];
     // Printing
     const Printing = () => {
@@ -301,7 +301,7 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, staticDa
                         }
                     } : {})
                 }, disableVirtualization: true, disableColumnResize: !resizable, paginationMode: openPdf ? 'server' : 'client', ...(openPdf ? { rowCount: gridData?.length } : {}), initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, slots: props?.slots ? props?.slots : { toolbar: actions || toolbar || customToolbar ? CustomToolbar : null }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""), ...(invisibility ? { columnVisibilityModel: invisibility.reduce((prev, key) => ({ ...prev, [key]: false }), {}) } : {}) })),
-        react_1.default.createElement("iframe", { id: 'iFrame', title: 'iFrame', style: { position: 'absolute', width: 0, height: 0 } })));
+        react_1.default.createElement("iframe", { id: 'iFrame', title: 'iFrame', style: { display: 'none', position: 'absolute', width: 0, height: 0 } })));
 };
 exports.Grid = Grid;
 //# sourceMappingURL=index.js.map

@@ -20,7 +20,10 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
             display: "flex",
             overflow: "auto",
             padding: "22px 20px",
-            flexDirection: "column"
+            flexDirection: "column",
+            '& ul p': {
+                display: 'none'
+            }
         },
         button: {
             gap: 10,

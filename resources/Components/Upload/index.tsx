@@ -35,6 +35,7 @@ export const Upload: FC<iUpload> = ({ value, name, multiple, onChange, onRemove,
     const [ files, setFiles ] = useState<any>([]);
     const [ viewer, setViewer ] = useState<any>(false);
     const [ , forceUpdate ] = useReducer(x => x + 1, 0);
+    const [ viewerType, setViewerType ] = useState<any>(false);
     const [ initValue, setInitValue ] = useState<string[]>([]);
     const element: any = document.getElementsByName(name || "default")[0];
     const { setValue, setError, clearErrors, formState: { errors } } = useFormContext() || {};
@@ -110,9 +111,15 @@ export const Upload: FC<iUpload> = ({ value, name, multiple, onChange, onRemove,
                         { !!files?.length && files.map((file: any, index: number) => (
                             <Grid key={index} xs={(imageWidth?.xs ? imageWidth.xs : 12)} sm={(imageWidth?.sm ? imageWidth.sm : 12)} md={(imageWidth?.md ? imageWidth.md : 12)} lg={(imageWidth?.lg ? imageWidth.lg : 12)} item>
                                 <Box className={classes.file} style={{ height: imageHeight ? `${imageHeight}px` : "80px" }}>
-                                    <img src={file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg"} alt={"File"}/>
+                                    { file?.file?.type === "application/pdf"
+                                        ? <Icons.PictureAsPdfOutlined />
+                                        : <img src={file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg"} alt={"File"}/>
+                                    }
                                     <Box className={classes.remove}>
-                                        <Box onClick={() => setViewer(file.image)} className={classes.viewer} />
+                                        <Box onClick={() => {
+                                            setViewer(file.image);
+                                            setViewerType(file.file.type);
+                                        }} className={classes.viewer} />
                                         <IconButton onClick={() => removeFile(index)}><Icons.Close /></IconButton>
                                     </Box>
                                 </Box>
@@ -143,7 +150,10 @@ export const Upload: FC<iUpload> = ({ value, name, multiple, onChange, onRemove,
                 { viewer &&
                     <Modal open={!!viewer} setOpen={setViewer} title={"File Preview"}>
                         <Box className={classes.file}>
-                            <img className={classes.imageViewer} src={viewer} alt={"File"} style={{display: "block"}} />
+                            { viewerType === "application/pdf"
+                                ? <Icons.PictureAsPdfOutlined />
+                                : <img className={classes.imageViewer} src={viewer} alt={"File"} style={{display: "block"}} />
+                            }
                             <Box className={classes.download}>
                                 <IconButton href={viewer} download={"file"}><Icons.SaveOutlined /></IconButton>
                             </Box>

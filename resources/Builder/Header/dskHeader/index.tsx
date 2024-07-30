@@ -34,7 +34,7 @@ export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, localeTe
     useEffect(() => {
         if (defaultLanguage && languages?.length) {
             if (defaultLanguage === 'ar' || defaultLanguage === 'en') {
-                setLanguageLogo(`${defaultLanguage === "ar" ? "images/lang/ar.jpg" : "images/lang/en.jpg"}`);
+                setLanguageLogo(`${defaultLanguage === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
             } else setLanguageLogo(languages.filter((language) => language.name === defaultLanguage)[0]?.logo || "");
         }
     }, [defaultLanguage, languages]);
@@ -122,9 +122,9 @@ export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, localeTe
                                                         <MenuItem key={index} component={Button} onClick={(event) => {
                                                             setMenuList({});
                                                             language.onClick && language.onClick(event);
-                                                            setLanguageLogo(`${language.name === "ar" ? "images/lang/ar.jpg" : "images/lang/en.jpg"}`);
+                                                            setLanguageLogo(`${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`);
                                                         }}>
-                                                            <img src={`${language.name === "ar" ? "images/lang/ar.jpg" : "images/lang/en.jpg"}`} alt={language.name === "ar" ? "العربية" : "English"} />
+                                                            <img src={`${language.name === "ar" ? "/images/lang/ar.jpg" : "/images/lang/en.jpg"}`} alt={language.name === "ar" ? "العربية" : "English"} />
                                                             { language.name === "ar" ? "العربية" : "English" }
                                                         </MenuItem>
                                                     )

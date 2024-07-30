@@ -19,6 +19,7 @@ interface iDashboard {
     customSideList?: any;
     children?: ReactNode;
     copyRight?: ReactNode;
+    versionName?: ReactNode;
     localeText?: {
         headerSearch?: string
     };
@@ -27,7 +28,7 @@ interface iDashboard {
     languages?: {name: "ar" | "en" | string, logo?: string, onClick?: any}[];
 }
 
-export const Dashboard: FC<iDashboard> = ({ menus, logo, icon, customMobList, customSideList, search, localeText, languages, defaultLanguage, mobMenus, copyRight, children }) => {
+export const Dashboard: FC<iDashboard> = ({ menus, logo, icon, customMobList, customSideList, search, localeText, languages, defaultLanguage, mobMenus, copyRight, versionName, children }) => {
     const { classes } = useStyles();
     const [ menusList, setMenusList ] = useState({});
     const [ sidebar, setSidebar ] = useState(true);
@@ -44,7 +45,7 @@ export const Dashboard: FC<iDashboard> = ({ menus, logo, icon, customMobList, cu
                 <Sidebar sidebar={sidebar} menus={menusList} setMenus={setMenusList} customList={customSideList} />
                 <Box className={`${classes.pages} ${!sidebar ? classes.closeSidebar : ""}`}>
                     {children}
-                    <Footer menus={menusList} setMenus={setMenusList} copyRight={copyRight} />
+                    <Footer menus={menusList} setMenus={setMenusList} copyRight={copyRight} versionName={versionName} />
                 </Box>
             </Box>
         </React.Fragment>

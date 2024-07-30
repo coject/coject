@@ -14,9 +14,10 @@ interface iFooter {
     menus?: any;
     setMenus?: any;
     copyRight?: ReactNode;
+    versionName?: ReactNode;
 }
 
-export const Footer: FC<iFooter> = ({ menus, setMenus, copyRight }) => {
+export const Footer: FC<iFooter> = ({ menus, setMenus, copyRight, versionName }) => {
     const { classes } = useStyles();
 
     return (
@@ -24,6 +25,9 @@ export const Footer: FC<iFooter> = ({ menus, setMenus, copyRight }) => {
             <Box className={classes.root}>
                 { copyRight &&
                     <Box className={classes.copyRight}>{copyRight}</Box>
+                }
+                { versionName &&
+                    <Box className={classes.copyRight}>{versionName}</Box>
                 }
                 { menus && !!Object.keys(menus).length && menus.footer && !!menus.footer.length &&
                     <List className={classes.menuList} sx={{ display: { xs: "none", md: "flex" } }}>

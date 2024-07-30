@@ -208,7 +208,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
 
     // Columns Schema
     const columnsSchema: any = [ ...(schema ? schema : defaultSchema), ...( (actions || customActions)
-        ? [ { field: "actions", type: "actions", headerName: (localeText && localeText?.gridHeaderAction) || "Actions", flex: 1, cellClassName: "actions", getActions: ({ row }: any) => ([ ...(gridActions(row) || []), ...(gridCustomActions(row) || []) ])} ]
+        ? [ { field: "actions", type: "actions", minWidth: '100', headerName: (localeText && localeText?.gridHeaderAction) || "Actions", flex: 1, cellClassName: "actions", getActions: ({ row }: any) => ([ ...(gridActions(row) || []), ...(gridCustomActions(row) || []) ])} ]
         : []
     ) ];
 
@@ -404,7 +404,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
             </Box>
             
             {/* Printing */}
-            <iframe id={'iFrame'} title={'iFrame'} style={{ position: 'absolute', width: 0, height: 0 }} />
+            <iframe id={'iFrame'} title={'iFrame'} style={{ display: 'none', position: 'absolute', width: 0, height: 0 }} />
         </React.Fragment>
     );
 };

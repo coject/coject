@@ -1,6 +1,6 @@
 {
     "name": "coject",
-    "version": "2.3.3",
+    "version": "2.3.4",
     "description": "React Library",
     "main": "dist/cjs/index.js",
     "module": "dist/esm/index.js",

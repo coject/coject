@@ -111,7 +111,7 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, s
     }).filter((element) => element !== undefined);
     // Columns Schema
     const columnsSchema = [...(schema ? schema : defaultSchema), ...((actions || customActions)
-            ? [{ field: "actions", type: "actions", minWidth: '100', headerName: (localeText && localeText?.gridHeaderAction) || "Actions", flex: 1, cellClassName: "actions", getActions: ({ row }) => ([...(gridActions(row) || []), ...(gridCustomActions(row) || [])]) }]
+            ? [{ field: "actions", type: "actions", minWidth: "100px", headerName: (localeText && localeText?.gridHeaderAction) || "Actions", flex: 1, cellClassName: "actions", getActions: ({ row }) => ([...(gridActions(row) || []), ...(gridCustomActions(row) || [])]) }]
             : [])];
     // Printing
     const Printing = () => {

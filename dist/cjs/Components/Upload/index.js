@@ -36,7 +36,7 @@ const material_1 = require("@mui/material");
 const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Upload = ({ value, name, multiple, onChange, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, error }) => {
+const Upload = ({ value, name, multiple, onChange, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, validateText, error }) => {
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useFormContext)() || {};
     const [files, setFiles] = (0, react_1.useState)([]);
@@ -109,7 +109,7 @@ const Upload = ({ value, name, multiple, onChange, onRemove, required, label, im
     // Error Handling
     (0, react_1.useEffect)(() => {
         if (required)
-            (!!files?.length) ? clearErrors(name || "default") : setError(name || "default", { type: "required", message: "This Field Is Required" });
+            (!!initValue?.length || !!files?.length) ? clearErrors(name || "default") : setError(name || "default", { type: "required", message: "This Field Is Required" });
     }, [required, files]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: classes.root },
@@ -150,7 +150,7 @@ const Upload = ({ value, name, multiple, onChange, onRemove, required, label, im
                         react_1.default.createElement(material_1.Box, { className: classes.download },
                             react_1.default.createElement(material_1.IconButton, { href: viewer, download: "file" },
                                 react_1.default.createElement(index_1.Icons.SaveOutlined, null))))),
-            (errors && errors[name || "default"]) ? react_1.default.createElement(material_1.FormHelperText, null, "This Field Is Required") : ((error?.errors && error?.errors[name || "default"]) ? react_1.default.createElement(material_1.FormHelperText, null, error.errors[name || "default"][0]) : ""))));
+            (errors && errors[name || "default"]) ? react_1.default.createElement(material_1.FormHelperText, null, validateText ? validateText : "This Field Is Required") : ((error?.errors && error?.errors[name || "default"]) ? react_1.default.createElement(material_1.FormHelperText, null, error.errors[name || "default"][0]) : ""))));
 };
 exports.Upload = Upload;
 //# sourceMappingURL=index.js.map

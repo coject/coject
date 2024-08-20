@@ -25,11 +25,12 @@ type iUpload = Omit<TextFieldProps, "onChange"> & {
     value?: any | any[];
     imageHeight?: number;
     placeholder?: string;
+    validateText?: string;
     required?: boolean | string;
     imageWidth?: { lg?: number, md?: number, sm?: number, xs?: number };
 }
 
-export const Upload: FC<iUpload> = ({ value, name, multiple, onChange, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, error }) => {
+export const Upload: FC<iUpload> = ({ value, name, multiple, onChange, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, validateText, error }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [ files, setFiles ] = useState<any>([]);
@@ -99,7 +100,7 @@ export const Upload: FC<iUpload> = ({ value, name, multiple, onChange, onRemove,
 
     // Error Handling
     useEffect(() => {
-        if (required) (!!files?.length) ? clearErrors(name || "default") : setError(name || "default", {type: "required", message: "This Field Is Required"});
+        if (required) (!!initValue?.length || !!files?.length) ? clearErrors(name || "default") : setError(name || "default", {type: "required", message: "This Field Is Required"});
     }, [required, files]);
 
     return (
@@ -160,7 +161,7 @@ export const Upload: FC<iUpload> = ({ value, name, multiple, onChange, onRemove,
                         </Box>
                     </Modal>
                 }
-                {(errors && errors[name || "default"]) ? <FormHelperText>This Field Is Required</FormHelperText> : ((error?.errors && error?.errors[name || "default"]) ? <FormHelperText>{error.errors[name || "default"][0]}</FormHelperText> : "")}
+                {(errors && errors[name || "default"]) ? <FormHelperText>{validateText ? validateText : "This Field Is Required"}</FormHelperText> : ((error?.errors && error?.errors[name || "default"]) ? <FormHelperText>{error.errors[name || "default"][0]}</FormHelperText> : "")}
             </Box>
         </React.Fragment>
     );

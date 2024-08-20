@@ -44,8 +44,8 @@ export const DskHeader: FC<DskHeaderInterface> = ({ logo, icon, search, localeTe
             <Box className={classes.dskHeader}>
                 <Box className={`${classes.dskLogo} ${!sidebar ? classes.closedDskLogo : ""}`}>
                     { sidebar
-                        ? <img onClick={() => window.location.href="/"} src={logo} alt="Logo"/>
-                        : <img onClick={() => window.location.href="/"} src={icon} alt="Logo"/>
+                        ? <img className="lgLogoImage" onClick={() => window.location.href="/"} src={logo} alt="Logo"/>
+                        : <img className="smLogoImage" onClick={() => window.location.href="/"} src={icon} alt="Logo"/>
                     }
                 </Box>
                 <Box className={`${classes.dskMenu} ${!sidebar ? classes.closedDskMenu : ""}`}>

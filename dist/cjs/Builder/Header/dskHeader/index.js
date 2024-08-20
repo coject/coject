@@ -51,8 +51,8 @@ const DskHeader = ({ logo, icon, search, localeText, languages, defaultLanguage,
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: classes.dskHeader },
             react_1.default.createElement(material_1.Box, { className: `${classes.dskLogo} ${!sidebar ? classes.closedDskLogo : ""}` }, sidebar
-                ? react_1.default.createElement("img", { onClick: () => window.location.href = "/", src: logo, alt: "Logo" })
-                : react_1.default.createElement("img", { onClick: () => window.location.href = "/", src: icon, alt: "Logo" })),
+                ? react_1.default.createElement("img", { className: "lgLogoImage", onClick: () => window.location.href = "/", src: logo, alt: "Logo" })
+                : react_1.default.createElement("img", { className: "smLogoImage", onClick: () => window.location.href = "/", src: icon, alt: "Logo" })),
             react_1.default.createElement(material_1.Box, { className: `${classes.dskMenu} ${!sidebar ? classes.closedDskMenu : ""}` },
                 react_1.default.createElement(material_1.List, { className: classes.menuList },
                     react_1.default.createElement(material_1.ListItem, null,

@@ -207,10 +207,10 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
     }).filter(( element ) => element !== undefined);
 
     // Columns Schema
-    const columnsSchema: any = [ ...(schema ? schema : defaultSchema), ...( (actions || customActions)
-        ? [ { field: "actions", type: "actions", minWidth: 100, headerName: (localeText && localeText?.gridHeaderAction) || "Actions", flex: 1, cellClassName: "actions", getActions: ({ row }: any) => ([ ...(gridActions(row) || []), ...(gridCustomActions(row) || []) ])} ]
+    const columnsSchema: any = [...(schema ? (invisibility ? schema.filter((column: any) => (!invisibility.includes(column.field))): schema) : defaultSchema), ...((actions || customActions)
+        ? [{ field: "actions", type: "actions", minWidth: 150, headerName: (localeText && localeText?.gridHeaderAction) || "Actions", flex: 1, cellClassName: "actions", getActions: ({ row }: any) => ([...(gridActions(row) || []), ...(gridCustomActions(row) || [])]) }]
         : []
-    ) ];
+    )];
 
     // Printing
     const Printing = () => {
@@ -399,7 +399,6 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                     initialState={props?.initialState ? props?.initialState : {pagination: {paginationModel: {pageSize: 15}}}}
                     slots={props?.slots ? props?.slots : {toolbar: actions || toolbar || customToolbar ? CustomToolbar : null}}
                     getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "")}
-                    { ...(invisibility ? {columnVisibilityModel: invisibility.reduce((prev: any, key: string) => ({ ...prev, [key]: false}), {}) } : {}) }
                 />
             </Box>
             

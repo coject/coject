@@ -22,8 +22,8 @@ export const DskHeader = ({ logo, icon, search, localeText, languages, defaultLa
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: classes.dskHeader },
             React.createElement(Box, { className: `${classes.dskLogo} ${!sidebar ? classes.closedDskLogo : ""}` }, sidebar
-                ? React.createElement("img", { onClick: () => window.location.href = "/", src: logo, alt: "Logo" })
-                : React.createElement("img", { onClick: () => window.location.href = "/", src: icon, alt: "Logo" })),
+                ? React.createElement("img", { className: "lgLogoImage", onClick: () => window.location.href = "/", src: logo, alt: "Logo" })
+                : React.createElement("img", { className: "smLogoImage", onClick: () => window.location.href = "/", src: icon, alt: "Logo" })),
             React.createElement(Box, { className: `${classes.dskMenu} ${!sidebar ? classes.closedDskMenu : ""}` },
                 React.createElement(List, { className: classes.menuList },
                     React.createElement(ListItem, null,

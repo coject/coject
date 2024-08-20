@@ -7,7 +7,7 @@ import { Box, Grid, FormHelperText, TextField, Typography, IconButton } from "@m
 import { Icons, Modal } from "../index";
 // Styles
 import useStyles from "./theme";
-export const Upload = ({ value, name, multiple, onChange, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, error }) => {
+export const Upload = ({ value, name, multiple, onChange, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, validateText, error }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [files, setFiles] = useState([]);
@@ -80,7 +80,7 @@ export const Upload = ({ value, name, multiple, onChange, onRemove, required, la
     // Error Handling
     useEffect(() => {
         if (required)
-            (!!files?.length) ? clearErrors(name || "default") : setError(name || "default", { type: "required", message: "This Field Is Required" });
+            (!!initValue?.length || !!files?.length) ? clearErrors(name || "default") : setError(name || "default", { type: "required", message: "This Field Is Required" });
     }, [required, files]);
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: classes.root },
@@ -121,6 +121,6 @@ export const Upload = ({ value, name, multiple, onChange, onRemove, required, la
                         React.createElement(Box, { className: classes.download },
                             React.createElement(IconButton, { href: viewer, download: "file" },
                                 React.createElement(Icons.SaveOutlined, null))))),
-            (errors && errors[name || "default"]) ? React.createElement(FormHelperText, null, "This Field Is Required") : ((error?.errors && error?.errors[name || "default"]) ? React.createElement(FormHelperText, null, error.errors[name || "default"][0]) : ""))));
+            (errors && errors[name || "default"]) ? React.createElement(FormHelperText, null, validateText ? validateText : "This Field Is Required") : ((error?.errors && error?.errors[name || "default"]) ? React.createElement(FormHelperText, null, error.errors[name || "default"][0]) : ""))));
 };
 //# sourceMappingURL=index.js.map

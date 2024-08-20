@@ -12,6 +12,7 @@ type iUpload = Omit<TextFieldProps, "onChange"> & {
     value?: any | any[];
     imageHeight?: number;
     placeholder?: string;
+    validateText?: string;
     required?: boolean | string;
     imageWidth?: {
         lg?: number;

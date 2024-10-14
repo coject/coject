@@ -105,7 +105,7 @@ export const Upload: FC<iUpload> = ({ value, name, multiple, onChange, onRemove,
 
     return (
         <React.Fragment>
-            <Box className={classes.root}>
+            <Box className={`${classes.root} coject_upload`}>
                 {label && <label>{label}</label>}
                 <Box className={`${classes.container} ${((errors && errors[name || "default"]) || (error?.errors && error?.errors[name || "default"])) ? classes.error : ""}`}>
                     <Grid spacing={1} container>

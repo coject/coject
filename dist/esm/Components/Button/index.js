@@ -6,7 +6,7 @@ import useStyles from "./theme";
 export const Button = ({ ...props }) => {
     const { classes } = useStyles();
     return (React.createElement(React.Fragment, null,
-        React.createElement(Box, { className: classes.root },
+        React.createElement(Box, { className: `${classes.root} coject_button` },
             React.createElement(MuiButton, { ...props }, props?.children))));
 };
 //# sourceMappingURL=index.js.map

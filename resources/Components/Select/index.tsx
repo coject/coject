@@ -115,7 +115,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
 
     return (
         <React.Fragment>
-            <Box className={classes.root}>
+            <Box className={`${classes.root} coject_select`}>
                 {control ?
                     <Controller name={name || "default"} control={control} render={() => {
                         return (

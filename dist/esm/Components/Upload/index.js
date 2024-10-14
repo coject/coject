@@ -83,7 +83,7 @@ export const Upload = ({ value, name, multiple, onChange, onRemove, required, la
             (!!initValue?.length || !!files?.length) ? clearErrors(name || "default") : setError(name || "default", { type: "required", message: "This Field Is Required" });
     }, [required, files]);
     return (React.createElement(React.Fragment, null,
-        React.createElement(Box, { className: classes.root },
+        React.createElement(Box, { className: `${classes.root} coject_upload` },
             label && React.createElement("label", null, label),
             React.createElement(Box, { className: `${classes.container} ${((errors && errors[name || "default"]) || (error?.errors && error?.errors[name || "default"])) ? classes.error : ""}` },
                 React.createElement(Grid, { spacing: 1, container: true },

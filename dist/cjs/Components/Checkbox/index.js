@@ -66,7 +66,7 @@ const Checkbox = ({ name, value, label, onChange, trueValue, falseValue, helperT
         }
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(material_1.Box, { className: `${classes.root} ${error ? classes.rootError : ""}` },
+        react_1.default.createElement(material_1.Box, { className: `${classes.root} ${error ? classes.rootError : ""} coject_checkbox` },
             react_1.default.createElement(material_1.FormControlLabel, { control: react_1.default.createElement(material_1.Checkbox, { name: name || "default", value: checkedValue, checked: checkedValue, onChange: changeValue, ...props }), label: label ? label : (name || "default") }),
             helperText && react_1.default.createElement(material_1.FormHelperText, { className: classes.error }, helperText))));
 };

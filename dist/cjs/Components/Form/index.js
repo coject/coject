@@ -39,7 +39,7 @@ const Form = ({ mode, id, getForm, schema, dataSource, localeText, className, st
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_hook_form_1.FormProvider, { ...Methods },
-            react_1.default.createElement("form", { id: id, className: `${classes.root} ${className}`, onSubmit: Methods.handleSubmit(onFormSubmit), ...props },
+            react_1.default.createElement("form", { id: id, className: `${classes.root} ${className} coject_form`, onSubmit: Methods.handleSubmit(onFormSubmit), ...props },
                 schema &&
                     react_1.default.createElement(material_1.Grid, { container: true, spacing: 2 },
                         schema && !!schema?.length && schema.map((field, index) => {

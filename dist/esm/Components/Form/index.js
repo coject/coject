@@ -33,7 +33,7 @@ export const Form = ({ mode, id, getForm, schema, dataSource, localeText, classN
     };
     return (React.createElement(React.Fragment, null,
         React.createElement(FormProvider, { ...Methods },
-            React.createElement("form", { id: id, className: `${classes.root} ${className}`, onSubmit: Methods.handleSubmit(onFormSubmit), ...props },
+            React.createElement("form", { id: id, className: `${classes.root} ${className} coject_form`, onSubmit: Methods.handleSubmit(onFormSubmit), ...props },
                 schema &&
                     React.createElement(Grid, { container: true, spacing: 2 },
                         schema && !!schema?.length && schema.map((field, index) => {

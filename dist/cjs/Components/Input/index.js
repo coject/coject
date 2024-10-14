@@ -105,7 +105,7 @@ const Input = ({ name, value, helperText, validation, required, onChange, ...pro
         }
     }, [inputValue, required, name, setError, clearErrors, validation]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(material_1.Box, { className: classes.root },
+        react_1.default.createElement(material_1.Box, { className: `${classes.root} coject_input` },
             react_1.default.createElement(material_1.TextField, { name: name || "default", value: inputValue, onChange: changeValue, label: props?.label ? props?.label : (name || "default"), ...props }, props?.children),
             (helperText || (control && errors && errors[name || "default"])) && react_1.default.createElement(material_1.FormHelperText, { className: classes.error },
                 control && errors && errors[name || "default"]?.message,

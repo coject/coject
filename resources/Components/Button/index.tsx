@@ -11,7 +11,7 @@ export const Button: FC<ButtonProps> = ({ ...props }) => {
 
     return (
         <React.Fragment>
-            <Box className={classes.root}>
+            <Box className={`${classes.root} coject_button`}>
                 <MuiButton {...props}>{props?.children}</MuiButton>
             </Box>
         </React.Fragment>

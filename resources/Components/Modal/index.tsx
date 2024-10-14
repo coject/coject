@@ -22,7 +22,7 @@ export const Modal: FC<iModal> = ({ open, setOpen, title, ...props }) => {
     return (
         <React.Fragment>
             <MuiModal open={open} {...props}>
-                <Box className={classes.root}>
+                <Box className={`${classes.root} coject_modal`}>
                     <Box className={classes.header}>
                         <Typography variant={"h5"}>{title ? title : "Modal Title"}</Typography>
                         <IconButton onClick={() => setOpen(false)}><Icons.Close /></IconButton>

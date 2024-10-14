@@ -52,7 +52,7 @@ export const Select = ({ name, value, label, callback, staticData, helperText, d
         // eslint-disable-next-line
     }, [callback, staticData]);
     return (React.createElement(React.Fragment, null,
-        React.createElement(Box, { className: classes.root },
+        React.createElement(Box, { className: `${classes.root} coject_select` },
             control ?
                 React.createElement(Controller, { name: name || "default", control: control, render: () => {
                         return (React.createElement(Autocomplete, { options: selectData, multiple: multiple, ...props, value: !!selectData?.length && selectedValue

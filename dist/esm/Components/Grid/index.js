@@ -204,27 +204,27 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, s
         return (React.createElement(GridToolbarContainer, null,
             toolbar &&
                 React.createElement(React.Fragment, null,
-                    toolbar instanceof Array ? (toolbar?.includes("visibility") && React.createElement(GridToolbarColumnsButton, null)) : React.createElement(GridToolbarColumnsButton, null),
-                    toolbar instanceof Array ? (toolbar?.includes("filter") && React.createElement(GridToolbarFilterButton, null)) : React.createElement(GridToolbarFilterButton, null),
-                    toolbar instanceof Array ? (toolbar?.includes("export") && React.createElement(GridToolbarExport, { csvOptions: { utf8WithBom: true }, printOptions: { disableToolbarButton: true } })) : React.createElement(GridToolbarExport, { csvOptions: { utf8WithBom: true }, printOptions: { disableToolbarButton: true } }),
-                    toolbar instanceof Array ? (toolbar?.includes("print") && React.createElement(Button, { onClick: Printing },
+                    toolbar instanceof Array ? (toolbar?.includes("visibility") && React.createElement(GridToolbarColumnsButton, { slotProps: { button: { id: "grid_visibility" } } })) : React.createElement(GridToolbarColumnsButton, { slotProps: { button: { id: "grid_visibility" } } }),
+                    toolbar instanceof Array ? (toolbar?.includes("filter") && React.createElement(GridToolbarFilterButton, { slotProps: { button: { id: "grid_filter" } } })) : React.createElement(GridToolbarFilterButton, { slotProps: { button: { id: "grid_filter" } } }),
+                    toolbar instanceof Array ? (toolbar?.includes("export") && React.createElement(GridToolbarExport, { slotProps: { button: { id: "grid_export" } }, csvOptions: { utf8WithBom: true }, printOptions: { disableToolbarButton: true } })) : React.createElement(GridToolbarExport, { slotProps: { button: { id: "grid_export" } }, csvOptions: { utf8WithBom: true }, printOptions: { disableToolbarButton: true } }),
+                    toolbar instanceof Array ? (toolbar?.includes("print") && React.createElement(Button, { id: "grid_print", onClick: Printing },
                         React.createElement(Icons.SimCardDownloadOutlined, null),
-                        localeText?.toolbarExportPrint || "Print")) : React.createElement(Button, { onClick: Printing },
+                        localeText?.toolbarExportPrint || "Print")) : React.createElement(Button, { id: "grid_print", onClick: Printing },
                         React.createElement(Icons.SimCardDownloadOutlined, null),
                         localeText?.toolbarExportPrint || "Print")),
             customToolbar && customToolbar(gridData),
             actions && (actions instanceof Array
-                ? (actions?.includes("add") && React.createElement(Button, { onClick: () => setAddModal(true), type: "button" },
+                ? (actions?.includes("add") && React.createElement(Button, { className: 'grid_create_button', onClick: () => setAddModal(true), type: "button" },
                     React.createElement(Icons.Add, null),
                     " ",
                     (localeText && localeText?.toolbarNew) || "Add New"))
-                : React.createElement(Button, { onClick: () => setAddModal(true), type: "button" },
+                : React.createElement(Button, { className: 'grid_create_button', onClick: () => setAddModal(true), type: "button" },
                     React.createElement(Icons.Add, null),
                     " ",
                     (localeText && localeText?.toolbarNew) || "Add New"))));
     };
     return (React.createElement(React.Fragment, null,
-        React.createElement(Modal, { title: localeText?.modalAddTitle || "Add New Item", open: addModal, setOpen: setAddModal },
+        React.createElement(Modal, { className: "grid_create_modal", title: localeText?.modalAddTitle || "Add New Item", open: addModal, setOpen: setAddModal },
             React.createElement(Form, { dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create", noRequest: (noRequest || noAddRequest) && !!dataSource, ...(formInvisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
                     onAddSubmit && onAddSubmit(data);
                     !!staticData && setAddModal(false);
@@ -232,7 +232,7 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, s
                     setCallData(!callData);
                     onAddCallback && onAddCallback(data);
                 }, setModal: setAddModal, ...(localeText?.modalAddButton ? { localeText: { submitButton: localeText?.modalAddButton } } : {}) }, addFormChildren && addFormChildren)),
-        React.createElement(Modal, { title: localeText?.modalEditTitle || "Update Item", open: editModal, setOpen: setEditModal },
+        React.createElement(Modal, { className: "grid_update_modal", title: localeText?.modalEditTitle || "Update Item", open: editModal, setOpen: setEditModal },
             React.createElement(Form, { dataSource: dataSource, staticData: selectedData, schema: schema ? schema : defaultSchema, mode: "update", noRequest: (noRequest || noEditRequest) && !!dataSource, ...(customKey ? { customKey: customKey } : {}), ...(formInvisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
                     onEditSubmit && onEditSubmit(data);
                     !!staticData?.length && setEditModal(false);
@@ -240,7 +240,7 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, s
                     setCallData(!callData);
                     onEditCallback && onEditCallback(data);
                 }, setModal: setEditModal, ...(localeText?.modalEditButton ? { localeText: { submitButton: localeText?.modalEditButton } } : {}) }, editFormChildren && editFormChildren(selectedData))),
-        React.createElement(Modal, { title: localeText?.modalDeleteTitle || "Delete Item", open: deleteModal, setOpen: setDeleteModal },
+        React.createElement(Modal, { className: "grid_delete_modal", title: localeText?.modalDeleteTitle || "Delete Item", open: deleteModal, setOpen: setDeleteModal },
             React.createElement(MuiGrid, { container: true, spacing: 2 },
                 React.createElement(MuiGrid, { item: true, md: 12, lg: 12 },
                     React.createElement(Typography, { color: theme => theme.palette.error.main }, localeText?.modalDeleteMessage || "Are You Sure To Delete This Item?")),
@@ -259,7 +259,7 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, s
                                 }).then();
                             }
                         } }, localeText?.modalDeleteButton || "Delete")))),
-        React.createElement(Box, { className: classes.root },
+        React.createElement(Box, { className: `${classes.root} coject_grid` },
             React.createElement(DataGrid, { apiRef: apiRef, className: !gridData?.length ? classes.empty : "", ...(localeText ? { localeText: localeText } : {}), ...(customKey ? { getRowId: (row) => row[customKey] } : {}), rows: gridData, columns: columnsSchema, density: "compact", ...props, pageSizeOptions: props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100], slotProps: {
                     ...(props?.slotProps ? props.slotProps : {}),
                     ...((localeText?.paginationLabel) || (localeText?.paginationLabelOf) ? {

@@ -104,7 +104,7 @@ export const Input: FC<iInput> = ({ name, value, helperText, validation, require
 
     return (
         <React.Fragment>
-            <Box className={classes.root}>
+            <Box className={`${classes.root} coject_input`}>
                 <TextField name={name || "default"} value={inputValue} onChange={changeValue} label={props?.label ? props?.label : (name || "default")} {...props}>
                     {props?.children}
                 </TextField>

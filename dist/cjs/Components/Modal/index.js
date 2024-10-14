@@ -39,7 +39,7 @@ const Modal = ({ open, setOpen, title, ...props }) => {
     const { classes } = (0, theme_1.default)();
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Modal, { open: open, ...props },
-            react_1.default.createElement(material_1.Box, { className: classes.root },
+            react_1.default.createElement(material_1.Box, { className: `${classes.root} coject_modal` },
                 react_1.default.createElement(material_1.Box, { className: classes.header },
                     react_1.default.createElement(material_1.Typography, { variant: "h5" }, title ? title : "Modal Title"),
                     react_1.default.createElement(material_1.IconButton, { onClick: () => setOpen(false) },

@@ -81,7 +81,7 @@ const Select = ({ name, value, label, callback, staticData, helperText, dataSour
         // eslint-disable-next-line
     }, [callback, staticData]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(material_1.Box, { className: classes.root },
+        react_1.default.createElement(material_1.Box, { className: `${classes.root} coject_select` },
             control ?
                 react_1.default.createElement(react_hook_form_1.Controller, { name: name || "default", control: control, render: () => {
                         return (react_1.default.createElement(material_1.Autocomplete, { options: selectData, multiple: multiple, ...props, value: !!selectData?.length && selectedValue

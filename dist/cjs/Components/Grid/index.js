@@ -233,27 +233,27 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, staticDa
         return (react_1.default.createElement(x_data_grid_1.GridToolbarContainer, null,
             toolbar &&
                 react_1.default.createElement(react_1.default.Fragment, null,
-                    toolbar instanceof Array ? (toolbar?.includes("visibility") && react_1.default.createElement(x_data_grid_1.GridToolbarColumnsButton, null)) : react_1.default.createElement(x_data_grid_1.GridToolbarColumnsButton, null),
-                    toolbar instanceof Array ? (toolbar?.includes("filter") && react_1.default.createElement(x_data_grid_1.GridToolbarFilterButton, null)) : react_1.default.createElement(x_data_grid_1.GridToolbarFilterButton, null),
-                    toolbar instanceof Array ? (toolbar?.includes("export") && react_1.default.createElement(x_data_grid_1.GridToolbarExport, { csvOptions: { utf8WithBom: true }, printOptions: { disableToolbarButton: true } })) : react_1.default.createElement(x_data_grid_1.GridToolbarExport, { csvOptions: { utf8WithBom: true }, printOptions: { disableToolbarButton: true } }),
-                    toolbar instanceof Array ? (toolbar?.includes("print") && react_1.default.createElement(material_1.Button, { onClick: Printing },
+                    toolbar instanceof Array ? (toolbar?.includes("visibility") && react_1.default.createElement(x_data_grid_1.GridToolbarColumnsButton, { slotProps: { button: { id: "grid_visibility" } } })) : react_1.default.createElement(x_data_grid_1.GridToolbarColumnsButton, { slotProps: { button: { id: "grid_visibility" } } }),
+                    toolbar instanceof Array ? (toolbar?.includes("filter") && react_1.default.createElement(x_data_grid_1.GridToolbarFilterButton, { slotProps: { button: { id: "grid_filter" } } })) : react_1.default.createElement(x_data_grid_1.GridToolbarFilterButton, { slotProps: { button: { id: "grid_filter" } } }),
+                    toolbar instanceof Array ? (toolbar?.includes("export") && react_1.default.createElement(x_data_grid_1.GridToolbarExport, { slotProps: { button: { id: "grid_export" } }, csvOptions: { utf8WithBom: true }, printOptions: { disableToolbarButton: true } })) : react_1.default.createElement(x_data_grid_1.GridToolbarExport, { slotProps: { button: { id: "grid_export" } }, csvOptions: { utf8WithBom: true }, printOptions: { disableToolbarButton: true } }),
+                    toolbar instanceof Array ? (toolbar?.includes("print") && react_1.default.createElement(material_1.Button, { id: "grid_print", onClick: Printing },
                         react_1.default.createElement(index_1.Icons.SimCardDownloadOutlined, null),
-                        localeText?.toolbarExportPrint || "Print")) : react_1.default.createElement(material_1.Button, { onClick: Printing },
+                        localeText?.toolbarExportPrint || "Print")) : react_1.default.createElement(material_1.Button, { id: "grid_print", onClick: Printing },
                         react_1.default.createElement(index_1.Icons.SimCardDownloadOutlined, null),
                         localeText?.toolbarExportPrint || "Print")),
             customToolbar && customToolbar(gridData),
             actions && (actions instanceof Array
-                ? (actions?.includes("add") && react_1.default.createElement(material_1.Button, { onClick: () => setAddModal(true), type: "button" },
+                ? (actions?.includes("add") && react_1.default.createElement(material_1.Button, { className: 'grid_create_button', onClick: () => setAddModal(true), type: "button" },
                     react_1.default.createElement(index_1.Icons.Add, null),
                     " ",
                     (localeText && localeText?.toolbarNew) || "Add New"))
-                : react_1.default.createElement(material_1.Button, { onClick: () => setAddModal(true), type: "button" },
+                : react_1.default.createElement(material_1.Button, { className: 'grid_create_button', onClick: () => setAddModal(true), type: "button" },
                     react_1.default.createElement(index_1.Icons.Add, null),
                     " ",
                     (localeText && localeText?.toolbarNew) || "Add New"))));
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(index_1.Modal, { title: localeText?.modalAddTitle || "Add New Item", open: addModal, setOpen: setAddModal },
+        react_1.default.createElement(index_1.Modal, { className: "grid_create_modal", title: localeText?.modalAddTitle || "Add New Item", open: addModal, setOpen: setAddModal },
             react_1.default.createElement(index_1.Form, { dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create", noRequest: (noRequest || noAddRequest) && !!dataSource, ...(formInvisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
                     onAddSubmit && onAddSubmit(data);
                     !!staticData && setAddModal(false);
@@ -261,7 +261,7 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, staticDa
                     setCallData(!callData);
                     onAddCallback && onAddCallback(data);
                 }, setModal: setAddModal, ...(localeText?.modalAddButton ? { localeText: { submitButton: localeText?.modalAddButton } } : {}) }, addFormChildren && addFormChildren)),
-        react_1.default.createElement(index_1.Modal, { title: localeText?.modalEditTitle || "Update Item", open: editModal, setOpen: setEditModal },
+        react_1.default.createElement(index_1.Modal, { className: "grid_update_modal", title: localeText?.modalEditTitle || "Update Item", open: editModal, setOpen: setEditModal },
             react_1.default.createElement(index_1.Form, { dataSource: dataSource, staticData: selectedData, schema: schema ? schema : defaultSchema, mode: "update", noRequest: (noRequest || noEditRequest) && !!dataSource, ...(customKey ? { customKey: customKey } : {}), ...(formInvisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
                     onEditSubmit && onEditSubmit(data);
                     !!staticData?.length && setEditModal(false);
@@ -269,7 +269,7 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, staticDa
                     setCallData(!callData);
                     onEditCallback && onEditCallback(data);
                 }, setModal: setEditModal, ...(localeText?.modalEditButton ? { localeText: { submitButton: localeText?.modalEditButton } } : {}) }, editFormChildren && editFormChildren(selectedData))),
-        react_1.default.createElement(index_1.Modal, { title: localeText?.modalDeleteTitle || "Delete Item", open: deleteModal, setOpen: setDeleteModal },
+        react_1.default.createElement(index_1.Modal, { className: "grid_delete_modal", title: localeText?.modalDeleteTitle || "Delete Item", open: deleteModal, setOpen: setDeleteModal },
             react_1.default.createElement(material_1.Grid, { container: true, spacing: 2 },
                 react_1.default.createElement(material_1.Grid, { item: true, md: 12, lg: 12 },
                     react_1.default.createElement(material_1.Typography, { color: theme => theme.palette.error.main }, localeText?.modalDeleteMessage || "Are You Sure To Delete This Item?")),
@@ -288,7 +288,7 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, staticDa
                                 }).then();
                             }
                         } }, localeText?.modalDeleteButton || "Delete")))),
-        react_1.default.createElement(material_1.Box, { className: classes.root },
+        react_1.default.createElement(material_1.Box, { className: `${classes.root} coject_grid` },
             react_1.default.createElement(x_data_grid_1.DataGrid, { apiRef: apiRef, className: !gridData?.length ? classes.empty : "", ...(localeText ? { localeText: localeText } : {}), ...(customKey ? { getRowId: (row) => row[customKey] } : {}), rows: gridData, columns: columnsSchema, density: "compact", ...props, pageSizeOptions: props?.pageSizeOptions ? props?.pageSizeOptions : [15, 25, 35, 50, 100], slotProps: {
                     ...(props?.slotProps ? props.slotProps : {}),
                     ...((localeText?.paginationLabel) || (localeText?.paginationLabelOf) ? {

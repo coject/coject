@@ -17,7 +17,7 @@ export const Page: FC<iPage> = ({ title, children }) => {
 
     return (
         <React.Fragment>
-            <Box className={classes.root}>
+            <Box id='coject_page' className={classes.root}>
                 { title &&
                     <Box className={classes.header}>
                         <Typography variant={"h2"}>{title}</Typography>

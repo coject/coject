@@ -6,7 +6,7 @@ import useStyles from "./theme";
 export const Page = ({ title, children }) => {
     const { classes } = useStyles();
     return (React.createElement(React.Fragment, null,
-        React.createElement(Box, { className: classes.root },
+        React.createElement(Box, { id: 'coject_page', className: classes.root },
             title &&
                 React.createElement(Box, { className: classes.header },
                     React.createElement(Typography, { variant: "h2" }, title)),

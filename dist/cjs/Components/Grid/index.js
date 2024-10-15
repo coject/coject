@@ -118,7 +118,7 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, staticDa
     const gridActions = (row) => actions && (actions instanceof Array
         ? actions?.map((label, index) => {
             if (((label === "edit") && (actionsControl?.edit instanceof Function ? actionsControl?.edit(row) : true)) || ((label === "delete") && (actionsControl?.delete instanceof Function ? actionsControl?.delete(row) : true))) {
-                return (react_1.default.createElement(x_data_grid_1.GridActionsCellItem, { key: index, label: label, icon: label === "edit" ? react_1.default.createElement(index_1.Icons.Edit, null) : react_1.default.createElement(index_1.Icons.Delete, null), onClick: () => {
+                return (react_1.default.createElement(x_data_grid_1.GridActionsCellItem, { id: `coject_${label}`, key: index, label: label, icon: label === "edit" ? react_1.default.createElement(index_1.Icons.Edit, null) : react_1.default.createElement(index_1.Icons.Delete, null), onClick: () => {
                         (label === "edit") ? setEditModal(true) : setDeleteModal(true);
                         setSelectedData(row);
                     } }));
@@ -127,8 +127,8 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, staticDa
                 return undefined;
         }).filter((element) => element !== undefined)
         : [
-            (actionsControl?.edit instanceof Function ? actionsControl?.edit(row) : true) ? react_1.default.createElement(x_data_grid_1.GridActionsCellItem, { label: "edit", icon: react_1.default.createElement(index_1.Icons.Edit, null), onClick: () => { setEditModal(true); setSelectedData(row); } }) : react_1.default.createElement(react_1.default.Fragment, null),
-            (actionsControl?.delete instanceof Function ? actionsControl?.delete(row) : true) ? react_1.default.createElement(x_data_grid_1.GridActionsCellItem, { label: "delete", icon: react_1.default.createElement(index_1.Icons.Delete, null), onClick: () => { setDeleteModal(true); setSelectedData(row); } }) : react_1.default.createElement(react_1.default.Fragment, null)
+            (actionsControl?.edit instanceof Function ? actionsControl?.edit(row) : true) ? react_1.default.createElement(x_data_grid_1.GridActionsCellItem, { id: 'coject_edit', label: "edit", icon: react_1.default.createElement(index_1.Icons.Edit, null), onClick: () => { setEditModal(true); setSelectedData(row); } }) : react_1.default.createElement(react_1.default.Fragment, null),
+            (actionsControl?.delete instanceof Function ? actionsControl?.delete(row) : true) ? react_1.default.createElement(x_data_grid_1.GridActionsCellItem, { id: 'coject_delete', label: "delete", icon: react_1.default.createElement(index_1.Icons.Delete, null), onClick: () => { setDeleteModal(true); setSelectedData(row); } }) : react_1.default.createElement(react_1.default.Fragment, null)
         ]);
     // Grid Custom Actions
     const gridCustomActions = (row) => customActions?.map((action, index) => {
@@ -243,11 +243,11 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, staticDa
                         localeText?.toolbarExportPrint || "Print")),
             customToolbar && customToolbar(gridData),
             actions && (actions instanceof Array
-                ? (actions?.includes("add") && react_1.default.createElement(material_1.Button, { className: 'grid_create_button', onClick: () => setAddModal(true), type: "button" },
+                ? (actions?.includes("add") && react_1.default.createElement(material_1.Button, { className: 'grid_create_button', id: 'coject_add', onClick: () => setAddModal(true), type: "button" },
                     react_1.default.createElement(index_1.Icons.Add, null),
                     " ",
                     (localeText && localeText?.toolbarNew) || "Add New"))
-                : react_1.default.createElement(material_1.Button, { className: 'grid_create_button', onClick: () => setAddModal(true), type: "button" },
+                : react_1.default.createElement(material_1.Button, { className: 'grid_create_button', id: 'coject_add', onClick: () => setAddModal(true), type: "button" },
                     react_1.default.createElement(index_1.Icons.Add, null),
                     " ",
                     (localeText && localeText?.toolbarNew) || "Add New"))));

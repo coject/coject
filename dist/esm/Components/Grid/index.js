@@ -89,7 +89,7 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, s
     const gridActions = (row) => actions && (actions instanceof Array
         ? actions?.map((label, index) => {
             if (((label === "edit") && (actionsControl?.edit instanceof Function ? actionsControl?.edit(row) : true)) || ((label === "delete") && (actionsControl?.delete instanceof Function ? actionsControl?.delete(row) : true))) {
-                return (React.createElement(GridActionsCellItem, { key: index, label: label, icon: label === "edit" ? React.createElement(Icons.Edit, null) : React.createElement(Icons.Delete, null), onClick: () => {
+                return (React.createElement(GridActionsCellItem, { id: `coject_${label}`, key: index, label: label, icon: label === "edit" ? React.createElement(Icons.Edit, null) : React.createElement(Icons.Delete, null), onClick: () => {
                         (label === "edit") ? setEditModal(true) : setDeleteModal(true);
                         setSelectedData(row);
                     } }));
@@ -98,8 +98,8 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, s
                 return undefined;
         }).filter((element) => element !== undefined)
         : [
-            (actionsControl?.edit instanceof Function ? actionsControl?.edit(row) : true) ? React.createElement(GridActionsCellItem, { label: "edit", icon: React.createElement(Icons.Edit, null), onClick: () => { setEditModal(true); setSelectedData(row); } }) : React.createElement(React.Fragment, null),
-            (actionsControl?.delete instanceof Function ? actionsControl?.delete(row) : true) ? React.createElement(GridActionsCellItem, { label: "delete", icon: React.createElement(Icons.Delete, null), onClick: () => { setDeleteModal(true); setSelectedData(row); } }) : React.createElement(React.Fragment, null)
+            (actionsControl?.edit instanceof Function ? actionsControl?.edit(row) : true) ? React.createElement(GridActionsCellItem, { id: 'coject_edit', label: "edit", icon: React.createElement(Icons.Edit, null), onClick: () => { setEditModal(true); setSelectedData(row); } }) : React.createElement(React.Fragment, null),
+            (actionsControl?.delete instanceof Function ? actionsControl?.delete(row) : true) ? React.createElement(GridActionsCellItem, { id: 'coject_delete', label: "delete", icon: React.createElement(Icons.Delete, null), onClick: () => { setDeleteModal(true); setSelectedData(row); } }) : React.createElement(React.Fragment, null)
         ]);
     // Grid Custom Actions
     const gridCustomActions = (row) => customActions?.map((action, index) => {
@@ -214,11 +214,11 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, s
                         localeText?.toolbarExportPrint || "Print")),
             customToolbar && customToolbar(gridData),
             actions && (actions instanceof Array
-                ? (actions?.includes("add") && React.createElement(Button, { className: 'grid_create_button', onClick: () => setAddModal(true), type: "button" },
+                ? (actions?.includes("add") && React.createElement(Button, { className: 'grid_create_button', id: 'coject_add', onClick: () => setAddModal(true), type: "button" },
                     React.createElement(Icons.Add, null),
                     " ",
                     (localeText && localeText?.toolbarNew) || "Add New"))
-                : React.createElement(Button, { className: 'grid_create_button', onClick: () => setAddModal(true), type: "button" },
+                : React.createElement(Button, { className: 'grid_create_button', id: 'coject_add', onClick: () => setAddModal(true), type: "button" },
                     React.createElement(Icons.Add, null),
                     " ",
                     (localeText && localeText?.toolbarNew) || "Add New"))));

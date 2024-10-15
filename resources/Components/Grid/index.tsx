@@ -181,7 +181,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
     const gridActions = (row: any) => actions && ( actions instanceof Array
         ? actions?.map((label: ("add" | "edit" | "delete"), index: any) => {
             if (((label === "edit") && (actionsControl?.edit instanceof Function ? actionsControl?.edit(row) : true)) || ((label === "delete") && (actionsControl?.delete instanceof Function ? actionsControl?.delete(row) : true))) { return (
-                <GridActionsCellItem key={index} label={label} icon={label === "edit" ? <Icons.Edit /> : <Icons.Delete />}
+                <GridActionsCellItem id={`coject_${label}`} key={index} label={label} icon={label === "edit" ? <Icons.Edit /> : <Icons.Delete />}
                     onClick={() => {
                         (label === "edit") ? setEditModal(true) : setDeleteModal(true);
                         setSelectedData(row);
@@ -190,8 +190,8 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
             ) } else return undefined;
         }).filter(( element ) => element !== undefined)
         : [
-            (actionsControl?.edit instanceof Function ? actionsControl?.edit(row) : true) ? <GridActionsCellItem label={"edit"} icon={<Icons.Edit />} onClick={() => { setEditModal(true); setSelectedData(row); }} /> : <></>,
-            (actionsControl?.delete instanceof Function ? actionsControl?.delete(row) : true) ? <GridActionsCellItem label={"delete"} icon={<Icons.Delete />} onClick={() => { setDeleteModal(true); setSelectedData(row); }} /> : <></>
+            (actionsControl?.edit instanceof Function ? actionsControl?.edit(row) : true) ? <GridActionsCellItem id='coject_edit' label={"edit"} icon={<Icons.Edit />} onClick={() => { setEditModal(true); setSelectedData(row); }} /> : <></>,
+            (actionsControl?.delete instanceof Function ? actionsControl?.delete(row) : true) ? <GridActionsCellItem id='coject_delete' label={"delete"} icon={<Icons.Delete />} onClick={() => { setDeleteModal(true); setSelectedData(row); }} /> : <></>
         ]
     );
 
@@ -312,8 +312,8 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                 } 
                 { customToolbar && customToolbar(gridData) }
                 { actions && ( actions instanceof Array
-                    ? ( actions?.includes("add") && <Button className={'grid_create_button'} onClick={() => setAddModal(true)} type={"button"}><Icons.Add /> {(localeText && localeText?.toolbarNew) || "Add New"}</Button> )
-                    : <Button className={'grid_create_button'} onClick={() => setAddModal(true)} type={"button"}><Icons.Add /> {(localeText && localeText?.toolbarNew) || "Add New"}</Button> )
+                    ? ( actions?.includes("add") && <Button className={'grid_create_button'} id='coject_add' onClick={() => setAddModal(true)} type={"button"}><Icons.Add /> {(localeText && localeText?.toolbarNew) || "Add New"}</Button> )
+                    : <Button className={'grid_create_button'} id='coject_add' onClick={() => setAddModal(true)} type={"button"}><Icons.Add /> {(localeText && localeText?.toolbarNew) || "Add New"}</Button> )
                 }
             </GridToolbarContainer>
         );

@@ -12,7 +12,7 @@ const theme_1 = __importDefault(require("./theme"));
 const Page = ({ title, children }) => {
     const { classes } = (0, theme_1.default)();
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(material_1.Box, { className: classes.root },
+        react_1.default.createElement(material_1.Box, { id: 'coject_page', className: classes.root },
             title &&
                 react_1.default.createElement(material_1.Box, { className: classes.header },
                     react_1.default.createElement(material_1.Typography, { variant: "h2" }, title)),

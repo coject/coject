@@ -56,7 +56,7 @@ export const Switch: FC<iSwitch> = ({ name, value, onChange, trueValue, falseVal
     return (
         <React.Fragment>
             <Box className={`${classes.root} ${error ? classes.rootError : ""} coject_switch`}>
-                <FormControlLabel control={<MuiSwitch name={name || "default"} value={checkedValue} checked={checkedValue} onChange={changeValue} {...props} />} label={label ? label : (name || "default")} />
+                <FormControlLabel control={<MuiSwitch inputProps={{autoComplete: 'off'}} name={name || "default"} value={checkedValue} checked={checkedValue} onChange={changeValue} {...props} />} label={label ? label : (name || "default")} />
                 { helperText && <FormHelperText className={classes.error}>{helperText}</FormHelperText> }
             </Box>
         </React.Fragment>

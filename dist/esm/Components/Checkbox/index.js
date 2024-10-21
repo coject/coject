@@ -38,7 +38,7 @@ export const Checkbox = ({ name, value, label, onChange, trueValue, falseValue, 
     };
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: `${classes.root} ${error ? classes.rootError : ""} coject_checkbox` },
-            React.createElement(FormControlLabel, { control: React.createElement(MuiCheckbox, { name: name || "default", value: checkedValue, checked: checkedValue, onChange: changeValue, ...props }), label: label ? label : (name || "default") }),
+            React.createElement(FormControlLabel, { control: React.createElement(MuiCheckbox, { inputProps: { autoComplete: 'off' }, name: name || "default", value: checkedValue, checked: checkedValue, onChange: changeValue, ...props }), label: label ? label : (name || "default") }),
             helperText && React.createElement(FormHelperText, { className: classes.error }, helperText))));
 };
 //# sourceMappingURL=index.js.map

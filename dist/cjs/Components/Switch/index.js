@@ -67,7 +67,7 @@ const Switch = ({ name, value, onChange, trueValue, falseValue, label, helperTex
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: `${classes.root} ${error ? classes.rootError : ""} coject_switch` },
-            react_1.default.createElement(material_1.FormControlLabel, { control: react_1.default.createElement(material_1.Switch, { name: name || "default", value: checkedValue, checked: checkedValue, onChange: changeValue, ...props }), label: label ? label : (name || "default") }),
+            react_1.default.createElement(material_1.FormControlLabel, { control: react_1.default.createElement(material_1.Switch, { inputProps: { autoComplete: 'off' }, name: name || "default", value: checkedValue, checked: checkedValue, onChange: changeValue, ...props }), label: label ? label : (name || "default") }),
             helperText && react_1.default.createElement(material_1.FormHelperText, { className: classes.error }, helperText))));
 };
 exports.Switch = Switch;

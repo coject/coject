@@ -105,7 +105,7 @@ export const Form: FC<iForm> = ({ mode, id, getForm, schema, dataSource, localeT
     return (
         <React.Fragment>
             <FormProvider {...Methods}>
-                <form id={id} className={`${classes.root} ${className} coject_form`} onSubmit={Methods.handleSubmit(onFormSubmit)} {...props}>
+                <form id={id} className={`${classes.root} ${className} coject_form`} autoComplete="off" onSubmit={Methods.handleSubmit(onFormSubmit)} {...props}>
                     { schema &&
                         <Grid container spacing={2}>
                             { schema && !!schema?.length && schema.map((field: any, index: number) => {

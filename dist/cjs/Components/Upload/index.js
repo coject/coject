@@ -110,7 +110,7 @@ const Upload = ({ value, name, multiple, onChange, onRemove, required, label, im
     (0, react_1.useEffect)(() => {
         if (required)
             (!!initValue?.length || !!files?.length) ? clearErrors(name || "default") : setError(name || "default", { type: "required", message: "This Field Is Required" });
-    }, [required, files]);
+    }, [required, files, initValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: `${classes.root} coject_upload` },
             label && react_1.default.createElement("label", null, label),
@@ -140,7 +140,7 @@ const Upload = ({ value, name, multiple, onChange, onRemove, required, label, im
                             react_1.default.createElement(material_1.Box, { className: classes.inputContainer, style: { height: imageHeight ? `${imageHeight}px` : "80px" } },
                                 react_1.default.createElement(index_1.Icons.BackupOutlined, null),
                                 react_1.default.createElement(material_1.Typography, null, placeholder ? placeholder : "Upload Your Files"),
-                                react_1.default.createElement(material_1.TextField, { name: name || "default", type: "file", onChange: fileChange, ...(disabled ? { disabled } : {}), inputProps: { multiple: multiple } }))))),
+                                react_1.default.createElement(material_1.TextField, { autoComplete: "off", name: name || "default", type: "file", onChange: fileChange, ...(disabled ? { disabled } : {}), inputProps: { multiple: multiple } }))))),
             viewer &&
                 react_1.default.createElement(index_1.Modal, { open: !!viewer, setOpen: setViewer, title: "File Preview" },
                     react_1.default.createElement(material_1.Box, { className: classes.file },

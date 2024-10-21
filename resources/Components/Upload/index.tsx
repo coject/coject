@@ -101,7 +101,7 @@ export const Upload: FC<iUpload> = ({ value, name, multiple, onChange, onRemove,
     // Error Handling
     useEffect(() => {
         if (required) (!!initValue?.length || !!files?.length) ? clearErrors(name || "default") : setError(name || "default", {type: "required", message: "This Field Is Required"});
-    }, [required, files]);
+    }, [required, files, initValue]);
 
     return (
         <React.Fragment>
@@ -142,7 +142,7 @@ export const Upload: FC<iUpload> = ({ value, name, multiple, onChange, onRemove,
                                 <Box className={classes.inputContainer} style={{ height: imageHeight ? `${imageHeight}px` : "80px" }}>
                                     <Icons.BackupOutlined />
                                     <Typography>{placeholder ? placeholder : "Upload Your Files"}</Typography>
-                                    <TextField name={name || "default"} type={"file"} onChange={fileChange} {...(disabled ? {disabled} : {})} inputProps={{multiple: multiple}} />
+                                    <TextField autoComplete="off" name={name || "default"} type={"file"} onChange={fileChange} {...(disabled ? {disabled} : {})} inputProps={{multiple: multiple}} />
                                 </Box>
                             </Grid>
                         }

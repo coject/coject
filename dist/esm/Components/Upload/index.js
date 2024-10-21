@@ -81,7 +81,7 @@ export const Upload = ({ value, name, multiple, onChange, onRemove, required, la
     useEffect(() => {
         if (required)
             (!!initValue?.length || !!files?.length) ? clearErrors(name || "default") : setError(name || "default", { type: "required", message: "This Field Is Required" });
-    }, [required, files]);
+    }, [required, files, initValue]);
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: `${classes.root} coject_upload` },
             label && React.createElement("label", null, label),
@@ -111,7 +111,7 @@ export const Upload = ({ value, name, multiple, onChange, onRemove, required, la
                             React.createElement(Box, { className: classes.inputContainer, style: { height: imageHeight ? `${imageHeight}px` : "80px" } },
                                 React.createElement(Icons.BackupOutlined, null),
                                 React.createElement(Typography, null, placeholder ? placeholder : "Upload Your Files"),
-                                React.createElement(TextField, { name: name || "default", type: "file", onChange: fileChange, ...(disabled ? { disabled } : {}), inputProps: { multiple: multiple } }))))),
+                                React.createElement(TextField, { autoComplete: "off", name: name || "default", type: "file", onChange: fileChange, ...(disabled ? { disabled } : {}), inputProps: { multiple: multiple } }))))),
             viewer &&
                 React.createElement(Modal, { open: !!viewer, setOpen: setViewer, title: "File Preview" },
                     React.createElement(Box, { className: classes.file },

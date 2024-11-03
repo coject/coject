@@ -14,7 +14,8 @@ interface iPage {
 
 export const Page: FC<iPage> = ({ title, children }) => {
     const { classes } = useStyles();
-
+    document.title = localStorage.language === 'en' ? localStorage.projectNameTwo : localStorage.projectNameOne  + ` | ${title}`;
+    
     return (
         <React.Fragment>
             <Box id='coject_page' className={classes.root}>

@@ -11,6 +11,7 @@ const material_1 = require("@mui/material");
 const theme_1 = __importDefault(require("./theme"));
 const Page = ({ title, children }) => {
     const { classes } = (0, theme_1.default)();
+    document.title = localStorage.language === 'en' ? localStorage.projectNameTwo : localStorage.projectNameOne + ` | ${title}`;
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { id: 'coject_page', className: classes.root },
             title &&

@@ -139,7 +139,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
                                     control && setValue(name || "default", multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
                                 }}
                                 renderTags={(tagValue, getTagProps) => tagValue.map((row, index) => (
-                                    <Chip {...getTagProps({ index })} label={customName ? row[`${customName}`] : row.label} disabled={(fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false} />
+                                    <Chip {...getTagProps({ index })} key={index} label={customName ? row[`${customName}`] : row.label} disabled={(fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false} />
                                 ))}
                                 {...(customName ? { getOptionLabel: (option: any) => option[`${customName}`] } : {})}
                                 {...((renderOption || checkboxes) ? {

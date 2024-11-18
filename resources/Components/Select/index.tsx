@@ -56,6 +56,7 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     error?: boolean;
     inputProps?: any;
     staticData?: any;
+    separate?: string;
     required?: boolean;
     renderOption?: any;
     customKey?: string;
@@ -68,7 +69,7 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     disabledOption?: (string | number)[];
 }
 
-export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, value, label, callback, staticData, helperText, dataSource, multiple, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
+export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, value, label, callback, staticData, helperText, dataSource, multiple, separate, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [selectedValue, setSelectedValue] = useState<any>();
@@ -85,8 +86,8 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
     useEffect(() => {
         if ((value || (fixedOption && multiple))) {
             if (fixedOption && multiple) {
-                setSelectedValue([...fixedOption, ...(value ? (multiple ? value : [value]) : [])]);
-                control && setValue(name || "default", [...fixedOption, ...(value ? (multiple ? value : [value]) : [])]);
+                setSelectedValue([...fixedOption, ...(value ? (multiple ? (separate ? value.split(separate) : value) : [value]) : [])]);
+                control && setValue(name || "default", [...fixedOption, ...(value ? (multiple ? (separate ? value.split(separate) : value) : [value]) : [])]);
             } else {
                 setSelectedValue(value);
                 control && setValue(name || "default", value);

@@ -89,8 +89,8 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
                 setSelectedValue([...fixedOption, ...(value ? (multiple ? (separate ? value.split(separate).map((t: any) => Number(t)) : value) : [value]) : [])]);
                 control && setValue(name || "default", [...fixedOption, ...(value ? (multiple ? (separate ? value.split(separate).map((t: any) => Number(t)) : value) : [value]) : [])]);
             } else {
-                setSelectedValue(value);
-                control && setValue(name || "default", value);
+                setSelectedValue((multiple ? (separate ? value.split(separate).map((t: any) => Number(t)) : value) : [value]));
+                control && setValue(name || "default", (multiple ? (separate ? value.split(separate).map((t: any) => Number(t)) : value) : [value]));
             }
         }
     }, [control, name, setValue, value, fixedOption, multiple]);

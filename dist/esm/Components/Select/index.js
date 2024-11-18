@@ -28,8 +28,8 @@ export const Select = ({ name, value, label, callback, staticData, helperText, d
                 control && setValue(name || "default", [...fixedOption, ...(value ? (multiple ? (separate ? value.split(separate).map((t) => Number(t)) : value) : [value]) : [])]);
             }
             else {
-                setSelectedValue((multiple ? (separate ? value.split(separate).map((t) => Number(t)) : value) : [value]));
-                control && setValue(name || "default", (multiple ? (separate ? value.split(separate).map((t) => Number(t)) : value) : [value]));
+                setSelectedValue(separate ? value.split(separate).map((t) => Number(t)) : value);
+                control && setValue(name || "default", (separate ? value.split(separate).map((t) => Number(t)) : value));
             }
         }
     }, [control, name, setValue, value, fixedOption, multiple]);

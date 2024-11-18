@@ -86,8 +86,8 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
     useEffect(() => {
         if ((value || (fixedOption && multiple))) {
             if (fixedOption && multiple) {
-                setSelectedValue([...fixedOption, ...(value ? (multiple ? (separate ? value.split(separate) : value) : [value]) : [])]);
-                control && setValue(name || "default", [...fixedOption, ...(value ? (multiple ? (separate ? value.split(separate) : value) : [value]) : [])]);
+                setSelectedValue([...fixedOption, ...(value ? (multiple ? (separate ? value.split(separate).map((t: any) => Number(t)) : value) : [value]) : [])]);
+                control && setValue(name || "default", [...fixedOption, ...(value ? (multiple ? (separate ? value.split(separate).map((t: any) => Number(t)) : value) : [value]) : [])]);
             } else {
                 setSelectedValue(value);
                 control && setValue(name || "default", value);

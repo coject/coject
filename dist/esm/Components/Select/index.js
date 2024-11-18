@@ -24,8 +24,8 @@ export const Select = ({ name, value, label, callback, staticData, helperText, d
     useEffect(() => {
         if ((value || (fixedOption && multiple))) {
             if (fixedOption && multiple) {
-                setSelectedValue([...fixedOption, ...(value ? (multiple ? (separate ? value.split(separate) : value) : [value]) : [])]);
-                control && setValue(name || "default", [...fixedOption, ...(value ? (multiple ? (separate ? value.split(separate) : value) : [value]) : [])]);
+                setSelectedValue([...fixedOption, ...(value ? (multiple ? (separate ? value.split(separate).map((t) => Number(t)) : value) : [value]) : [])]);
+                control && setValue(name || "default", [...fixedOption, ...(value ? (multiple ? (separate ? value.split(separate).map((t) => Number(t)) : value) : [value]) : [])]);
             }
             else {
                 setSelectedValue(value);

@@ -13,7 +13,9 @@ const useStyles = makeStyles()((theme) => {
             color: theme.palette.secondary.contrastText,
             boxShadow: "0px 10px 30px 0px rgba(82, 63, 105, 0.05);",
             [theme.breakpoints.down('md')]: {
-                justifyContent: "center"
+                gap: "8px",
+                justifyContent: "center",
+                flexDirection: "column-reverse"
             }
         },
         copyRight: {

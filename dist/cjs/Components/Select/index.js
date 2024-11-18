@@ -38,7 +38,7 @@ const material_1 = require("@mui/material");
 const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Select = ({ name, value, label, callback, staticData, helperText, dataSource, multiple, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
+const Select = ({ name, value, label, callback, staticData, helperText, dataSource, multiple, separate, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useFormContext)() || {};
     const [selectedValue, setSelectedValue] = (0, react_1.useState)();
@@ -53,8 +53,8 @@ const Select = ({ name, value, label, callback, staticData, helperText, dataSour
     (0, react_1.useEffect)(() => {
         if ((value || (fixedOption && multiple))) {
             if (fixedOption && multiple) {
-                setSelectedValue([...fixedOption, ...(value ? (multiple ? value : [value]) : [])]);
-                control && setValue(name || "default", [...fixedOption, ...(value ? (multiple ? value : [value]) : [])]);
+                setSelectedValue([...fixedOption, ...(value ? (multiple ? (separate ? value.split(separate) : value) : [value]) : [])]);
+                control && setValue(name || "default", [...fixedOption, ...(value ? (multiple ? (separate ? value.split(separate) : value) : [value]) : [])]);
             }
             else {
                 setSelectedValue(value);

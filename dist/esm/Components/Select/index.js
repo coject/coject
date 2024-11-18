@@ -9,7 +9,7 @@ import { Box, TextField, Autocomplete, Chip, Checkbox, FormHelperText } from '@m
 import { Icons } from "../index";
 // Styles
 import useStyles from "./theme";
-export const Select = ({ name, value, label, callback, staticData, helperText, dataSource, multiple, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
+export const Select = ({ name, value, label, callback, staticData, helperText, dataSource, multiple, separate, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [selectedValue, setSelectedValue] = useState();
@@ -24,8 +24,8 @@ export const Select = ({ name, value, label, callback, staticData, helperText, d
     useEffect(() => {
         if ((value || (fixedOption && multiple))) {
             if (fixedOption && multiple) {
-                setSelectedValue([...fixedOption, ...(value ? (multiple ? value : [value]) : [])]);
-                control && setValue(name || "default", [...fixedOption, ...(value ? (multiple ? value : [value]) : [])]);
+                setSelectedValue([...fixedOption, ...(value ? (multiple ? (separate ? value.split(separate) : value) : [value]) : [])]);
+                control && setValue(name || "default", [...fixedOption, ...(value ? (multiple ? (separate ? value.split(separate) : value) : [value]) : [])]);
             }
             else {
                 setSelectedValue(value);

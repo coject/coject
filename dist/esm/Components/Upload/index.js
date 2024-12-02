@@ -89,9 +89,11 @@ export const Upload = ({ value, name, multiple, onChange, onRemove, required, la
                 React.createElement(Grid, { spacing: 1, container: true },
                     !!files?.length && files.map((file, index) => (React.createElement(Grid, { key: index, xs: (imageWidth?.xs ? imageWidth.xs : 12), sm: (imageWidth?.sm ? imageWidth.sm : 12), md: (imageWidth?.md ? imageWidth.md : 12), lg: (imageWidth?.lg ? imageWidth.lg : 12), item: true },
                         React.createElement(Box, { className: classes.file, style: { height: imageHeight ? `${imageHeight}px` : "80px" } },
-                            file?.file?.type === "application/pdf"
-                                ? React.createElement(Icons.PictureAsPdfOutlined, null)
-                                : React.createElement("img", { src: file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg", alt: "File" }),
+                            file?.file?.type === "application/pdf" ? React.createElement(Icons.PictureAsPdfOutlined, null)
+                                : file?.file?.type === "application/msword" ? React.createElement(Icons.ArticleOutlined, null)
+                                    : file?.file?.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ? React.createElement(Icons.ArticleOutlined, null)
+                                        : file?.file?.type === "application/vnd.openxmlformats-officedocument.presentationml.presentation" ? React.createElement(Icons.ArticleOutlined, null)
+                                            : React.createElement("img", { src: file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg", alt: "File" }),
                             React.createElement(Box, { className: classes.remove },
                                 React.createElement(Box, { onClick: () => {
                                         setViewer(file.image);
@@ -115,9 +117,11 @@ export const Upload = ({ value, name, multiple, onChange, onRemove, required, la
             viewer &&
                 React.createElement(Modal, { open: !!viewer, setOpen: setViewer, title: "File Preview" },
                     React.createElement(Box, { className: classes.file },
-                        viewerType === "application/pdf"
-                            ? React.createElement(Icons.PictureAsPdfOutlined, null)
-                            : React.createElement("img", { className: classes.imageViewer, src: viewer, alt: "File", style: { display: "block" } }),
+                        viewerType === "application/pdf" ? React.createElement(Icons.PictureAsPdfOutlined, null)
+                            : viewerType === "application/msword" ? React.createElement(Icons.ArticleOutlined, null)
+                                : viewerType === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ? React.createElement(Icons.ArticleOutlined, null)
+                                    : viewerType === "application/vnd.openxmlformats-officedocument.presentationml.presentation" ? React.createElement(Icons.ArticleOutlined, null)
+                                        : React.createElement("img", { className: classes.imageViewer, src: viewer, alt: "File", style: { display: "block" } }),
                         React.createElement(Box, { className: classes.download },
                             React.createElement(IconButton, { href: viewer, download: "file" },
                                 React.createElement(Icons.SaveOutlined, null))))),

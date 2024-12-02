@@ -60,6 +60,7 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     required?: boolean;
     renderOption?: any;
     customKey?: string;
+    dependancy?: any[];
     multiple?: boolean;
     customName?: string;
     helperText?: string;
@@ -69,7 +70,7 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     disabledOption?: (string | number)[];
 }
 
-export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, value, label, callback, staticData, helperText, dataSource, multiple, separate, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
+export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, value, label, callback, staticData, helperText, dataSource,dependancy, multiple, separate, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [selectedValue, setSelectedValue] = useState<any>();
@@ -112,7 +113,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
             }).then();
         }
         // eslint-disable-next-line
-    }, [callback, staticData]);
+    }, [callback, staticData, ...[dependancy]]);
 
     return (
         <React.Fragment>

@@ -9,7 +9,7 @@ import { Box, TextField, Autocomplete, Chip, Checkbox, FormHelperText } from '@m
 import { Icons } from "../index";
 // Styles
 import useStyles from "./theme";
-export const Select = ({ name, value, label, callback, staticData, helperText, dataSource, multiple, separate, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
+export const Select = ({ name, value, label, callback, staticData, helperText, dataSource, dependancy, multiple, separate, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [selectedValue, setSelectedValue] = useState();
@@ -50,7 +50,7 @@ export const Select = ({ name, value, label, callback, staticData, helperText, d
             }).then();
         }
         // eslint-disable-next-line
-    }, [callback, staticData]);
+    }, [callback, staticData, ...[dependancy]]);
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: `${classes.root} coject_select` },
             control ?

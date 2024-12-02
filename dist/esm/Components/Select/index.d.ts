@@ -43,6 +43,7 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     required?: boolean;
     renderOption?: any;
     customKey?: string;
+    dependancy?: any[];
     multiple?: boolean;
     customName?: string;
     helperText?: string;

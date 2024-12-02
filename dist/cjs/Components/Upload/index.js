@@ -118,9 +118,11 @@ const Upload = ({ value, name, multiple, onChange, onRemove, required, label, im
                 react_1.default.createElement(material_1.Grid, { spacing: 1, container: true },
                     !!files?.length && files.map((file, index) => (react_1.default.createElement(material_1.Grid, { key: index, xs: (imageWidth?.xs ? imageWidth.xs : 12), sm: (imageWidth?.sm ? imageWidth.sm : 12), md: (imageWidth?.md ? imageWidth.md : 12), lg: (imageWidth?.lg ? imageWidth.lg : 12), item: true },
                         react_1.default.createElement(material_1.Box, { className: classes.file, style: { height: imageHeight ? `${imageHeight}px` : "80px" } },
-                            file?.file?.type === "application/pdf"
-                                ? react_1.default.createElement(index_1.Icons.PictureAsPdfOutlined, null)
-                                : react_1.default.createElement("img", { src: file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg", alt: "File" }),
+                            file?.file?.type === "application/pdf" ? react_1.default.createElement(index_1.Icons.PictureAsPdfOutlined, null)
+                                : file?.file?.type === "application/msword" ? react_1.default.createElement(index_1.Icons.ArticleOutlined, null)
+                                    : file?.file?.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ? react_1.default.createElement(index_1.Icons.ArticleOutlined, null)
+                                        : file?.file?.type === "application/vnd.openxmlformats-officedocument.presentationml.presentation" ? react_1.default.createElement(index_1.Icons.ArticleOutlined, null)
+                                            : react_1.default.createElement("img", { src: file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg", alt: "File" }),
                             react_1.default.createElement(material_1.Box, { className: classes.remove },
                                 react_1.default.createElement(material_1.Box, { onClick: () => {
                                         setViewer(file.image);
@@ -144,9 +146,11 @@ const Upload = ({ value, name, multiple, onChange, onRemove, required, label, im
             viewer &&
                 react_1.default.createElement(index_1.Modal, { open: !!viewer, setOpen: setViewer, title: "File Preview" },
                     react_1.default.createElement(material_1.Box, { className: classes.file },
-                        viewerType === "application/pdf"
-                            ? react_1.default.createElement(index_1.Icons.PictureAsPdfOutlined, null)
-                            : react_1.default.createElement("img", { className: classes.imageViewer, src: viewer, alt: "File", style: { display: "block" } }),
+                        viewerType === "application/pdf" ? react_1.default.createElement(index_1.Icons.PictureAsPdfOutlined, null)
+                            : viewerType === "application/msword" ? react_1.default.createElement(index_1.Icons.ArticleOutlined, null)
+                                : viewerType === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ? react_1.default.createElement(index_1.Icons.ArticleOutlined, null)
+                                    : viewerType === "application/vnd.openxmlformats-officedocument.presentationml.presentation" ? react_1.default.createElement(index_1.Icons.ArticleOutlined, null)
+                                        : react_1.default.createElement("img", { className: classes.imageViewer, src: viewer, alt: "File", style: { display: "block" } }),
                         react_1.default.createElement(material_1.Box, { className: classes.download },
                             react_1.default.createElement(material_1.IconButton, { href: viewer, download: "file" },
                                 react_1.default.createElement(index_1.Icons.SaveOutlined, null))))),

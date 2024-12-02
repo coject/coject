@@ -112,8 +112,10 @@ export const Upload: FC<iUpload> = ({ value, name, multiple, onChange, onRemove,
                         { !!files?.length && files.map((file: any, index: number) => (
                             <Grid key={index} xs={(imageWidth?.xs ? imageWidth.xs : 12)} sm={(imageWidth?.sm ? imageWidth.sm : 12)} md={(imageWidth?.md ? imageWidth.md : 12)} lg={(imageWidth?.lg ? imageWidth.lg : 12)} item>
                                 <Box className={classes.file} style={{ height: imageHeight ? `${imageHeight}px` : "80px" }}>
-                                    { file?.file?.type === "application/pdf"
-                                        ? <Icons.PictureAsPdfOutlined />
+                                    { file?.file?.type === "application/pdf" ? <Icons.PictureAsPdfOutlined />
+                                        : file?.file?.type === "application/msword" ? <Icons.ArticleOutlined />
+                                        : file?.file?.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ? <Icons.ArticleOutlined />
+                                        : file?.file?.type === "application/vnd.openxmlformats-officedocument.presentationml.presentation" ? <Icons.ArticleOutlined /> 
                                         : <img src={file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg"} alt={"File"}/>
                                     }
                                     <Box className={classes.remove}>
@@ -151,8 +153,10 @@ export const Upload: FC<iUpload> = ({ value, name, multiple, onChange, onRemove,
                 { viewer &&
                     <Modal open={!!viewer} setOpen={setViewer} title={"File Preview"}>
                         <Box className={classes.file}>
-                            { viewerType === "application/pdf"
-                                ? <Icons.PictureAsPdfOutlined />
+                            { viewerType === "application/pdf" ? <Icons.PictureAsPdfOutlined />
+                                : viewerType === "application/msword" ? <Icons.ArticleOutlined />
+                                : viewerType === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ? <Icons.ArticleOutlined />
+                                : viewerType === "application/vnd.openxmlformats-officedocument.presentationml.presentation" ? <Icons.ArticleOutlined /> 
                                 : <img className={classes.imageViewer} src={viewer} alt={"File"} style={{display: "block"}} />
                             }
                             <Box className={classes.download}>

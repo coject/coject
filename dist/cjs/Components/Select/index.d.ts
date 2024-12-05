@@ -43,11 +43,12 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     required?: boolean;
     renderOption?: any;
     customKey?: string;
-    dependancy?: any[];
     multiple?: boolean;
     customName?: string;
     helperText?: string;
+    dependancies?: any[];
     checkboxes?: boolean;
+    noOptionsText?: string;
     dataSource?: iDataSource;
     fixedOption?: (string | number)[];
     disabledOption?: (string | number)[];

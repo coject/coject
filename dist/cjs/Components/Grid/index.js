@@ -38,7 +38,7 @@ const x_data_grid_1 = require("@mui/x-data-grid");
 const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies, resizable, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const apiRef = (0, x_data_grid_1.useGridApiRef)();
     const { classes } = (0, theme_1.default)();
     const [gridData, setGridData] = (0, react_1.useState)([]);
@@ -65,7 +65,7 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, staticDa
                 } }).then();
         }
         // eslint-disable-next-line
-    }, [callData, dispatch, staticData, callback, noRenderRequest]);
+    }, [callData, dispatch, staticData, callback, noRenderRequest, ...[dependancies]]);
     // Dynamic Data ( Schema )
     (0, react_1.useEffect)(() => {
         if (schema) {
@@ -79,7 +79,7 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, staticDa
                     return null;
             });
         }
-    }, []);
+    }, [...[dependancies]]);
     // Default Schema
     const defaultSchema = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => ({ field: columnKey, component: "input", flex: (columnKey === (customKey ? customKey : "id") ? 0 : 1) })) : [];
     // Custom Schema

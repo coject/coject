@@ -75,6 +75,7 @@ interface iGrid extends DataGridProps {
     customKey?: string;
     onEditSubmit?: any;
     resizable?: boolean;
+    dependancies?: any[];
     noRequest?: boolean;
     customToolbar?: any;
     onAddCallback?: any;
@@ -98,7 +99,7 @@ interface iGrid extends DataGridProps {
     customActions?: { icon: string, label: string, onClick: any }[];
 }
 
-export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRenderRequest, actionsControl, resizable, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRenderRequest, actionsControl,dependancies, resizable, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const apiRef = useGridApiRef();
     const { classes } = useStyles();
     const [ gridData, setGridData ] = useState<any>([]);
@@ -127,7 +128,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
             } }).then();
         }
         // eslint-disable-next-line
-    }, [callData, dispatch, staticData, callback, noRenderRequest]);
+    }, [callData, dispatch, staticData, callback, noRenderRequest, ...[dependancies]]);
 
     // Dynamic Data ( Schema )
     useEffect(() => {
@@ -140,7 +141,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                 } else return null;
             })
         }
-    }, []);
+    }, [...[dependancies]]);
 
     // Default Schema
     const defaultSchema: any = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => (

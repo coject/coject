@@ -9,7 +9,7 @@ import { useGridApiRef, DataGrid, GridActionsCellItem, GridToolbarContainer, Gri
 import { Form, DatePicker, Modal, Icons } from "../index";
 // Styles
 import useStyles from "./theme";
-export const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+export const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies, resizable, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const apiRef = useGridApiRef();
     const { classes } = useStyles();
     const [gridData, setGridData] = useState([]);
@@ -36,7 +36,7 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, s
                 } }).then();
         }
         // eslint-disable-next-line
-    }, [callData, dispatch, staticData, callback, noRenderRequest]);
+    }, [callData, dispatch, staticData, callback, noRenderRequest, ...[dependancies]]);
     // Dynamic Data ( Schema )
     useEffect(() => {
         if (schema) {
@@ -50,7 +50,7 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, resizable, s
                     return null;
             });
         }
-    }, []);
+    }, [...[dependancies]]);
     // Default Schema
     const defaultSchema = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => ({ field: columnKey, component: "input", flex: (columnKey === (customKey ? customKey : "id") ? 0 : 1) })) : [];
     // Custom Schema

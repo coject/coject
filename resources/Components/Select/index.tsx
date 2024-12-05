@@ -60,17 +60,18 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     required?: boolean;
     renderOption?: any;
     customKey?: string;
-    dependancy?: any[];
     multiple?: boolean;
     customName?: string;
     helperText?: string;
+    dependancies?: any[];
     checkboxes?: boolean;
+    noOptionsText?: string;
     dataSource?: iDataSource;
     fixedOption?: (string | number)[];
     disabledOption?: (string | number)[];
 }
 
-export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, value, label, callback, staticData, helperText, dataSource,dependancy, multiple, separate, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
+export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, value, label, noOptionsText, callback, staticData, helperText, dataSource,dependancies, multiple, separate, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [selectedValue, setSelectedValue] = useState<any>();
@@ -113,7 +114,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
             }).then();
         }
         // eslint-disable-next-line
-    }, [callback, staticData, ...[dependancy]]);
+    }, [callback, staticData, ...[dependancies]]);
 
     return (
         <React.Fragment>
@@ -121,7 +122,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
                 {control ?
                     <Controller name={name || "default"} control={control} render={() => {
                         return (
-                            <Autocomplete options={selectData} multiple={multiple} {...props}
+                            <Autocomplete noOptionsText={noOptionsText} options={selectData} multiple={multiple} {...props}
                                 value={!!selectData?.length && selectedValue
                                     ? multiple
                                         ? selectedValue?.map((SValue: string) => selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === SValue))
@@ -159,7 +160,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
                             />
                         )
                     }} />
-                    : <Autocomplete options={selectData} multiple={multiple} {...props}
+                    : <Autocomplete noOptionsText={noOptionsText} options={selectData} multiple={multiple} {...props}
                         value={!!selectData?.length && selectedValue
                             ? multiple
                                 ? selectedValue?.map((SValue: string) => selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === SValue))

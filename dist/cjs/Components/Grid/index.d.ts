@@ -62,7 +62,6 @@ interface iGrid extends DataGridProps {
     onAddCallback?: any;
     onDeleteSubmit?: any;
     onEditCallback?: any;
-    noApiUrlId?: boolean;
     actionsControl?: any;
     schema?: iSchema | any;
     noAddRequest?: boolean;

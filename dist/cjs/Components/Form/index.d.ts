@@ -46,6 +46,7 @@ interface iForm {
     staticData?: any;
     customKey?: string;
     noRequest?: boolean;
+    noApiUrlId?: boolean;
     children?: ReactNode;
     schema?: iSchema | any;
     invisibility?: string[];

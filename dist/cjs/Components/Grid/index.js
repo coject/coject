@@ -38,7 +38,7 @@ const x_data_grid_1 = require("@mui/x-data-grid");
 const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies, resizable, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies, noApiUrlId, resizable, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const apiRef = (0, x_data_grid_1.useGridApiRef)();
     const { classes } = (0, theme_1.default)();
     const [gridData, setGridData] = (0, react_1.useState)([]);
@@ -262,9 +262,9 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies, resiz
                     onAddCallback && onAddCallback(data);
                 }, setModal: setAddModal, ...(localeText?.modalAddButton ? { localeText: { submitButton: localeText?.modalAddButton } } : {}) }, addFormChildren && addFormChildren)),
         react_1.default.createElement(index_1.Modal, { className: "grid_update_modal", title: localeText?.modalEditTitle || "Update Item", open: editModal, setOpen: setEditModal },
-            react_1.default.createElement(index_1.Form, { dataSource: dataSource, staticData: selectedData, schema: schema ? schema : defaultSchema, mode: "update", noRequest: (noRequest || noEditRequest) && !!dataSource, ...(customKey ? { customKey: customKey } : {}), ...(formInvisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
+            react_1.default.createElement(index_1.Form, { dataSource: dataSource, staticData: selectedData, noApiUrlId: noApiUrlId, schema: schema ? schema : defaultSchema, mode: "update", noRequest: (noRequest || noEditRequest) && !!dataSource, ...(customKey ? { customKey: customKey } : {}), ...(formInvisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
                     onEditSubmit && onEditSubmit(data);
-                    !!staticData?.length && setEditModal(false);
+                    setEditModal(false);
                 }, callback: (data) => {
                     setCallData(!callData);
                     onEditCallback && onEditCallback(data);
@@ -284,7 +284,7 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies, resiz
                                         setDeleteModal(false);
                                         onDeleteCallback && onDeleteCallback(data);
                                     }, dispatch,
-                                    apiUrlId: customKey ? selectedData[customKey] : selectedData.id
+                                    apiUrlId: noApiUrlId ? '' : (customKey ? selectedData[customKey] : selectedData.id)
                                 }).then();
                             }
                         } }, localeText?.modalDeleteButton || "Delete")))),

@@ -81,6 +81,7 @@ interface iGrid extends DataGridProps {
     onAddCallback?: any;
     onDeleteSubmit?: any;
     onEditCallback?: any;
+    noApiUrlId?: boolean;
     actionsControl?: any;
     schema?: iSchema | any;
     noAddRequest?: boolean;
@@ -99,7 +100,7 @@ interface iGrid extends DataGridProps {
     customActions?: { icon: string, label: string, onClick: any }[];
 }
 
-export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRenderRequest, actionsControl,dependancies, resizable, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRenderRequest, actionsControl, dependancies, noApiUrlId, resizable, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const apiRef = useGridApiRef();
     const { classes } = useStyles();
     const [ gridData, setGridData ] = useState<any>([]);
@@ -337,9 +338,9 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
 
             {/* Update Modal */}
             <Modal className={"grid_update_modal"} title={localeText?.modalEditTitle || "Update Item"} open={editModal} setOpen={setEditModal}>
-                <Form dataSource={dataSource} staticData={selectedData} schema={schema ? schema : defaultSchema} mode={"update"} noRequest={(noRequest || noEditRequest) && !!dataSource} {...(customKey ? {customKey: customKey} : {})} {...(formInvisibility ? {invisibility: formInvisibility} : {})} onSubmit={(data: any) => {
+                <Form dataSource={dataSource} staticData={selectedData} noApiUrlId={noApiUrlId} schema={schema ? schema : defaultSchema} mode={"update"} noRequest={(noRequest || noEditRequest) && !!dataSource} {...(customKey ? {customKey: customKey} : {})} {...(formInvisibility ? {invisibility: formInvisibility} : {})} onSubmit={(data: any) => {
                     onEditSubmit && onEditSubmit(data);
-                    !!staticData?.length && setEditModal(false);
+                    setEditModal(false);
                 }} callback={(data: any) => {
                     setCallData(!callData);
                     onEditCallback && onEditCallback(data);
@@ -365,7 +366,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                                         setDeleteModal(false);
                                         onDeleteCallback && onDeleteCallback(data);
                                     }, dispatch,
-                                    apiUrlId: customKey ? selectedData[customKey] : selectedData.id
+                                    apiUrlId: noApiUrlId ? '' : (customKey ? selectedData[customKey] : selectedData.id)
                                 }).then()
                             } }}>{localeText?.modalDeleteButton || "Delete"}</Button>
                     </MuiGrid>

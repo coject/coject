@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, ReactNode } from "react";
 
 // Material UI
 import { Box, Typography, IconButton, Modal as MuiModal, ModalProps } from "@mui/material";
@@ -10,9 +10,9 @@ import * as MuiIcons from "@mui/icons-material";
 import useStyles from "./theme";
 
 // Interface
-interface iModal extends ModalProps {
+interface iModal extends Omit<ModalProps, 'title'> {
     setOpen?: any;
-    title?: string;
+    title?: string | ReactNode;
 }
 
 export const Modal: FC<iModal> = ({ open, setOpen, title, ...props }) => {

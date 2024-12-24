@@ -1,8 +1,8 @@
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import { ModalProps } from "@mui/material";
-interface iModal extends ModalProps {
+interface iModal extends Omit<ModalProps, 'title'> {
     setOpen?: any;
-    title?: string;
+    title?: string | ReactNode;
 }
 export declare const Modal: FC<iModal>;
 export {};

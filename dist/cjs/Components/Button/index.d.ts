@@ -1,3 +1,7 @@
 import { FC } from "react";
 import { ButtonProps } from "@mui/material";
-export declare const Button: FC<ButtonProps>;
+interface CustomButtonProps extends ButtonProps {
+    download?: string;
+}
+export declare const Button: FC<CustomButtonProps>;
+export {};

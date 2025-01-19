@@ -31,5 +31,8 @@ export { DatePicker } from "./DatePicker";
 // Date
 export { Upload } from "./Upload";
 
+// PDF Generator
+export { PDFGenerator } from "./PDFGenerator";
+
 // Icons
 export const Icons: any = MuiIcons;

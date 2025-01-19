@@ -8,4 +8,5 @@ export { Switch } from "./Switch";
 export { Checkbox } from "./Checkbox";
 export { DatePicker } from "./DatePicker";
 export { Upload } from "./Upload";
+export { PDFGenerator } from "./PDFGenerator";
 export declare const Icons: any;

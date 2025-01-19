@@ -20,6 +20,8 @@ export { Checkbox } from "./Checkbox";
 export { DatePicker } from "./DatePicker";
 // Date
 export { Upload } from "./Upload";
+// PDF Generator
+export { PDFGenerator } from "./PDFGenerator";
 // Icons
 export const Icons = MuiIcons;
 //# sourceMappingURL=index.js.map

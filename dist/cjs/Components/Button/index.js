@@ -9,11 +9,14 @@ const react_1 = __importDefault(require("react"));
 const material_1 = require("@mui/material");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Button = ({ ...props }) => {
+const Button = ({ download, ...props }) => {
     const { classes } = (0, theme_1.default)();
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: `${classes.root} coject_button` },
-            react_1.default.createElement(material_1.Button, { ...props }, props?.children))));
+            react_1.default.createElement(material_1.Button, { ...props },
+                props?.children,
+                " download=",
+                'mohamed.pdf'))));
 };
 exports.Button = Button;
 //# sourceMappingURL=index.js.map

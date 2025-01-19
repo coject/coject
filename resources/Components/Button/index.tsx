@@ -17,7 +17,7 @@ export const Button: FC<CustomButtonProps> = ({ download, ...props }) => {
     return (
         <React.Fragment>
             <Box className={`${classes.root} coject_button`}>
-                <MuiButton {...props}>{props?.children} download={'mohamed.pdf'}</MuiButton>
+                <MuiButton {...props}>{props?.children}</MuiButton>
             </Box>
         </React.Fragment>
     );

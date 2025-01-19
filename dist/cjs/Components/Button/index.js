@@ -13,10 +13,7 @@ const Button = ({ download, ...props }) => {
     const { classes } = (0, theme_1.default)();
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: `${classes.root} coject_button` },
-            react_1.default.createElement(material_1.Button, { ...props },
-                props?.children,
-                " download=",
-                'mohamed.pdf'))));
+            react_1.default.createElement(material_1.Button, { ...props }, props?.children))));
 };
 exports.Button = Button;
 //# sourceMappingURL=index.js.map

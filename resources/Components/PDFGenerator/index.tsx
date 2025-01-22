@@ -26,32 +26,72 @@ export const PDFGenerator: FC<any> = ({button, landscape, fileName, title, child
     }, [modal]);
 
     // Generate PDF
-    const generatePDF = () => {
+    const generatePDF = async () => {
         const element: any = document.getElementById("content");
-        html2canvas(element).then((canvas: any) => {
-            let position = 0;
-            let pageCount = 0;
-            const imgWidth = landscape ? 297 : 210;
+        html2canvas(element).then((canvas) => {
+            const positionX = 0;
+            const headerHeight = 10;
+            const footerHeight = 10;
+            const pageWidth = landscape ? 297 : 210;
             const pageHeight = landscape ? 210 : 297;
+
+            // Calculate The Content Height
+            const canvasWidth = canvas.width;
+            const contentHeight = pageHeight - (headerHeight + footerHeight);
+            const canvasHeight    = contentHeight * (canvasWidth / pageWidth);
             const pdf = new jsPDF(`${landscape ? 'landscape' : 'p'}`, "mm", "a4");
-            const imgData = canvas.toDataURL("image/png");
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            let heightLeft = imgHeight;
+            const totalContent = (canvas.height + (((headerHeight + footerHeight) * (canvasWidth / pageWidth)) * Math.ceil(canvas.height / ((pageHeight - (headerHeight + footerHeight)) * (canvasWidth / pageWidth))))) / (canvasWidth / pageWidth);
 
-            // Create Pages
-            while (heightLeft > 0) {
+            // Dependencies
+            let pageCount = 0;
+            let positionY = headerHeight;
+
+            // Split ImgData Into Sections
+            const splitData = [];
+            const totalPages = Math.ceil(canvas.height / canvasHeight);
+
+            // Left Height
+            let leftHeight = totalContent;
+
+            // Create Images
+            for (let i = 0; i < totalPages; i++) {
+                // Create A New Canvas For Each Section
+                const croppedContent = document.createElement("canvas");
+                const ctx: any = croppedContent.getContext("2d");
+                croppedContent.width = canvasWidth;
+                croppedContent.height = canvasHeight;
+
+                // Draw The Section On The New Canvas (Vertical Split)
+                ctx.drawImage(canvas, 0, i * canvasHeight, canvasWidth, canvasHeight, 0, 0, canvasWidth, canvasHeight);
+
+                // Save The Cropped Canvas As An Image
+                splitData.push(croppedContent.toDataURL("image/png"));
+            }
+
+            // Add Each Section To The PDF
+            while (leftHeight > 0) {
+                // Header
+                pdf.setFontSize(12);
+                pdf.text(title || "PDF Report", pageWidth / 2, 7, { align: "center" });
+
+                // Content (Adding Each Split Image On The Page)
+                pdf.addImage(splitData[pageCount], "PNG", positionX, positionY, pageWidth, contentHeight);
+
+                // Footer
+                pdf.setFontSize(10);
+                pdf.text(`${pageCount + 1} / ${totalPages}`, pageWidth / 2, pageHeight - 4, { align: "center" });
+
+                // Add New Page
                 pageCount++;
-                pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-                pdf.text(`${pageCount}`, 105, 290, { align: "center" });
 
-                heightLeft -= pageHeight;
-                if (heightLeft > 0) {
-                    position -= pageHeight;
+                // Adjust Remaining Content Height
+                leftHeight -= pageHeight;
+                if (leftHeight > 0) {
                     pdf.addPage();
                 }
             }
 
-            // Generate a Blob URL for preview
+            // Generate Preview
             const pdfBlob = pdf.output("blob");
             const pdfURL: any = URL.createObjectURL(pdfBlob);
             setPdfPreview(pdfURL);
@@ -66,7 +106,7 @@ export const PDFGenerator: FC<any> = ({button, landscape, fileName, title, child
                     { pdfPreview ?
                         <Fragment>
                             <iframe src={pdfPreview} className={classes.preview} />
-                            <Button className={classes.button} variant={'contained'} component={'a'} href={pdfPreview} download={`${fileName ? (fileName + ".pdf") : "example.pdf"}`}>Download PDF</Button>
+                            <Button className={classes.button} variant={'contained'} href={pdfPreview} download={`${fileName ? (fileName + ".pdf") : "example.pdf"}`}>Download PDF</Button>
                         </Fragment> :
                         <Fragment>
                             <Box className={classes.children}>

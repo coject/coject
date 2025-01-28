@@ -36,7 +36,7 @@ const material_1 = require("@mui/material");
 const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Upload = ({ value, name, multiple, onChange, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, validateText, error }) => {
+const Upload = ({ value, name, setFile, multiple, onChange, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, validateText, error }) => {
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useFormContext)() || {};
     const [files, setFiles] = (0, react_1.useState)([]);
@@ -46,6 +46,11 @@ const Upload = ({ value, name, multiple, onChange, onRemove, required, label, im
     const [initValue, setInitValue] = (0, react_1.useState)([]);
     const element = document.getElementsByName(name || "default")[0];
     const { setValue, setError, clearErrors, formState: { errors } } = (0, react_hook_form_1.useFormContext)() || {};
+    // Reset Files
+    (0, react_1.useEffect)(() => {
+        setFiles(setFile);
+        setValue(name || "default", setFile);
+    }, [setFile]);
     // Clear Files History
     const clearHistory = () => {
         try {

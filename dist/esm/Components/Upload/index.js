@@ -7,7 +7,7 @@ import { Box, Grid, FormHelperText, TextField, Typography, IconButton } from "@m
 import { Icons, Modal } from "../index";
 // Styles
 import useStyles from "./theme";
-export const Upload = ({ value, name, multiple, onChange, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, validateText, error }) => {
+export const Upload = ({ value, name, setFile, multiple, onChange, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, validateText, error }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [files, setFiles] = useState([]);
@@ -17,6 +17,11 @@ export const Upload = ({ value, name, multiple, onChange, onRemove, required, la
     const [initValue, setInitValue] = useState([]);
     const element = document.getElementsByName(name || "default")[0];
     const { setValue, setError, clearErrors, formState: { errors } } = useFormContext() || {};
+    // Reset Files
+    useEffect(() => {
+        setFiles(setFile);
+        setValue(name || "default", setFile);
+    }, [setFile]);
     // Clear Files History
     const clearHistory = () => {
         try {

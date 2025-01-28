@@ -3,6 +3,7 @@ import { TextFieldProps } from "@mui/material";
 type iUpload = Omit<TextFieldProps, "onChange"> & {
     error?: any;
     name?: string;
+    setFile?: any;
     label?: string;
     onChange?: any;
     onRemove?: any;

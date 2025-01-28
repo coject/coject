@@ -16,6 +16,7 @@ import useStyles from "./theme";
 type iUpload = Omit<TextFieldProps, "onChange"> & {
     error?: any;
     name?: string;
+    setFile?: any;
     label?: string;
     onChange?: any;
     onRemove?: any;
@@ -30,7 +31,7 @@ type iUpload = Omit<TextFieldProps, "onChange"> & {
     imageWidth?: { lg?: number, md?: number, sm?: number, xs?: number };
 }
 
-export const Upload: FC<iUpload> = ({ value, name, multiple, onChange, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, validateText, error }) => {
+export const Upload: FC<iUpload> = ({ value, name, setFile, multiple, onChange, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, validateText, error }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [ files, setFiles ] = useState<any>([]);
@@ -40,6 +41,12 @@ export const Upload: FC<iUpload> = ({ value, name, multiple, onChange, onRemove,
     const [ initValue, setInitValue ] = useState<string[]>([]);
     const element: any = document.getElementsByName(name || "default")[0];
     const { setValue, setError, clearErrors, formState: { errors } } = useFormContext() || {};
+
+    // Reset Files
+    useEffect(() => {
+        setFiles(setFile);
+        setValue(name || "default", setFile);
+    }, [setFile]);
 
     // Clear Files History
     const clearHistory = () => {

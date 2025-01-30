@@ -48,8 +48,8 @@ const Upload = ({ value, name, setFile, multiple, onChange, onRemove, required, 
     const { setValue, setError, clearErrors, formState: { errors } } = (0, react_hook_form_1.useFormContext)() || {};
     // Reset Files
     (0, react_1.useEffect)(() => {
-        setFiles(setFile);
-        setValue(name || "default", setFile);
+        setFile && setFiles(setFile);
+        setFile && setValue(name || "default", setFile);
     }, [setFile]);
     // Clear Files History
     const clearHistory = () => {

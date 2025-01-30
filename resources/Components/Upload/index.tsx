@@ -44,8 +44,8 @@ export const Upload: FC<iUpload> = ({ value, name, setFile, multiple, onChange, 
 
     // Reset Files
     useEffect(() => {
-        setFiles(setFile);
-        setValue(name || "default", setFile);
+        setFile && setFiles(setFile);
+        setFile && setValue(name || "default", setFile);
     }, [setFile]);
 
     // Clear Files History

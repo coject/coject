@@ -19,8 +19,8 @@ export const Upload = ({ value, name, setFile, multiple, onChange, onRemove, req
     const { setValue, setError, clearErrors, formState: { errors } } = useFormContext() || {};
     // Reset Files
     useEffect(() => {
-        setFiles(setFile);
-        setValue(name || "default", setFile);
+        setFile && setFiles(setFile);
+        setFile && setValue(name || "default", setFile);
     }, [setFile]);
     // Clear Files History
     const clearHistory = () => {

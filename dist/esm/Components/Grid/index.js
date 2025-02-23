@@ -243,7 +243,7 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies
         React.createElement(Modal, { className: "grid_delete_modal", title: localeText?.modalDeleteTitle || "Delete Item", open: deleteModal, setOpen: setDeleteModal },
             React.createElement(MuiGrid, { container: true, spacing: 2 },
                 React.createElement(MuiGrid, { item: true, md: 12, lg: 12 },
-                    React.createElement(Typography, { color: theme => theme.palette.error.main }, localeText?.modalDeleteMessage || "Are You Sure To Delete This Item?")),
+                    React.createElement(Typography, { color: 'error' }, localeText?.modalDeleteMessage || "Are You Sure To Delete This Item?")),
                 React.createElement(MuiGrid, { item: true, md: 12, lg: 12 },
                     React.createElement(Button, { fullWidth: true, type: "button", variant: "contained", onClick: () => {
                             onDeleteSubmit && onDeleteSubmit(selectedData);

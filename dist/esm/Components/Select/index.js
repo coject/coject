@@ -9,7 +9,7 @@ import { Box, TextField, Autocomplete, Chip, Checkbox, FormHelperText } from '@m
 import { Icons } from "../index";
 // Styles
 import useStyles from "./theme";
-export const Select = ({ name, value, label, noOptionsText, callback, staticData, helperText, dataSource, dependancies, multiple, separate, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
+export const Select = ({ name, value, label, noOptionsText, callback, staticData, disabled, helperText, dataSource, dependancies, multiple, separate, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [selectedValue, setSelectedValue] = useState();
@@ -55,7 +55,7 @@ export const Select = ({ name, value, label, noOptionsText, callback, staticData
         React.createElement(Box, { className: `${classes.root} coject_select` },
             control ?
                 React.createElement(Controller, { name: name || "default", control: control, render: () => {
-                        return (React.createElement(Autocomplete, { noOptionsText: noOptionsText, options: selectData, multiple: multiple, ...props, value: !!selectData?.length && selectedValue
+                        return (React.createElement(Autocomplete, { noOptionsText: noOptionsText, options: selectData, multiple: multiple, disabled: disabled, readOnly: disabled, ...props, value: !!selectData?.length && selectedValue
                                 ? multiple
                                     ? selectedValue?.map((SValue) => selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === SValue))
                                     : multiple ? [] : selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
@@ -75,7 +75,7 @@ export const Select = ({ name, value, label, noOptionsText, callback, staticData
                                     : renderOption(row))
                             } : {}), getOptionDisabled: (row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false), renderInput: (params) => React.createElement(TextField, { ...params, InputProps: { ...params.InputProps, ...inputProps }, fullWidth: !!inputProps?.fullWidth, error: error, label: label ? label : (name || "default"), required: required }) }));
                     } })
-                : React.createElement(Autocomplete, { noOptionsText: noOptionsText, options: selectData, multiple: multiple, ...props, value: !!selectData?.length && selectedValue
+                : React.createElement(Autocomplete, { noOptionsText: noOptionsText, options: selectData, multiple: multiple, disabled: disabled, readOnly: disabled, ...props, value: !!selectData?.length && selectedValue
                         ? multiple
                             ? selectedValue?.map((SValue) => selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === SValue))
                             : multiple ? [] : selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)

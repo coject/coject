@@ -352,7 +352,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
             <Modal className={"grid_delete_modal"} title={localeText?.modalDeleteTitle || "Delete Item"} open={deleteModal} setOpen={setDeleteModal}>
                 <MuiGrid container spacing={2}>
                     <MuiGrid item md={12} lg={12}>
-                        <Typography color={theme => theme.palette.error.main}>{localeText?.modalDeleteMessage || "Are You Sure To Delete This Item?"}</Typography>
+                        <Typography color='error'>{localeText?.modalDeleteMessage || "Are You Sure To Delete This Item?"}</Typography>
                     </MuiGrid>
                     <MuiGrid item md={12} lg={12}>
                         <Button fullWidth type={"button"} variant={"contained"} onClick={() => {

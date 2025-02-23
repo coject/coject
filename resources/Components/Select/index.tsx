@@ -58,6 +58,7 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     staticData?: any;
     separate?: string;
     required?: boolean;
+    disabled?: boolean;
     renderOption?: any;
     customKey?: string;
     multiple?: boolean;
@@ -71,7 +72,7 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     disabledOption?: (string | number)[];
 }
 
-export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, value, label, noOptionsText, callback, staticData, helperText, dataSource,dependancies, multiple, separate, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
+export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, value, label, noOptionsText, callback, staticData, disabled, helperText, dataSource, dependancies, multiple, separate, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [selectedValue, setSelectedValue] = useState<any>();
@@ -122,7 +123,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
                 {control ?
                     <Controller name={name || "default"} control={control} render={() => {
                         return (
-                            <Autocomplete noOptionsText={noOptionsText} options={selectData} multiple={multiple} {...props}
+                            <Autocomplete noOptionsText={noOptionsText} options={selectData} multiple={multiple} disabled={disabled} readOnly={disabled} {...props}
                                 value={!!selectData?.length && selectedValue
                                     ? multiple
                                         ? selectedValue?.map((SValue: string) => selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === SValue))
@@ -160,7 +161,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
                             />
                         )
                     }} />
-                    : <Autocomplete noOptionsText={noOptionsText} options={selectData} multiple={multiple} {...props}
+                    : <Autocomplete noOptionsText={noOptionsText} options={selectData} multiple={multiple} disabled={disabled} readOnly={disabled} {...props}
                         value={!!selectData?.length && selectedValue
                             ? multiple
                                 ? selectedValue?.map((SValue: string) => selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === SValue))

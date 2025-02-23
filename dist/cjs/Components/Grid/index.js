@@ -272,7 +272,7 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies, resiz
         react_1.default.createElement(index_1.Modal, { className: "grid_delete_modal", title: localeText?.modalDeleteTitle || "Delete Item", open: deleteModal, setOpen: setDeleteModal },
             react_1.default.createElement(material_1.Grid, { container: true, spacing: 2 },
                 react_1.default.createElement(material_1.Grid, { item: true, md: 12, lg: 12 },
-                    react_1.default.createElement(material_1.Typography, { color: theme => theme.palette.error.main }, localeText?.modalDeleteMessage || "Are You Sure To Delete This Item?")),
+                    react_1.default.createElement(material_1.Typography, { color: 'error' }, localeText?.modalDeleteMessage || "Are You Sure To Delete This Item?")),
                 react_1.default.createElement(material_1.Grid, { item: true, md: 12, lg: 12 },
                     react_1.default.createElement(material_1.Button, { fullWidth: true, type: "button", variant: "contained", onClick: () => {
                             onDeleteSubmit && onDeleteSubmit(selectedData);

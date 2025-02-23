@@ -109,7 +109,7 @@ export const Upload = ({ value, name, setFile, multiple, onChange, onRemove, req
                     !!initValue?.length && initValue.map((file, index) => (React.createElement(Grid, { key: index, xs: (imageWidth?.xs ? imageWidth.xs : 12), sm: (imageWidth?.sm ? imageWidth.sm : 12), md: (imageWidth?.md ? imageWidth.md : 12), lg: (imageWidth?.lg ? imageWidth.lg : 12), item: true },
                         React.createElement(Box, { className: classes.file, style: { height: imageHeight ? `${imageHeight}px` : "80px" } },
                             React.createElement("img", { src: imagePath ? file[`${imagePath}`] : file || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg", alt: "File" }),
-                            React.createElement(Box, { className: classes.remove },
+                            React.createElement(Box, { className: classes.remove, style: { display: disabled ? 'none' : '' } },
                                 React.createElement(Box, { onClick: () => setViewer(imagePath ? file[`${imagePath}`] : file), className: classes.viewer }),
                                 React.createElement(IconButton, { onClick: () => removeInitFile(index) },
                                     React.createElement(Icons.Close, null))))))),

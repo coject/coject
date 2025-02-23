@@ -139,7 +139,7 @@ export const Upload: FC<iUpload> = ({ value, name, setFile, multiple, onChange, 
                             <Grid key={index} xs={(imageWidth?.xs ? imageWidth.xs : 12)} sm={(imageWidth?.sm ? imageWidth.sm : 12)} md={(imageWidth?.md ? imageWidth.md : 12)} lg={(imageWidth?.lg ? imageWidth.lg : 12)} item>
                                 <Box className={classes.file} style={{ height: imageHeight ? `${imageHeight}px` : "80px" }}>
                                     <img src={imagePath ? file[`${imagePath}`] : file || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg"} alt={"File"}/>
-                                    <Box className={classes.remove}>
+                                    <Box className={classes.remove} style={{display: disabled ? 'none' : ''}}>
                                         <Box onClick={() => setViewer(imagePath ? file[`${imagePath}`] : file)} className={classes.viewer} />
                                         <IconButton onClick={() => removeInitFile(index)}><Icons.Close /></IconButton>
                                     </Box>

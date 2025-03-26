@@ -61,7 +61,7 @@ export const DatePicker: FC<iDatePicker> = ({ name, value, hijri, viewFormat, ac
 
     // Default Value
     useEffect(() => {
-        control && setValue(name || "default", selectedDate.format(actionFormat ? actionFormat : "DD-MM-YYYY"));
+        control && setValue(name || "default", selectedDate ? selectedDate.format(actionFormat ? actionFormat : "DD-MM-YYYY") : '');
     }, [control, setValue, name, selectedDate, actionFormat]);
 
     // Normal Value

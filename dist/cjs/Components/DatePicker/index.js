@@ -65,7 +65,7 @@ const DatePicker = ({ name, value, hijri, viewFormat, actionFormat, minDate, max
     }, [getValues, name, watch && watch(name || "default")]);
     // Default Value
     (0, react_1.useEffect)(() => {
-        control && setValue(name || "default", selectedDate.format(actionFormat ? actionFormat : "DD-MM-YYYY"));
+        control && setValue(name || "default", selectedDate ? selectedDate.format(actionFormat ? actionFormat : "DD-MM-YYYY") : '');
     }, [control, setValue, name, selectedDate, actionFormat]);
     // Normal Value
     (0, react_1.useEffect)(() => {

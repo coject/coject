@@ -36,7 +36,7 @@ export const DatePicker = ({ name, value, hijri, viewFormat, actionFormat, minDa
     }, [getValues, name, watch && watch(name || "default")]);
     // Default Value
     useEffect(() => {
-        control && setValue(name || "default", selectedDate.format(actionFormat ? actionFormat : "DD-MM-YYYY"));
+        control && setValue(name || "default", selectedDate ? selectedDate.format(actionFormat ? actionFormat : "DD-MM-YYYY") : '');
     }, [control, setValue, name, selectedDate, actionFormat]);
     // Normal Value
     useEffect(() => {

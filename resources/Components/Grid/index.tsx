@@ -394,7 +394,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                         } : {})
                     }}
                     disableVirtualization
-                    disableColumnResize={resizable}
+                    disableColumnResize={!resizable}
                     paginationMode={openPdf ? 'server' : 'client'}
                     {...(openPdf ? {rowCount: gridData?.length} : {})}
                     initialState={props?.initialState ? props?.initialState : {pagination: {paginationModel: {pageSize: 15}}}}

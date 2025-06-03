@@ -300,7 +300,7 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies, resiz
                                 } } : {}),
                         }
                     } : {})
-                }, disableVirtualization: true, disableColumnResize: resizable, paginationMode: openPdf ? 'server' : 'client', ...(openPdf ? { rowCount: gridData?.length } : {}), initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, slots: props?.slots ? props?.slots : { toolbar: actions || toolbar || customToolbar ? CustomToolbar : null }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "") })),
+                }, disableVirtualization: true, disableColumnResize: !resizable, paginationMode: openPdf ? 'server' : 'client', ...(openPdf ? { rowCount: gridData?.length } : {}), initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, slots: props?.slots ? props?.slots : { toolbar: actions || toolbar || customToolbar ? CustomToolbar : null }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "") })),
         react_1.default.createElement("iframe", { id: 'iFrame', title: 'iFrame', style: { display: 'none', position: 'absolute', width: 0, height: 0 } })));
 };
 exports.Grid = Grid;

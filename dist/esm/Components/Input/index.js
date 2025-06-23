@@ -77,7 +77,7 @@ export const Input = ({ name, value, multiline, helperText, validation, required
     }, [inputValue, required, name, setError, clearErrors, validation]);
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: `${classes.root} coject_input` },
-            React.createElement(TextField, { name: name || "default", sx: multiline
+            React.createElement(TextField, { name: name || "default", multiline: multiline, sx: multiline
                     ? { '& .MuiInputBase-root textarea': { resize: 'both', overflow: 'auto' } }
                     : undefined, autoComplete: "off", value: inputValue, onChange: changeValue, label: props?.label ? props?.label : (name || "default"), ...props }, props?.children),
             (helperText || (control && errors && errors[name || "default"])) && React.createElement(FormHelperText, { className: classes.error },

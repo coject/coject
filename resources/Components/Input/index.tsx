@@ -106,7 +106,7 @@ export const Input: FC<iInput> = ({ name, value, multiline, helperText, validati
     return (
         <React.Fragment>
             <Box className={`${classes.root} coject_input`}>
-                <TextField name={name || "default"} 
+                <TextField name={name || "default"} multiline={multiline}
                 sx={ multiline
                         ? { '& .MuiInputBase-root textarea': { resize: 'both', overflow: 'auto' } }
                         : undefined

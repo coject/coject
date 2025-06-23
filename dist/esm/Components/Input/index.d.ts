@@ -3,6 +3,7 @@ import { TextFieldProps } from "@mui/material";
 type iInput = Omit<TextFieldProps, "helperText" | "required"> & {
     name?: string;
     onChange?: any;
+    multiline?: any;
     validation?: {
         number?: boolean | string;
         arabic?: boolean | string;

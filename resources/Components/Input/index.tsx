@@ -13,6 +13,7 @@ import useStyles from "./theme";
 type iInput = Omit<TextFieldProps, "helperText" | "required"> & {
     name?: string;
     onChange?: any;
+    multiline?: any;
     validation?: {
         number?: boolean | string;
         arabic?: boolean | string;
@@ -29,7 +30,7 @@ type iInput = Omit<TextFieldProps, "helperText" | "required"> & {
     required?: boolean | string;
 }
 
-export const Input: FC<iInput> = ({ name, value, helperText, validation, required, onChange, ...props }) => {
+export const Input: FC<iInput> = ({ name, value, multiline, helperText, validation, required, onChange, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [ inputValue, setInputValue ] = useState<string | number>("");
@@ -105,7 +106,11 @@ export const Input: FC<iInput> = ({ name, value, helperText, validation, require
     return (
         <React.Fragment>
             <Box className={`${classes.root} coject_input`}>
-                <TextField name={name || "default"} autoComplete="off" value={inputValue} onChange={changeValue} label={props?.label ? props?.label : (name || "default")} {...props}>
+                <TextField name={name || "default"} 
+                sx={ multiline
+                        ? { '& .MuiInputBase-root textarea': { resize: 'both', overflow: 'auto' } }
+                        : undefined
+                } autoComplete="off" value={inputValue} onChange={changeValue} label={props?.label ? props?.label : (name || "default")} {...props}>
                     {props?.children}
                 </TextField>
                 { (helperText || (control && errors && errors[name || "default"])) && <FormHelperText className={classes.error}>{control && errors && errors[name || "default"]?.message as string}{helperText && !(control && errors && errors[name || "default"]) && helperText}</FormHelperText> }

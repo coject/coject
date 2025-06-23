@@ -34,7 +34,7 @@ const react_hook_form_1 = require("react-hook-form");
 const material_1 = require("@mui/material");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Input = ({ name, value, helperText, validation, required, onChange, ...props }) => {
+const Input = ({ name, value, multiline, helperText, validation, required, onChange, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useFormContext)() || {};
     const [inputValue, setInputValue] = (0, react_1.useState)("");
@@ -106,7 +106,9 @@ const Input = ({ name, value, helperText, validation, required, onChange, ...pro
     }, [inputValue, required, name, setError, clearErrors, validation]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: `${classes.root} coject_input` },
-            react_1.default.createElement(material_1.TextField, { name: name || "default", autoComplete: "off", value: inputValue, onChange: changeValue, label: props?.label ? props?.label : (name || "default"), ...props }, props?.children),
+            react_1.default.createElement(material_1.TextField, { name: name || "default", sx: multiline
+                    ? { '& .MuiInputBase-root textarea': { resize: 'both', overflow: 'auto' } }
+                    : undefined, autoComplete: "off", value: inputValue, onChange: changeValue, label: props?.label ? props?.label : (name || "default"), ...props }, props?.children),
             (helperText || (control && errors && errors[name || "default"])) && react_1.default.createElement(material_1.FormHelperText, { className: classes.error },
                 control && errors && errors[name || "default"]?.message,
                 helperText && !(control && errors && errors[name || "default"]) && helperText))));

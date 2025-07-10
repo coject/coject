@@ -12,17 +12,17 @@ import useStyles from "./theme";
 export const Select = ({ name, value, label, noOptionsText, callback, staticData, disabled, helperText, dataSource, dependancies, multiple, separate, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
-    const [selectedValue, setSelectedValue] = useState();
+    const [selectedValue, setSelectedValue] = useState(multiple ? [] : null);
     const [selectData, setSelectData] = useState([]);
     const { setValue, control, watch, getValues } = useFormContext() || {};
     // Methods Watching
     useEffect(() => {
-        control && setSelectedValue(getValues(name || "default") ? getValues(name || "default") : "");
+        control && setSelectedValue(getValues(name || "default") !== undefined ? getValues(name || "default") : multiple ? [] : null);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [control, getValues, name, watch && watch(name || "default")]);
     // Value
     useEffect(() => {
-        if ((value || (fixedOption && multiple))) {
+        if ((value !== undefined || (fixedOption && multiple))) {
             if (fixedOption && multiple) {
                 setSelectedValue([...fixedOption, ...(value ? (multiple ? (separate ? value.split(separate).map((t) => Number(t)) : value) : [value]) : [])]);
                 control && setValue(name || "default", [...fixedOption, ...(value ? (multiple ? (separate ? value.split(separate).map((t) => Number(t)) : value) : [value]) : [])]);
@@ -55,11 +55,11 @@ export const Select = ({ name, value, label, noOptionsText, callback, staticData
         React.createElement(Box, { className: `${classes.root} coject_select` },
             control ?
                 React.createElement(Controller, { name: name || "default", control: control, render: () => {
-                        return (React.createElement(Autocomplete, { noOptionsText: noOptionsText, options: selectData, multiple: multiple, disabled: disabled, readOnly: disabled, ...props, value: !!selectData?.length && selectedValue
+                        return (React.createElement(Autocomplete, { noOptionsText: noOptionsText, options: selectData, multiple: multiple, disabled: disabled, readOnly: disabled, ...props, value: !!selectData?.length && selectedValue !== undefined && selectedValue !== null
                                 ? multiple
                                     ? selectedValue?.map((SValue) => selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === SValue))
                                     : multiple ? [] : selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
-                                : multiple ? [] : null, defaultValue: !!selectData?.length && selectedValue
+                                : multiple ? [] : null, defaultValue: !!selectData?.length && selectedValue !== undefined && selectedValue !== null
                                 ? multiple
                                     ? selectedValue?.map((SValue) => selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === SValue))
                                     : multiple ? [] : selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
@@ -75,11 +75,11 @@ export const Select = ({ name, value, label, noOptionsText, callback, staticData
                                     : renderOption(row))
                             } : {}), getOptionDisabled: (row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false), renderInput: (params) => React.createElement(TextField, { ...params, InputProps: { ...params.InputProps, ...inputProps }, fullWidth: !!inputProps?.fullWidth, error: error, label: label ? label : (name || "default"), required: required }) }));
                     } })
-                : React.createElement(Autocomplete, { noOptionsText: noOptionsText, options: selectData, multiple: multiple, disabled: disabled, readOnly: disabled, ...props, value: !!selectData?.length && selectedValue
+                : React.createElement(Autocomplete, { noOptionsText: noOptionsText, options: selectData, multiple: multiple, disabled: disabled, readOnly: disabled, ...props, value: !!selectData?.length && selectedValue !== undefined && selectedValue !== null
                         ? multiple
                             ? selectedValue?.map((SValue) => selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === SValue))
                             : multiple ? [] : selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
-                        : multiple ? [] : null, defaultValue: !!selectData?.length && selectedValue
+                        : multiple ? [] : null, defaultValue: !!selectData?.length && selectedValue !== undefined && selectedValue !== null
                         ? multiple
                             ? selectedValue?.map((SValue) => selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === SValue))
                             : multiple ? [] : selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)

@@ -1,7 +1,8 @@
 import { FC, ReactNode } from "react";
 interface iPage {
-    title?: string;
+    tabTitle?: string;
     children?: ReactNode;
+    title?: string | ReactNode;
 }
 export declare const Page: FC<iPage>;
 export {};

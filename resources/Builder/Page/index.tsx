@@ -8,13 +8,14 @@ import useStyles from "./theme";
 
 // Interfaces
 interface iPage {
-    title?: string;
+    tabTitle?: string;
     children?: ReactNode;
+    title?: string | ReactNode;
 }
 
-export const Page: FC<iPage> = ({ title, children }) => {
+export const Page: FC<iPage> = ({ title, tabTitle, children }) => {
     const { classes } = useStyles();
-    document.title = localStorage.language === 'en' ? localStorage.projectNameTwo + ` | ${title}` : localStorage.projectNameOne + ` | ${title}`;
+    document.title = localStorage.language === 'en' ? localStorage.projectNameTwo + ` | ${tabTitle ?? title}` : localStorage.projectNameOne + ` | ${tabTitle ?? title}`;
     
     return (
         <React.Fragment>

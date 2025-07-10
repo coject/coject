@@ -8,16 +8,16 @@ import useStyles from "./theme";
 export const Input = ({ name, value, multiline, helperText, validation, required, onChange, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
-    const [inputValue, setInputValue] = useState("");
+    const [inputValue, setInputValue] = useState(value ?? "");
     const { setValue, control, getValues, watch, setError, clearErrors, formState: { errors } } = useFormContext() || {};
     // Methods Watching
     useEffect(() => {
-        control && setInputValue(getValues(name || "default") ? getValues(name || "default") : "");
+        control && setInputValue(getValues(name || "default") !== undefined ? getValues(name || "default") : "");
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [control, getValues, name, watch && watch(name || "default")]);
     // Value
     useEffect(() => {
-        if (value) {
+        if (value !== undefined) {
             setInputValue(value);
             control && setValue(name || "default", value);
         }

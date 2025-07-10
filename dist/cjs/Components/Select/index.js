@@ -41,17 +41,17 @@ const theme_1 = __importDefault(require("./theme"));
 const Select = ({ name, value, label, noOptionsText, callback, staticData, disabled, helperText, dataSource, dependancies, multiple, separate, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useFormContext)() || {};
-    const [selectedValue, setSelectedValue] = (0, react_1.useState)();
+    const [selectedValue, setSelectedValue] = (0, react_1.useState)(multiple ? [] : null);
     const [selectData, setSelectData] = (0, react_1.useState)([]);
     const { setValue, control, watch, getValues } = (0, react_hook_form_1.useFormContext)() || {};
     // Methods Watching
     (0, react_1.useEffect)(() => {
-        control && setSelectedValue(getValues(name || "default") ? getValues(name || "default") : "");
+        control && setSelectedValue(getValues(name || "default") !== undefined ? getValues(name || "default") : multiple ? [] : null);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [control, getValues, name, watch && watch(name || "default")]);
     // Value
     (0, react_1.useEffect)(() => {
-        if ((value || (fixedOption && multiple))) {
+        if ((value !== undefined || (fixedOption && multiple))) {
             if (fixedOption && multiple) {
                 setSelectedValue([...fixedOption, ...(value ? (multiple ? (separate ? value.split(separate).map((t) => Number(t)) : value) : [value]) : [])]);
                 control && setValue(name || "default", [...fixedOption, ...(value ? (multiple ? (separate ? value.split(separate).map((t) => Number(t)) : value) : [value]) : [])]);
@@ -84,11 +84,11 @@ const Select = ({ name, value, label, noOptionsText, callback, staticData, disab
         react_1.default.createElement(material_1.Box, { className: `${classes.root} coject_select` },
             control ?
                 react_1.default.createElement(react_hook_form_1.Controller, { name: name || "default", control: control, render: () => {
-                        return (react_1.default.createElement(material_1.Autocomplete, { noOptionsText: noOptionsText, options: selectData, multiple: multiple, disabled: disabled, readOnly: disabled, ...props, value: !!selectData?.length && selectedValue
+                        return (react_1.default.createElement(material_1.Autocomplete, { noOptionsText: noOptionsText, options: selectData, multiple: multiple, disabled: disabled, readOnly: disabled, ...props, value: !!selectData?.length && selectedValue !== undefined && selectedValue !== null
                                 ? multiple
                                     ? selectedValue?.map((SValue) => selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === SValue))
                                     : multiple ? [] : selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
-                                : multiple ? [] : null, defaultValue: !!selectData?.length && selectedValue
+                                : multiple ? [] : null, defaultValue: !!selectData?.length && selectedValue !== undefined && selectedValue !== null
                                 ? multiple
                                     ? selectedValue?.map((SValue) => selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === SValue))
                                     : multiple ? [] : selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
@@ -104,11 +104,11 @@ const Select = ({ name, value, label, noOptionsText, callback, staticData, disab
                                     : renderOption(row))
                             } : {}), getOptionDisabled: (row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false), renderInput: (params) => react_1.default.createElement(material_1.TextField, { ...params, InputProps: { ...params.InputProps, ...inputProps }, fullWidth: !!inputProps?.fullWidth, error: error, label: label ? label : (name || "default"), required: required }) }));
                     } })
-                : react_1.default.createElement(material_1.Autocomplete, { noOptionsText: noOptionsText, options: selectData, multiple: multiple, disabled: disabled, readOnly: disabled, ...props, value: !!selectData?.length && selectedValue
+                : react_1.default.createElement(material_1.Autocomplete, { noOptionsText: noOptionsText, options: selectData, multiple: multiple, disabled: disabled, readOnly: disabled, ...props, value: !!selectData?.length && selectedValue !== undefined && selectedValue !== null
                         ? multiple
                             ? selectedValue?.map((SValue) => selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === SValue))
                             : multiple ? [] : selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
-                        : multiple ? [] : null, defaultValue: !!selectData?.length && selectedValue
+                        : multiple ? [] : null, defaultValue: !!selectData?.length && selectedValue !== undefined && selectedValue !== null
                         ? multiple
                             ? selectedValue?.map((SValue) => selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === SValue))
                             : multiple ? [] : selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)

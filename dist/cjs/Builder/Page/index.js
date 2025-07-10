@@ -9,9 +9,9 @@ const react_1 = __importDefault(require("react"));
 const material_1 = require("@mui/material");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Page = ({ title, children }) => {
+const Page = ({ title, tabTitle, children }) => {
     const { classes } = (0, theme_1.default)();
-    document.title = localStorage.language === 'en' ? localStorage.projectNameTwo + ` | ${title}` : localStorage.projectNameOne + ` | ${title}`;
+    document.title = localStorage.language === 'en' ? localStorage.projectNameTwo + ` | ${tabTitle ?? title}` : localStorage.projectNameOne + ` | ${tabTitle ?? title}`;
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { id: 'coject_page', className: classes.root },
             title &&

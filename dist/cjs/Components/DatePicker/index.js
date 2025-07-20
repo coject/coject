@@ -47,7 +47,7 @@ const DatePicker = ({ name, value, hijri, viewFormat, actionFormat, minDate, max
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useFormContext)() || {};
     const DateComponent = withTime ? DateTimePicker_1.DateTimePicker : DatePicker_1.DatePicker;
-    const [selectedDate, setSelectedDate] = (0, react_1.useState)(hijri ? (0, coject_hijri_1.default)(new Date()) : (0, moment_1.default)(new Date()));
+    const [selectedDate, setSelectedDate] = (0, react_1.useState)(null);
     const { setValue, control, getValues, watch } = (0, react_hook_form_1.useFormContext)() || {};
     // Calendar
     const Calendar = hijri
@@ -60,7 +60,7 @@ const DatePicker = ({ name, value, hijri, viewFormat, actionFormat, minDate, max
             setSelectedDate(ValueFormat);
         }
         else
-            setSelectedDate(hijri ? (0, coject_hijri_1.default)(new Date()) : (0, moment_1.default)(new Date()));
+            setSelectedDate(null);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getValues, name, watch && watch(name || "default")]);
     // Default Value
@@ -78,11 +78,11 @@ const DatePicker = ({ name, value, hijri, viewFormat, actionFormat, minDate, max
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: `${classes.root} ${error ? classes.rootError : ""} coject_date` },
             react_1.default.createElement(LocalizationProvider_1.LocalizationProvider, { dateAdapter: (hijri ? adapter_1.Adapter : AdapterMoment_1.AdapterMoment) }, textView
-                ? react_1.default.createElement(material_1.Typography, { ...style, ...props }, selectedDate.format(viewFormat ? viewFormat : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY"))
+                ? react_1.default.createElement(material_1.Typography, { ...style, ...props }, selectedDate ? selectedDate.format(viewFormat ? viewFormat : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY") : '')
                 : react_1.default.createElement(DateComponent, { className: `${fullWidth ? "MuiFormControl-fullWidth" : ""}`, label: props.label ? props.label : name, value: selectedDate, ...style, ...Calendar, ...props, format: viewFormat ? viewFormat : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY", onChange: (newValue) => {
                         setSelectedDate(newValue);
-                        onChange && onChange(newValue.format(actionFormat ? actionFormat : "DD-MM-YYYY"), Methods);
-                        control && setValue(name || "default", newValue.format(actionFormat ? actionFormat : "DD-MM-YYYY"));
+                        onChange && onChange(newValue ? newValue.format(actionFormat ? actionFormat : "DD-MM-YYYY") : null, Methods);
+                        control && setValue(name || "default", newValue ? newValue.format(actionFormat ? actionFormat : "DD-MM-YYYY") : '');
                     } })),
             helperText && react_1.default.createElement(material_1.FormHelperText, { className: classes.error }, helperText))));
 };

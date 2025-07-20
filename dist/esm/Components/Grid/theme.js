@@ -54,7 +54,7 @@ const useStyles = makeStyles()((theme) => {
         },
         empty: {
             "& .MuiDataGrid-virtualScroller": {
-                minHeight: "350px"
+                minHeight: "100px"
             }
         }
     };

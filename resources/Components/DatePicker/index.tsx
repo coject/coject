@@ -42,7 +42,7 @@ export const DatePicker: FC<iDatePicker> = ({ name, value, hijri, viewFormat, ac
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const DateComponent: any = withTime ? DateTimePicker : MuiDatePicker;
-    const [ selectedDate, setSelectedDate ] = useState<any>(hijri ? MomentHijri(new Date()) : Moment(new Date()));
+    const [ selectedDate, setSelectedDate ] = useState<any>(null);
     const { setValue, control, getValues, watch } = useFormContext() || {};
 
     // Calendar
@@ -55,7 +55,7 @@ export const DatePicker: FC<iDatePicker> = ({ name, value, hijri, viewFormat, ac
         if (getValues && getValues(name || "default")) {
             const ValueFormat = hijri ? MomentHijri(getValues(name || "default"), actionFormat ? actionFormat : "DD-MM-YYYY") : Moment(getValues(name || "default"), actionFormat ? actionFormat : "DD-MM-YYYY");
             setSelectedDate(ValueFormat);
-        } else setSelectedDate(hijri ? MomentHijri(new Date()) : Moment(new Date()));
+        } else setSelectedDate(null);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getValues, name, watch && watch(name || "default")]);
 
@@ -78,13 +78,13 @@ export const DatePicker: FC<iDatePicker> = ({ name, value, hijri, viewFormat, ac
             <Box className={`${classes.root} ${error ? classes.rootError : ""} coject_date`}>
                 <LocalizationProvider dateAdapter={(hijri ? Adapter : AdapterMoment) as any}>
                     { textView
-                        ? <Typography {...style} {...props}>{selectedDate.format(viewFormat ? viewFormat : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY")}</Typography>
+                        ? <Typography {...style} {...props}>{selectedDate ? selectedDate.format(viewFormat ? viewFormat : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY") : ''}</Typography>
                         : <DateComponent className={`${fullWidth ? "MuiFormControl-fullWidth" : ""}`} label={props.label ? props.label : name} value={selectedDate} {...style} {...Calendar} {...props}
                             format={viewFormat ? viewFormat : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY"}
                             onChange={(newValue: any) => {
                                 setSelectedDate(newValue);
-                                onChange && onChange(newValue.format(actionFormat ? actionFormat : "DD-MM-YYYY"), Methods);
-                                control && setValue(name || "default", newValue.format(actionFormat ? actionFormat : "DD-MM-YYYY"));
+                                onChange && onChange(newValue ? newValue.format(actionFormat ? actionFormat : "DD-MM-YYYY") : null, Methods);
+                                control && setValue(name || "default", newValue ? newValue.format(actionFormat ? actionFormat : "DD-MM-YYYY") : '');
                             }
                         } />
                     }

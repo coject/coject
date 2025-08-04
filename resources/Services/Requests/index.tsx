@@ -67,12 +67,12 @@ export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, call
     };
 
     // Handling Variables
+    withCredentials = dataSource?.withCredentials ?? false;
     switch (mode) {
         case "create": case "update": case "delete":
             Type = "SINGLE";
             APIUrlId = apiUrlId ? apiUrlId : "";
             Name = dataSource?.name ? dataSource.name : "default";
-            withCredentials = dataSource?.withCredentials || false;
             Headers = dataSource && dataSource[mode]?.headers ? dataSource[mode]?.headers : dataSource?.headers;
             DataPath = dataSource && dataSource[mode]?.dataPath ? dataSource[mode]?.dataPath?.split(".") : dataSource?.dataPath?.split(".");
             APIUrl = (dataSource && dataSource[mode]?.apiUrl) ? dataSource[mode]?.apiUrl || "" : (dataSource?.apiUrl ? dataSource.apiUrl : "");
@@ -85,7 +85,6 @@ export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, call
             APIUrlId = apiUrlId ? apiUrlId : "";
             DataPath = dataSource?.dataPath?.split(".");
             Name = dataSource?.name ? dataSource.name : "default";
-            withCredentials = dataSource?.withCredentials || false;
             Method = dataSource?.method ? dataSource.method : DefaultMethod();
             Data = (dataSource?.requestData ? dataSource.requestData(data) : (data ? data : {}));
             break;
@@ -113,11 +112,11 @@ export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, call
 
     // Request Actions
     if (Method.toLowerCase() === "get" || Method.toLowerCase() === "delete")
-        await RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : localStorage?.baseUrl}${APIUrl || ""}${APIUrlId ? "/" + APIUrlId : ""}`, { "withCredentials": withCredentials }, { "headers": Headers })
+        await RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : localStorage?.baseUrl}${APIUrl || ""}${APIUrlId ? "/" + APIUrlId : ""}`, { "headers": Headers, "withCredentials": withCredentials })
             .then((Response: any) => SuccessAction(Response))
             .catch((Error: any) => CatchAction(Error));
     else
-        await RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : localStorage?.baseUrl}${APIUrl || ""}${APIUrlId ? "/" + APIUrlId : ""}`, Data, { "withCredentials": withCredentials }, { "headers": Headers })
+        await RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : localStorage?.baseUrl}${APIUrl || ""}${APIUrlId ? "/" + APIUrlId : ""}`, Data, { "headers": Headers, "withCredentials": withCredentials })
             .then((Response: any) => SuccessAction(Response))
             .catch((Error: any) => CatchAction(Error));
 };

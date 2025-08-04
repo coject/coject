@@ -27,6 +27,7 @@ const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, callback })
         }
     };
     // Handling Variables
+    withCredentials = dataSource?.withCredentials ?? false;
     switch (mode) {
         case "create":
         case "update":
@@ -34,7 +35,6 @@ const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, callback })
             Type = "SINGLE";
             APIUrlId = apiUrlId ? apiUrlId : "";
             Name = dataSource?.name ? dataSource.name : "default";
-            withCredentials = dataSource?.withCredentials || false;
             Headers = dataSource && dataSource[mode]?.headers ? dataSource[mode]?.headers : dataSource?.headers;
             DataPath = dataSource && dataSource[mode]?.dataPath ? dataSource[mode]?.dataPath?.split(".") : dataSource?.dataPath?.split(".");
             APIUrl = (dataSource && dataSource[mode]?.apiUrl) ? dataSource[mode]?.apiUrl || "" : (dataSource?.apiUrl ? dataSource.apiUrl : "");
@@ -47,7 +47,6 @@ const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, callback })
             APIUrlId = apiUrlId ? apiUrlId : "";
             DataPath = dataSource?.dataPath?.split(".");
             Name = dataSource?.name ? dataSource.name : "default";
-            withCredentials = dataSource?.withCredentials || false;
             Method = dataSource?.method ? dataSource.method : DefaultMethod();
             Data = (dataSource?.requestData ? dataSource.requestData(data) : (data ? data : {}));
             break;
@@ -71,11 +70,11 @@ const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, callback })
     };
     // Request Actions
     if (Method.toLowerCase() === "get" || Method.toLowerCase() === "delete")
-        await exports.RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : localStorage?.baseUrl}${APIUrl || ""}${APIUrlId ? "/" + APIUrlId : ""}`, { "withCredentials": withCredentials }, { "headers": Headers })
+        await exports.RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : localStorage?.baseUrl}${APIUrl || ""}${APIUrlId ? "/" + APIUrlId : ""}`, { "headers": Headers, "withCredentials": withCredentials })
             .then((Response) => SuccessAction(Response))
             .catch((Error) => CatchAction(Error));
     else
-        await exports.RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : localStorage?.baseUrl}${APIUrl || ""}${APIUrlId ? "/" + APIUrlId : ""}`, Data, { "withCredentials": withCredentials }, { "headers": Headers })
+        await exports.RequestCreation[Method.toLowerCase()](`${dataSource?.baseUrl ? dataSource?.baseUrl : localStorage?.baseUrl}${APIUrl || ""}${APIUrlId ? "/" + APIUrlId : ""}`, Data, { "headers": Headers, "withCredentials": withCredentials })
             .then((Response) => SuccessAction(Response))
             .catch((Error) => CatchAction(Error));
 };

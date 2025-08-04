@@ -9,12 +9,12 @@ export const Input = ({ name, value, multiline, helperText, validation, required
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const [inputValue, setInputValue] = useState(value ?? "");
-    const { setValue, control, getValues, watch, setError, clearErrors, formState: { errors } } = useFormContext() || {};
+    const { setValue, control, getValues, setError, clearErrors, formState: { errors } } = useFormContext() || {};
     // Methods Watching
     useEffect(() => {
         control && setInputValue(getValues(name || "default") !== undefined ? getValues(name || "default") : "");
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [control, getValues, name, watch && watch(name || "default")]);
+    }, [control, getValues, name]);
     // Value
     useEffect(() => {
         if (value !== undefined) {

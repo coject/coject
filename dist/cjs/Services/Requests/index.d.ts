@@ -5,6 +5,7 @@ interface iDataSource {
     baseUrl?: string;
     requestData?: any;
     dataPath?: string;
+    withCredentials?: boolean;
     method?: "get" | "post" | "put" | "delete";
     create?: {
         headers?: any;

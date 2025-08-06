@@ -38,12 +38,12 @@ const Input = ({ name, value, multiline, helperText, validation, required, onCha
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useFormContext)() || {};
     const [inputValue, setInputValue] = (0, react_1.useState)(value ?? "");
-    const { setValue, control, getValues, setError, clearErrors, formState: { errors } } = (0, react_hook_form_1.useFormContext)() || {};
+    const { setValue, control, getValues, watch, setError, clearErrors, formState: { errors } } = (0, react_hook_form_1.useFormContext)() || {};
     // Methods Watching
     (0, react_1.useEffect)(() => {
         control && setInputValue(getValues(name || "default") !== undefined ? getValues(name || "default") : "");
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [control, getValues, name]);
+    }, [control, getValues, name, watch && watch(name || "default")]);
     // Value
     (0, react_1.useEffect)(() => {
         if (value !== undefined) {

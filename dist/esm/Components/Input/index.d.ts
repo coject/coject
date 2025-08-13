@@ -5,6 +5,8 @@ type iInput = Omit<TextFieldProps, "helperText" | "required"> & {
     onChange?: any;
     multiline?: any;
     validation?: {
+        email?: boolean | string;
+        phone?: boolean | string;
         number?: boolean | string;
         arabic?: boolean | string;
         english?: boolean | string;

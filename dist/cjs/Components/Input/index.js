@@ -62,7 +62,9 @@ const Input = ({ name, value, multiline, helperText, validation, required, onCha
     // Error Handling
     (0, react_1.useEffect)(() => {
         const Required = (!!required || !!validation?.required) && !inputValue;
+        const Phone = !!validation?.email && !!inputValue && !(/^\d{9}$/.test(`${inputValue}`));
         const Numbers = !!validation?.number && !!inputValue && !(/^[0-9,.]+$/i.test(`${inputValue}`));
+        const Email = !!validation?.email && !!inputValue && !(/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(`${inputValue}`));
         const Arabic = !!validation?.arabic && !!inputValue && !(/^[\u0621-\u064A\u064B-\u0652\u0670\u0671',._\/\-\s]+$/ui.test(`${inputValue}`));
         const English = !!validation?.english && !!inputValue && !(/^[-/_.,'A-Za-z ]+$/i.test(`${inputValue}`));
         const MinNumber = !!validation?.min && !!inputValue && Number(inputValue) < Number((validation.min instanceof Object) ? validation.min.value : validation.min);
@@ -71,7 +73,7 @@ const Input = ({ name, value, multiline, helperText, validation, required, onCha
         const MaxLength = !!validation?.maxLength && !!inputValue && (`${inputValue}`).length > Number((validation.maxLength instanceof Object) ? validation.maxLength.value : validation.maxLength);
         const Pattern = !!validation?.pattern && !!inputValue && ((validation.pattern instanceof Object) ? !((validation?.pattern?.value).test(`${inputValue}`)) : !((validation?.pattern).test(`${inputValue}`)));
         // Clear Errors
-        if (!Required && !Numbers && !Arabic && !English && !MinNumber && !MaxNumber && !MinLength && !MaxLength && !Pattern)
+        if (!Required && !Numbers && !Arabic && !English && !MinNumber && !MaxNumber && !MinLength && !MaxLength && !Pattern && !Email && !Phone)
             clearErrors(name || "default");
         // Set Errors
         else {
@@ -87,6 +89,12 @@ const Input = ({ name, value, multiline, helperText, validation, required, onCha
             // English
             if (English)
                 setError(name || "default", { type: "pattern", message: (validation?.english?.toString() === "true") ? "This Field Just English" : `${validation?.english}` });
+            // Email
+            if (Email)
+                setError(name || "default", { type: "email", message: (validation?.email?.toString() === "true") ? "This Field Just Email" : `${validation?.email}` });
+            // Phone
+            if (Phone)
+                setError(name || "default", { type: "pattern", message: (validation?.phone?.toString() === "true") ? "This Field Just Phone" : `${validation?.phone}` });
             // MinNumber
             if (MinNumber)
                 setError(name || "default", { type: "min", message: (validation?.min instanceof Object) ? `${validation.min.message}` : "Less Than The Minimum" });

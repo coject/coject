@@ -15,6 +15,8 @@ type iInput = Omit<TextFieldProps, "helperText" | "required"> & {
     onChange?: any;
     multiline?: any;
     validation?: {
+        email?: boolean | string;
+        phone?: boolean | string;
         number?: boolean | string;
         arabic?: boolean | string;
         english?: boolean | string;
@@ -60,7 +62,9 @@ export const Input: FC<iInput> = ({ name, value, multiline, helperText, validati
     // Error Handling
     useEffect(() => {
         const Required: boolean = (!!required || !!validation?.required) && !inputValue;
+        const Phone: boolean = !!validation?.email && !!inputValue && !(/^\d{9}$/.test(`${inputValue}`));
         const Numbers: boolean = !!validation?.number && !!inputValue && !(/^[0-9,.]+$/i.test(`${inputValue}`));
+        const Email: boolean = !!validation?.email && !!inputValue && !(/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(`${inputValue}`));
         const Arabic: boolean = !!validation?.arabic && !!inputValue && !(/^[\u0621-\u064A\u064B-\u0652\u0670\u0671',._\/\-\s]+$/ui.test(`${inputValue}`));
         const English: boolean = !!validation?.english && !!inputValue && !(/^[-/_.,'A-Za-z ]+$/i.test(`${inputValue}`));
         const MinNumber: boolean = !!validation?.min && !!inputValue && Number(inputValue) < Number((validation.min instanceof Object) ? validation.min.value : validation.min);
@@ -70,7 +74,7 @@ export const Input: FC<iInput> = ({ name, value, multiline, helperText, validati
         const Pattern: boolean = !!validation?.pattern && !!inputValue && ((validation.pattern instanceof Object) ? !((validation?.pattern?.value).test(`${inputValue}`)) : !((validation?.pattern).test(`${inputValue}`)));
 
         // Clear Errors
-        if ( !Required && !Numbers && !Arabic && !English && !MinNumber && !MaxNumber && !MinLength && !MaxLength && !Pattern ) clearErrors(name || "default");
+        if ( !Required && !Numbers && !Arabic && !English && !MinNumber && !MaxNumber && !MinLength && !MaxLength && !Pattern && !Email && !Phone ) clearErrors(name || "default");
 
         // Set Errors
         else {
@@ -85,6 +89,12 @@ export const Input: FC<iInput> = ({ name, value, multiline, helperText, validati
 
             // English
             if (English) setError(name || "default", { type: "pattern", message: (validation?.english?.toString() === "true") ? "This Field Just English" : `${validation?.english}` });
+
+            // Email
+            if (Email) setError(name || "default", { type: "email", message: (validation?.email?.toString() === "true") ? "This Field Just Email" : `${validation?.email}` });
+
+            // Phone
+            if (Phone) setError(name || "default", { type: "pattern", message: (validation?.phone?.toString() === "true") ? "This Field Just Phone" : `${validation?.phone}` });
 
             // MinNumber
             if (MinNumber) setError(name || "default", { type: "min", message: (validation?.min instanceof Object) ? `${validation.min.message}` : "Less Than The Minimum" });

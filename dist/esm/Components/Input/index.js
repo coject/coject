@@ -33,7 +33,7 @@ export const Input = ({ name, value, multiline, helperText, validation, required
     // Error Handling
     useEffect(() => {
         const Required = (!!required || !!validation?.required) && !inputValue;
-        const Phone = !!validation?.email && !!inputValue && !(/^\d{9}$/.test(`${inputValue}`));
+        const Phone = !!validation?.phone && !!inputValue && !(/^\d{9}$/.test(`${inputValue}`));
         const Numbers = !!validation?.number && !!inputValue && !(/^[0-9,.]+$/i.test(`${inputValue}`));
         const Email = !!validation?.email && !!inputValue && !(/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(`${inputValue}`));
         const Arabic = !!validation?.arabic && !!inputValue && !(/^[\u0621-\u064A\u064B-\u0652\u0670\u0671',._\/\-\s]+$/ui.test(`${inputValue}`));
@@ -62,7 +62,7 @@ export const Input = ({ name, value, multiline, helperText, validation, required
                 setError(name || "default", { type: "pattern", message: (validation?.english?.toString() === "true") ? "This Field Just English" : `${validation?.english}` });
             // Email
             if (Email)
-                setError(name || "default", { type: "email", message: (validation?.email?.toString() === "true") ? "This Field Just Email" : `${validation?.email}` });
+                setError(name || "default", { type: "pattern", message: (validation?.email?.toString() === "true") ? "This Field Just Email" : `${validation?.email}` });
             // Phone
             if (Phone)
                 setError(name || "default", { type: "pattern", message: (validation?.phone?.toString() === "true") ? "This Field Just Phone" : `${validation?.phone}` });

@@ -116,7 +116,10 @@ const Input = ({ name, value, multiline, helperText, validation, required, onCha
         react_1.default.createElement(material_1.Box, { className: `${classes.root} coject_input` },
             react_1.default.createElement(material_1.TextField, { name: name || "default", multiline: multiline, sx: multiline
                     ? { '& .MuiInputBase-root textarea': { resize: 'both', overflow: 'auto' } }
-                    : undefined, autoComplete: "off", value: inputValue, onChange: changeValue, label: props?.label ? props?.label : (name || "default"), ...props }, props?.children),
+                    : undefined, autoComplete: "off", value: inputValue, onChange: changeValue, label: props?.label ? props?.label : (name || "default"), ...props, InputProps: {
+                    ...props.InputProps,
+                    endAdornment: validation?.phone ? (react_1.default.createElement(material_1.InputAdornment, { position: "end" }, "966+")) : props.InputProps?.startAdornment,
+                } }, props?.children),
             (helperText || (control && errors && errors[name || "default"])) && react_1.default.createElement(material_1.FormHelperText, { className: classes.error },
                 control && errors && errors[name || "default"]?.message,
                 helperText && !(control && errors && errors[name || "default"]) && helperText))));

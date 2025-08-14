@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 // React Hook Form
 import { useFormContext } from "react-hook-form";
 // Material UI
-import { Box, TextField, FormHelperText } from "@mui/material";
+import { Box, TextField, FormHelperText, InputAdornment } from "@mui/material";
 // Styles
 import useStyles from "./theme";
 export const Input = ({ name, value, multiline, helperText, validation, required, onChange, ...props }) => {
@@ -87,7 +87,10 @@ export const Input = ({ name, value, multiline, helperText, validation, required
         React.createElement(Box, { className: `${classes.root} coject_input` },
             React.createElement(TextField, { name: name || "default", multiline: multiline, sx: multiline
                     ? { '& .MuiInputBase-root textarea': { resize: 'both', overflow: 'auto' } }
-                    : undefined, autoComplete: "off", value: inputValue, onChange: changeValue, label: props?.label ? props?.label : (name || "default"), ...props }, props?.children),
+                    : undefined, autoComplete: "off", value: inputValue, onChange: changeValue, label: props?.label ? props?.label : (name || "default"), ...props, InputProps: {
+                    ...props.InputProps,
+                    endAdornment: validation?.phone ? (React.createElement(InputAdornment, { position: "end" }, "966+")) : props.InputProps?.startAdornment,
+                } }, props?.children),
             (helperText || (control && errors && errors[name || "default"])) && React.createElement(FormHelperText, { className: classes.error },
                 control && errors && errors[name || "default"]?.message,
                 helperText && !(control && errors && errors[name || "default"]) && helperText))));

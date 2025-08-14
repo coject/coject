@@ -4,7 +4,7 @@ import React, { FC, useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 // Material UI
-import { Box, TextField, TextFieldProps, FormHelperText } from "@mui/material";
+import { Box, TextField, TextFieldProps, FormHelperText, InputAdornment } from "@mui/material";
 
 // Styles
 import useStyles from "./theme";
@@ -120,7 +120,13 @@ export const Input: FC<iInput> = ({ name, value, multiline, helperText, validati
                 sx={ multiline
                         ? { '& .MuiInputBase-root textarea': { resize: 'both', overflow: 'auto' } }
                         : undefined
-                } autoComplete="off" value={inputValue} onChange={changeValue} label={props?.label ? props?.label : (name || "default")} {...props}>
+                } autoComplete="off" value={inputValue} onChange={changeValue} label={props?.label ? props?.label : (name || "default")} {...props}
+                InputProps={{
+                        ...props.InputProps,
+                        endAdornment: validation?.phone ? (
+                            <InputAdornment position="end">966+</InputAdornment>
+                        ) : props.InputProps?.startAdornment,
+                    }}>
                     {props?.children}
                 </TextField>
                 { (helperText || (control && errors && errors[name || "default"])) && <FormHelperText className={classes.error}>{control && errors && errors[name || "default"]?.message as string}{helperText && !(control && errors && errors[name || "default"]) && helperText}</FormHelperText> }

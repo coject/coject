@@ -123,10 +123,11 @@ export const Input: FC<iInput> = ({ name, value, multiline, helperText, validati
                 } autoComplete="off" value={inputValue} onChange={changeValue} label={props?.label ? props?.label : (name || "default")} {...props}
                 InputProps={{
                         ...props.InputProps,
+                        startAdornment: props.InputProps?.startAdornment,
                         endAdornment: validation?.phone ? (
                             <InputAdornment position="end">966+</InputAdornment>
-                        ) : props.InputProps?.startAdornment,
-                    }}>
+                        ) : props.InputProps?.endAdornment,
+                }}>
                     {props?.children}
                 </TextField>
                 { (helperText || (control && errors && errors[name || "default"])) && <FormHelperText className={classes.error}>{control && errors && errors[name || "default"]?.message as string}{helperText && !(control && errors && errors[name || "default"]) && helperText}</FormHelperText> }

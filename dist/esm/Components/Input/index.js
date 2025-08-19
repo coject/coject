@@ -89,7 +89,8 @@ export const Input = ({ name, value, multiline, helperText, validation, required
                     ? { '& .MuiInputBase-root textarea': { resize: 'both', overflow: 'auto' } }
                     : undefined, autoComplete: "off", value: inputValue, onChange: changeValue, label: props?.label ? props?.label : (name || "default"), ...props, InputProps: {
                     ...props.InputProps,
-                    endAdornment: validation?.phone ? (React.createElement(InputAdornment, { position: "end" }, "966+")) : props.InputProps?.startAdornment,
+                    startAdornment: props.InputProps?.startAdornment,
+                    endAdornment: validation?.phone ? (React.createElement(InputAdornment, { position: "end" }, "966+")) : props.InputProps?.endAdornment,
                 } }, props?.children),
             (helperText || (control && errors && errors[name || "default"])) && React.createElement(FormHelperText, { className: classes.error },
                 control && errors && errors[name || "default"]?.message,

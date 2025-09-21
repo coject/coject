@@ -2,14 +2,15 @@ import React, { useEffect, useState } from "react";
 // React Hook Form
 import { useFormContext } from "react-hook-form";
 // Material UI
-import { Box, TextField, FormHelperText, InputAdornment } from "@mui/material";
+import { Box, TextField, InputAdornment, Tooltip } from "@mui/material";
 // Styles
 import useStyles from "./theme";
 export const Input = ({ name, value, multiline, helperText, validation, required, onChange, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
+    const [isTouched, setIsTouched] = useState(false);
     const [inputValue, setInputValue] = useState(value ?? "");
-    const { setValue, control, getValues, watch, setError, clearErrors, formState: { errors } } = useFormContext() || {};
+    const { setValue, control, getValues, watch, setError, clearErrors, formState: { errors, isSubmitted } } = useFormContext() || {};
     // Methods Watching
     useEffect(() => {
         control && setInputValue(getValues(name || "default") !== undefined ? getValues(name || "default") : "");
@@ -26,6 +27,8 @@ export const Input = ({ name, value, multiline, helperText, validation, required
     }, [control, name, setValue, value]);
     // Change Value
     const changeValue = (event) => {
+        if (!isTouched)
+            setIsTouched(true);
         onChange && onChange(event, event.target.value, Methods);
         setInputValue(event.target.value);
         control && setValue(name || "default", event.target.value);
@@ -85,15 +88,11 @@ export const Input = ({ name, value, multiline, helperText, validation, required
     }, [inputValue, required, name, setError, clearErrors, validation]);
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: `${classes.root} coject_input` },
-            React.createElement(TextField, { name: name || "default", multiline: multiline, sx: multiline
-                    ? { '& .MuiInputBase-root textarea': { resize: 'both', overflow: 'auto' } }
-                    : undefined, autoComplete: "off", value: inputValue, onChange: changeValue, label: props?.label ? props?.label : (name || "default"), ...props, InputProps: {
-                    ...props.InputProps,
-                    startAdornment: props.InputProps?.startAdornment,
-                    endAdornment: validation?.phone ? (React.createElement(InputAdornment, { position: "end" }, "966+")) : props.InputProps?.endAdornment,
-                } }, props?.children),
-            (helperText || (control && errors && errors[name || "default"])) && React.createElement(FormHelperText, { className: classes.error },
-                control && errors && errors[name || "default"]?.message,
-                helperText && !(control && errors && errors[name || "default"]) && helperText))));
+            React.createElement(Tooltip, { title: (!!(errors && errors[name || "default"] && (isTouched || isSubmitted))) ? errors[name || "default"]?.message : "", placement: localStorage?.language === 'ar' ? "left" : "right", arrow: true, disableHoverListener: true, open: !!(errors && errors[name || "default"] && (isTouched || isSubmitted)) },
+                React.createElement(TextField, { name: name || "default", multiline: multiline, error: !!(errors && errors[name || "default"] && (isTouched || isSubmitted)), sx: multiline ? { '& .MuiInputBase-root textarea': { resize: 'both', overflow: 'auto' } } : undefined, onBlur: () => setIsTouched(true), autoComplete: "off", value: inputValue, onChange: changeValue, label: props?.label ? props?.label : (name || "default"), ...props, InputProps: {
+                        ...props.InputProps,
+                        startAdornment: props.InputProps?.startAdornment,
+                        endAdornment: validation?.phone ? (React.createElement(InputAdornment, { position: "end" }, "966+")) : props.InputProps?.endAdornment,
+                    } }, props?.children)))));
 };
 //# sourceMappingURL=index.js.map

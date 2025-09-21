@@ -4,7 +4,7 @@ import React, { FC, useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 // Material UI
-import { Box, TextField, TextFieldProps, FormHelperText, InputAdornment } from "@mui/material";
+import { Box, TextField, TextFieldProps, InputAdornment, Tooltip } from "@mui/material";
 
 // Styles
 import useStyles from "./theme";
@@ -35,8 +35,9 @@ type iInput = Omit<TextFieldProps, "helperText" | "required"> & {
 export const Input: FC<iInput> = ({ name, value, multiline, helperText, validation, required, onChange, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
-    const [ inputValue, setInputValue ] = useState<string | number>(value ?? "");
-    const { setValue, control, getValues, watch, setError, clearErrors, formState: { errors } } = useFormContext() || {};
+    const [isTouched, setIsTouched] = useState(false);
+    const [inputValue, setInputValue] = useState<string | number>(value ?? "");
+    const { setValue, control, getValues, watch, setError, clearErrors, formState: { errors, isSubmitted } } = useFormContext() || {};
 
     // Methods Watching
     useEffect(() => {
@@ -54,6 +55,7 @@ export const Input: FC<iInput> = ({ name, value, multiline, helperText, validati
 
     // Change Value
     const changeValue = (event: any) => {
+        if (!isTouched) setIsTouched(true);
         onChange && onChange(event, event.target.value, Methods);
         setInputValue(event.target.value);
         control && setValue(name || "default", event.target.value);
@@ -74,7 +76,7 @@ export const Input: FC<iInput> = ({ name, value, multiline, helperText, validati
         const Pattern: boolean = !!validation?.pattern && !!inputValue && ((validation.pattern instanceof Object) ? !((validation?.pattern?.value).test(`${inputValue}`)) : !((validation?.pattern).test(`${inputValue}`)));
 
         // Clear Errors
-        if ( !Required && !Numbers && !Arabic && !English && !MinNumber && !MaxNumber && !MinLength && !MaxLength && !Pattern && !Email && !Phone ) clearErrors(name || "default");
+        if (!Required && !Numbers && !Arabic && !English && !MinNumber && !MaxNumber && !MinLength && !MaxLength && !Pattern && !Email && !Phone) clearErrors(name || "default");
 
         // Set Errors
         else {
@@ -107,7 +109,7 @@ export const Input: FC<iInput> = ({ name, value, multiline, helperText, validati
 
             // MaxLength
             if (MaxLength) setError(name || "default", { type: "maxLength", message: (validation?.maxLength instanceof Object) ? `${validation.maxLength.message}` : "Greater Than The Maximum Length" });
-        
+
             // Pattern
             if (Pattern) setError(name || "default", { type: "pattern", message: (validation?.pattern instanceof Object) ? `${validation.pattern.message}` : "This Field Required" });
         }
@@ -116,21 +118,28 @@ export const Input: FC<iInput> = ({ name, value, multiline, helperText, validati
     return (
         <React.Fragment>
             <Box className={`${classes.root} coject_input`}>
-                <TextField name={name || "default"} multiline={multiline}
-                sx={ multiline
-                        ? { '& .MuiInputBase-root textarea': { resize: 'both', overflow: 'auto' } }
-                        : undefined
-                } autoComplete="off" value={inputValue} onChange={changeValue} label={props?.label ? props?.label : (name || "default")} {...props}
-                InputProps={{
-                        ...props.InputProps,
-                        startAdornment: props.InputProps?.startAdornment,
-                        endAdornment: validation?.phone ? (
-                            <InputAdornment position="end">966+</InputAdornment>
-                        ) : props.InputProps?.endAdornment,
-                }}>
-                    {props?.children}
-                </TextField>
-                { (helperText || (control && errors && errors[name || "default"])) && <FormHelperText className={classes.error}>{control && errors && errors[name || "default"]?.message as string}{helperText && !(control && errors && errors[name || "default"]) && helperText}</FormHelperText> }
+                <Tooltip
+                    title={(!!(errors && errors[name || "default"] && (isTouched || isSubmitted))) ? (errors[name || "default"]?.message as string) : ""}
+                    placement={localStorage?.language === 'ar' ? "left" : "right"}
+                    arrow
+                    disableHoverListener
+                    open={!!(errors && errors[name || "default"] && (isTouched || isSubmitted))}
+                >
+                    <TextField name={name || "default"} multiline={multiline} error={!!(errors && errors[name || "default"] && (isTouched || isSubmitted))}
+                        sx={multiline ? { '& .MuiInputBase-root textarea': { resize: 'both', overflow: 'auto' } } : undefined}
+                        onBlur={() => setIsTouched(true)}
+                        autoComplete="off" value={inputValue} onChange={changeValue} label={props?.label ? props?.label : (name || "default")} {...props}
+                        InputProps={{
+                            ...props.InputProps,
+                            startAdornment: props.InputProps?.startAdornment,
+                            endAdornment: validation?.phone ? (
+                                <InputAdornment position="end">966+</InputAdornment>
+                            ) : props.InputProps?.endAdornment,
+                        }}>
+                        {props?.children}
+                    </TextField>
+                </Tooltip>
+                {/* { (helperText || (control && errors && errors[name || "default"])) && <FormHelperText className={classes.error}>{control && errors && errors[name || "default"]?.message as string}{helperText && !(control && errors && errors[name || "default"]) && helperText}</FormHelperText> } */}
             </Box>
         </React.Fragment>
     )

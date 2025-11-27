@@ -60,7 +60,9 @@ export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, call
     };
     // Error State
     const CatchAction = (Error) => {
-        dispatch && dispatch({ type: "ERRORS", error: Error.message, name: Name });
+        let errorMessage = Error?.response?.data?.message || Error?.response?.data?.error || Error?.message || "Unknown Error";
+        dispatch && dispatch({ type: "ERRORS", error: errorMessage, name: Name });
+        throw errorMessage;
     };
     // Request Actions
     if (Method.toLowerCase() === "get" || Method.toLowerCase() === "delete")

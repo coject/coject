@@ -107,7 +107,7 @@ export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, call
 
     // Error State
     const CatchAction = (Error: any) => {
-        let errorMessage = Error?.response?.data?.message || Error?.response?.data?.error || Error?.message || "Unknown Error";
+        let errorMessage = Error;
         dispatch && dispatch({ type: "ERRORS", error: errorMessage, name: Name });
         throw errorMessage;
     };

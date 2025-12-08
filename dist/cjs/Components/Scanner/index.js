@@ -50,7 +50,7 @@ const Scanner = ({ name, value, onChange, disabled, multiple, placeholder, valid
     // Load scanner.js
     (0, react_1.useEffect)(() => {
         const script = document.createElement("script");
-        script.src = "/scanner.js";
+        script.src = "./scanner.js";
         script.type = "text/javascript";
         script.async = true;
         script.onload = () => setIsScriptLoaded(true);

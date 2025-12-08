@@ -1,12 +1,11 @@
 {
     "name": "coject",
-    "version": "2.4.25",
+    "version": "2.4.26",
     "description": "React Library",
     "main": "dist/cjs/index.js",
     "module": "dist/esm/index.js",
     "files": [
-        "dist",
-        "resources/scanner.js"
+        "dist"
     ],
     "scripts": {
         "build": "npm run build:esm && npm run build:cjs",

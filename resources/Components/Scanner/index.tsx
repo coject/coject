@@ -61,7 +61,7 @@ export const Scanner: FC<iScanner> = ({
     // Load scanner.js
     useEffect(() => {
         const script = document.createElement("script");
-        script.src = "./scanner.js";
+        script.src = "/scanner.js";
         script.type = "text/javascript";
         script.async = true;
 

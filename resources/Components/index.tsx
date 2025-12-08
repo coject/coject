@@ -34,5 +34,8 @@ export { Upload } from "./Upload";
 // PDF Generator
 export { PDFGenerator } from "./PDFGenerator";
 
+// Scanner
+export { Scanner } from "./Scanner";
+
 // Icons
 export const Icons: any = MuiIcons;

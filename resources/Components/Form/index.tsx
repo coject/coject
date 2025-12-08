@@ -11,7 +11,7 @@ import { Grid, Button } from "@mui/material";
 import { GridColDef } from "@mui/x-data-grid";
 
 // Coject
-import { Input, Switch, Select, Checkbox, DatePicker, Upload } from "../index";
+import { Input, Switch, Select, Checkbox, DatePicker, Upload, Scanner } from "../index";
 
 // Styles
 import useStyles from "./theme";
@@ -86,7 +86,7 @@ export const Form: FC<iForm> = ({ mode, id, getForm, schema, dataSource, localeT
 
     // On Form Submit
     const onFormSubmit = (submitData: any) => {
-        onSubmit && onSubmit({...((mode === "update") ? Data : {}), ...submitData});
+        onSubmit && onSubmit({ ...((mode === "update") ? Data : {}), ...submitData });
 
         if (dataSource && !noRequest) {
             Request({
@@ -106,47 +106,51 @@ export const Form: FC<iForm> = ({ mode, id, getForm, schema, dataSource, localeT
         <React.Fragment>
             <FormProvider {...Methods}>
                 <form id={id} className={`${classes.root} ${className} coject_form`} autoComplete="off" onSubmit={Methods.handleSubmit(onFormSubmit)} {...props}>
-                    { schema &&
+                    {schema &&
                         <Grid container spacing={2}>
-                            { schema && !!schema?.length && schema.map((field: any, index: number) => {
+                            {schema && !!schema?.length && schema.map((field: any, index: number) => {
                                 if (!(invisibility?.includes(field.field))) switch (field.component?.toLowerCase()) {
                                     case "date":
                                         return field.actionTemplate
-                                            ? ( <React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment> )
-                                            : ( <Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><DatePicker fullWidth name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid> );
+                                            ? (<React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment>)
+                                            : (<Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><DatePicker fullWidth name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid>);
                                     case "input":
                                         return field.actionTemplate
-                                            ? ( <React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment> )
-                                            : ( <Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><Input fullWidth name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid> );
+                                            ? (<React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment>)
+                                            : (<Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><Input fullWidth name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid>);
                                     case "switch":
                                         return field.actionTemplate
-                                            ? ( <React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment> )
-                                            : ( <Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><Switch name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid> );
+                                            ? (<React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment>)
+                                            : (<Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><Switch name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid>);
                                     case "checkbox":
                                         return field.actionTemplate
-                                            ? ( <React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment> )
-                                            : ( <Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><Checkbox name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid> );
+                                            ? (<React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment>)
+                                            : (<Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><Checkbox name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid>);
                                     case "select":
                                         return field.actionTemplate
-                                            ? ( <React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment> )
-                                            : ( <Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><Select fullWidth name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid> );
+                                            ? (<React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment>)
+                                            : (<Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><Select fullWidth name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid>);
                                     case "upload":
                                         return field.actionTemplate
-                                            ? ( <React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment> )
-                                            : ( <Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><Upload name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid> );
+                                            ? (<React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment>)
+                                            : (<Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><Upload name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid>);
+                                    case "scanner":
+                                        return field.actionTemplate
+                                            ? (<React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment>)
+                                            : (<Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><Scanner name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid>);
                                     default:
                                         return null;
                                 }
                             })}
-                            { children }
-                            { !(children) &&
+                            {children}
+                            {!(children) &&
                                 <Grid item xs={12} sm={12} md={12} lg={12}>
                                     <Button fullWidth type="submit" variant="outlined">{localeText?.submitButton || "Submit"}</Button>
                                 </Grid>
                             }
                         </Grid>
                     }
-                    { (children && !schema) && children }
+                    {(children && !schema) && children}
                 </form>
             </FormProvider>
         </React.Fragment>

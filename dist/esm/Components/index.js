@@ -22,6 +22,8 @@ export { DatePicker } from "./DatePicker";
 export { Upload } from "./Upload";
 // PDF Generator
 export { PDFGenerator } from "./PDFGenerator";
+// Scanner
+export { Scanner } from "./Scanner";
 // Icons
 export const Icons = MuiIcons;
 //# sourceMappingURL=index.js.map

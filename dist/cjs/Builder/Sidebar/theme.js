@@ -78,6 +78,7 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => {
                 margin: "0 !important",
                 textTransform: "capitalize",
                 color: theme.palette.primary.light,
+                fontFamily: theme.typography.fontFamily,
                 "& svg": {
                     width: "22px",
                     height: "22px",

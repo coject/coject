@@ -76,6 +76,7 @@ const useStyles = makeStyles()((theme) => {
                 margin: "0 !important",
                 textTransform: "capitalize",
                 color: theme.palette.primary.light,
+                fontFamily: theme.typography.fontFamily,
                 "& svg": {
                     width: "22px",
                     height: "22px",

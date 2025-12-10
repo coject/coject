@@ -34,6 +34,7 @@ interface iScanner {
         scanningText?: string;
         downloadButton?: string;
         openPdfButton?: string;
+        downloadApp?: string;
     };
     pdfHeight?: string | number;
     pdfWidth?: string | number;
@@ -47,8 +48,7 @@ declare global {
     }
 }
 
-export const Scanner: FC<iScanner> = ({
-    name, value, onChange, disabled, multiple, placeholder, validateText, required, localeText, pdfHeight, pdfWidth, variant, error }) => {
+export const Scanner: FC<iScanner> = ({ name, value, onChange, disabled, multiple, placeholder, validateText, required, localeText, pdfHeight, pdfWidth, variant, error }) => {
     const { classes } = useStyles();
     const formContext = useFormContext();
     const [isScanning, setIsScanning] = useState(false);
@@ -56,7 +56,13 @@ export const Scanner: FC<iScanner> = ({
     const [isScriptLoaded, setIsScriptLoaded] = useState(false);
     const [scannedImages, setScannedImages] = useState<string[]>(value || []);
     const { setValue, setError, clearErrors, formState } = formContext || {};
+    const [isScannerInstalled, setIsScannerInstalled] = useState<boolean>(false);
     const errors = formState?.errors || {};
+
+    // Check Scanner App Exist
+    useEffect(() => {
+        if (window.scanner) setIsScannerInstalled(true);
+    }, []);
 
     // Load scanner.js
     useEffect(() => {
@@ -74,33 +80,33 @@ export const Scanner: FC<iScanner> = ({
         };
     }, []);
 
-    // Update images from props
+    // Update Images From Props
     useEffect(() => {
-        if (value) {
-            setScannedImages(value);
-        }
+        if (value) setScannedImages(value);
     }, [value]);
 
-    // Required field validation
+    // Required Field Validation
     useEffect(() => {
         if (required && setError && clearErrors) {
-            scannedImages.length > 0
-                ? clearErrors(name || "default")
-                : setError(name || "default", {
+            if (scannedImages.length > 0) {
+                clearErrors(name || "default");
+            } else {
+                const message = typeof required === "string" ? required : validateText || "This field is required";
+                setError(name || "default", {
                     type: "required",
-                    message: "This field is required",
+                    message,
                 });
+            }
         }
-    }, [required, scannedImages, name, clearErrors, setError]);
+    }, [required, scannedImages, name, clearErrors, setError, validateText]);
 
-    // Generate PDF + return File to parent
+    // Generate PDF + Return File To Parent
     useEffect(() => {
         if (scannedImages.length === 0) {
             setPdfUrl(null);
             onChange?.(null);
             return;
         }
-
         const pdf = new jsPDF();
         scannedImages.forEach((img, i) => {
             if (i > 0) pdf.addPage();
@@ -111,7 +117,6 @@ export const Scanner: FC<iScanner> = ({
         const url = URL.createObjectURL(blob);
         setPdfUrl(url);
 
-        // Return a File object instead of URL
         const file = new File([blob], "scanned_document.pdf", { type: "application/pdf" });
         onChange?.(file);
 
@@ -120,14 +125,13 @@ export const Scanner: FC<iScanner> = ({
         };
     }, [scannedImages]);
 
-    // Scan handler
+    // Scan Handler
     const handleScan = useCallback(() => {
         const { scanner } = window;
         if (!scanner || !isScriptLoaded) {
-            alert("Scanner not available!");
+            alert("Scanner Not Available!");
             return;
         }
-
         setIsScanning(true);
         const scanRequest = {
             use_asprise_dialog: true,
@@ -135,7 +139,6 @@ export const Scanner: FC<iScanner> = ({
             twain_cap_setting: { ICAP_PIXELTYPE: "TWPT_RGB" },
             output_settings: [{ type: "return-base64", format: "jpg" }],
         };
-
         scanner.scan(displayImagesOnPage, scanRequest);
     }, [isScriptLoaded]);
 
@@ -164,75 +167,73 @@ export const Scanner: FC<iScanner> = ({
         const link = document.createElement("a");
         link.href = pdfUrl;
         link.download = "scanned-document.pdf";
+        link.target = "_blank";
         link.click();
     };
 
-    // Open PDF in new tab
-    const handleOpenInNewTab = () => {
+    // Open PDF In New Tab
+    const handleOpenPDF = () => {
         if (!pdfUrl) return;
         window.open(pdfUrl, "_blank");
     };
 
-    // Handle errors
+    // Download Installer
+    const downloadInstaller = () => {
+        const link = document.createElement("a");
+        link.href = "/scanner/scan-setup.exe";
+        link.download = "scan-setup.exe";
+        link.click();
+        setIsScannerInstalled(true);
+    };
+
+    // Error Handler
     const hasError = Boolean(
         (errors && errors[name || "default"]) || (error?.errors && error?.errors[name || "default"])
     );
 
     return (
         <React.Fragment>
-            <Box className={`${classes.root} coject_scanner`}>
+            <Box className={classes.root}>
                 <Box className={classes.header}>
-                    <Typography variant="h6">
+                    <Typography className={classes.title}>
                         {localeText?.scanTitle || "Document Scanner"}
                     </Typography>
-                    <Box className={classes.actions} sx={{ display: "flex", gap: 1 }}>
-                        <Button
-                            variant={variant}
-                            onClick={handleScan}
-                            disabled={!isScriptLoaded || disabled || isScanning}
-                            startIcon={<MuiIcons.Scanner />}
-                        >
-                            {isScanning
-                                ? localeText?.scanningText || "Scanning..."
-                                : localeText?.scanButton || "Scan"}
+                    <Box className={classes.actions}>
+                        <Button variant={variant} onClick={handleScan} disabled={!isScriptLoaded || disabled || isScanning} startIcon={<MuiIcons.Scanner />}>
+                            {isScanning ? localeText?.scanningText || "Scanning..." : localeText?.scanButton || "Scan Document"}
                         </Button>
+                        {!isScannerInstalled && (
+                            <Button variant={variant} startIcon={<MuiIcons.Download />} onClick={downloadInstaller}>
+                                {localeText?.downloadApp || "Install Scanner App"}
+                            </Button>
+                        )}
                         {pdfUrl && (
                             <>
-                                <Button
-                                    variant={variant}
-                                    startIcon={<MuiIcons.Download />}
-                                    onClick={handleDownloadPDF}
-                                >
+                                <Button variant={variant} startIcon={<MuiIcons.Download />} onClick={handleDownloadPDF}>
                                     {localeText?.downloadButton || "Download PDF"}
                                 </Button>
-                                <Button
-                                    variant={variant}
-                                    startIcon={<MuiIcons.OpenInNew />}
-                                    onClick={handleOpenInNewTab}
-                                >
+                                <Button variant={variant} startIcon={<MuiIcons.OpenInNew />} onClick={handleOpenPDF}>
                                     {localeText?.openPdfButton || "Open PDF"}
                                 </Button>
                             </>
                         )}
                     </Box>
                 </Box>
-
                 {pdfUrl ? (
-                    <Box sx={{ border: "1px solid #ccc", borderRadius: 2, overflow: "hidden", width: pdfWidth, height: pdfHeight, mt: 1 }}>
-                        <iframe src={pdfUrl} style={{ width: "100%", height: "100%", border: "none" }} title="Scanned PDF Preview" />
+                    <Box className={classes.previewBox} style={{ width: pdfWidth, height: pdfHeight }}>
+                        <iframe src={pdfUrl} className={classes.iframe} title="PDF Preview" />
                     </Box>
                 ) : (
                     <Box className={classes.placeholder}>
-                        <MuiIcons.Scanner fontSize="large" />
-                        <Typography variant="body2">
-                            {placeholder || "No scanned documents. Click 'Scan' to get started"}
+                        <MuiIcons.Scanner fontSize="large" className={classes.placeholderIcon} />
+                        <Typography className={classes.placeholderText}>
+                            {placeholder || "No Scanned Documents Yet. Click Scan To Begin"}
                         </Typography>
                     </Box>
                 )}
-
                 {hasError && (
-                    <FormHelperText className={classes.error}>
-                        {validateText || "This field is required"}
+                    <FormHelperText className={classes.errorText}>
+                        {String(errors?.[name || "default"]?.message || "")}
                     </FormHelperText>
                 )}
             </Box>

@@ -17,6 +17,7 @@ interface iScanner {
         scanningText?: string;
         downloadButton?: string;
         openPdfButton?: string;
+        downloadApp?: string;
     };
     pdfHeight?: string | number;
     pdfWidth?: string | number;

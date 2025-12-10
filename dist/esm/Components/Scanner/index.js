@@ -17,7 +17,13 @@ export const Scanner = ({ name, value, onChange, disabled, multiple, placeholder
     const [isScriptLoaded, setIsScriptLoaded] = useState(false);
     const [scannedImages, setScannedImages] = useState(value || []);
     const { setValue, setError, clearErrors, formState } = formContext || {};
+    const [isScannerInstalled, setIsScannerInstalled] = useState(false);
     const errors = formState?.errors || {};
+    // Check Scanner App Exist
+    useEffect(() => {
+        if (window.scanner)
+            setIsScannerInstalled(true);
+    }, []);
     // Load scanner.js
     useEffect(() => {
         const script = document.createElement("script");
@@ -31,24 +37,27 @@ export const Scanner = ({ name, value, onChange, disabled, multiple, placeholder
             document.body.removeChild(script);
         };
     }, []);
-    // Update images from props
+    // Update Images From Props
     useEffect(() => {
-        if (value) {
+        if (value)
             setScannedImages(value);
-        }
     }, [value]);
-    // Required field validation
+    // Required Field Validation
     useEffect(() => {
         if (required && setError && clearErrors) {
-            scannedImages.length > 0
-                ? clearErrors(name || "default")
-                : setError(name || "default", {
+            if (scannedImages.length > 0) {
+                clearErrors(name || "default");
+            }
+            else {
+                const message = typeof required === "string" ? required : validateText || "This field is required";
+                setError(name || "default", {
                     type: "required",
-                    message: "This field is required",
+                    message,
                 });
+            }
         }
-    }, [required, scannedImages, name, clearErrors, setError]);
-    // Generate PDF + return File to parent
+    }, [required, scannedImages, name, clearErrors, setError, validateText]);
+    // Generate PDF + Return File To Parent
     useEffect(() => {
         if (scannedImages.length === 0) {
             setPdfUrl(null);
@@ -64,18 +73,17 @@ export const Scanner = ({ name, value, onChange, disabled, multiple, placeholder
         const blob = pdf.output("blob");
         const url = URL.createObjectURL(blob);
         setPdfUrl(url);
-        // Return a File object instead of URL
         const file = new File([blob], "scanned_document.pdf", { type: "application/pdf" });
         onChange?.(file);
         return () => {
             URL.revokeObjectURL(url);
         };
     }, [scannedImages]);
-    // Scan handler
+    // Scan Handler
     const handleScan = useCallback(() => {
         const { scanner } = window;
         if (!scanner || !isScriptLoaded) {
-            alert("Scanner not available!");
+            alert("Scanner Not Available!");
             return;
         }
         setIsScanning(true);
@@ -110,31 +118,39 @@ export const Scanner = ({ name, value, onChange, disabled, multiple, placeholder
         const link = document.createElement("a");
         link.href = pdfUrl;
         link.download = "scanned-document.pdf";
+        link.target = "_blank";
         link.click();
     };
-    // Open PDF in new tab
-    const handleOpenInNewTab = () => {
+    // Open PDF In New Tab
+    const handleOpenPDF = () => {
         if (!pdfUrl)
             return;
         window.open(pdfUrl, "_blank");
     };
-    // Handle errors
+    // Download Installer
+    const downloadInstaller = () => {
+        const link = document.createElement("a");
+        link.href = "/scanner/scan-setup.exe";
+        link.download = "scan-setup.exe";
+        link.click();
+        setIsScannerInstalled(true);
+    };
+    // Error Handler
     const hasError = Boolean((errors && errors[name || "default"]) || (error?.errors && error?.errors[name || "default"]));
     return (React.createElement(React.Fragment, null,
-        React.createElement(Box, { className: `${classes.root} coject_scanner` },
+        React.createElement(Box, { className: classes.root },
             React.createElement(Box, { className: classes.header },
-                React.createElement(Typography, { variant: "h6" }, localeText?.scanTitle || "Document Scanner"),
-                React.createElement(Box, { className: classes.actions, sx: { display: "flex", gap: 1 } },
-                    React.createElement(Button, { variant: variant, onClick: handleScan, disabled: !isScriptLoaded || disabled || isScanning, startIcon: React.createElement(MuiIcons.Scanner, null) }, isScanning
-                        ? localeText?.scanningText || "Scanning..."
-                        : localeText?.scanButton || "Scan"),
+                React.createElement(Typography, { className: classes.title }, localeText?.scanTitle || "Document Scanner"),
+                React.createElement(Box, { className: classes.actions },
+                    React.createElement(Button, { variant: variant, onClick: handleScan, disabled: !isScriptLoaded || disabled || isScanning, startIcon: React.createElement(MuiIcons.Scanner, null) }, isScanning ? localeText?.scanningText || "Scanning..." : localeText?.scanButton || "Scan Document"),
+                    !isScannerInstalled && (React.createElement(Button, { variant: variant, startIcon: React.createElement(MuiIcons.Download, null), onClick: downloadInstaller }, localeText?.downloadApp || "Install Scanner App")),
                     pdfUrl && (React.createElement(React.Fragment, null,
                         React.createElement(Button, { variant: variant, startIcon: React.createElement(MuiIcons.Download, null), onClick: handleDownloadPDF }, localeText?.downloadButton || "Download PDF"),
-                        React.createElement(Button, { variant: variant, startIcon: React.createElement(MuiIcons.OpenInNew, null), onClick: handleOpenInNewTab }, localeText?.openPdfButton || "Open PDF"))))),
-            pdfUrl ? (React.createElement(Box, { sx: { border: "1px solid #ccc", borderRadius: 2, overflow: "hidden", width: pdfWidth, height: pdfHeight, mt: 1 } },
-                React.createElement("iframe", { src: pdfUrl, style: { width: "100%", height: "100%", border: "none" }, title: "Scanned PDF Preview" }))) : (React.createElement(Box, { className: classes.placeholder },
-                React.createElement(MuiIcons.Scanner, { fontSize: "large" }),
-                React.createElement(Typography, { variant: "body2" }, placeholder || "No scanned documents. Click 'Scan' to get started"))),
-            hasError && (React.createElement(FormHelperText, { className: classes.error }, validateText || "This field is required")))));
+                        React.createElement(Button, { variant: variant, startIcon: React.createElement(MuiIcons.OpenInNew, null), onClick: handleOpenPDF }, localeText?.openPdfButton || "Open PDF"))))),
+            pdfUrl ? (React.createElement(Box, { className: classes.previewBox, style: { width: pdfWidth, height: pdfHeight } },
+                React.createElement("iframe", { src: pdfUrl, className: classes.iframe, title: "PDF Preview" }))) : (React.createElement(Box, { className: classes.placeholder },
+                React.createElement(MuiIcons.Scanner, { fontSize: "large", className: classes.placeholderIcon }),
+                React.createElement(Typography, { className: classes.placeholderText }, placeholder || "No Scanned Documents Yet. Click Scan To Begin"))),
+            hasError && (React.createElement(FormHelperText, { className: classes.errorText }, String(errors?.[name || "default"]?.message || ""))))));
 };
 //# sourceMappingURL=index.js.map

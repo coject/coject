@@ -38,6 +38,7 @@ interface iRequest {
     data?: any;
     dispatch?: any;
     callback?: any;
+    onError?: any;
     apiUrlId?: string;
     dataSource?: iDataSource;
     mode?: "render" | "create" | "update" | "delete";
@@ -47,7 +48,7 @@ interface iRequest {
 export const RequestCreation: any = axios.create();
 
 // Request
-export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, callback }: iRequest) => {
+export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, callback, onError }: iRequest) => {
     let Type: string, Name: string, Method: string, Data: any, Headers: any, APIUrl: string, APIUrlId: string, DataPath: any, withCredentials: boolean;
 
     // Default Method
@@ -107,9 +108,9 @@ export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, call
 
     // Error State
     const CatchAction = (Error: any) => {
-        let errorMessage = Error;
-        dispatch && dispatch({ type: "ERRORS", error: errorMessage, name: Name });
-        throw errorMessage;
+        dispatch && dispatch({ type: "ERRORS", error: Error, name: Name });
+        if (onError) onError(Error);
+        return Promise.reject(Error);
     };
 
     // Request Actions

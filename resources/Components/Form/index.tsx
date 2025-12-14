@@ -70,13 +70,14 @@ interface iForm {
     invisibility?: string[];
     onSubmitClear?: boolean;
     dataSource?: iDataSource;
+    onError?: (error: any) => void;
     localeText?: {
         submitButton?: string
     };
     mode?: "render" | "create" | "update" | "delete";
 }
 
-export const Form: FC<iForm> = ({ mode, id, getForm, schema, dataSource, localeText, className, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, noRequest, invisibility, children, ...props }) => {
+export const Form: FC<iForm> = ({ mode, id, getForm, schema, dataSource, localeText, className, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, onError, noRequest, invisibility, children, ...props }) => {
     const Data = { ...(staticData ? staticData : {}) };
     const { classes } = useStyles();
     const Methods = useForm();
@@ -97,7 +98,7 @@ export const Form: FC<iForm> = ({ mode, id, getForm, schema, dataSource, localeT
                     callback && callback(data);
                     setModal && setModal(false);
                     onSubmitClear && Methods.reset();
-                }, dispatch
+                }, dispatch, onError
             }).then();
         }
     };

@@ -9,7 +9,7 @@ import { Grid, Button } from "@mui/material";
 import { Input, Switch, Select, Checkbox, DatePicker, Upload, Scanner } from "../index";
 // Styles
 import useStyles from "./theme";
-export const Form = ({ mode, id, getForm, schema, dataSource, localeText, className, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, noRequest, invisibility, children, ...props }) => {
+export const Form = ({ mode, id, getForm, schema, dataSource, localeText, className, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, onError, noRequest, invisibility, children, ...props }) => {
     const Data = { ...(staticData ? staticData : {}) };
     const { classes } = useStyles();
     const Methods = useForm();
@@ -27,7 +27,7 @@ export const Form = ({ mode, id, getForm, schema, dataSource, localeText, classN
                     callback && callback(data);
                     setModal && setModal(false);
                     onSubmitClear && Methods.reset();
-                }, dispatch
+                }, dispatch, onError
             }).then();
         }
     };

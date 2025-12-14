@@ -51,6 +51,7 @@ interface iForm {
     invisibility?: string[];
     onSubmitClear?: boolean;
     dataSource?: iDataSource;
+    onError?: (error: any) => void;
     localeText?: {
         submitButton?: string;
     };

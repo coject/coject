@@ -9,7 +9,7 @@ const axios_1 = __importDefault(require("axios"));
 // Request Creation
 exports.RequestCreation = axios_1.default.create();
 // Request
-const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, callback }) => {
+const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, callback, onError }) => {
     let Type, Name, Method, Data, Headers, APIUrl, APIUrlId, DataPath, withCredentials;
     // Default Method
     const DefaultMethod = () => {
@@ -66,9 +66,10 @@ const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, callback })
     };
     // Error State
     const CatchAction = (Error) => {
-        let errorMessage = Error;
-        dispatch && dispatch({ type: "ERRORS", error: errorMessage, name: Name });
-        throw errorMessage;
+        dispatch && dispatch({ type: "ERRORS", error: Error, name: Name });
+        if (onError)
+            onError(Error);
+        return Promise.reject(Error);
     };
     // Request Actions
     if (Method.toLowerCase() === "get" || Method.toLowerCase() === "delete")

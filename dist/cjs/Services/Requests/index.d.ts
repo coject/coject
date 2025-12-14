@@ -33,10 +33,11 @@ interface iRequest {
     data?: any;
     dispatch?: any;
     callback?: any;
+    onError?: any;
     apiUrlId?: string;
     dataSource?: iDataSource;
     mode?: "render" | "create" | "update" | "delete";
 }
 export declare const RequestCreation: any;
-export declare const Request: ({ dataSource, mode, data, apiUrlId, dispatch, callback }: iRequest) => Promise<void>;
+export declare const Request: ({ dataSource, mode, data, apiUrlId, dispatch, callback, onError }: iRequest) => Promise<void>;
 export {};

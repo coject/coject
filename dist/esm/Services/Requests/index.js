@@ -3,7 +3,7 @@ import axios from "axios";
 // Request Creation
 export const RequestCreation = axios.create();
 // Request
-export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, callback }) => {
+export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, callback, onError }) => {
     let Type, Name, Method, Data, Headers, APIUrl, APIUrlId, DataPath, withCredentials;
     // Default Method
     const DefaultMethod = () => {
@@ -60,9 +60,10 @@ export const Request = async ({ dataSource, mode, data, apiUrlId, dispatch, call
     };
     // Error State
     const CatchAction = (Error) => {
-        let errorMessage = Error;
-        dispatch && dispatch({ type: "ERRORS", error: errorMessage, name: Name });
-        throw errorMessage;
+        dispatch && dispatch({ type: "ERRORS", error: Error, name: Name });
+        if (onError)
+            onError(Error);
+        return Promise.reject(Error);
     };
     // Request Actions
     if (Method.toLowerCase() === "get" || Method.toLowerCase() === "delete")

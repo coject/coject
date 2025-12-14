@@ -15,7 +15,7 @@ const material_1 = require("@mui/material");
 const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Form = ({ mode, id, getForm, schema, dataSource, localeText, className, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, noRequest, invisibility, children, ...props }) => {
+const Form = ({ mode, id, getForm, schema, dataSource, localeText, className, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, onError, noRequest, invisibility, children, ...props }) => {
     const Data = { ...(staticData ? staticData : {}) };
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useForm)();
@@ -33,7 +33,7 @@ const Form = ({ mode, id, getForm, schema, dataSource, localeText, className, st
                     callback && callback(data);
                     setModal && setModal(false);
                     onSubmitClear && Methods.reset();
-                }, dispatch
+                }, dispatch, onError
             }).then();
         }
     };

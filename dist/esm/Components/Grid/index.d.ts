@@ -6,6 +6,7 @@ type iSchema = GridColDef & {
     componentMedia?: any;
 };
 type iLocaleText = GridLocaleText & {
+    saveAllBtn?: string;
     toolbarNew?: string;
     modalAddTitle?: string;
     modalAddButton?: string;
@@ -66,6 +67,7 @@ interface iGrid extends DataGridProps {
     schema?: iSchema | any;
     noAddRequest?: boolean;
     onDeleteCallback?: any;
+    enableSaveAll?: boolean;
     editFormChildren?: any;
     invisibility?: string[];
     noEditRequest?: boolean;
@@ -82,6 +84,11 @@ interface iGrid extends DataGridProps {
         label: string;
         onClick: any;
     }[];
+    onCellValidationError?: (message: string, info: {
+        field: string;
+        value: any;
+        id: any;
+    }) => void;
 }
 export declare const Grid: FC<Omit<iGrid, "rows" | "columns">>;
 export {};

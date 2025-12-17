@@ -38,7 +38,7 @@ const x_data_grid_1 = require("@mui/x-data-grid");
 const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies, resizable, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies, resizable, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, enableSaveAll = false, ...props }) => {
     const apiRef = (0, x_data_grid_1.useGridApiRef)();
     const { classes } = (0, theme_1.default)();
     const [gridData, setGridData] = (0, react_1.useState)([]);
@@ -50,6 +50,7 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies, resiz
     const [editModal, setEditModal] = (0, react_1.useState)(false);
     const [selectedData, setSelectedData] = (0, react_1.useState)(null);
     const [deleteModal, setDeleteModal] = (0, react_1.useState)(false);
+    const [editedRows, setEditedRows] = (0, react_1.useState)({});
     // Static Data
     (0, react_1.useEffect)(() => {
         if (staticData) {
@@ -91,6 +92,22 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies, resiz
                         columnSchema.componentProps.label = columnSchema.headerName;
                     else
                         columnSchema.componentProps = { label: columnSchema.headerName };
+                }
+                if (columnSchema.editable && columnSchema.componentProps?.validation) {
+                    columnSchema.preProcessEditCellProps = (params) => {
+                        const errorMessage = validateCellValue(params.props.value, columnSchema.componentProps.validation);
+                        if (errorMessage) {
+                            props.onCellValidationError?.(errorMessage, {
+                                field: columnSchema.field,
+                                value: params.props.value,
+                                id: params.id,
+                            });
+                        }
+                        return {
+                            ...params.props,
+                            error: !!errorMessage,
+                        };
+                    };
                 }
                 if (columnSchema.component === "date" && !columnSchema.renderCell) {
                     columnSchema.renderCell = (data) => react_1.default.createElement(index_1.DatePicker, { value: data.value, ...columnSchema.componentProps, textView: true });
@@ -252,6 +269,54 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies, resiz
                     " ",
                     (localeText && localeText?.toolbarNew) || "Add New"))));
     };
+    // Handle Save All Data In Api
+    const handleSaveAll = async () => {
+        try {
+            const rowsToUpdate = Object.values(editedRows);
+            if (!(noRequest || noEditRequest) && dataSource?.apiUrl) {
+                await (0, Services_1.Request)({
+                    dataSource,
+                    mode: "update",
+                    data: rowsToUpdate,
+                    dispatch
+                });
+            }
+            setEditedRows({});
+            onEditCallback?.(rowsToUpdate);
+        }
+        catch (e) {
+        }
+    };
+    // Validation in Cell
+    const validateCellValue = (value, rules) => {
+        if (!rules)
+            return null;
+        if (rules.required && (value === undefined || value === null || value === "")) {
+            return rules.required;
+        }
+        if (rules.arabic && value && /[A-Za-z]/.test(value)) {
+            return rules.arabic;
+        }
+        if (rules.english && value && /[\u0600-\u06FF]/.test(value)) {
+            return rules.english;
+        }
+        return null;
+    };
+    // Handle Update in Row in Inline Mode
+    const processRowUpdate = async (newRow) => {
+        const rowId = customKey ? newRow[customKey] : newRow.id;
+        setGridData((prev) => prev.map((row) => (customKey ? row[customKey] : row.id) === rowId ? newRow : row));
+        setEditedRows((prev) => {
+            if (!enableSaveAll) {
+                return { [rowId]: newRow };
+            }
+            return {
+                ...prev,
+                [rowId]: newRow,
+            };
+        });
+        return newRow;
+    };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(index_1.Modal, { className: "grid_create_modal", title: localeText?.modalAddTitle || "Add New Item", open: addModal, setOpen: setAddModal },
             react_1.default.createElement(index_1.Form, { dataSource: dataSource, schema: schema ? schema : defaultSchema, mode: "create", noRequest: (noRequest || noAddRequest) && !!dataSource, ...(formInvisibility ? { invisibility: formInvisibility } : {}), onSubmit: (data) => {
@@ -300,7 +365,12 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies, resiz
                                 } } : {}),
                         }
                     } : {})
-                }, disableVirtualization: true, disableColumnResize: !resizable, paginationMode: openPdf ? 'server' : 'client', ...(openPdf ? { rowCount: gridData?.length } : {}), initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, slots: props?.slots ? props?.slots : { toolbar: actions || toolbar || customToolbar ? CustomToolbar : null }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "") })),
+                }, editMode: 'row', processRowUpdate: processRowUpdate, disableVirtualization: true, disableColumnResize: !resizable, paginationMode: openPdf ? 'server' : 'client', ...(openPdf ? { rowCount: gridData?.length } : {}), initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, slots: props?.slots ? props?.slots : { toolbar: actions || toolbar || customToolbar ? CustomToolbar : null }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "") }),
+            enableSaveAll && (react_1.default.createElement(material_1.Box, { sx: { display: "flex", justifyContent: "flex-end", mt: 1, gap: 1 } },
+                react_1.default.createElement(material_1.Button, { onClick: handleSaveAll },
+                    react_1.default.createElement(index_1.Icons.Save, null),
+                    " ",
+                    localeText?.saveAllBtn || "Save All")))),
         react_1.default.createElement("iframe", { id: 'iFrame', title: 'iFrame', style: { display: 'none', position: 'absolute', width: 0, height: 0 } })));
 };
 exports.Grid = Grid;

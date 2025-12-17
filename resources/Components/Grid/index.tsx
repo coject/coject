@@ -23,6 +23,7 @@ type iSchema = GridColDef & {
 }
 
 type iLocaleText = GridLocaleText & {
+    saveAllBtn?: string;
     toolbarNew?: string;
     modalAddTitle?: string;
     modalAddButton?: string;
@@ -85,6 +86,7 @@ interface iGrid extends DataGridProps {
     schema?: iSchema | any;
     noAddRequest?: boolean;
     onDeleteCallback?: any;
+    enableSaveAll?: boolean;
     editFormChildren?: any;
     invisibility?: string[];
     noEditRequest?: boolean;
@@ -97,9 +99,10 @@ interface iGrid extends DataGridProps {
     actions?: boolean | ("add" | "edit" | "delete")[];
     toolbar?: boolean | ("visibility" | "filter" | "export" | "print")[];
     customActions?: { icon: string, label: string, onClick: any }[];
+    onCellValidationError?: (message: string, info: { field: string; value: any; id: any }) => void;
 }
 
-export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRenderRequest, actionsControl,dependancies, resizable, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRenderRequest, actionsControl, dependancies, resizable, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, enableSaveAll = false, ...props }) => {
     const apiRef = useGridApiRef();
     const { classes } = useStyles();
     const [ gridData, setGridData ] = useState<any>([]);
@@ -110,7 +113,8 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
     const [ addModal, setAddModal ] = useState<boolean>(false);
     const [ editModal, setEditModal ] = useState<boolean>(false);
     const [ selectedData, setSelectedData ] = useState<any>(null);
-    const [ deleteModal, setDeleteModal ] = useState<boolean>(false);
+    const [ deleteModal, setDeleteModal ] = useState<boolean>(false);    
+    const [editedRows, setEditedRows] = useState<Record<string, any>>({});
 
     // Static Data
     useEffect(() => {
@@ -155,6 +159,25 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                 if (columnSchema.headerName) {
                     if (columnSchema.componentProps) columnSchema.componentProps.label = columnSchema.headerName
                     else columnSchema.componentProps = {label: columnSchema.headerName}
+                }
+                if (columnSchema.editable && columnSchema.componentProps?.validation) {
+                    columnSchema.preProcessEditCellProps = (params: any) => {
+                        const errorMessage = validateCellValue(
+                            params.props.value,
+                            columnSchema.componentProps.validation
+                        );
+                        if (errorMessage) {
+                            props.onCellValidationError?.(errorMessage, {
+                                field: columnSchema.field,
+                                value: params.props.value,
+                                id: params.id,
+                            });
+                        }
+                        return {
+                            ...params.props,
+                            error: !!errorMessage,
+                        };
+                    };
                 }
                 if (columnSchema.component === "date" && !columnSchema.renderCell) {
                     columnSchema.renderCell = (data: any) => <DatePicker value={data.value} {...columnSchema.componentProps} textView />;
@@ -320,6 +343,61 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
         );
     };
 
+    // Handle Save All Data In Api
+    const handleSaveAll = async () => {
+        try {
+            const rowsToUpdate = Object.values(editedRows);
+            if (!(noRequest || noEditRequest) && dataSource?.apiUrl) {
+                await Request({
+                    dataSource,
+                    mode: "update",
+                    data: rowsToUpdate,
+                    dispatch
+                });
+            }
+            setEditedRows({});
+            onEditCallback?.(rowsToUpdate);
+        } catch (e) {
+            
+        }
+    };
+
+    // Validation in Cell
+    const validateCellValue = (value: any, rules: any) => {
+        if (!rules) return null;
+        if (rules.required && (value === undefined || value === null || value === "")) {
+            return rules.required;
+        }
+        if (rules.arabic && value && /[A-Za-z]/.test(value)) {
+            return rules.arabic;
+        }
+        if (rules.english && value && /[\u0600-\u06FF]/.test(value)) {
+            return rules.english;
+        }
+        return null;
+    };
+
+// Handle Update in Row in Inline Mode
+    const processRowUpdate = async (newRow: any) => {
+        const rowId = customKey ? newRow[customKey] : newRow.id;
+
+        setGridData((prev: any) =>
+            prev.map((row: any) =>
+                (customKey ? row[customKey] : row.id) === rowId ? newRow : row
+            )
+        );
+        setEditedRows((prev) => {
+            if (!enableSaveAll) {
+                return { [rowId]: newRow };
+            }
+            return {
+                ...prev,
+                [rowId]: newRow,
+            };
+        });
+        return newRow;
+    };
+
     return (
         <React.Fragment>
             {/* Create Modal */}
@@ -393,6 +471,8 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                             }
                         } : {})
                     }}
+                    editMode='row'
+                    processRowUpdate={processRowUpdate}
                     disableVirtualization
                     disableColumnResize={!resizable}
                     paginationMode={openPdf ? 'server' : 'client'}
@@ -401,6 +481,13 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                     slots={props?.slots ? props?.slots : {toolbar: actions || toolbar || customToolbar ? CustomToolbar : null}}
                     getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "")}
                 />
+                {enableSaveAll && (
+                    <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 1, gap: 1 }}>
+                        <Button onClick={handleSaveAll}>
+                            <Icons.Save /> {localeText?.saveAllBtn || "Save All"}
+                        </Button>
+                    </Box>
+                )}
             </Box>
             
             {/* Printing */}

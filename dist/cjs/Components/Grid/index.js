@@ -38,7 +38,7 @@ const x_data_grid_1 = require("@mui/x-data-grid");
 const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies, resizable, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, enableSaveAll = false, ...props }) => {
+const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies, resizable, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const apiRef = (0, x_data_grid_1.useGridApiRef)();
     const { classes } = (0, theme_1.default)();
     const [gridData, setGridData] = (0, react_1.useState)([]);
@@ -159,91 +159,95 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies, resiz
     const columnsSchema = [...(schema ? (invisibility ? schema.filter((column) => (!invisibility.includes(column.field))) : schema) : defaultSchema), ...((actions || customActions)
             ? [{ field: "actions", type: "actions", minWidth: 150, headerName: (localeText && localeText?.gridHeaderAction) || "Actions", flex: 1, cellClassName: "actions", getActions: ({ row }) => ([...(gridActions(row) || []), ...(gridCustomActions(row) || [])]) }]
             : [])];
+    // Date Format For Print PDF
+    const formatDate = (value) => {
+        if (!value)
+            return "";
+        const date = new Date(value);
+        if (isNaN(date.getTime()))
+            return value;
+        return date.toLocaleDateString(localStorage.language === "ar" ? "ar-EG" : "en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric"
+        });
+    };
+    // Handle Y/N Render in PDF
+    const getPrintCellValue = (col, row) => {
+        const value = row[col?.field];
+        if (col?.valueFormatter) {
+            return col.valueFormatter({ value, row });
+        }
+        if (typeof value === "boolean") {
+            return value ? (localStorage.language === 'ar' ? "نعم" : "Yes") : (localStorage.language === 'ar' ? "لا" : "No");
+        }
+        if (value === "Y")
+            return (localStorage.language === 'ar' ? "نعم" : "Yes");
+        if (value === "N")
+            return (localStorage.language === 'ar' ? "لا" : "No");
+        if (col.component === "date" || col.type === "date" || col.type === "dateTime") {
+            return formatDate(value);
+        }
+        return value ?? "";
+    };
     // Printing
     const Printing = () => {
         setOpenPdf(true);
         setTimeout(() => {
-            const iFrame = (document?.querySelector("#iFrame"));
-            iFrame?.contentDocument?.open();
-            iFrame?.contentDocument?.write(`
-                <meta charset="utf-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-                    <style>
-                        @media print{
-                            .table { background-color: #f5f5f5; text-align: center; width: 100% }
-                            .table thead { background-color: #00b366; color:#f5f5f5 }
-                            @page { margin-top: 8px }
-                        }
-                        table {
-                            width: 100%;
-                            direction: ${localStorage.language === 'ar' ? 'rtl' : 'ltr'};
-                        }
-                        td, th {
-                            padding: 8px;
-                            text-align: center;
-                            border: 1px solid #dddddd;
-                        }
-                        tr:nth-child(even) {
-                            background-color: #dddddd;
-                        }
-                    </style>
-            `);
-            const printData = `
-            <table>
-                <thead>
+            const iFrame = document.querySelector("#iFrame");
+            const doc = iFrame?.contentDocument;
+            if (!doc)
+                return;
+            const columnVisibilityModel = apiRef.current.state.columns.columnVisibilityModel;
+            const visibleColumns = apiRef.current.getAllColumns().filter((col) => columnVisibilityModel[col.field] !== false && col.field !== '__check__' && col.field !== 'actions');
+            doc.open();
+            doc.write(`
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+            <style>
+                @media print {
+                    @page { margin: 8px }
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    direction: ${localStorage.language === 'ar' ? 'rtl' : 'ltr'};
+                }
+                th, td {
+                    padding: 8px;
+                    text-align: center;
+                    border: 1px solid #ddd;
+                }
+                tr:nth-child(even) {
+                    background-color: #f2f2f2;
+                }
+            </style>
+        `);
+            doc.write(`<table>`);
+            doc.write(`
+            <thead>
+                <tr>
+                    ${visibleColumns.map(col => `<th>${col.headerName ?? col.field}</th>`).join("")}
+                </tr>
+            </thead>
+        `);
+            doc.write(`
+            <tbody>
+                ${gridData.map((row) => `
                     <tr>
-                        ${(() => {
-                let result = '';
-                if (schema) {
-                    for (let index = 0; index < schema.length; index++) {
-                        if (!invisibility?.find((column) => column === schema[index].field)) {
-                            const item = schema[index];
-                            result += `<th key=${index}>${item.headerName}</th>`;
-                        }
-                    }
-                }
-                return result;
-            })()}
+                        ${visibleColumns.map(col => `<td>${getPrintCellValue(col, row)}</td>`).join("")}
                     </tr>
-                </thead>
-                <tbody>
-                ${(() => {
-                let rowsResult = '';
-                const allRows = apiRef?.current?.getAllRowIds();
-                if (allRows.length > 0) {
-                    for (let index = 0; index < allRows.length; index++) {
-                        const element = allRows[index];
-                        const rowElement = apiRef?.current?.getRowElement(element);
-                        const dataFieldElements = rowElement?.querySelectorAll('[data-field]');
-                        let row = '<tr>';
-                        if (actions || customActions) {
-                            for (let i = 0; i < dataFieldElements?.length - 1; i++) {
-                                const dataFieldElement = dataFieldElements[i];
-                                row += `<td key=${i}>${dataFieldElement.innerText}</td>`;
-                            }
-                        }
-                        else {
-                            for (let i = 0; i < dataFieldElements?.length; i++) {
-                                const dataFieldElement = dataFieldElements[i];
-                                row += `<td key=${i}>${dataFieldElement.innerText}</td>`;
-                            }
-                        }
-                        row += '</tr>';
-                        rowsResult += row;
-                    }
-                }
-                return rowsResult;
-            })()}
-                </tbody>
-            </table>`;
-            iFrame?.contentDocument?.write(printData);
-            iFrame?.contentDocument?.close();
-            iFrame?.contentWindow?.focus();
-            iFrame?.contentWindow?.print();
-        }, 1000);
+                    `).join("")}
+            </tbody>
+        `);
+            doc.write(`</table>`);
+            doc.close();
+            iFrame.contentWindow.focus();
+            iFrame.contentWindow.print();
+        }, 500);
         setTimeout(() => {
             setOpenPdf(false);
-        }, 1000);
+        }, 800);
     };
     // Custom Toolbar
     const CustomToolbar = () => {
@@ -269,24 +273,6 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies, resiz
                     " ",
                     (localeText && localeText?.toolbarNew) || "Add New"))));
     };
-    // Handle Save All Data In Api
-    const handleSaveAll = async () => {
-        try {
-            const rowsToUpdate = Object.values(editedRows);
-            if (!(noRequest || noEditRequest) && dataSource?.apiUrl) {
-                await (0, Services_1.Request)({
-                    dataSource,
-                    mode: "update",
-                    data: rowsToUpdate,
-                    dispatch
-                });
-            }
-            setEditedRows({});
-            onEditCallback?.(rowsToUpdate);
-        }
-        catch (e) {
-        }
-    };
     // Validation in Cell
     const validateCellValue = (value, rules) => {
         if (!rules)
@@ -307,14 +293,14 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies, resiz
         const rowId = customKey ? newRow[customKey] : newRow.id;
         setGridData((prev) => prev.map((row) => (customKey ? row[customKey] : row.id) === rowId ? newRow : row));
         setEditedRows((prev) => {
-            if (!enableSaveAll) {
-                return { [rowId]: newRow };
-            }
-            return {
+            const updated = {
                 ...prev,
                 [rowId]: newRow,
             };
+            props.onRowsChange?.(updated);
+            return updated;
         });
+        props.onRowEdit?.(newRow);
         return newRow;
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
@@ -365,12 +351,13 @@ const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies, resiz
                                 } } : {}),
                         }
                     } : {})
-                }, editMode: 'row', processRowUpdate: processRowUpdate, disableVirtualization: true, disableColumnResize: !resizable, paginationMode: openPdf ? 'server' : 'client', ...(openPdf ? { rowCount: gridData?.length } : {}), initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, slots: props?.slots ? props?.slots : { toolbar: actions || toolbar || customToolbar ? CustomToolbar : null }, getRowClassName: (params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "") }),
-            enableSaveAll && (react_1.default.createElement(material_1.Box, { sx: { display: "flex", justifyContent: "flex-end", mt: 1, gap: 1 } },
-                react_1.default.createElement(material_1.Button, { onClick: handleSaveAll },
-                    react_1.default.createElement(index_1.Icons.Save, null),
-                    " ",
-                    localeText?.saveAllBtn || "Save All")))),
+                }, editMode: 'row', processRowUpdate: processRowUpdate, disableVirtualization: true, disableColumnResize: !resizable, paginationMode: openPdf ? 'server' : 'client', ...(openPdf ? { rowCount: gridData?.length } : {}), initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, slots: props?.slots ? props?.slots : { toolbar: actions || toolbar || customToolbar ? CustomToolbar : null }, getRowClassName: (params) => {
+                    const id = customKey ? params.row[customKey] : params.id;
+                    if (editedRows[id]) {
+                        return "edited-row";
+                    }
+                    return params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "";
+                } })),
         react_1.default.createElement("iframe", { id: 'iFrame', title: 'iFrame', style: { display: 'none', position: 'absolute', width: 0, height: 0 } })));
 };
 exports.Grid = Grid;

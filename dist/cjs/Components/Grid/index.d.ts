@@ -6,7 +6,6 @@ type iSchema = GridColDef & {
     componentMedia?: any;
 };
 type iLocaleText = GridLocaleText & {
-    saveAllBtn?: string;
     toolbarNew?: string;
     modalAddTitle?: string;
     modalAddButton?: string;
@@ -77,6 +76,8 @@ interface iGrid extends DataGridProps {
     addFormChildren?: ReactNode;
     formInvisibility?: string[];
     localeText?: iLocaleText | any;
+    onRowEdit?: (row: any) => void;
+    onRowsChange?: (rows: Record<string, any>) => void;
     actions?: boolean | ("add" | "edit" | "delete")[];
     toolbar?: boolean | ("visibility" | "filter" | "export" | "print")[];
     customActions?: {

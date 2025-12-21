@@ -13,13 +13,6 @@ const useStyles = makeStyles()((theme) => {
             "& .MuiDataGrid-root": {
                 border: "unset"
             },
-            "& .MuiDataGrid-row.edited-row": {
-                backgroundColor: "rgba(255, 193, 7, 0.15)",
-
-                "&:hover": {
-                    backgroundColor: "rgba(255, 193, 7, 0.25)",
-                }
-            },
             "& .MuiDataGrid-toolbarContainer": {
                 padding: 0,
                 marginBottom: "15px",

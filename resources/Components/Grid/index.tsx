@@ -166,17 +166,20 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                         if (!params.hasChanged) {
                             return { ...params.props, error: false };
                         }
-                        const errorMessage = validateCellValue(
-                            params.props.value,
-                            {
-                                ...columnSchema.componentProps.validation,
-                                required: false,
-                            }
-                        );
                         return {
                             ...params.props,
-                            error: !!errorMessage,
+                            error: false,
                         };
+                    };
+                }
+                if (columnSchema.editable) {
+                    columnSchema.preProcessEditCellProps = (params: any) => {
+                        const rowId = customKey ? params.row[customKey] : params.id;
+                        const updatedRow = { ...params.row, [params.field]: params.props.value };
+                        setEditedRows(prev => ({ ...prev, [rowId]: updatedRow }));
+                        props.onRowsChange?.({ ...editedRows, [rowId]: updatedRow });
+                        props.onRowEdit?.(updatedRow);
+                        return params.props;
                     };
                 }
                 if (columnSchema.component === "date" && !columnSchema.renderCell) {
@@ -271,15 +274,15 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                     <tr>
                         ${(() => {
                             let result = '';
-                            if (schema) {
-                                for (let index = 0; index < schema.length; index++) {
-                                    if (!invisibility?.find((column: any) => column === schema[index].field)) {
-                                        const item = schema[index];
-                                        result += `<th key=${index}>${item.headerName}</th>`;
-                                    }
-                                }
-                            }
-                            return result;
+                                const visibilityModel =
+                                apiRef.current?.state.columns.columnVisibilityModel || {};
+                                const visibleColumns = apiRef.current?.getAllColumns()?.filter((col: any) =>
+                                            col.field !== 'actions' && visibilityModel[col.field] !== false
+                                        );
+                                    visibleColumns?.forEach((col: any, index: number) => {
+                                        result += `<th key=${index}>${col.headerName}</th>`;
+                                    });
+                                    return result;
                         })()}
                     </tr>
                 </thead>
@@ -359,47 +362,31 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
     };
 
     // Handle Update in Row in Inline Mode
-    // Handle Update in Row in Inline Mode
-    const processRowUpdate = async (newRow: any) => {
-        try {
-            if (schema) {
-                for (const col of schema) {
-                    const rules = col.componentProps?.validation;
-                    if (rules?.required) {
-                        const value = newRow[col.field];
-                        if (value === "" || value === null || value === undefined) {
-                            const message = rules.required;
-                            props.onCellValidationError?.(message, {
-                                field: col.field,
-                                value: value,
-                                id: customKey ? newRow[customKey] : newRow.id
-                            });
-                            throw new Error(message);
-                        }
-                    }
+    const processRowUpdate = async (newRow: any, _: any) => {
+        if (schema) {
+            for (const col of schema) {
+                const rules = col.componentProps?.validation;
+                if (!rules) continue;
+                const value = newRow[col.field];
+                const errorMessage = validateCellValue(value, rules);
+                if (errorMessage) {
+                    props.onCellValidationError?.(errorMessage, {
+                        field: col.field,
+                        value,
+                        id: customKey ? newRow[customKey] : newRow.id
+                    });
+                    throw new Error(errorMessage);
                 }
             }
-            const rowId = customKey ? newRow[customKey] : newRow.id;
-            setGridData((prev: any) =>
-                prev.map((row: any) =>
-                    (customKey ? row[customKey] : row.id) === rowId ? newRow : row
-                )
-            );
-            setEditedRows((prev) => {
-                const updatedEditedRows = {
-                    ...prev,
-                    [rowId]: newRow,
-                };
-                props.onRowsChange?.(updatedEditedRows);
-
-                return updatedEditedRows;
-            });
-            props.onRowEdit?.(newRow);
-
-            return newRow;
-        } catch (error) {
-            throw error;
         }
+        const rowId = customKey ? newRow[customKey] : newRow.id;
+        setEditedRows((prev) => {
+            const updated = { ...prev, [rowId]: newRow };
+            props.onRowsChange?.(updated);
+            return updated;
+        });
+        props.onRowEdit?.(newRow);
+        return newRow;
     };
 
     return (
@@ -475,24 +462,15 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                             }
                         } : {})
                     }}
-                    editMode='row'
+                    editMode='cell'
                     processRowUpdate={processRowUpdate}
-                    onProcessRowUpdateError={(error: any) => {
-                        props.onCellValidationError?.(error.message, { field: "", value: null, id: null });
-                    }}
                     disableVirtualization
                     disableColumnResize={!resizable}
                     paginationMode={openPdf ? 'server' : 'client'}
                     {...(openPdf ? {rowCount: gridData?.length} : {})}
                     initialState={props?.initialState ? props?.initialState : {pagination: {paginationModel: {pageSize: 15}}}}
                     slots={props?.slots ? props?.slots : {toolbar: actions || toolbar || customToolbar ? CustomToolbar : null}}
-                    getRowClassName={(params) => {
-                        const id = customKey ? params.row[customKey] : params.id;
-                        if (editedRows[id]) {
-                            return "edited-row";
-                        }
-                        return params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "";
-                    }}
+                    getRowClassName={(params) => { return params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "" }}
                 />
             </Box>
             

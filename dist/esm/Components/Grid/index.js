@@ -69,14 +69,20 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies
                         if (!params.hasChanged) {
                             return { ...params.props, error: false };
                         }
-                        const errorMessage = validateCellValue(params.props.value, {
-                            ...columnSchema.componentProps.validation,
-                            required: false,
-                        });
                         return {
                             ...params.props,
-                            error: !!errorMessage,
+                            error: false,
                         };
+                    };
+                }
+                if (columnSchema.editable) {
+                    columnSchema.preProcessEditCellProps = (params) => {
+                        const rowId = customKey ? params.row[customKey] : params.id;
+                        const updatedRow = { ...params.row, [params.field]: params.props.value };
+                        setEditedRows(prev => ({ ...prev, [rowId]: updatedRow }));
+                        props.onRowsChange?.({ ...editedRows, [rowId]: updatedRow });
+                        props.onRowEdit?.(updatedRow);
+                        return params.props;
                     };
                 }
                 if (columnSchema.component === "date" && !columnSchema.renderCell) {
@@ -164,14 +170,11 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies
                     <tr>
                         ${(() => {
                 let result = '';
-                if (schema) {
-                    for (let index = 0; index < schema.length; index++) {
-                        if (!invisibility?.find((column) => column === schema[index].field)) {
-                            const item = schema[index];
-                            result += `<th key=${index}>${item.headerName}</th>`;
-                        }
-                    }
-                }
+                const visibilityModel = apiRef.current?.state.columns.columnVisibilityModel || {};
+                const visibleColumns = apiRef.current?.getAllColumns()?.filter((col) => col.field !== 'actions' && visibilityModel[col.field] !== false);
+                visibleColumns?.forEach((col, index) => {
+                    result += `<th key=${index}>${col.headerName}</th>`;
+                });
                 return result;
             })()}
                     </tr>
@@ -255,42 +258,32 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies
         return null;
     };
     // Handle Update in Row in Inline Mode
-    // Handle Update in Row in Inline Mode
-    const processRowUpdate = async (newRow) => {
-        try {
-            if (schema) {
-                for (const col of schema) {
-                    const rules = col.componentProps?.validation;
-                    if (rules?.required) {
-                        const value = newRow[col.field];
-                        if (value === "" || value === null || value === undefined) {
-                            const message = rules.required;
-                            props.onCellValidationError?.(message, {
-                                field: col.field,
-                                value: value,
-                                id: customKey ? newRow[customKey] : newRow.id
-                            });
-                            throw new Error(message);
-                        }
-                    }
+    const processRowUpdate = async (newRow, _) => {
+        if (schema) {
+            for (const col of schema) {
+                const rules = col.componentProps?.validation;
+                if (!rules)
+                    continue;
+                const value = newRow[col.field];
+                const errorMessage = validateCellValue(value, rules);
+                if (errorMessage) {
+                    props.onCellValidationError?.(errorMessage, {
+                        field: col.field,
+                        value,
+                        id: customKey ? newRow[customKey] : newRow.id
+                    });
+                    throw new Error(errorMessage);
                 }
             }
-            const rowId = customKey ? newRow[customKey] : newRow.id;
-            setGridData((prev) => prev.map((row) => (customKey ? row[customKey] : row.id) === rowId ? newRow : row));
-            setEditedRows((prev) => {
-                const updatedEditedRows = {
-                    ...prev,
-                    [rowId]: newRow,
-                };
-                props.onRowsChange?.(updatedEditedRows);
-                return updatedEditedRows;
-            });
-            props.onRowEdit?.(newRow);
-            return newRow;
         }
-        catch (error) {
-            throw error;
-        }
+        const rowId = customKey ? newRow[customKey] : newRow.id;
+        setEditedRows((prev) => {
+            const updated = { ...prev, [rowId]: newRow };
+            props.onRowsChange?.(updated);
+            return updated;
+        });
+        props.onRowEdit?.(newRow);
+        return newRow;
     };
     return (React.createElement(React.Fragment, null,
         React.createElement(Modal, { className: "grid_create_modal", title: localeText?.modalAddTitle || "Add New Item", open: addModal, setOpen: setAddModal },
@@ -340,15 +333,7 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies
                                 } } : {}),
                         }
                     } : {})
-                }, editMode: 'row', processRowUpdate: processRowUpdate, onProcessRowUpdateError: (error) => {
-                    props.onCellValidationError?.(error.message, { field: "", value: null, id: null });
-                }, disableVirtualization: true, disableColumnResize: !resizable, paginationMode: openPdf ? 'server' : 'client', ...(openPdf ? { rowCount: gridData?.length } : {}), initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, slots: props?.slots ? props?.slots : { toolbar: actions || toolbar || customToolbar ? CustomToolbar : null }, getRowClassName: (params) => {
-                    const id = customKey ? params.row[customKey] : params.id;
-                    if (editedRows[id]) {
-                        return "edited-row";
-                    }
-                    return params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : "";
-                } })),
+                }, editMode: 'cell', processRowUpdate: processRowUpdate, disableVirtualization: true, disableColumnResize: !resizable, paginationMode: openPdf ? 'server' : 'client', ...(openPdf ? { rowCount: gridData?.length } : {}), initialState: props?.initialState ? props?.initialState : { pagination: { paginationModel: { pageSize: 15 } } }, slots: props?.slots ? props?.slots : { toolbar: actions || toolbar || customToolbar ? CustomToolbar : null }, getRowClassName: (params) => { return params.indexRelativeToCurrentPage % 2 === 0 ? "dark" : ""; } })),
         React.createElement("iframe", { id: 'iFrame', title: 'iFrame', style: { display: 'none', position: 'absolute', width: 0, height: 0 } })));
 };
 //# sourceMappingURL=index.js.map

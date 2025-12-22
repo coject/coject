@@ -34,15 +34,25 @@ export const Phone: FC<iPhone> = ({ name, label, helperText, value, validation, 
         };
     }, [validation]);
 
+    // Handle KeyDown
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
+        if (!/[0-9]/.test(e.key) && !allowedKeys.includes(e.key)) {
+            e.preventDefault();
+        }
+    };
+
+    // Handle Change
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const numericValue = e.target.value.replace(/\D/g, "");
+        const numericValue = e.target.value.replace(/[^0-9]/g, "").slice(0, 9);
         onChange?.(`966${numericValue}`);
     };
 
+    // Handle Input Adorment
     const displayValue = typeof value === "string" && value.startsWith("966") ? value.slice(3) : value || "";
 
     return (
-        <Input name={name} label={label || "Phone"} helperText={helperText} validation={validate} value={displayValue} onChange={handleChange}
+        <Input name={name} label={label || "Phone"} helperText={helperText} validation={validate} value={displayValue} onChange={handleChange} onKeyDown={handleKeyDown}
             inputProps={{ maxLength: 9, inputMode: "numeric", pattern: "[0-9]*" }}
             InputProps={{
                 ...props.InputProps,

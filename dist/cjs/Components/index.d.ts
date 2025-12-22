@@ -2,6 +2,8 @@ export { Form } from "./Form";
 export { Grid } from "./Grid";
 export { Modal } from "./Modal";
 export { Input } from "./Input";
+export { Email } from "./Email";
+export { Phone } from "./Phone";
 export { Select } from "./Select";
 export { Button } from "./Button";
 export { Switch } from "./Switch";

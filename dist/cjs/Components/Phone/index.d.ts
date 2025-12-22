@@ -12,6 +12,10 @@ type iPhone = Omit<TextFieldProps, "type" | "validation" | "required" | "onChang
         };
         required?: string | boolean;
     };
+    errorMessages?: {
+        required?: string;
+        pattern?: string;
+    };
     onChange?: (value: string) => void;
 };
 export declare const Phone: FC<iPhone>;

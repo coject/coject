@@ -12,6 +12,10 @@ type iEmail = Omit<TextFieldProps, "type" | "validation" | "required"> & {
         };
         required?: string | boolean;
     };
+    errorMessages?: {
+        required?: string;
+        pattern?: string;
+    };
 };
 export declare const Email: FC<iEmail>;
 export {};

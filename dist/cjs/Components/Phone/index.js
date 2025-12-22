@@ -29,14 +29,14 @@ const react_1 = __importStar(require("react"));
 const material_1 = require("@mui/material");
 // Coject
 const Input_1 = require("../Input");
-const Phone = ({ name, label, helperText, value, validation, onChange, ...props }) => {
+const Phone = ({ name, label, helperText, value, validation, onChange, errorMessages, ...props }) => {
     const validate = (0, react_1.useMemo)(() => {
         return {
             pattern: validation?.pattern ?? {
                 value: /^\d{9}$/,
-                message: "Please enter a valid Saudi phone number (9 digits only)",
+                message: errorMessages?.pattern ?? "Please enter a valid Saudi phone number (9 digits only)",
             },
-            required: validation?.required ?? "Phone number is required",
+            required: errorMessages?.required ?? "Phone number is required",
         };
     }, [validation]);
     const handleChange = (e) => {
@@ -44,9 +44,9 @@ const Phone = ({ name, label, helperText, value, validation, onChange, ...props 
         onChange?.(`966${numericValue}`);
     };
     const displayValue = typeof value === "string" && value.startsWith("966") ? value.slice(3) : value || "";
-    return (react_1.default.createElement(Input_1.Input, { name: name, label: label || "Phone", helperText: helperText, validation: validate, value: displayValue, onChange: handleChange, InputProps: {
+    return (react_1.default.createElement(Input_1.Input, { name: name, label: label || "Phone", helperText: helperText, validation: validate, value: displayValue, onChange: handleChange, inputProps: { maxLength: 9, inputMode: "numeric", pattern: "[0-9]*" }, InputProps: {
             ...props.InputProps,
-            endAdornment: (react_1.default.createElement(material_1.InputAdornment, { position: "end" }, "966+")),
+            endAdornment: (react_1.default.createElement(material_1.InputAdornment, { position: "end" }, "966+"))
         }, ...props }));
 };
 exports.Phone = Phone;

@@ -15,16 +15,20 @@ type iEmail = Omit<TextFieldProps, "type" | "validation" | "required"> & {
         pattern?: { value: RegExp; message: string };
         required?: string | boolean;
     };
+    errorMessages?: {
+        required?: string;
+        pattern?: string;
+    };
 };
 
-export const Email: FC<iEmail> = ({ name, label, helperText, value, validation, ...props }) => {
+export const Email: FC<iEmail> = ({ name, label, helperText, value, validation, errorMessages, ...props }) => {
     const validate = useMemo(() => {
         return {
             pattern: validation?.pattern ?? {
                 value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Please enter a valid email address"
+                message: errorMessages?.pattern ?? "Please enter a valid email address"
             },
-            required: validation?.required ?? "Email is required"
+            required: errorMessages?.required ?? "Email is required"
         };
     }, [validation]);
 

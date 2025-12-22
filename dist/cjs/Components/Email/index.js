@@ -27,14 +27,14 @@ exports.Email = void 0;
 const react_1 = __importStar(require("react"));
 // Coject
 const Input_1 = require("../Input");
-const Email = ({ name, label, helperText, value, validation, ...props }) => {
+const Email = ({ name, label, helperText, value, validation, errorMessages, ...props }) => {
     const validate = (0, react_1.useMemo)(() => {
         return {
             pattern: validation?.pattern ?? {
                 value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Please enter a valid email address"
+                message: errorMessages?.pattern ?? "Please enter a valid email address"
             },
-            required: validation?.required ?? "Email is required"
+            required: errorMessages?.required ?? "Email is required"
         };
     }, [validation]);
     return (react_1.default.createElement(Input_1.Input, { name: name, label: label || "Email", type: "email", helperText: helperText, validation: validate, value: value, ...props }));

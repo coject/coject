@@ -15,18 +15,22 @@ type iPhone = Omit<TextFieldProps, "type" | "validation" | "required" | "onChang
         pattern?: { value: RegExp; message: string };
         required?: string | boolean;
     };
+    errorMessages?: {
+        required?: string;
+        pattern?: string;
+    };
     onChange?: (value: string) => void;
 };
 
-export const Phone: FC<iPhone> = ({ name, label, helperText, value, validation, onChange, ...props }) => {
+export const Phone: FC<iPhone> = ({ name, label, helperText, value, validation, onChange, errorMessages, ...props }) => {
     const validate = useMemo(() => {
         return {
             pattern:
                 validation?.pattern ?? {
                     value: /^\d{9}$/,
-                    message: "Please enter a valid Saudi phone number (9 digits only)",
+                    message: errorMessages?.pattern ?? "Please enter a valid Saudi phone number (9 digits only)",
                 },
-            required: validation?.required ?? "Phone number is required",
+            required: errorMessages?.required ?? "Phone number is required",
         };
     }, [validation]);
 
@@ -39,11 +43,12 @@ export const Phone: FC<iPhone> = ({ name, label, helperText, value, validation, 
 
     return (
         <Input name={name} label={label || "Phone"} helperText={helperText} validation={validate} value={displayValue} onChange={handleChange}
+            inputProps={{ maxLength: 9, inputMode: "numeric", pattern: "[0-9]*" }}
             InputProps={{
                 ...props.InputProps,
                 endAdornment: (
                     <InputAdornment position="end">966+</InputAdornment>
-                ),
+                )
             }}
             {...props}
         />

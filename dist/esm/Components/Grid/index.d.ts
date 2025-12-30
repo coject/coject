@@ -68,6 +68,7 @@ interface iGrid extends DataGridProps {
     onDeleteCallback?: any;
     enableSaveAll?: boolean;
     editFormChildren?: any;
+    freezeActions?: boolean;
     invisibility?: string[];
     noEditRequest?: boolean;
     dataSource?: iDataSource;

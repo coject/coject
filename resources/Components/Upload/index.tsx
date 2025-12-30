@@ -18,7 +18,6 @@ type iUpload = Omit<TextFieldProps, "onChange"> & {
     name?: string;
     setFile?: any;
     label?: string;
-    onChange?: any;
     onRemove?: any;
     disabled?: boolean;
     multiple?: boolean;
@@ -27,15 +26,21 @@ type iUpload = Omit<TextFieldProps, "onChange"> & {
     imageHeight?: number;
     placeholder?: string;
     validateText?: string;
+    beforeUpload?: (
+        file: File,
+        allFiles: File[],
+        currentFiles: File[]
+    ) => boolean | string | Promise<boolean | string>;
+    onChange?: (value: any, error?: string) => void;
     required?: boolean | string;
     imageWidth?: { lg?: number, md?: number, sm?: number, xs?: number };
 }
 
-export const Upload: FC<iUpload> = ({ value, name, setFile, multiple, onChange, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, validateText, error }) => {
+export const Upload: FC<iUpload> = ({ value, name, setFile, multiple, onChange, beforeUpload, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, validateText, error }) => {
     const { classes } = useStyles();
-    const Methods = useFormContext() || {};
     const [ files, setFiles ] = useState<any>([]);
     const [ viewer, setViewer ] = useState<any>(false);
+    const [touched, setTouched] = useState<any>(false);
     const [ , forceUpdate ] = useReducer(x => x + 1, 0);
     const [ viewerType, setViewerType ] = useState<any>(false);
     const [ initValue, setInitValue ] = useState<string[]>([]);
@@ -68,21 +73,47 @@ export const Upload: FC<iUpload> = ({ value, name, setFile, multiple, onChange, 
     }, [value]);
 
     // File Change
-    const fileChange = (event: any) => {
-        const newFiles: any[] = [];
-        for (let index = 0; index < Object.keys(event.target.files).length; index++) {
-            newFiles.push(event.target.files[index])
-        }
-        if ( event.target.files.length > 0 ) {
-            for ( let index = 0; index < event.target.files.length; index++ ) {
-                const Reader = new FileReader();
-                Reader.readAsDataURL(event.target.files[index]);
-                Reader.onload = () => setFiles((prev: any) => ([...(multiple ? prev : []), {file: event.target.files[index], image: Reader.result}]));
+    const fileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        setTouched(true);
+        const selectedFiles = Array.from(event.target.files || []);
+        if (!selectedFiles.length) return;
+        const acceptedFiles: File[] = [];
+        const currentFiles = files.map((f: any) => f.file);
+        for (const file of selectedFiles) {
+            if (beforeUpload) {
+                const result = await beforeUpload(
+                    file,
+                    selectedFiles,
+                    currentFiles.concat(acceptedFiles)
+                );
+                if (result !== true) {
+                    const message = typeof result === "string" ? result : "File rejected";
+                    setError(name || "default", { type: "manual", message });
+                    onChange?.(null, message);
+                    continue;
+                }
             }
+            acceptedFiles.push(file);
         }
-        if (!multiple) setInitValue([]);
-        onChange && onChange((multiple ? [...(files?.map((file: any) => file.file)), ...newFiles] : event.target.files[0]), Methods);
-        setValue(name || "default", (multiple ? [...(files?.map((file: any) => file.file)), ...newFiles] : event.target.files[0]));
+        if (!acceptedFiles.length) {
+            clearHistory();
+            return;
+        }
+        acceptedFiles.forEach(file => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                setFiles((prev: any) => [
+                    ...(multiple ? prev : []),
+                    { file, image: reader.result }
+                ]);
+            };
+        });
+        clearErrors(name || "default");
+        const finalValue = multiple ? [...currentFiles, ...acceptedFiles] : acceptedFiles[0];
+        setValue(name || "default", finalValue);
+        onChange?.(finalValue);
+        clearHistory();
     };
 
     // File Remove
@@ -107,7 +138,7 @@ export const Upload: FC<iUpload> = ({ value, name, setFile, multiple, onChange, 
 
     // Error Handling
     useEffect(() => {
-        if (required) (!!initValue?.length || !!files?.length) ? clearErrors(name || "default") : setError(name || "default", {type: "required", message: "This Field Is Required"});
+        if (required && touched) (!!initValue?.length || !!files?.length) ? clearErrors(name || "default") : setError(name || "default", {type: "required", message: "This Field Is Required"});
     }, [required, files, initValue]);
 
     return (

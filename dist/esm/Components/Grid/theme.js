@@ -6,6 +6,27 @@ const useStyles = makeStyles()((theme) => {
             '& .MuiDataGrid-filler': {
                 height: '1px !important'
             },
+            "& .actions": {
+                right: 0,
+                zIndex: 2,
+                position: "sticky",
+                background: theme.palette.background.default
+            },
+            "& .MuiDataGrid-columnHeaders .actions": {
+                right: 0,
+                zIndex: 3,
+                position: "sticky",
+                background: theme.palette.background.default
+            },
+            "& .MuiDataGrid-columnHeaders .headerActions": {
+                right: 0,
+                zIndex: 3,
+                position: "sticky",
+                background: theme.palette.background.default
+            },
+            "& .MuiDataGrid-scrollbarFiller--header": {
+                backgroundColor: theme.palette.primary.main
+            },
             "& .dark": {
                 backgroundColor: theme.palette.grey[200]
             },

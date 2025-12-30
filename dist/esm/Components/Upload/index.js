@@ -7,11 +7,11 @@ import { Box, Grid, FormHelperText, TextField, Typography, IconButton } from "@m
 import { Icons, Modal } from "../index";
 // Styles
 import useStyles from "./theme";
-export const Upload = ({ value, name, setFile, multiple, onChange, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, validateText, error }) => {
+export const Upload = ({ value, name, setFile, multiple, onChange, beforeUpload, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, validateText, error }) => {
     const { classes } = useStyles();
-    const Methods = useFormContext() || {};
     const [files, setFiles] = useState([]);
     const [viewer, setViewer] = useState(false);
+    const [touched, setTouched] = useState(false);
     const [, forceUpdate] = useReducer(x => x + 1, 0);
     const [viewerType, setViewerType] = useState(false);
     const [initValue, setInitValue] = useState([]);
@@ -47,22 +47,44 @@ export const Upload = ({ value, name, setFile, multiple, onChange, onRemove, req
         }
     }, [value]);
     // File Change
-    const fileChange = (event) => {
-        const newFiles = [];
-        for (let index = 0; index < Object.keys(event.target.files).length; index++) {
-            newFiles.push(event.target.files[index]);
-        }
-        if (event.target.files.length > 0) {
-            for (let index = 0; index < event.target.files.length; index++) {
-                const Reader = new FileReader();
-                Reader.readAsDataURL(event.target.files[index]);
-                Reader.onload = () => setFiles((prev) => ([...(multiple ? prev : []), { file: event.target.files[index], image: Reader.result }]));
+    const fileChange = async (event) => {
+        setTouched(true);
+        const selectedFiles = Array.from(event.target.files || []);
+        if (!selectedFiles.length)
+            return;
+        const acceptedFiles = [];
+        const currentFiles = files.map((f) => f.file);
+        for (const file of selectedFiles) {
+            if (beforeUpload) {
+                const result = await beforeUpload(file, selectedFiles, currentFiles.concat(acceptedFiles));
+                if (result !== true) {
+                    const message = typeof result === "string" ? result : "File rejected";
+                    setError(name || "default", { type: "manual", message });
+                    onChange?.(null, message);
+                    continue;
+                }
             }
+            acceptedFiles.push(file);
         }
-        if (!multiple)
-            setInitValue([]);
-        onChange && onChange((multiple ? [...(files?.map((file) => file.file)), ...newFiles] : event.target.files[0]), Methods);
-        setValue(name || "default", (multiple ? [...(files?.map((file) => file.file)), ...newFiles] : event.target.files[0]));
+        if (!acceptedFiles.length) {
+            clearHistory();
+            return;
+        }
+        acceptedFiles.forEach(file => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                setFiles((prev) => [
+                    ...(multiple ? prev : []),
+                    { file, image: reader.result }
+                ]);
+            };
+        });
+        clearErrors(name || "default");
+        const finalValue = multiple ? [...currentFiles, ...acceptedFiles] : acceptedFiles[0];
+        setValue(name || "default", finalValue);
+        onChange?.(finalValue);
+        clearHistory();
     };
     // File Remove
     const removeFile = (index) => {
@@ -84,7 +106,7 @@ export const Upload = ({ value, name, setFile, multiple, onChange, onRemove, req
     };
     // Error Handling
     useEffect(() => {
-        if (required)
+        if (required && touched)
             (!!initValue?.length || !!files?.length) ? clearErrors(name || "default") : setError(name || "default", { type: "required", message: "This Field Is Required" });
     }, [required, files, initValue]);
     return (React.createElement(React.Fragment, null,

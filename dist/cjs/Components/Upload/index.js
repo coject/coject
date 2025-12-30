@@ -36,11 +36,11 @@ const material_1 = require("@mui/material");
 const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Upload = ({ value, name, setFile, multiple, onChange, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, validateText, error }) => {
+const Upload = ({ value, name, setFile, multiple, onChange, beforeUpload, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, validateText, error }) => {
     const { classes } = (0, theme_1.default)();
-    const Methods = (0, react_hook_form_1.useFormContext)() || {};
     const [files, setFiles] = (0, react_1.useState)([]);
     const [viewer, setViewer] = (0, react_1.useState)(false);
+    const [touched, setTouched] = (0, react_1.useState)(false);
     const [, forceUpdate] = (0, react_1.useReducer)(x => x + 1, 0);
     const [viewerType, setViewerType] = (0, react_1.useState)(false);
     const [initValue, setInitValue] = (0, react_1.useState)([]);
@@ -76,22 +76,44 @@ const Upload = ({ value, name, setFile, multiple, onChange, onRemove, required, 
         }
     }, [value]);
     // File Change
-    const fileChange = (event) => {
-        const newFiles = [];
-        for (let index = 0; index < Object.keys(event.target.files).length; index++) {
-            newFiles.push(event.target.files[index]);
-        }
-        if (event.target.files.length > 0) {
-            for (let index = 0; index < event.target.files.length; index++) {
-                const Reader = new FileReader();
-                Reader.readAsDataURL(event.target.files[index]);
-                Reader.onload = () => setFiles((prev) => ([...(multiple ? prev : []), { file: event.target.files[index], image: Reader.result }]));
+    const fileChange = async (event) => {
+        setTouched(true);
+        const selectedFiles = Array.from(event.target.files || []);
+        if (!selectedFiles.length)
+            return;
+        const acceptedFiles = [];
+        const currentFiles = files.map((f) => f.file);
+        for (const file of selectedFiles) {
+            if (beforeUpload) {
+                const result = await beforeUpload(file, selectedFiles, currentFiles.concat(acceptedFiles));
+                if (result !== true) {
+                    const message = typeof result === "string" ? result : "File rejected";
+                    setError(name || "default", { type: "manual", message });
+                    onChange?.(null, message);
+                    continue;
+                }
             }
+            acceptedFiles.push(file);
         }
-        if (!multiple)
-            setInitValue([]);
-        onChange && onChange((multiple ? [...(files?.map((file) => file.file)), ...newFiles] : event.target.files[0]), Methods);
-        setValue(name || "default", (multiple ? [...(files?.map((file) => file.file)), ...newFiles] : event.target.files[0]));
+        if (!acceptedFiles.length) {
+            clearHistory();
+            return;
+        }
+        acceptedFiles.forEach(file => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                setFiles((prev) => [
+                    ...(multiple ? prev : []),
+                    { file, image: reader.result }
+                ]);
+            };
+        });
+        clearErrors(name || "default");
+        const finalValue = multiple ? [...currentFiles, ...acceptedFiles] : acceptedFiles[0];
+        setValue(name || "default", finalValue);
+        onChange?.(finalValue);
+        clearHistory();
     };
     // File Remove
     const removeFile = (index) => {
@@ -113,7 +135,7 @@ const Upload = ({ value, name, setFile, multiple, onChange, onRemove, required, 
     };
     // Error Handling
     (0, react_1.useEffect)(() => {
-        if (required)
+        if (required && touched)
             (!!initValue?.length || !!files?.length) ? clearErrors(name || "default") : setError(name || "default", { type: "required", message: "This Field Is Required" });
     }, [required, files, initValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,

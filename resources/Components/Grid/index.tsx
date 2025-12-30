@@ -87,6 +87,7 @@ interface iGrid extends DataGridProps {
     onDeleteCallback?: any;
     enableSaveAll?: boolean;
     editFormChildren?: any;
+    freezeActions?: boolean;
     invisibility?: string[];
     noEditRequest?: boolean;
     dataSource?: iDataSource;
@@ -103,7 +104,7 @@ interface iGrid extends DataGridProps {
     onCellValidationError?: (message: string, info: { field: string; value: any; id: any }) => void;
 }
 
-export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRenderRequest, actionsControl, dependancies, resizable, staticData, callback, localeText, customKey, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
+export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRenderRequest, actionsControl, dependancies, resizable, staticData, callback, localeText, customKey, freezeActions, onAddCallback, onEditCallback, addFormChildren, editFormChildren, onDeleteCallback, schema, actions, customActions, invisibility, formInvisibility, toolbar, customToolbar, dispatch, onAddSubmit, onEditSubmit, onDeleteSubmit, noAddRequest, noEditRequest, noDeleteRequest, noRequest, ...props }) => {
     const apiRef = useGridApiRef();
     const { classes } = useStyles();
     const [ gridData, setGridData ] = useState<any>([]);
@@ -235,7 +236,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
 
     // Columns Schema
     const columnsSchema: any = [...(schema ? (invisibility ? schema.filter((column: any) => (!invisibility.includes(column.field))): schema) : defaultSchema), ...((actions || customActions)
-        ? [{ field: "actions", type: "actions", minWidth: 150, headerName: (localeText && localeText?.gridHeaderAction) || "Actions", flex: 1, cellClassName: "actions", getActions: ({ row }: any) => ([...(gridActions(row) || []), ...(gridCustomActions(row) || [])]) }]
+        ? [{ field: "actions", type: "actions", minWidth: 150, headerName: (localeText && localeText?.gridHeaderAction) || "Actions", flex: 1, headerClassName: freezeActions ? "headerActions" : "", cellClassName: freezeActions ? "actions" : "", getActions: ({ row }: any) => ([...(gridActions(row) || []), ...(gridCustomActions(row) || [])]) }]
         : []
     )];
 

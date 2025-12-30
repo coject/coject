@@ -5,7 +5,6 @@ type iUpload = Omit<TextFieldProps, "onChange"> & {
     name?: string;
     setFile?: any;
     label?: string;
-    onChange?: any;
     onRemove?: any;
     disabled?: boolean;
     multiple?: boolean;
@@ -14,6 +13,8 @@ type iUpload = Omit<TextFieldProps, "onChange"> & {
     imageHeight?: number;
     placeholder?: string;
     validateText?: string;
+    beforeUpload?: (file: File, allFiles: File[], currentFiles: File[]) => boolean | string | Promise<boolean | string>;
+    onChange?: (value: any, error?: string) => void;
     required?: boolean | string;
     imageWidth?: {
         lg?: number;

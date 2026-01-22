@@ -12,6 +12,8 @@ export { Input } from "./Input";
 export { Email } from "./Email";
 // Phone
 export { Phone } from "./Phone";
+// National Id
+export { NationalId } from "./NationalId";
 // Select
 export { Select } from "./Select";
 // Button
@@ -22,7 +24,7 @@ export { Switch } from "./Switch";
 export { Checkbox } from "./Checkbox";
 // Date
 export { DatePicker } from "./DatePicker";
-// Date
+// Upload
 export { Upload } from "./Upload";
 // PDF Generator
 export { PDFGenerator } from "./PDFGenerator";

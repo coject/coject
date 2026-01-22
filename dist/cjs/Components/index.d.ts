@@ -4,6 +4,7 @@ export { Modal } from "./Modal";
 export { Input } from "./Input";
 export { Email } from "./Email";
 export { Phone } from "./Phone";
+export { NationalId } from "./NationalId";
 export { Select } from "./Select";
 export { Button } from "./Button";
 export { Switch } from "./Switch";

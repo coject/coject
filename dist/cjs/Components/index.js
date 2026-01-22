@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Icons = exports.Scanner = exports.PDFGenerator = exports.Upload = exports.DatePicker = exports.Checkbox = exports.Switch = exports.Button = exports.Select = exports.Phone = exports.Email = exports.Input = exports.Modal = exports.Grid = exports.Form = void 0;
+exports.Icons = exports.Scanner = exports.PDFGenerator = exports.Upload = exports.DatePicker = exports.Checkbox = exports.Switch = exports.Button = exports.Select = exports.NationalId = exports.Phone = exports.Email = exports.Input = exports.Modal = exports.Grid = exports.Form = void 0;
 // Material MUI Icons
 const MuiIcons = __importStar(require("@mui/icons-material"));
 // Form
@@ -44,6 +44,9 @@ Object.defineProperty(exports, "Email", { enumerable: true, get: function () { r
 // Phone
 var Phone_1 = require("./Phone");
 Object.defineProperty(exports, "Phone", { enumerable: true, get: function () { return Phone_1.Phone; } });
+// National Id
+var NationalId_1 = require("./NationalId");
+Object.defineProperty(exports, "NationalId", { enumerable: true, get: function () { return NationalId_1.NationalId; } });
 // Select
 var Select_1 = require("./Select");
 Object.defineProperty(exports, "Select", { enumerable: true, get: function () { return Select_1.Select; } });
@@ -59,7 +62,7 @@ Object.defineProperty(exports, "Checkbox", { enumerable: true, get: function () 
 // Date
 var DatePicker_1 = require("./DatePicker");
 Object.defineProperty(exports, "DatePicker", { enumerable: true, get: function () { return DatePicker_1.DatePicker; } });
-// Date
+// Upload
 var Upload_1 = require("./Upload");
 Object.defineProperty(exports, "Upload", { enumerable: true, get: function () { return Upload_1.Upload; } });
 // PDF Generator

@@ -19,6 +19,9 @@ export { Email } from "./Email";
 // Phone
 export { Phone } from "./Phone";
 
+// National Id
+export { NationalId } from "./NationalId";
+
 // Select
 export { Select } from "./Select";
 
@@ -34,7 +37,7 @@ export { Checkbox } from "./Checkbox";
 // Date
 export { DatePicker } from "./DatePicker";
 
-// Date
+// Upload
 export { Upload } from "./Upload";
 
 // PDF Generator

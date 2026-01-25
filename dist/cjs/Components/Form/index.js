@@ -65,6 +65,11 @@ const Form = ({ mode, id, getForm, schema, dataSource, localeText, className, st
                                             ? (react_1.default.createElement(react_1.default.Fragment, { key: index }, field.actionTemplate(field)))
                                             : (react_1.default.createElement(material_1.Grid, { item: true, key: index, ...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 }) },
                                                 react_1.default.createElement(index_1.Phone, { fullWidth: true, name: field.field, ...field.componentProps, value: Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value) })));
+                                    case "nationalid":
+                                        return field.actionTemplate
+                                            ? (react_1.default.createElement(react_1.default.Fragment, { key: index }, field.actionTemplate(field)))
+                                            : (react_1.default.createElement(material_1.Grid, { item: true, key: index, ...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 }) },
+                                                react_1.default.createElement(index_1.NationalId, { fullWidth: true, name: field.field, ...field.componentProps, value: Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value) })));
                                     case "switch":
                                         return field.actionTemplate
                                             ? (react_1.default.createElement(react_1.default.Fragment, { key: index }, field.actionTemplate(field)))

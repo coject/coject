@@ -10,7 +10,7 @@ import { Box, TextField, TextFieldProps, InputAdornment, Tooltip } from "@mui/ma
 import useStyles from "./theme";
 
 // Interfaces
-type iInput = Omit<TextFieldProps, "helperText" | "required"> & {
+type iInput = Omit<TextFieldProps, "helperText" | "required" | "onChange"> & {
     name?: string;
     onChange?: any;
     multiline?: any;

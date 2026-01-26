@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Icons = exports.Scanner = exports.PDFGenerator = exports.Upload = exports.DatePicker = exports.Checkbox = exports.Switch = exports.Button = exports.Select = exports.NationalId = exports.Phone = exports.Email = exports.Input = exports.Modal = exports.Grid = exports.Form = void 0;
+exports.Icons = exports.Scanner = exports.PDFGenerator = exports.Upload = exports.DatePicker = exports.Checkbox = exports.Switch = exports.Button = exports.Select = exports.Iban = exports.NationalId = exports.Phone = exports.Email = exports.Input = exports.Modal = exports.Grid = exports.Form = void 0;
 // Material MUI Icons
 const MuiIcons = __importStar(require("@mui/icons-material"));
 // Form
@@ -47,6 +47,9 @@ Object.defineProperty(exports, "Phone", { enumerable: true, get: function () { r
 // National Id
 var NationalId_1 = require("./NationalId");
 Object.defineProperty(exports, "NationalId", { enumerable: true, get: function () { return NationalId_1.NationalId; } });
+// Iban
+var Iban_1 = require("./Iban");
+Object.defineProperty(exports, "Iban", { enumerable: true, get: function () { return Iban_1.Iban; } });
 // Select
 var Select_1 = require("./Select");
 Object.defineProperty(exports, "Select", { enumerable: true, get: function () { return Select_1.Select; } });

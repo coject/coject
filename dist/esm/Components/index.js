@@ -14,6 +14,8 @@ export { Email } from "./Email";
 export { Phone } from "./Phone";
 // National Id
 export { NationalId } from "./NationalId";
+// Iban
+export { Iban } from "./Iban";
 // Select
 export { Select } from "./Select";
 // Button

@@ -6,7 +6,7 @@ import { Request } from "../../Services";
 // Material UI
 import { Grid, Button } from "@mui/material";
 // Coject
-import { Input, Switch, Select, Checkbox, DatePicker, Upload, Scanner, Email, Phone, NationalId, Iban } from "../index";
+import { Input, Switch, Select, Checkbox, DatePicker, Upload, Scanner, Email, Phone, NationalId, Iban, InputLabel } from "../index";
 // Styles
 import useStyles from "./theme";
 export const Form = ({ mode, id, getForm, schema, dataSource, localeText, className, staticData, customKey, onSubmit, onSubmitClear, setModal, dispatch, callback, onError, noRequest, invisibility, children, ...props }) => {
@@ -49,6 +49,11 @@ export const Form = ({ mode, id, getForm, schema, dataSource, localeText, classN
                                             ? (React.createElement(React.Fragment, { key: index }, field.actionTemplate(field)))
                                             : (React.createElement(Grid, { item: true, key: index, ...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 }) },
                                                 React.createElement(Input, { fullWidth: true, name: field.field, ...field.componentProps, value: Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value) })));
+                                    case "inputlabel":
+                                        return field.actionTemplate
+                                            ? (React.createElement(React.Fragment, { key: index }, field.actionTemplate(field)))
+                                            : (React.createElement(Grid, { item: true, key: index, ...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 }) },
+                                                React.createElement(InputLabel, { fullWidth: true, name: field.field, ...field.componentProps, value: Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value) })));
                                     case "email":
                                         return field.actionTemplate
                                             ? (React.createElement(React.Fragment, { key: index }, field.actionTemplate(field)))

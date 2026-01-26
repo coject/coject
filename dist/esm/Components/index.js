@@ -8,6 +8,8 @@ export { Grid } from "./Grid";
 export { Modal } from "./Modal";
 // Input
 export { Input } from "./Input";
+// Input Label
+export { InputLabel } from "./InputLabel";
 // Email
 export { Email } from "./Email";
 // Phone

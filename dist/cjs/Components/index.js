@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Icons = exports.Scanner = exports.PDFGenerator = exports.Upload = exports.DatePicker = exports.Checkbox = exports.Switch = exports.Button = exports.Select = exports.Iban = exports.NationalId = exports.Phone = exports.Email = exports.Input = exports.Modal = exports.Grid = exports.Form = void 0;
+exports.Icons = exports.Scanner = exports.PDFGenerator = exports.Upload = exports.DatePicker = exports.Checkbox = exports.Switch = exports.Button = exports.Select = exports.Iban = exports.NationalId = exports.Phone = exports.Email = exports.InputLabel = exports.Input = exports.Modal = exports.Grid = exports.Form = void 0;
 // Material MUI Icons
 const MuiIcons = __importStar(require("@mui/icons-material"));
 // Form
@@ -38,6 +38,9 @@ Object.defineProperty(exports, "Modal", { enumerable: true, get: function () { r
 // Input
 var Input_1 = require("./Input");
 Object.defineProperty(exports, "Input", { enumerable: true, get: function () { return Input_1.Input; } });
+// Input Label
+var InputLabel_1 = require("./InputLabel");
+Object.defineProperty(exports, "InputLabel", { enumerable: true, get: function () { return InputLabel_1.InputLabel; } });
 // Email
 var Email_1 = require("./Email");
 Object.defineProperty(exports, "Email", { enumerable: true, get: function () { return Email_1.Email; } });

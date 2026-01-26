@@ -17,9 +17,9 @@ type iIban = Omit<TextFieldProps, | "name" | "helperText" | "required"> & {
     };
 };
 
-export const Iban: FC<iIban> = ({ name, label, helperText, required = true, errorMessages, ...props }) => {
+export const Iban: FC<iIban> = ({ name, label, helperText, required = true, errorMessages, onChange: externalOnChange, ...props }) => {
     const ibanRegex = /^[A-Za-z]{2}[0-9]{20}$/;
-    const { value, onChange, ...restProps } = props;
+    const { value, ...restProps } = props;
 
     return (
         <React.Fragment>
@@ -42,6 +42,9 @@ export const Iban: FC<iIban> = ({ name, label, helperText, required = true, erro
                         val = letters + numbers;
                     }
                     form.setValue(name, val);
+                    if (externalOnChange) {
+                        externalOnChange({ target: { name, value: val } } as React.ChangeEvent<HTMLInputElement>);
+                    }
                 }}
                 {...restProps}
             />

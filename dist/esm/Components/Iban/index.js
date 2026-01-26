@@ -1,9 +1,9 @@
 import React from "react";
 // Coject
 import { Input } from "../Input";
-export const Iban = ({ name, label, helperText, required = true, errorMessages, ...props }) => {
+export const Iban = ({ name, label, helperText, required = true, errorMessages, onChange: externalOnChange, ...props }) => {
     const ibanRegex = /^[A-Za-z]{2}[0-9]{20}$/;
-    const { value, onChange, ...restProps } = props;
+    const { value, ...restProps } = props;
     return (React.createElement(React.Fragment, null,
         React.createElement(Input, { name: name, label: label || "IBAN", helperText: helperText, required: errorMessages?.required ?? required, inputProps: { maxLength: 22 }, validation: {
                 pattern: {
@@ -23,6 +23,9 @@ export const Iban = ({ name, label, helperText, required = true, errorMessages, 
                     val = letters + numbers;
                 }
                 form.setValue(name, val);
+                if (externalOnChange) {
+                    externalOnChange({ target: { name, value: val } });
+                }
             }, ...restProps })));
 };
 //# sourceMappingURL=index.js.map

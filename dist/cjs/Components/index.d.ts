@@ -2,6 +2,7 @@ export { Form } from "./Form";
 export { Grid } from "./Grid";
 export { Modal } from "./Modal";
 export { Input } from "./Input";
+export { InputLabel } from "./InputLabel";
 export { Email } from "./Email";
 export { Phone } from "./Phone";
 export { NationalId } from "./NationalId";

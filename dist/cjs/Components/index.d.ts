@@ -5,6 +5,7 @@ export { Input } from "./Input";
 export { InputLabel } from "./InputLabel";
 export { Email } from "./Email";
 export { Phone } from "./Phone";
+export { InternationalPhone } from "./InternationalPhone";
 export { NationalId } from "./NationalId";
 export { Iban } from "./Iban";
 export { Select } from "./Select";

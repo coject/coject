@@ -11,7 +11,7 @@ import { Grid, Button } from "@mui/material";
 import { GridColDef } from "@mui/x-data-grid";
 
 // Coject
-import { Input, Switch, Select, Checkbox, DatePicker, Upload, Scanner, Email, Phone, NationalId, Iban, InputLabel } from "../index";
+import { Input, Switch, Select, Checkbox, DatePicker, Upload, Scanner, Email, Phone, InternationalPhone, NationalId, Iban, InputLabel } from "../index";
 
 // Styles
 import useStyles from "./theme";
@@ -131,6 +131,10 @@ export const Form: FC<iForm> = ({ mode, id, getForm, schema, dataSource, localeT
                                         return field.actionTemplate
                                             ? (<React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment>)
                                             : (<Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><Phone fullWidth name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid>);
+                                    case "internationalphone":
+                                        return field.actionTemplate
+                                            ? (<React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment>)
+                                            : (<Grid item key={index} {...(field.componentMedia ? field.componentMedia : { xs: 12, sm: 12, md: 12, lg: 12 })}><InternationalPhone fullWidth name={field.field} {...field.componentProps} value={Data[field.field] ? Data[field.field] : (Data[field.field] === false ? "false" : field?.componentProps?.value)} /></Grid>);
                                     case "nationalid":
                                         return field.actionTemplate
                                             ? (<React.Fragment key={index}>{field.actionTemplate(field)}</React.Fragment>)

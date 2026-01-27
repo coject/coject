@@ -4,7 +4,7 @@ import React, { FC, useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 // Material UI
-import { Box, TextField, TextFieldProps, Tooltip } from "@mui/material";
+import { Box, FormHelperText, TextField, TextFieldProps, Tooltip } from "@mui/material";
 
 // Styles
 import useStyles from "./theme";
@@ -36,6 +36,7 @@ type iInputLabel = Omit<TextFieldProps, "helperText" | "required" | "label"> & {
 export const InputLabel: FC<iInputLabel> = ({ name, multiline, value, helperText, validation, required, onChange, label, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
+    const { defaultValue, ...restProps } = props;
     const [isTouched, setIsTouched] = useState(false);
     const [inputValue, setInputValue] = useState<string | number>(value ?? "");
     const { setValue, control, getValues, watch, setError, clearErrors, formState: { errors, isSubmitted } } = useFormContext() || {};
@@ -128,14 +129,14 @@ export const InputLabel: FC<iInputLabel> = ({ name, multiline, value, helperText
                     <TextField name={name || "default"} variant="outlined" multiline={multiline} error={!!(errors && errors[name || "default"] && (isTouched || isSubmitted))}
                         sx={multiline ? { '& .MuiInputBase-root textarea': { resize: 'both', overflow: 'auto' } } : undefined}
                         onBlur={() => setIsTouched(true)}
-                        autoComplete="off" value={inputValue} onChange={changeValue}  {...props}
+                        autoComplete="off" value={inputValue} onChange={changeValue}  {...restProps}
                         InputProps={{
-                            ...props.InputProps
+                            ...restProps.InputProps
                         }}>
                         {props?.children}
                     </TextField>
                 </Tooltip>
-                {/* {(helperText || !!(errors && errors[name || "default"] && (isTouched || isSubmitted))) && <FormHelperText className={classes.error}>{(!!(errors && errors[name || "default"] && (isTouched || isSubmitted))) ? (errors[name || "default"]?.message as string) : helperText}</FormHelperText>} */}
+                {(helperText) && <FormHelperText className={classes.error}>{helperText}</FormHelperText>}
             </Box>
         </React.Fragment>
     )

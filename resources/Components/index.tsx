@@ -22,6 +22,9 @@ export { Email } from "./Email";
 // Phone
 export { Phone } from "./Phone";
 
+// International Phone
+export { InternationalPhone } from "./InternationalPhone";
+
 // National Id
 export { NationalId } from "./NationalId";
 

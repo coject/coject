@@ -37,6 +37,7 @@ const theme_1 = __importDefault(require("./theme"));
 const InputLabel = ({ name, multiline, value, helperText, validation, required, onChange, label, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useFormContext)() || {};
+    const { defaultValue, ...restProps } = props;
     const [isTouched, setIsTouched] = (0, react_1.useState)(false);
     const [inputValue, setInputValue] = (0, react_1.useState)(value ?? "");
     const { setValue, control, getValues, watch, setError, clearErrors, formState: { errors, isSubmitted } } = (0, react_hook_form_1.useFormContext)() || {};
@@ -119,9 +120,10 @@ const InputLabel = ({ name, multiline, value, helperText, validation, required, 
         react_1.default.createElement(material_1.Box, { className: `${classes.root} coject_input` },
             label && (react_1.default.createElement(material_1.Box, { className: classes.label }, label)),
             react_1.default.createElement(material_1.Tooltip, { arrow: true, disableHoverListener: true, title: (!!(errors && errors[name || "default"] && (isTouched || isSubmitted))) ? errors[name || "default"]?.message : "", placement: localStorage?.language === 'ar' ? "left" : "right", open: !!(errors && errors[name || "default"] && (isTouched || isSubmitted)) },
-                react_1.default.createElement(material_1.TextField, { name: name || "default", variant: "outlined", multiline: multiline, error: !!(errors && errors[name || "default"] && (isTouched || isSubmitted)), sx: multiline ? { '& .MuiInputBase-root textarea': { resize: 'both', overflow: 'auto' } } : undefined, onBlur: () => setIsTouched(true), autoComplete: "off", value: inputValue, onChange: changeValue, ...props, InputProps: {
-                        ...props.InputProps
-                    } }, props?.children)))));
+                react_1.default.createElement(material_1.TextField, { name: name || "default", variant: "outlined", multiline: multiline, error: !!(errors && errors[name || "default"] && (isTouched || isSubmitted)), sx: multiline ? { '& .MuiInputBase-root textarea': { resize: 'both', overflow: 'auto' } } : undefined, onBlur: () => setIsTouched(true), autoComplete: "off", value: inputValue, onChange: changeValue, ...restProps, InputProps: {
+                        ...restProps.InputProps
+                    } }, props?.children)),
+            (helperText) && react_1.default.createElement(material_1.FormHelperText, { className: classes.error }, helperText))));
 };
 exports.InputLabel = InputLabel;
 //# sourceMappingURL=index.js.map

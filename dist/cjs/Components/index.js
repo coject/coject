@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Icons = exports.Scanner = exports.PDFGenerator = exports.Upload = exports.DatePicker = exports.Checkbox = exports.Switch = exports.Button = exports.Select = exports.Iban = exports.NationalId = exports.Phone = exports.Email = exports.InputLabel = exports.Input = exports.Modal = exports.Grid = exports.Form = void 0;
+exports.Icons = exports.Scanner = exports.PDFGenerator = exports.Upload = exports.DatePicker = exports.Checkbox = exports.Switch = exports.Button = exports.Select = exports.Iban = exports.NationalId = exports.InternationalPhone = exports.Phone = exports.Email = exports.InputLabel = exports.Input = exports.Modal = exports.Grid = exports.Form = void 0;
 // Material MUI Icons
 const MuiIcons = __importStar(require("@mui/icons-material"));
 // Form
@@ -47,6 +47,9 @@ Object.defineProperty(exports, "Email", { enumerable: true, get: function () { r
 // Phone
 var Phone_1 = require("./Phone");
 Object.defineProperty(exports, "Phone", { enumerable: true, get: function () { return Phone_1.Phone; } });
+// International Phone
+var InternationalPhone_1 = require("./InternationalPhone");
+Object.defineProperty(exports, "InternationalPhone", { enumerable: true, get: function () { return InternationalPhone_1.InternationalPhone; } });
 // National Id
 var NationalId_1 = require("./NationalId");
 Object.defineProperty(exports, "NationalId", { enumerable: true, get: function () { return NationalId_1.NationalId; } });

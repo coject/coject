@@ -27,14 +27,11 @@ interface iScanner {
     required?: boolean | string;
     localeText?: {
         scanButton?: string;
-        savePdfButton?: string;
-        uploadButton?: string;
         scanTitle?: string;
-        noImagesText?: string;
         scanningText?: string;
         downloadButton?: string;
         openPdfButton?: string;
-        downloadApp?: string;
+        clearButton?: string;
     };
     pdfHeight?: string | number;
     pdfWidth?: string | number;
@@ -56,28 +53,40 @@ export const Scanner: FC<iScanner> = ({ name, value, onChange, disabled, multipl
     const [isScriptLoaded, setIsScriptLoaded] = useState(false);
     const [scannedImages, setScannedImages] = useState<string[]>(value || []);
     const { setValue, setError, clearErrors, formState } = formContext || {};
-    const [isScannerInstalled, setIsScannerInstalled] = useState<boolean>(false);
     const errors = formState?.errors || {};
 
-    // Check Scanner App Exist
+    // Load ScannerJs File
     useEffect(() => {
-        if (window.scanner) setIsScannerInstalled(true);
-    }, []);
-
-    // Load scanner.js
-    useEffect(() => {
-        const script = document.createElement("script");
-        script.src = "/scanner.js";
-        script.type = "text/javascript";
+        if (document.querySelector('script[src*="asprise.com/scannerjs"]')) {
+            setIsScriptLoaded(true);
+            return;
+        }
+        const script = document.createElement('script');
+        script.src = '//cdn.asprise.com/scannerjs/scanner.js';
+        script.type = 'text/javascript';
         script.async = true;
 
-        script.onload = () => setIsScriptLoaded(true);
-        script.onerror = () => setIsScriptLoaded(false);
-
-        document.body.appendChild(script);
-        return () => {
-            document.body.removeChild(script);
+        script.onload = () => {
+            setIsScriptLoaded(true);
         };
+        script.onerror = () => {
+            console.error('Failed to load ScannerJS script');
+        };
+        document.head.appendChild(script);
+
+        // Cleanup function
+        return () => { };
+    }, []);
+
+    // Load Scanner File
+    useEffect(() => {
+        const timer = setInterval(() => {
+            if (window.scanner) {
+                setIsScriptLoaded(true);
+                clearInterval(timer);
+            }
+        }, 300);
+        return () => clearInterval(timer);
     }, []);
 
     // Update Images From Props
@@ -100,7 +109,7 @@ export const Scanner: FC<iScanner> = ({ name, value, onChange, disabled, multipl
         }
     }, [required, scannedImages, name, clearErrors, setError, validateText]);
 
-    // Generate PDF + Return File To Parent
+    // Generate PDF and Return File To Parent
     useEffect(() => {
         if (scannedImages.length === 0) {
             setPdfUrl(null);
@@ -135,7 +144,7 @@ export const Scanner: FC<iScanner> = ({ name, value, onChange, disabled, multipl
         setIsScanning(true);
         const scanRequest = {
             use_asprise_dialog: true,
-            show_scanner_ui: false,
+            show_scanner_ui: true,
             twain_cap_setting: { ICAP_PIXELTYPE: "TWPT_RGB" },
             output_settings: [{ type: "return-base64", format: "jpg" }],
         };
@@ -177,19 +186,19 @@ export const Scanner: FC<iScanner> = ({ name, value, onChange, disabled, multipl
         window.open(pdfUrl, "_blank");
     };
 
-    // Download Installer
-    const downloadInstaller = () => {
-        const link = document.createElement("a");
-        link.href = "/scanner/scan-setup.exe";
-        link.download = "scan-setup.exe";
-        link.click();
-        setIsScannerInstalled(true);
-    };
-
     // Error Handler
     const hasError = Boolean(
         (errors && errors[name || "default"]) || (error?.errors && error?.errors[name || "default"])
     );
+
+    // handle Clear
+    const handleClear = () => {
+        setScannedImages([]);
+        setPdfUrl(null);
+        setValue?.(name || "default", []);
+        onChange?.(null);
+        clearErrors?.(name || "default");
+    };
 
     return (
         <React.Fragment>
@@ -202,11 +211,6 @@ export const Scanner: FC<iScanner> = ({ name, value, onChange, disabled, multipl
                         <Button variant={variant} onClick={handleScan} disabled={!isScriptLoaded || disabled || isScanning} startIcon={<MuiIcons.Scanner />}>
                             {isScanning ? localeText?.scanningText || "Scanning..." : localeText?.scanButton || "Scan Document"}
                         </Button>
-                        {!isScannerInstalled && (
-                            <Button variant={variant} startIcon={<MuiIcons.Download />} onClick={downloadInstaller}>
-                                {localeText?.downloadApp || "Install Scanner App"}
-                            </Button>
-                        )}
                         {pdfUrl && (
                             <>
                                 <Button variant={variant} startIcon={<MuiIcons.Download />} onClick={handleDownloadPDF}>
@@ -214,6 +218,9 @@ export const Scanner: FC<iScanner> = ({ name, value, onChange, disabled, multipl
                                 </Button>
                                 <Button variant={variant} startIcon={<MuiIcons.OpenInNew />} onClick={handleOpenPDF}>
                                     {localeText?.openPdfButton || "Open PDF"}
+                                </Button>
+                                <Button variant={variant} startIcon={<MuiIcons.Delete />} onClick={handleClear}>
+                                    {localeText?.clearButton || "Clear"}
                                 </Button>
                             </>
                         )}

@@ -46,25 +46,36 @@ const Scanner = ({ name, value, onChange, disabled, multiple, placeholder, valid
     const [isScriptLoaded, setIsScriptLoaded] = (0, react_1.useState)(false);
     const [scannedImages, setScannedImages] = (0, react_1.useState)(value || []);
     const { setValue, setError, clearErrors, formState } = formContext || {};
-    const [isScannerInstalled, setIsScannerInstalled] = (0, react_1.useState)(false);
     const errors = formState?.errors || {};
-    // Check Scanner App Exist
+    // Load ScannerJs File
     (0, react_1.useEffect)(() => {
-        if (window.scanner)
-            setIsScannerInstalled(true);
-    }, []);
-    // Load scanner.js
-    (0, react_1.useEffect)(() => {
-        const script = document.createElement("script");
-        script.src = "/scanner.js";
-        script.type = "text/javascript";
+        if (document.querySelector('script[src*="asprise.com/scannerjs"]')) {
+            setIsScriptLoaded(true);
+            return;
+        }
+        const script = document.createElement('script');
+        script.src = '//cdn.asprise.com/scannerjs/scanner.js';
+        script.type = 'text/javascript';
         script.async = true;
-        script.onload = () => setIsScriptLoaded(true);
-        script.onerror = () => setIsScriptLoaded(false);
-        document.body.appendChild(script);
-        return () => {
-            document.body.removeChild(script);
+        script.onload = () => {
+            setIsScriptLoaded(true);
         };
+        script.onerror = () => {
+            console.error('Failed to load ScannerJS script');
+        };
+        document.head.appendChild(script);
+        // Cleanup function
+        return () => { };
+    }, []);
+    // Load Scanner File
+    (0, react_1.useEffect)(() => {
+        const timer = setInterval(() => {
+            if (window.scanner) {
+                setIsScriptLoaded(true);
+                clearInterval(timer);
+            }
+        }, 300);
+        return () => clearInterval(timer);
     }, []);
     // Update Images From Props
     (0, react_1.useEffect)(() => {
@@ -86,7 +97,7 @@ const Scanner = ({ name, value, onChange, disabled, multiple, placeholder, valid
             }
         }
     }, [required, scannedImages, name, clearErrors, setError, validateText]);
-    // Generate PDF + Return File To Parent
+    // Generate PDF and Return File To Parent
     (0, react_1.useEffect)(() => {
         if (scannedImages.length === 0) {
             setPdfUrl(null);
@@ -118,7 +129,7 @@ const Scanner = ({ name, value, onChange, disabled, multiple, placeholder, valid
         setIsScanning(true);
         const scanRequest = {
             use_asprise_dialog: true,
-            show_scanner_ui: false,
+            show_scanner_ui: true,
             twain_cap_setting: { ICAP_PIXELTYPE: "TWPT_RGB" },
             output_settings: [{ type: "return-base64", format: "jpg" }],
         };
@@ -156,26 +167,26 @@ const Scanner = ({ name, value, onChange, disabled, multiple, placeholder, valid
             return;
         window.open(pdfUrl, "_blank");
     };
-    // Download Installer
-    const downloadInstaller = () => {
-        const link = document.createElement("a");
-        link.href = "/scanner/scan-setup.exe";
-        link.download = "scan-setup.exe";
-        link.click();
-        setIsScannerInstalled(true);
-    };
     // Error Handler
     const hasError = Boolean((errors && errors[name || "default"]) || (error?.errors && error?.errors[name || "default"]));
+    // handle Clear
+    const handleClear = () => {
+        setScannedImages([]);
+        setPdfUrl(null);
+        setValue?.(name || "default", []);
+        onChange?.(null);
+        clearErrors?.(name || "default");
+    };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: classes.root },
             react_1.default.createElement(material_1.Box, { className: classes.header },
                 react_1.default.createElement(material_1.Typography, { className: classes.title }, localeText?.scanTitle || "Document Scanner"),
                 react_1.default.createElement(material_1.Box, { className: classes.actions },
                     react_1.default.createElement(material_1.Button, { variant: variant, onClick: handleScan, disabled: !isScriptLoaded || disabled || isScanning, startIcon: react_1.default.createElement(MuiIcons.Scanner, null) }, isScanning ? localeText?.scanningText || "Scanning..." : localeText?.scanButton || "Scan Document"),
-                    !isScannerInstalled && (react_1.default.createElement(material_1.Button, { variant: variant, startIcon: react_1.default.createElement(MuiIcons.Download, null), onClick: downloadInstaller }, localeText?.downloadApp || "Install Scanner App")),
                     pdfUrl && (react_1.default.createElement(react_1.default.Fragment, null,
                         react_1.default.createElement(material_1.Button, { variant: variant, startIcon: react_1.default.createElement(MuiIcons.Download, null), onClick: handleDownloadPDF }, localeText?.downloadButton || "Download PDF"),
-                        react_1.default.createElement(material_1.Button, { variant: variant, startIcon: react_1.default.createElement(MuiIcons.OpenInNew, null), onClick: handleOpenPDF }, localeText?.openPdfButton || "Open PDF"))))),
+                        react_1.default.createElement(material_1.Button, { variant: variant, startIcon: react_1.default.createElement(MuiIcons.OpenInNew, null), onClick: handleOpenPDF }, localeText?.openPdfButton || "Open PDF"),
+                        react_1.default.createElement(material_1.Button, { variant: variant, startIcon: react_1.default.createElement(MuiIcons.Delete, null), onClick: handleClear }, localeText?.clearButton || "Clear"))))),
             pdfUrl ? (react_1.default.createElement(material_1.Box, { className: classes.previewBox, style: { width: pdfWidth, height: pdfHeight } },
                 react_1.default.createElement("iframe", { src: pdfUrl, className: classes.iframe, title: "PDF Preview" }))) : (react_1.default.createElement(material_1.Box, { className: classes.placeholder },
                 react_1.default.createElement(MuiIcons.Scanner, { fontSize: "large", className: classes.placeholderIcon }),

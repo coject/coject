@@ -77,6 +77,26 @@ See the [package source](https://github.com/coject/coject) for more details.
 **Note:**<br>
 Install [Material UI](https://www.npmjs.com/package/n_) for Coject use in the React.js > 16.
 
+## ⚠️ Scanner Component (Important Notice)
+
+The **Scanner** component depends on **Asprise ScannerJS**, which has important technical limitations that users must be aware of.
+
+### Requirements
+
+- ScannerJS requires a **native scanner client installation** on the user's machine.
+- The setup dialog (**Download / Run / Scan**) appears **only if the scanner client is NOT installed**.
+- If the client is already installed, the setup dialog **will not appear again**.
+- The presence of `window.scanner` does **not guarantee** that a physical scanner device is available.
+
+### Script Loading (Required)
+
+ScannerJS **must be loaded synchronously** before using the Scanner component.
+
+You must include the following script in your application's `index.html`:
+
+```html
+<script src="//cdn.asprise.com/scannerjs/scanner.js"></script>
+
 ### Support
 
 Tested in Chrome 74-75, Firefox 66-67, IE 11, Edge 18, Safari 11-12, & Node.js 8-12.

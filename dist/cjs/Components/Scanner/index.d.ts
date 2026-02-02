@@ -10,14 +10,11 @@ interface iScanner {
     required?: boolean | string;
     localeText?: {
         scanButton?: string;
-        savePdfButton?: string;
-        uploadButton?: string;
         scanTitle?: string;
-        noImagesText?: string;
         scanningText?: string;
         downloadButton?: string;
         openPdfButton?: string;
-        downloadApp?: string;
+        clearButton?: string;
     };
     pdfHeight?: string | number;
     pdfWidth?: string | number;

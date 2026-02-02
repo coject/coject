@@ -19,7 +19,7 @@ const countries = [
     { code: "+964", label: "Iraq" },
     { code: "+90", label: "Turkey" }
 ];
-export const InternationalPhone = ({ name, label, value, required, fullWidth, onChange }) => {
+export const InternationalPhone = ({ name, label, value, required, fullWidth, disabled, onChange }) => {
     const { setValue } = useFormContext();
     const [phone, setPhone] = useState("");
     const [touched, setTouched] = useState(false);
@@ -42,9 +42,9 @@ export const InternationalPhone = ({ name, label, value, required, fullWidth, on
             onChange(fullNumber);
     }, [country, phone, name, setValue, onChange]);
     return (React.createElement(React.Fragment, null,
-        React.createElement(TextField, { fullWidth: fullWidth, label: label || "Phone Number", value: phone, required: !!required, dir: "ltr", helperText: touched && !!required && !phone ? (typeof required === "string" ? required : "This Field Is Required") : "", onBlur: () => setTouched(true), onChange: (e) => setPhone(e.target.value.replace(/\D/g, "")), inputProps: { inputMode: "numeric", dir: "ltr" }, InputProps: {
+        React.createElement(TextField, { disabled: disabled, fullWidth: fullWidth, label: label || "Phone Number", value: phone, required: !!required, dir: "ltr", helperText: touched && !!required && !phone ? (typeof required === "string" ? required : "This Field Is Required") : "", onBlur: () => setTouched(true), onChange: (e) => setPhone(e.target.value.replace(/\D/g, "")), inputProps: { inputMode: "numeric", dir: "ltr" }, InputProps: {
                 startAdornment: (React.createElement(InputAdornment, { position: "start" },
-                    React.createElement(Autocomplete, { disableClearable: true, options: countries, value: country, onChange: (_, v) => v && setCountry(v), getOptionLabel: (o) => o.code, sx: {
+                    React.createElement(Autocomplete, { disableClearable: true, options: countries, value: country, disabled: disabled, onChange: (_, v) => v && setCountry(v), getOptionLabel: (o) => o.code, sx: {
                             width: 90,
                             "& .MuiInputBase-root": {
                                 paddingRight: "18px",

@@ -33,12 +33,13 @@ interface Props {
     name: string;
     label?: string;
     value?: string;
+    disabled?: boolean;
     fullWidth?: boolean;
     required?: boolean | string;
     onChange?: (fullNumber: string) => void;
 }
 
-export const InternationalPhone: FC<Props> = ({ name, label, value, required, fullWidth, onChange }) => {
+export const InternationalPhone: FC<Props> = ({ name, label, value, required, fullWidth, disabled, onChange }) => {
     const { setValue } = useFormContext();
     const [phone, setPhone] = useState("");
     const [touched, setTouched] = useState(false);
@@ -63,7 +64,7 @@ export const InternationalPhone: FC<Props> = ({ name, label, value, required, fu
 
     return (
         <React.Fragment>
-            <TextField fullWidth={fullWidth} label={label || "Phone Number"} value={phone} required={!!required} dir="ltr"
+            <TextField disabled={disabled} fullWidth={fullWidth} label={label || "Phone Number"} value={phone} required={!!required} dir="ltr"
                 helperText={touched && !!required && !phone ? (typeof required === "string" ? required : "This Field Is Required") : ""}
                 onBlur={() => setTouched(true)}
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
@@ -71,7 +72,7 @@ export const InternationalPhone: FC<Props> = ({ name, label, value, required, fu
                 InputProps={{
                     startAdornment: (
                         <InputAdornment position="start">
-                            <Autocomplete disableClearable options={countries} value={country}
+                            <Autocomplete disableClearable options={countries} value={country} disabled={disabled}
                                 onChange={(_, v) => v && setCountry(v)}
                                 getOptionLabel={(o) => o.code}
                                 sx={{

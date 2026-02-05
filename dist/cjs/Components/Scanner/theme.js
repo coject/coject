@@ -36,7 +36,9 @@ const useStyles = (0, mui_1.makeStyles)()((theme) => ({
         gap: theme.spacing(1),
         flexWrap: "wrap",
         "& button": {
+            display: "flex",
             borderRadius: 10,
+            alignItems: 'start',
             textTransform: "none",
             [theme.breakpoints.down("sm")]: {
                 width: "100%"

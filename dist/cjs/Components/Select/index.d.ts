@@ -40,7 +40,6 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     inputProps?: any;
     staticData?: any;
     separate?: string;
-    required?: boolean;
     disabled?: boolean;
     renderOption?: any;
     customKey?: string;
@@ -51,6 +50,7 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     checkboxes?: boolean;
     noOptionsText?: string;
     dataSource?: iDataSource;
+    required?: boolean | string;
     fixedOption?: (string | number)[];
     disabledOption?: (string | number)[];
 }

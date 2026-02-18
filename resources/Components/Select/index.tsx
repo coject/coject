@@ -122,10 +122,7 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
             <Box className={`${classes.root} coject_select`}>
                 {control ?
                     <Controller name={name || "default"} control={control}
-                        rules={{
-                                required: required ? typeof required === "string" ? required : "This Field is Required" : false,
-                                validate: (value) => multiple ? (Array.isArray(value) && value.length > 0) || (typeof required === "string" ? required : "This Field is Required") : !!value || (typeof required === "string" ? required : "This Field is Required")
-                            }}
+                        rules={ required ? { validate: (value) => multiple ? (Array.isArray(value) && value.length > 0) || (typeof required === "string" ? required : "This Field is Required") : !!value || (typeof required === "string" ? required : "This Field is Required") } : undefined }
                         render={({ fieldState }) => {
                             return (
                                 <Autocomplete noOptionsText={noOptionsText} options={selectData} multiple={multiple} disabled={disabled} readOnly={disabled} {...props}

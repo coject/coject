@@ -54,10 +54,7 @@ export const Select = ({ name, value, label, noOptionsText, callback, staticData
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: `${classes.root} coject_select` },
             control ?
-                React.createElement(Controller, { name: name || "default", control: control, rules: {
-                        required: required ? typeof required === "string" ? required : "This Field is Required" : false,
-                        validate: (value) => multiple ? (Array.isArray(value) && value.length > 0) || (typeof required === "string" ? required : "This Field is Required") : !!value || (typeof required === "string" ? required : "This Field is Required")
-                    }, render: ({ fieldState }) => {
+                React.createElement(Controller, { name: name || "default", control: control, rules: required ? { validate: (value) => multiple ? (Array.isArray(value) && value.length > 0) || (typeof required === "string" ? required : "This Field is Required") : !!value || (typeof required === "string" ? required : "This Field is Required") } : undefined, render: ({ fieldState }) => {
                         return (React.createElement(Autocomplete, { noOptionsText: noOptionsText, options: selectData, multiple: multiple, disabled: disabled, readOnly: disabled, ...props, value: !!selectData?.length && selectedValue !== undefined && selectedValue !== null
                                 ? multiple
                                     ? selectedValue?.map((SValue) => selectData.find((option) => (customKey ? option[`${customKey}`] : option.id) === SValue))

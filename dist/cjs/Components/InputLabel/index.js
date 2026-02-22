@@ -36,11 +36,19 @@ const material_1 = require("@mui/material");
 const theme_1 = __importDefault(require("./theme"));
 const InputLabel = ({ name, multiline, value, helperText, validation, required, onChange, label, ...props }) => {
     const { classes } = (0, theme_1.default)();
-    const Methods = (0, react_hook_form_1.useFormContext)() || {};
+    const Methods = (0, react_hook_form_1.useFormContext)();
     const { defaultValue, ...restProps } = props;
     const [isTouched, setIsTouched] = (0, react_1.useState)(false);
     const [inputValue, setInputValue] = (0, react_1.useState)(value ?? "");
-    const { setValue, control, getValues, watch, setError, clearErrors, formState: { errors, isSubmitted } } = (0, react_hook_form_1.useFormContext)() || {};
+    const setValue = Methods?.setValue;
+    const control = Methods?.control;
+    const getValues = Methods?.getValues;
+    const watch = Methods?.watch;
+    const setError = Methods?.setError;
+    const clearErrors = Methods?.clearErrors;
+    const errors = Methods?.formState?.errors || {};
+    const isSubmitted = Methods?.formState?.isSubmitted || false;
+    const isInsideForm = !!Methods;
     // Methods Watching
     (0, react_1.useEffect)(() => {
         control && setInputValue(getValues(name || "default") !== undefined ? getValues(name || "default") : "");
@@ -48,6 +56,8 @@ const InputLabel = ({ name, multiline, value, helperText, validation, required, 
     }, [control, getValues, name, watch && watch(name || "default")]);
     // Value
     (0, react_1.useEffect)(() => {
+        if (!isInsideForm || !name)
+            return;
         if (value !== undefined) {
             setInputValue(value);
             control && setValue(name || "default", value);
@@ -62,6 +72,9 @@ const InputLabel = ({ name, multiline, value, helperText, validation, required, 
         onChange && onChange(event, event.target.value, Methods);
         setInputValue(event.target.value);
         control && setValue(name || "default", event.target.value);
+        if (isInsideForm && name) {
+            setValue?.(name || "default", event.target.value);
+        }
     };
     // Error Handling
     (0, react_1.useEffect)(() => {
@@ -77,7 +90,7 @@ const InputLabel = ({ name, multiline, value, helperText, validation, required, 
         const MaxLength = !!validation?.maxLength && !!inputValue && (`${inputValue}`).length > Number((validation.maxLength instanceof Object) ? validation.maxLength.value : validation.maxLength);
         const Pattern = !!validation?.pattern && !!inputValue && ((validation.pattern instanceof Object) ? !((validation?.pattern?.value).test(`${inputValue}`)) : !((validation?.pattern).test(`${inputValue}`)));
         // Clear Errors
-        if (!Required && !Numbers && !Arabic && !English && !MinNumber && !MaxNumber && !MinLength && !MaxLength && !Pattern && !Email && !Phone)
+        if (clearErrors && !Required && !Numbers && !Arabic && !English && !MinNumber && !MaxNumber && !MinLength && !MaxLength && !Pattern && !Email && !Phone)
             clearErrors(name || "default");
         // Set Errors
         else {

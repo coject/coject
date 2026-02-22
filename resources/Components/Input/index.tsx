@@ -4,7 +4,7 @@ import React, { FC, useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 // Material UI
-import { Box, TextField, TextFieldProps, InputAdornment, Tooltip } from "@mui/material";
+import { Box, TextField, TextFieldProps, InputAdornment, Tooltip, FormHelperText } from "@mui/material";
 
 // Styles
 import useStyles from "./theme";
@@ -34,10 +34,18 @@ type iInput = Omit<TextFieldProps, "helperText" | "required" | "onChange"> & {
 
 export const Input: FC<iInput> = ({ name, value, multiline, helperText, validation, required, onChange, ...props }) => {
     const { classes } = useStyles();
-    const Methods = useFormContext() || {};
+    const Methods = useFormContext();
     const [isTouched, setIsTouched] = useState(false);
     const [inputValue, setInputValue] = useState<string | number>(value ?? "");
-    const { setValue, control, getValues, watch, setError, clearErrors, formState: { errors, isSubmitted } } = useFormContext() || {};
+    const setValue = Methods?.setValue;
+    const control = Methods?.control;
+    const getValues = Methods?.getValues;
+    const watch = Methods?.watch;
+    const setError = Methods?.setError;
+    const clearErrors = Methods?.clearErrors;
+    const errors = Methods?.formState?.errors || {};
+    const isSubmitted = Methods?.formState?.isSubmitted || false;
+    const isInsideForm = !!Methods;
 
     // Methods Watching
     useEffect(() => {
@@ -47,6 +55,7 @@ export const Input: FC<iInput> = ({ name, value, multiline, helperText, validati
 
     // Value
     useEffect(() => {
+        if (!isInsideForm || !name) return;
         if (value !== undefined) {
             setInputValue(value);
             control && setValue(name || "default", value);
@@ -59,6 +68,9 @@ export const Input: FC<iInput> = ({ name, value, multiline, helperText, validati
         onChange && onChange(event, event.target.value, Methods);
         setInputValue(event.target.value);
         control && setValue(name || "default", event.target.value);
+        if (isInsideForm && name) {
+            setValue?.(name || "default", event.target.value);
+        }
     }
 
     // Error Handling
@@ -139,7 +151,7 @@ export const Input: FC<iInput> = ({ name, value, multiline, helperText, validati
                         {props?.children}
                     </TextField>
                 </Tooltip>
-                {/* { (helperText || (control && errors && errors[name || "default"])) && <FormHelperText className={classes.error}>{control && errors && errors[name || "default"]?.message as string}{helperText && !(control && errors && errors[name || "default"]) && helperText}</FormHelperText> } */}
+                {(helperText) && <FormHelperText className={classes.error}>{helperText}</FormHelperText>}
             </Box>
         </React.Fragment>
     )

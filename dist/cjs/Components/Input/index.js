@@ -36,10 +36,18 @@ const material_1 = require("@mui/material");
 const theme_1 = __importDefault(require("./theme"));
 const Input = ({ name, value, multiline, helperText, validation, required, onChange, ...props }) => {
     const { classes } = (0, theme_1.default)();
-    const Methods = (0, react_hook_form_1.useFormContext)() || {};
+    const Methods = (0, react_hook_form_1.useFormContext)();
     const [isTouched, setIsTouched] = (0, react_1.useState)(false);
     const [inputValue, setInputValue] = (0, react_1.useState)(value ?? "");
-    const { setValue, control, getValues, watch, setError, clearErrors, formState: { errors, isSubmitted } } = (0, react_hook_form_1.useFormContext)() || {};
+    const setValue = Methods?.setValue;
+    const control = Methods?.control;
+    const getValues = Methods?.getValues;
+    const watch = Methods?.watch;
+    const setError = Methods?.setError;
+    const clearErrors = Methods?.clearErrors;
+    const errors = Methods?.formState?.errors || {};
+    const isSubmitted = Methods?.formState?.isSubmitted || false;
+    const isInsideForm = !!Methods;
     // Methods Watching
     (0, react_1.useEffect)(() => {
         control && setInputValue(getValues(name || "default") !== undefined ? getValues(name || "default") : "");
@@ -47,6 +55,8 @@ const Input = ({ name, value, multiline, helperText, validation, required, onCha
     }, [control, getValues, name, watch && watch(name || "default")]);
     // Value
     (0, react_1.useEffect)(() => {
+        if (!isInsideForm || !name)
+            return;
         if (value !== undefined) {
             setInputValue(value);
             control && setValue(name || "default", value);
@@ -61,6 +71,9 @@ const Input = ({ name, value, multiline, helperText, validation, required, onCha
         onChange && onChange(event, event.target.value, Methods);
         setInputValue(event.target.value);
         control && setValue(name || "default", event.target.value);
+        if (isInsideForm && name) {
+            setValue?.(name || "default", event.target.value);
+        }
     };
     // Error Handling
     (0, react_1.useEffect)(() => {
@@ -122,7 +135,8 @@ const Input = ({ name, value, multiline, helperText, validation, required, onCha
                         ...props.InputProps,
                         startAdornment: props.InputProps?.startAdornment,
                         endAdornment: validation?.phone ? (react_1.default.createElement(material_1.InputAdornment, { position: "end" }, "966+")) : props.InputProps?.endAdornment,
-                    } }, props?.children)))));
+                    } }, props?.children)),
+            (helperText) && react_1.default.createElement(material_1.FormHelperText, { className: classes.error }, helperText))));
 };
 exports.Input = Input;
 //# sourceMappingURL=index.js.map

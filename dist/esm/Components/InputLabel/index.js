@@ -7,11 +7,19 @@ import { Box, FormHelperText, TextField, Tooltip } from "@mui/material";
 import useStyles from "./theme";
 export const InputLabel = ({ name, multiline, value, helperText, validation, required, onChange, label, ...props }) => {
     const { classes } = useStyles();
-    const Methods = useFormContext() || {};
+    const Methods = useFormContext();
     const { defaultValue, ...restProps } = props;
     const [isTouched, setIsTouched] = useState(false);
     const [inputValue, setInputValue] = useState(value ?? "");
-    const { setValue, control, getValues, watch, setError, clearErrors, formState: { errors, isSubmitted } } = useFormContext() || {};
+    const setValue = Methods?.setValue;
+    const control = Methods?.control;
+    const getValues = Methods?.getValues;
+    const watch = Methods?.watch;
+    const setError = Methods?.setError;
+    const clearErrors = Methods?.clearErrors;
+    const errors = Methods?.formState?.errors || {};
+    const isSubmitted = Methods?.formState?.isSubmitted || false;
+    const isInsideForm = !!Methods;
     // Methods Watching
     useEffect(() => {
         control && setInputValue(getValues(name || "default") !== undefined ? getValues(name || "default") : "");
@@ -19,6 +27,8 @@ export const InputLabel = ({ name, multiline, value, helperText, validation, req
     }, [control, getValues, name, watch && watch(name || "default")]);
     // Value
     useEffect(() => {
+        if (!isInsideForm || !name)
+            return;
         if (value !== undefined) {
             setInputValue(value);
             control && setValue(name || "default", value);
@@ -33,6 +43,9 @@ export const InputLabel = ({ name, multiline, value, helperText, validation, req
         onChange && onChange(event, event.target.value, Methods);
         setInputValue(event.target.value);
         control && setValue(name || "default", event.target.value);
+        if (isInsideForm && name) {
+            setValue?.(name || "default", event.target.value);
+        }
     };
     // Error Handling
     useEffect(() => {
@@ -48,7 +61,7 @@ export const InputLabel = ({ name, multiline, value, helperText, validation, req
         const MaxLength = !!validation?.maxLength && !!inputValue && (`${inputValue}`).length > Number((validation.maxLength instanceof Object) ? validation.maxLength.value : validation.maxLength);
         const Pattern = !!validation?.pattern && !!inputValue && ((validation.pattern instanceof Object) ? !((validation?.pattern?.value).test(`${inputValue}`)) : !((validation?.pattern).test(`${inputValue}`)));
         // Clear Errors
-        if (!Required && !Numbers && !Arabic && !English && !MinNumber && !MaxNumber && !MinLength && !MaxLength && !Pattern && !Email && !Phone)
+        if (clearErrors && !Required && !Numbers && !Arabic && !English && !MinNumber && !MaxNumber && !MinLength && !MaxLength && !Pattern && !Email && !Phone)
             clearErrors(name || "default");
         // Set Errors
         else {

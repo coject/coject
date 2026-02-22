@@ -2,15 +2,23 @@ import React, { useEffect, useState } from "react";
 // React Hook Form
 import { useFormContext } from "react-hook-form";
 // Material UI
-import { Box, TextField, InputAdornment, Tooltip } from "@mui/material";
+import { Box, TextField, InputAdornment, Tooltip, FormHelperText } from "@mui/material";
 // Styles
 import useStyles from "./theme";
 export const Input = ({ name, value, multiline, helperText, validation, required, onChange, ...props }) => {
     const { classes } = useStyles();
-    const Methods = useFormContext() || {};
+    const Methods = useFormContext();
     const [isTouched, setIsTouched] = useState(false);
     const [inputValue, setInputValue] = useState(value ?? "");
-    const { setValue, control, getValues, watch, setError, clearErrors, formState: { errors, isSubmitted } } = useFormContext() || {};
+    const setValue = Methods?.setValue;
+    const control = Methods?.control;
+    const getValues = Methods?.getValues;
+    const watch = Methods?.watch;
+    const setError = Methods?.setError;
+    const clearErrors = Methods?.clearErrors;
+    const errors = Methods?.formState?.errors || {};
+    const isSubmitted = Methods?.formState?.isSubmitted || false;
+    const isInsideForm = !!Methods;
     // Methods Watching
     useEffect(() => {
         control && setInputValue(getValues(name || "default") !== undefined ? getValues(name || "default") : "");
@@ -18,6 +26,8 @@ export const Input = ({ name, value, multiline, helperText, validation, required
     }, [control, getValues, name, watch && watch(name || "default")]);
     // Value
     useEffect(() => {
+        if (!isInsideForm || !name)
+            return;
         if (value !== undefined) {
             setInputValue(value);
             control && setValue(name || "default", value);
@@ -32,6 +42,9 @@ export const Input = ({ name, value, multiline, helperText, validation, required
         onChange && onChange(event, event.target.value, Methods);
         setInputValue(event.target.value);
         control && setValue(name || "default", event.target.value);
+        if (isInsideForm && name) {
+            setValue?.(name || "default", event.target.value);
+        }
     };
     // Error Handling
     useEffect(() => {
@@ -93,6 +106,7 @@ export const Input = ({ name, value, multiline, helperText, validation, required
                         ...props.InputProps,
                         startAdornment: props.InputProps?.startAdornment,
                         endAdornment: validation?.phone ? (React.createElement(InputAdornment, { position: "end" }, "966+")) : props.InputProps?.endAdornment,
-                    } }, props?.children)))));
+                    } }, props?.children)),
+            (helperText) && React.createElement(FormHelperText, { className: classes.error }, helperText))));
 };
 //# sourceMappingURL=index.js.map

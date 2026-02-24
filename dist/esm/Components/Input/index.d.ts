@@ -35,6 +35,7 @@ type iInput = Omit<TextFieldProps, "helperText" | "required" | "onChange"> & {
     helperText?: string;
     value?: string | number;
     required?: boolean | string;
+    tooltipPlacement?: "top" | "bottom" | "left" | "right";
 };
 export declare const Input: FC<iInput>;
 export {};

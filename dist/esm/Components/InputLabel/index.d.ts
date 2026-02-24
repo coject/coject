@@ -36,6 +36,7 @@ type iInputLabel = Omit<TextFieldProps, "helperText" | "required" | "label"> & {
     helperText?: string;
     value?: string | number;
     required?: boolean | string;
+    tooltipPlacement?: "top" | "bottom" | "left" | "right";
 };
 export declare const InputLabel: FC<iInputLabel>;
 export {};

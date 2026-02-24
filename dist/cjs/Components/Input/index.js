@@ -34,7 +34,7 @@ const react_hook_form_1 = require("react-hook-form");
 const material_1 = require("@mui/material");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Input = ({ name, value, multiline, helperText, validation, required, onChange, ...props }) => {
+const Input = ({ name, value, multiline, helperText, validation, required, onChange, tooltipPlacement, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useFormContext)();
     const [isTouched, setIsTouched] = (0, react_1.useState)(false);
@@ -77,6 +77,8 @@ const Input = ({ name, value, multiline, helperText, validation, required, onCha
     };
     // Error Handling
     (0, react_1.useEffect)(() => {
+        if (!isInsideForm)
+            return;
         const Required = (!!required || !!validation?.required) && !inputValue;
         const Phone = !!validation?.phone && !!inputValue && !(/^\d{9}$/.test(`${inputValue}`));
         const Numbers = !!validation?.number && !!inputValue && !(/^[0-9,.]+$/i.test(`${inputValue}`));
@@ -130,7 +132,7 @@ const Input = ({ name, value, multiline, helperText, validation, required, onCha
     }, [inputValue, required, name, setError, clearErrors, validation]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: `${classes.root} coject_input` },
-            react_1.default.createElement(material_1.Tooltip, { title: (!!(errors && errors[name || "default"] && (isTouched || isSubmitted))) ? errors[name || "default"]?.message : "", placement: localStorage?.language === 'ar' ? "left" : "right", arrow: true, disableHoverListener: true, open: !!(errors && errors[name || "default"] && (isTouched || isSubmitted)) },
+            react_1.default.createElement(material_1.Tooltip, { title: (!!(errors && errors[name || "default"] && (isTouched || isSubmitted))) ? errors[name || "default"]?.message : "", placement: tooltipPlacement ?? (localStorage?.language === "ar" ? "left" : "right"), arrow: true, disableHoverListener: true, open: !!(errors && errors[name || "default"] && (isTouched || isSubmitted)) },
                 react_1.default.createElement(material_1.TextField, { name: name || "default", multiline: multiline, error: !!(errors && errors[name || "default"] && (isTouched || isSubmitted)), sx: multiline ? { '& .MuiInputBase-root textarea': { resize: 'both', overflow: 'auto' } } : undefined, onBlur: () => setIsTouched(true), autoComplete: "off", value: inputValue, onChange: changeValue, label: props?.label ? props?.label : (name || "default"), ...props, InputProps: {
                         ...props.InputProps,
                         startAdornment: props.InputProps?.startAdornment,

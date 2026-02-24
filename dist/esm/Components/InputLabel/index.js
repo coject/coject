@@ -5,7 +5,7 @@ import { useFormContext } from "react-hook-form";
 import { Box, FormHelperText, TextField, Tooltip } from "@mui/material";
 // Styles
 import useStyles from "./theme";
-export const InputLabel = ({ name, multiline, value, helperText, validation, required, onChange, label, ...props }) => {
+export const InputLabel = ({ name, multiline, value, helperText, validation, required, onChange, label, tooltipPlacement, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext();
     const { defaultValue, ...restProps } = props;
@@ -49,6 +49,8 @@ export const InputLabel = ({ name, multiline, value, helperText, validation, req
     };
     // Error Handling
     useEffect(() => {
+        if (!isInsideForm)
+            return;
         const Required = (!!required || !!validation?.required) && !inputValue;
         const Phone = !!validation?.phone && !!inputValue && !(/^\d{9}$/.test(`${inputValue}`));
         const Numbers = !!validation?.number && !!inputValue && !(/^[0-9,.]+$/i.test(`${inputValue}`));
@@ -61,7 +63,7 @@ export const InputLabel = ({ name, multiline, value, helperText, validation, req
         const MaxLength = !!validation?.maxLength && !!inputValue && (`${inputValue}`).length > Number((validation.maxLength instanceof Object) ? validation.maxLength.value : validation.maxLength);
         const Pattern = !!validation?.pattern && !!inputValue && ((validation.pattern instanceof Object) ? !((validation?.pattern?.value).test(`${inputValue}`)) : !((validation?.pattern).test(`${inputValue}`)));
         // Clear Errors
-        if (clearErrors && !Required && !Numbers && !Arabic && !English && !MinNumber && !MaxNumber && !MinLength && !MaxLength && !Pattern && !Email && !Phone)
+        if (!Required && !Numbers && !Arabic && !English && !MinNumber && !MaxNumber && !MinLength && !MaxLength && !Pattern && !Email && !Phone)
             clearErrors(name || "default");
         // Set Errors
         else {
@@ -103,7 +105,7 @@ export const InputLabel = ({ name, multiline, value, helperText, validation, req
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: `${classes.root} coject_input` },
             label && (React.createElement(Box, { className: classes.label }, label)),
-            React.createElement(Tooltip, { arrow: true, disableHoverListener: true, title: (!!(errors && errors[name || "default"] && (isTouched || isSubmitted))) ? errors[name || "default"]?.message : "", placement: localStorage?.language === 'ar' ? "left" : "right", open: !!(errors && errors[name || "default"] && (isTouched || isSubmitted)) },
+            React.createElement(Tooltip, { arrow: true, disableHoverListener: true, title: (!!(errors && errors[name || "default"] && (isTouched || isSubmitted))) ? errors[name || "default"]?.message : "", placement: tooltipPlacement ?? (localStorage?.language === "ar" ? "left" : "right"), open: !!(errors && errors[name || "default"] && (isTouched || isSubmitted)) },
                 React.createElement(TextField, { name: name || "default", variant: "outlined", multiline: multiline, error: !!(errors && errors[name || "default"] && (isTouched || isSubmitted)), sx: multiline ? { '& .MuiInputBase-root textarea': { resize: 'both', overflow: 'auto' } } : undefined, onBlur: () => setIsTouched(true), autoComplete: "off", value: inputValue, onChange: changeValue, ...restProps, InputProps: {
                         ...restProps.InputProps
                     } }, props?.children)),

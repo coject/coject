@@ -31,9 +31,10 @@ type iInputLabel = Omit<TextFieldProps, "helperText" | "required" | "label"> & {
     helperText?: string;
     value?: string | number;
     required?: boolean | string;
+    tooltipPlacement?: "top" | "bottom" | "left" | "right";
 }
 
-export const InputLabel: FC<iInputLabel> = ({ name, multiline, value, helperText, validation, required, onChange, label, ...props }) => {
+export const InputLabel: FC<iInputLabel> = ({ name, multiline, value, helperText, validation, required, onChange, label, tooltipPlacement, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext();
     const { defaultValue, ...restProps } = props;
@@ -77,6 +78,7 @@ export const InputLabel: FC<iInputLabel> = ({ name, multiline, value, helperText
 
     // Error Handling
     useEffect(() => {
+        if (!isInsideForm) return;
         const Required: boolean = (!!required || !!validation?.required) && !inputValue;
         const Phone: boolean = !!validation?.phone && !!inputValue && !(/^\d{9}$/.test(`${inputValue}`));
         const Numbers: boolean = !!validation?.number && !!inputValue && !(/^[0-9,.]+$/i.test(`${inputValue}`));
@@ -90,7 +92,7 @@ export const InputLabel: FC<iInputLabel> = ({ name, multiline, value, helperText
         const Pattern: boolean = !!validation?.pattern && !!inputValue && ((validation.pattern instanceof Object) ? !((validation?.pattern?.value).test(`${inputValue}`)) : !((validation?.pattern).test(`${inputValue}`)));
 
         // Clear Errors
-        if (clearErrors && !Required && !Numbers && !Arabic && !English && !MinNumber && !MaxNumber && !MinLength && !MaxLength && !Pattern && !Email && !Phone) clearErrors(name || "default");
+        if (!Required && !Numbers && !Arabic && !English && !MinNumber && !MaxNumber && !MinLength && !MaxLength && !Pattern && !Email && !Phone) clearErrors(name || "default");
 
         // Set Errors
         else {
@@ -135,7 +137,7 @@ export const InputLabel: FC<iInputLabel> = ({ name, multiline, value, helperText
                 {label && ( <Box className={classes.label}>{label}</Box> )}
                 <Tooltip arrow disableHoverListener
                     title={(!!(errors && errors[name || "default"] && (isTouched || isSubmitted))) ? (errors[name || "default"]?.message as string) : ""}
-                    placement={localStorage?.language === 'ar' ? "left" : "right"}
+                    placement={tooltipPlacement ?? (localStorage?.language === "ar" ? "left" : "right")}
                     open={!!(errors && errors[name || "default"] && (isTouched || isSubmitted))}
                 >
                     <TextField name={name || "default"} variant="outlined" multiline={multiline} error={!!(errors && errors[name || "default"] && (isTouched || isSubmitted))}

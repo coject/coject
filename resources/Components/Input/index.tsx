@@ -30,9 +30,10 @@ type iInput = Omit<TextFieldProps, "helperText" | "required" | "onChange"> & {
     helperText?: string;
     value?: string | number;
     required?: boolean | string;
+    tooltipPlacement?: "top" | "bottom" | "left" | "right";
 }
 
-export const Input: FC<iInput> = ({ name, value, multiline, helperText, validation, required, onChange, ...props }) => {
+export const Input: FC<iInput> = ({ name, value, multiline, helperText, validation, required, onChange, tooltipPlacement, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext();
     const [isTouched, setIsTouched] = useState(false);
@@ -75,6 +76,7 @@ export const Input: FC<iInput> = ({ name, value, multiline, helperText, validati
 
     // Error Handling
     useEffect(() => {
+        if (!isInsideForm) return;
         const Required: boolean = (!!required || !!validation?.required) && !inputValue;
         const Phone: boolean = !!validation?.phone && !!inputValue && !(/^\d{9}$/.test(`${inputValue}`));
         const Numbers: boolean = !!validation?.number && !!inputValue && !(/^[0-9,.]+$/i.test(`${inputValue}`));
@@ -132,7 +134,7 @@ export const Input: FC<iInput> = ({ name, value, multiline, helperText, validati
             <Box className={`${classes.root} coject_input`}>
                 <Tooltip
                     title={(!!(errors && errors[name || "default"] && (isTouched || isSubmitted))) ? (errors[name || "default"]?.message as string) : ""}
-                    placement={localStorage?.language === 'ar' ? "left" : "right"}
+                    placement={tooltipPlacement ?? (localStorage?.language === "ar" ? "left" : "right")}
                     arrow
                     disableHoverListener
                     open={!!(errors && errors[name || "default"] && (isTouched || isSubmitted))}

@@ -34,7 +34,7 @@ const react_hook_form_1 = require("react-hook-form");
 const material_1 = require("@mui/material");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const InputLabel = ({ name, multiline, value, helperText, validation, required, onChange, label, ...props }) => {
+const InputLabel = ({ name, multiline, value, helperText, validation, required, onChange, label, tooltipPlacement, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useFormContext)();
     const { defaultValue, ...restProps } = props;
@@ -78,6 +78,8 @@ const InputLabel = ({ name, multiline, value, helperText, validation, required, 
     };
     // Error Handling
     (0, react_1.useEffect)(() => {
+        if (!isInsideForm)
+            return;
         const Required = (!!required || !!validation?.required) && !inputValue;
         const Phone = !!validation?.phone && !!inputValue && !(/^\d{9}$/.test(`${inputValue}`));
         const Numbers = !!validation?.number && !!inputValue && !(/^[0-9,.]+$/i.test(`${inputValue}`));
@@ -90,7 +92,7 @@ const InputLabel = ({ name, multiline, value, helperText, validation, required, 
         const MaxLength = !!validation?.maxLength && !!inputValue && (`${inputValue}`).length > Number((validation.maxLength instanceof Object) ? validation.maxLength.value : validation.maxLength);
         const Pattern = !!validation?.pattern && !!inputValue && ((validation.pattern instanceof Object) ? !((validation?.pattern?.value).test(`${inputValue}`)) : !((validation?.pattern).test(`${inputValue}`)));
         // Clear Errors
-        if (clearErrors && !Required && !Numbers && !Arabic && !English && !MinNumber && !MaxNumber && !MinLength && !MaxLength && !Pattern && !Email && !Phone)
+        if (!Required && !Numbers && !Arabic && !English && !MinNumber && !MaxNumber && !MinLength && !MaxLength && !Pattern && !Email && !Phone)
             clearErrors(name || "default");
         // Set Errors
         else {
@@ -132,7 +134,7 @@ const InputLabel = ({ name, multiline, value, helperText, validation, required, 
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: `${classes.root} coject_input` },
             label && (react_1.default.createElement(material_1.Box, { className: classes.label }, label)),
-            react_1.default.createElement(material_1.Tooltip, { arrow: true, disableHoverListener: true, title: (!!(errors && errors[name || "default"] && (isTouched || isSubmitted))) ? errors[name || "default"]?.message : "", placement: localStorage?.language === 'ar' ? "left" : "right", open: !!(errors && errors[name || "default"] && (isTouched || isSubmitted)) },
+            react_1.default.createElement(material_1.Tooltip, { arrow: true, disableHoverListener: true, title: (!!(errors && errors[name || "default"] && (isTouched || isSubmitted))) ? errors[name || "default"]?.message : "", placement: tooltipPlacement ?? (localStorage?.language === "ar" ? "left" : "right"), open: !!(errors && errors[name || "default"] && (isTouched || isSubmitted)) },
                 react_1.default.createElement(material_1.TextField, { name: name || "default", variant: "outlined", multiline: multiline, error: !!(errors && errors[name || "default"] && (isTouched || isSubmitted)), sx: multiline ? { '& .MuiInputBase-root textarea': { resize: 'both', overflow: 'auto' } } : undefined, onBlur: () => setIsTouched(true), autoComplete: "off", value: inputValue, onChange: changeValue, ...restProps, InputProps: {
                         ...restProps.InputProps
                     } }, props?.children)),

@@ -53,7 +53,7 @@ export const Phone: FC<iPhone> = ({ name, label, helperText, value, validation, 
 
     return (
         <Input name={name} label={label || "Phone"} helperText={helperText} validation={validate} value={displayValue} onChange={handleChange} onKeyDown={handleKeyDown}
-            inputProps={{ maxLength: 9, inputMode: "numeric", pattern: "[0-9]*" }}
+            inputProps={{ maxLength: 9, inputMode: "numeric", pattern: "[0-9]*", dir: "ltr" }}
             InputProps={{
                 ...props.InputProps,
                 endAdornment: (

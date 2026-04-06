@@ -79,7 +79,7 @@ const Select = ({ name, value, label, noOptionsText, callback, staticData, disab
             }).then();
         }
         // eslint-disable-next-line
-    }, [callback, staticData, ...[dependancies]]);
+    }, [callback, staticData, ...(dependancies || [])]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Box, { className: `${classes.root} coject_select` },
             control ?

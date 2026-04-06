@@ -50,7 +50,7 @@ export const Select = ({ name, value, label, noOptionsText, callback, staticData
             }).then();
         }
         // eslint-disable-next-line
-    }, [callback, staticData, ...[dependancies]]);
+    }, [callback, staticData, ...(dependancies || [])]);
     return (React.createElement(React.Fragment, null,
         React.createElement(Box, { className: `${classes.root} coject_select` },
             control ?

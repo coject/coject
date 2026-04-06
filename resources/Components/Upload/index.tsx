@@ -88,7 +88,9 @@ export const Upload: FC<iUpload> = ({ value, name, setFile, multiple, onChange, 
                 );
                 if (result !== true) {
                     const message = typeof result === "string" ? result : "File rejected";
-                    setError(name || "default", { type: "manual", message });
+                    if (typeof result === "string") {
+                        setError(name || "default", { type: "manual", message });
+                    }
                     onChange?.(null, message);
                     continue;
                 }

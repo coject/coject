@@ -16,6 +16,8 @@ type iDatePicker = DateTimePickerProps<any> & DatePickerProps<any> & {
     helperText?: string;
     viewFormat?: string;
     actionFormat?: string;
+    required?: boolean | string;
+    tooltipPlacement?: "top" | "bottom" | "left" | "right";
 };
 export declare const DatePicker: FC<iDatePicker>;
 export {};

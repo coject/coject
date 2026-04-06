@@ -37,7 +37,7 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies
                 } }).then();
         }
         // eslint-disable-next-line
-    }, [callData, dispatch, staticData, callback, noRenderRequest, ...[dependancies]]);
+    }, [callData, dispatch, staticData, callback, noRenderRequest, ...(dependancies || [])]);
     // Dynamic Data ( Schema )
     useEffect(() => {
         if (schema) {
@@ -51,7 +51,7 @@ export const Grid = ({ dataSource, noRenderRequest, actionsControl, dependancies
                     return null;
             });
         }
-    }, [...[dependancies]]);
+    }, [...(dependancies || [])]);
     // Default Schema
     const defaultSchema = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => ({ field: columnKey, component: "input", flex: (columnKey === (customKey ? customKey : "id") ? 0 : 1) })) : [];
     // Custom Schema

@@ -134,7 +134,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
             } }).then();
         }
         // eslint-disable-next-line
-    }, [callData, dispatch, staticData, callback, noRenderRequest, ...[dependancies]]);
+    }, [callData, dispatch, staticData, callback, noRenderRequest, ...(dependancies || [])]);
 
     // Dynamic Data ( Schema )
     useEffect(() => {
@@ -147,7 +147,7 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                 } else return null;
             })
         }
-    }, [...[dependancies]]);
+    }, [...(dependancies || [])]);
 
     // Default Schema
     const defaultSchema: any = !!gridData.length ? Object.keys(gridData[0])?.map((columnKey) => (

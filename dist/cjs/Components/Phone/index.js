@@ -53,7 +53,7 @@ const Phone = ({ name, label, helperText, value, validation, onChange, errorMess
     };
     // Handle Input Adorment
     const displayValue = typeof value === "string" && value.startsWith("966") ? value.slice(3) : value || "";
-    return (react_1.default.createElement(Input_1.Input, { name: name, label: label || "Phone", helperText: helperText, validation: validate, value: displayValue, onChange: handleChange, onKeyDown: handleKeyDown, inputProps: { maxLength: 9, inputMode: "numeric", pattern: "[0-9]*" }, InputProps: {
+    return (react_1.default.createElement(Input_1.Input, { name: name, label: label || "Phone", helperText: helperText, validation: validate, value: displayValue, onChange: handleChange, onKeyDown: handleKeyDown, inputProps: { maxLength: 9, inputMode: "numeric", pattern: "[0-9]*", dir: "ltr" }, InputProps: {
             ...props.InputProps,
             endAdornment: (react_1.default.createElement(material_1.InputAdornment, { position: "end" }, "966+"))
         }, ...props }));

@@ -295,18 +295,25 @@ export const Grid: FC<Omit<iGrid, "rows" | "columns">> = ({ dataSource, noRender
                         for (let index = 0; index < allRows.length; index++) {
                             const element = allRows[index];
                             const rowElement = apiRef?.current?.getRowElement(element);
-                            const dataFieldElements: any = rowElement?.querySelectorAll('[data-field]');
+                            const dataFieldElements: any = Array.from(rowElement?.querySelectorAll('.MuiDataGrid-cell[data-field]') || []);
                             let row = '<tr>';
-                            if (actions || customActions) {
-                                for (let i = 0; i < dataFieldElements?.length - 1; i++) {
-                                    const dataFieldElement = dataFieldElements[i];
-                                    row += `<td key=${i}>${dataFieldElement.innerText}</td>`;
+                            const columnsToProcess = (actions || customActions) ? dataFieldElements.length - 1 : dataFieldElements.length;
+                            for (let i = 0; i < columnsToProcess; i++) {
+                                const dataFieldElement = dataFieldElements[i];
+                                let cellContent = dataFieldElement.innerText;
+
+                                // Check for Rating component
+                                const ratingElement = dataFieldElement.querySelector('.MuiRating-root');
+                                if (ratingElement) {
+                                    const val = Number(dataFieldElement.querySelector('[data-value]')?.getAttribute('data-value') || ratingElement.getAttribute('aria-label')?.match(/\d+/)?.[0] || 0);
+                                    let stars = '';
+                                    for (let s = 1; s <= 5; s++) {
+                                        stars += `<span style="color: ${s <= val ? '#faaf00' : '#e0e0e0'}; font-size: 20px;">${s <= val ? '★' : '☆'}</span>`;
+                                    }
+                                    cellContent = `<div style="display: flex; justify-content: center; gap: 2px;">${stars}</div>`;
                                 }
-                            } else {
-                                for (let i = 0; i < dataFieldElements?.length; i++) {
-                                    const dataFieldElement = dataFieldElements[i];
-                                    row += `<td key=${i}>${dataFieldElement.innerText}</td>`;
-                                }
+
+                                row += `<td key=${i}>${cellContent}</td>`;
                             }
                             row += '</tr>';
                             rowsResult += row;

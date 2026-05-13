@@ -38,4 +38,6 @@ export { PDFGenerator } from "./PDFGenerator";
 export { Scanner } from "./Scanner";
 // Icons
 export const Icons = MuiIcons;
+// Coject Report
+export { CojectReport } from "./CojectReport";
 //# sourceMappingURL=index.js.map

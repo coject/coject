@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Icons = exports.Scanner = exports.PDFGenerator = exports.Upload = exports.DatePicker = exports.Checkbox = exports.Switch = exports.Button = exports.Select = exports.Iban = exports.NationalId = exports.InternationalPhone = exports.Phone = exports.Email = exports.InputLabel = exports.Input = exports.Modal = exports.Grid = exports.Form = void 0;
+exports.CojectReport = exports.Icons = exports.Scanner = exports.PDFGenerator = exports.Upload = exports.DatePicker = exports.Checkbox = exports.Switch = exports.Button = exports.Select = exports.Iban = exports.NationalId = exports.InternationalPhone = exports.Phone = exports.Email = exports.InputLabel = exports.Input = exports.Modal = exports.Grid = exports.Form = void 0;
 // Material MUI Icons
 const MuiIcons = __importStar(require("@mui/icons-material"));
 // Form
@@ -82,4 +82,7 @@ var Scanner_1 = require("./Scanner");
 Object.defineProperty(exports, "Scanner", { enumerable: true, get: function () { return Scanner_1.Scanner; } });
 // Icons
 exports.Icons = MuiIcons;
+// Coject Report
+var CojectReport_1 = require("./CojectReport");
+Object.defineProperty(exports, "CojectReport", { enumerable: true, get: function () { return CojectReport_1.CojectReport; } });
 //# sourceMappingURL=index.js.map

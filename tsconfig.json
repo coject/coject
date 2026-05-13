@@ -15,6 +15,7 @@
         ],
         "module": "ESNext",
         "moduleResolution": "node",
+        "skipLibCheck": true,
         "noImplicitAny": true,
         "noUnusedLocals": true,
         "outDir": "dist/esm",

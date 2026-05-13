@@ -57,3 +57,6 @@ export { Scanner } from "./Scanner";
 
 // Icons
 export const Icons: any = MuiIcons;
+
+// Coject Report
+export { CojectReport } from "./CojectReport";

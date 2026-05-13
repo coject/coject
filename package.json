@@ -1,6 +1,6 @@
 {
     "name": "coject",
-    "version": "2.4.51",
+    "version": "2.4.52",
     "description": "React Library",
     "main": "dist/cjs/index.js",
     "module": "dist/esm/index.js",
@@ -57,7 +57,9 @@
         "react-dom": "^18.2.0"
     },
     "dependencies": {
+        "@react-pdf/renderer": "^4.5.1",
         "html2canvas": "^1.4.1",
-        "jspdf": "^2.5.2"
+        "jspdf": "^2.5.2",
+        "qr-code-styling": "^1.9.2"
     }
 }

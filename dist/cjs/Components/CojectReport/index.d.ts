@@ -1,10 +1,10 @@
 import { FC } from "react";
 import { ButtonProps } from "@mui/material";
 interface CojectReportProps extends Omit<ButtonProps, 'onClick'> {
-    data: any;
-    jsonData: any;
     label: string;
-    parameter?: any;
+    reportData: any;
+    reportTemplate: any;
+    reportParameter?: any;
     reportCode?: string;
     reportName?: string;
     fullWidth?: boolean;

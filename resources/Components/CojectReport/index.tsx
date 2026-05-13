@@ -14,22 +14,22 @@ import { Button } from '../Button';
 
 // Interface
 interface CojectReportProps extends Omit<ButtonProps, 'onClick'> {
-    data: any;
-    jsonData: any;
     label: string;
-    parameter?: any;
+    reportData: any;
+    reportTemplate: any;
+    reportParameter?: any;
     reportCode?: string;
     reportName?: string;
     fullWidth?: boolean;
     variant?: "contained" | "outlined" | "text";
 }
 
-export const CojectReport: FC<CojectReportProps> = ({ data, jsonData, reportCode, reportName, parameter, label, fullWidth, variant, ...buttonProps }) => {
+export const CojectReport: FC<CojectReportProps> = ({ reportData, reportTemplate, reportCode, reportName, reportParameter, label, fullWidth, variant, ...buttonProps }) => {
 
     // Handle Print
     const handlePrint = async () => {
-        if (!jsonData) return;
-        const blob = await pdf(<PdfContainer data={data} jsonData={jsonData} parameter={parameter} reportName={reportName} />).toBlob();
+        if (!reportTemplate) return;
+        const blob = await pdf(<PdfContainer data={reportData} jsonData={reportTemplate} parameter={reportParameter} reportName={reportName} />).toBlob();
         const url = URL.createObjectURL(blob);
         window.open(url, '_blank');
     };

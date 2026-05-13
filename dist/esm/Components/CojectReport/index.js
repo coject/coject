@@ -5,12 +5,12 @@ import { pdf } from '@react-pdf/renderer';
 import PdfContainer from './PdfContainer';
 // Coject Components
 import { Button } from '../Button';
-export const CojectReport = ({ data, jsonData, reportCode, reportName, parameter, label, fullWidth, variant, ...buttonProps }) => {
+export const CojectReport = ({ reportData, reportTemplate, reportCode, reportName, reportParameter, label, fullWidth, variant, ...buttonProps }) => {
     // Handle Print
     const handlePrint = async () => {
-        if (!jsonData)
+        if (!reportTemplate)
             return;
-        const blob = await pdf(React.createElement(PdfContainer, { data: data, jsonData: jsonData, parameter: parameter, reportName: reportName })).toBlob();
+        const blob = await pdf(React.createElement(PdfContainer, { data: reportData, jsonData: reportTemplate, parameter: reportParameter, reportName: reportName })).toBlob();
         const url = URL.createObjectURL(blob);
         window.open(url, '_blank');
     };

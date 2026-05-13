@@ -11,12 +11,12 @@ const renderer_1 = require("@react-pdf/renderer");
 const PdfContainer_1 = __importDefault(require("./PdfContainer"));
 // Coject Components
 const Button_1 = require("../Button");
-const CojectReport = ({ data, jsonData, reportCode, reportName, parameter, label, fullWidth, variant, ...buttonProps }) => {
+const CojectReport = ({ reportData, reportTemplate, reportCode, reportName, reportParameter, label, fullWidth, variant, ...buttonProps }) => {
     // Handle Print
     const handlePrint = async () => {
-        if (!jsonData)
+        if (!reportTemplate)
             return;
-        const blob = await (0, renderer_1.pdf)(react_1.default.createElement(PdfContainer_1.default, { data: data, jsonData: jsonData, parameter: parameter, reportName: reportName })).toBlob();
+        const blob = await (0, renderer_1.pdf)(react_1.default.createElement(PdfContainer_1.default, { data: reportData, jsonData: reportTemplate, parameter: reportParameter, reportName: reportName })).toBlob();
         const url = URL.createObjectURL(blob);
         window.open(url, '_blank');
     };

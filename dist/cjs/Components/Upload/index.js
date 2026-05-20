@@ -36,7 +36,7 @@ const material_1 = require("@mui/material");
 const index_1 = require("../index");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const Upload = ({ value, name, setFile, multiple, onChange, beforeUpload, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, validateText, error }) => {
+const Upload = ({ beforeUpload, value, name, setFile, multiple, onChange, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, validateText, error }) => {
     const { classes } = (0, theme_1.default)();
     const [files, setFiles] = (0, react_1.useState)([]);
     const [viewer, setViewer] = (0, react_1.useState)(false);
@@ -135,6 +135,29 @@ const Upload = ({ value, name, setFile, multiple, onChange, beforeUpload, onRemo
         setInitValue(!!allFiles?.length ? allFiles : []);
         forceUpdate();
     };
+    // Get File Type Handler
+    const getFileType = (fileUrl) => {
+        if (typeof fileUrl !== 'string')
+            return '';
+        if (fileUrl.startsWith('data:')) {
+            const match = fileUrl.match(/^data:([^;]+);/);
+            return match ? match[1] : '';
+        }
+        const ext = fileUrl.split('.').pop()?.split('?')[0]?.toLowerCase();
+        if (ext === 'pdf')
+            return 'application/pdf';
+        if (ext === 'png')
+            return 'image/png';
+        if (ext === 'jpg' || ext === 'jpeg')
+            return 'image/jpeg';
+        if (ext === 'gif')
+            return 'image/gif';
+        if (ext === 'webp')
+            return 'image/webp';
+        if (ext === 'svg')
+            return 'image/svg+xml';
+        return '';
+    };
     // Error Handling
     (0, react_1.useEffect)(() => {
         if (required && touched)
@@ -148,10 +171,8 @@ const Upload = ({ value, name, setFile, multiple, onChange, beforeUpload, onRemo
                     !!files?.length && files.map((file, index) => (react_1.default.createElement(material_1.Grid, { key: index, xs: (imageWidth?.xs ? imageWidth.xs : 12), sm: (imageWidth?.sm ? imageWidth.sm : 12), md: (imageWidth?.md ? imageWidth.md : 12), lg: (imageWidth?.lg ? imageWidth.lg : 12), item: true },
                         react_1.default.createElement(material_1.Box, { className: classes.file, style: { height: imageHeight ? `${imageHeight}px` : "80px" } },
                             file?.file?.type === "application/pdf" ? react_1.default.createElement(index_1.Icons.PictureAsPdfOutlined, null)
-                                : file?.file?.type === "image/png" ? react_1.default.createElement("img", { src: file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg", alt: "File" })
-                                    : file?.file?.type === "image/jpg" ? react_1.default.createElement("img", { src: file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg", alt: "File" })
-                                        : file?.file?.type === "image/jpeg" ? react_1.default.createElement("img", { src: file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg", alt: "File" })
-                                            : react_1.default.createElement(index_1.Icons.ArticleOutlined, null),
+                                : file?.file?.type?.startsWith("image/") ? react_1.default.createElement("img", { src: file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg", alt: "File" })
+                                    : react_1.default.createElement(index_1.Icons.ArticleOutlined, null),
                             react_1.default.createElement(material_1.Box, { className: classes.remove },
                                 react_1.default.createElement(material_1.Box, { onClick: () => {
                                         setViewer(file.image);
@@ -159,13 +180,23 @@ const Upload = ({ value, name, setFile, multiple, onChange, beforeUpload, onRemo
                                     }, className: classes.viewer }),
                                 react_1.default.createElement(material_1.IconButton, { onClick: () => removeFile(index) },
                                     react_1.default.createElement(index_1.Icons.Close, null))))))),
-                    !!initValue?.length && initValue.map((file, index) => (react_1.default.createElement(material_1.Grid, { key: index, xs: (imageWidth?.xs ? imageWidth.xs : 12), sm: (imageWidth?.sm ? imageWidth.sm : 12), md: (imageWidth?.md ? imageWidth.md : 12), lg: (imageWidth?.lg ? imageWidth.lg : 12), item: true },
-                        react_1.default.createElement(material_1.Box, { className: classes.file, style: { height: imageHeight ? `${imageHeight}px` : "80px" } },
-                            react_1.default.createElement("img", { src: imagePath ? file[`${imagePath}`] : file || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg", alt: "File" }),
-                            react_1.default.createElement(material_1.Box, { className: classes.remove, style: { display: disabled ? 'none' : '' } },
-                                react_1.default.createElement(material_1.Box, { onClick: () => setViewer(imagePath ? file[`${imagePath}`] : file), className: classes.viewer }),
-                                react_1.default.createElement(material_1.IconButton, { onClick: () => removeInitFile(index) },
-                                    react_1.default.createElement(index_1.Icons.Close, null))))))),
+                    !!initValue?.length && initValue.map((file, index) => {
+                        const fileUrl = imagePath ? file[`${imagePath}`] : file;
+                        const type = getFileType(fileUrl);
+                        const isImage = type.startsWith("image/") || (!type && typeof fileUrl === 'string');
+                        return (react_1.default.createElement(material_1.Grid, { key: index, xs: (imageWidth?.xs ? imageWidth.xs : 12), sm: (imageWidth?.sm ? imageWidth.sm : 12), md: (imageWidth?.md ? imageWidth.md : 12), lg: (imageWidth?.lg ? imageWidth.lg : 12), item: true },
+                            react_1.default.createElement(material_1.Box, { className: classes.file, style: { height: imageHeight ? `${imageHeight}px` : "80px" } },
+                                type === "application/pdf" ? react_1.default.createElement(index_1.Icons.PictureAsPdfOutlined, null)
+                                    : isImage ? react_1.default.createElement("img", { src: fileUrl || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg", alt: "File" })
+                                        : react_1.default.createElement(index_1.Icons.ArticleOutlined, null),
+                                react_1.default.createElement(material_1.Box, { className: classes.remove, style: { display: disabled ? 'none' : '' } },
+                                    react_1.default.createElement(material_1.Box, { onClick: () => {
+                                            setViewer(fileUrl);
+                                            setViewerType(type || (isImage ? "image/jpeg" : ""));
+                                        }, className: classes.viewer }),
+                                    react_1.default.createElement(material_1.IconButton, { onClick: () => removeInitFile(index) },
+                                        react_1.default.createElement(index_1.Icons.Close, null))))));
+                    }),
                     ((!multiple && !(files?.length) && !(initValue?.length)) || multiple) &&
                         react_1.default.createElement(material_1.Grid, { xs: true, sm: true, md: true, lg: true, item: true },
                             react_1.default.createElement(material_1.Box, { className: classes.inputContainer, style: { height: imageHeight ? `${imageHeight}px` : "80px" } },
@@ -176,10 +207,8 @@ const Upload = ({ value, name, setFile, multiple, onChange, beforeUpload, onRemo
                 react_1.default.createElement(index_1.Modal, { open: !!viewer, setOpen: setViewer, title: "File Preview" },
                     react_1.default.createElement(material_1.Box, { className: classes.file },
                         viewerType === "application/pdf" ? react_1.default.createElement(index_1.Icons.PictureAsPdfOutlined, null)
-                            : viewerType === "image/png" ? react_1.default.createElement("img", { className: classes.imageViewer, src: viewer, alt: "File", style: { display: "block" } })
-                                : viewerType === "image/jpg" ? react_1.default.createElement("img", { className: classes.imageViewer, src: viewer, alt: "File", style: { display: "block" } })
-                                    : viewerType === "image/jpeg" ? react_1.default.createElement("img", { className: classes.imageViewer, src: viewer, alt: "File", style: { display: "block" } })
-                                        : react_1.default.createElement(index_1.Icons.ArticleOutlined, null),
+                            : viewerType?.startsWith("image/") ? react_1.default.createElement("img", { className: classes.imageViewer, src: viewer, alt: "File", style: { display: "block" } })
+                                : react_1.default.createElement(index_1.Icons.ArticleOutlined, null),
                         react_1.default.createElement(material_1.Box, { className: classes.download },
                             react_1.default.createElement(material_1.IconButton, { href: viewer, download: "file" },
                                 react_1.default.createElement(index_1.Icons.SaveOutlined, null))))),

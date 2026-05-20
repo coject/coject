@@ -7,7 +7,7 @@ import { Box, Grid, FormHelperText, TextField, Typography, IconButton } from "@m
 import { Icons, Modal } from "../index";
 // Styles
 import useStyles from "./theme";
-export const Upload = ({ value, name, setFile, multiple, onChange, beforeUpload, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, validateText, error }) => {
+export const Upload = ({ beforeUpload, value, name, setFile, multiple, onChange, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, validateText, error }) => {
     const { classes } = useStyles();
     const [files, setFiles] = useState([]);
     const [viewer, setViewer] = useState(false);
@@ -106,6 +106,29 @@ export const Upload = ({ value, name, setFile, multiple, onChange, beforeUpload,
         setInitValue(!!allFiles?.length ? allFiles : []);
         forceUpdate();
     };
+    // Get File Type Handler
+    const getFileType = (fileUrl) => {
+        if (typeof fileUrl !== 'string')
+            return '';
+        if (fileUrl.startsWith('data:')) {
+            const match = fileUrl.match(/^data:([^;]+);/);
+            return match ? match[1] : '';
+        }
+        const ext = fileUrl.split('.').pop()?.split('?')[0]?.toLowerCase();
+        if (ext === 'pdf')
+            return 'application/pdf';
+        if (ext === 'png')
+            return 'image/png';
+        if (ext === 'jpg' || ext === 'jpeg')
+            return 'image/jpeg';
+        if (ext === 'gif')
+            return 'image/gif';
+        if (ext === 'webp')
+            return 'image/webp';
+        if (ext === 'svg')
+            return 'image/svg+xml';
+        return '';
+    };
     // Error Handling
     useEffect(() => {
         if (required && touched)
@@ -119,10 +142,8 @@ export const Upload = ({ value, name, setFile, multiple, onChange, beforeUpload,
                     !!files?.length && files.map((file, index) => (React.createElement(Grid, { key: index, xs: (imageWidth?.xs ? imageWidth.xs : 12), sm: (imageWidth?.sm ? imageWidth.sm : 12), md: (imageWidth?.md ? imageWidth.md : 12), lg: (imageWidth?.lg ? imageWidth.lg : 12), item: true },
                         React.createElement(Box, { className: classes.file, style: { height: imageHeight ? `${imageHeight}px` : "80px" } },
                             file?.file?.type === "application/pdf" ? React.createElement(Icons.PictureAsPdfOutlined, null)
-                                : file?.file?.type === "image/png" ? React.createElement("img", { src: file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg", alt: "File" })
-                                    : file?.file?.type === "image/jpg" ? React.createElement("img", { src: file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg", alt: "File" })
-                                        : file?.file?.type === "image/jpeg" ? React.createElement("img", { src: file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg", alt: "File" })
-                                            : React.createElement(Icons.ArticleOutlined, null),
+                                : file?.file?.type?.startsWith("image/") ? React.createElement("img", { src: file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg", alt: "File" })
+                                    : React.createElement(Icons.ArticleOutlined, null),
                             React.createElement(Box, { className: classes.remove },
                                 React.createElement(Box, { onClick: () => {
                                         setViewer(file.image);
@@ -130,13 +151,23 @@ export const Upload = ({ value, name, setFile, multiple, onChange, beforeUpload,
                                     }, className: classes.viewer }),
                                 React.createElement(IconButton, { onClick: () => removeFile(index) },
                                     React.createElement(Icons.Close, null))))))),
-                    !!initValue?.length && initValue.map((file, index) => (React.createElement(Grid, { key: index, xs: (imageWidth?.xs ? imageWidth.xs : 12), sm: (imageWidth?.sm ? imageWidth.sm : 12), md: (imageWidth?.md ? imageWidth.md : 12), lg: (imageWidth?.lg ? imageWidth.lg : 12), item: true },
-                        React.createElement(Box, { className: classes.file, style: { height: imageHeight ? `${imageHeight}px` : "80px" } },
-                            React.createElement("img", { src: imagePath ? file[`${imagePath}`] : file || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg", alt: "File" }),
-                            React.createElement(Box, { className: classes.remove, style: { display: disabled ? 'none' : '' } },
-                                React.createElement(Box, { onClick: () => setViewer(imagePath ? file[`${imagePath}`] : file), className: classes.viewer }),
-                                React.createElement(IconButton, { onClick: () => removeInitFile(index) },
-                                    React.createElement(Icons.Close, null))))))),
+                    !!initValue?.length && initValue.map((file, index) => {
+                        const fileUrl = imagePath ? file[`${imagePath}`] : file;
+                        const type = getFileType(fileUrl);
+                        const isImage = type.startsWith("image/") || (!type && typeof fileUrl === 'string');
+                        return (React.createElement(Grid, { key: index, xs: (imageWidth?.xs ? imageWidth.xs : 12), sm: (imageWidth?.sm ? imageWidth.sm : 12), md: (imageWidth?.md ? imageWidth.md : 12), lg: (imageWidth?.lg ? imageWidth.lg : 12), item: true },
+                            React.createElement(Box, { className: classes.file, style: { height: imageHeight ? `${imageHeight}px` : "80px" } },
+                                type === "application/pdf" ? React.createElement(Icons.PictureAsPdfOutlined, null)
+                                    : isImage ? React.createElement("img", { src: fileUrl || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg", alt: "File" })
+                                        : React.createElement(Icons.ArticleOutlined, null),
+                                React.createElement(Box, { className: classes.remove, style: { display: disabled ? 'none' : '' } },
+                                    React.createElement(Box, { onClick: () => {
+                                            setViewer(fileUrl);
+                                            setViewerType(type || (isImage ? "image/jpeg" : ""));
+                                        }, className: classes.viewer }),
+                                    React.createElement(IconButton, { onClick: () => removeInitFile(index) },
+                                        React.createElement(Icons.Close, null))))));
+                    }),
                     ((!multiple && !(files?.length) && !(initValue?.length)) || multiple) &&
                         React.createElement(Grid, { xs: true, sm: true, md: true, lg: true, item: true },
                             React.createElement(Box, { className: classes.inputContainer, style: { height: imageHeight ? `${imageHeight}px` : "80px" } },
@@ -147,10 +178,8 @@ export const Upload = ({ value, name, setFile, multiple, onChange, beforeUpload,
                 React.createElement(Modal, { open: !!viewer, setOpen: setViewer, title: "File Preview" },
                     React.createElement(Box, { className: classes.file },
                         viewerType === "application/pdf" ? React.createElement(Icons.PictureAsPdfOutlined, null)
-                            : viewerType === "image/png" ? React.createElement("img", { className: classes.imageViewer, src: viewer, alt: "File", style: { display: "block" } })
-                                : viewerType === "image/jpg" ? React.createElement("img", { className: classes.imageViewer, src: viewer, alt: "File", style: { display: "block" } })
-                                    : viewerType === "image/jpeg" ? React.createElement("img", { className: classes.imageViewer, src: viewer, alt: "File", style: { display: "block" } })
-                                        : React.createElement(Icons.ArticleOutlined, null),
+                            : viewerType?.startsWith("image/") ? React.createElement("img", { className: classes.imageViewer, src: viewer, alt: "File", style: { display: "block" } })
+                                : React.createElement(Icons.ArticleOutlined, null),
                         React.createElement(Box, { className: classes.download },
                             React.createElement(IconButton, { href: viewer, download: "file" },
                                 React.createElement(Icons.SaveOutlined, null))))),

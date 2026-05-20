@@ -18,6 +18,12 @@ type iUpload = Omit<TextFieldProps, "onChange"> & {
     name?: string;
     setFile?: any;
     label?: string;
+    beforeUpload?: (
+        file: File,
+        allFiles: File[],
+        currentFiles: File[]
+    ) => boolean | string | Promise<boolean | string>;
+    onChange?: (value: any, error?: string) => void;
     onRemove?: any;
     disabled?: boolean;
     multiple?: boolean;
@@ -26,24 +32,18 @@ type iUpload = Omit<TextFieldProps, "onChange"> & {
     imageHeight?: number;
     placeholder?: string;
     validateText?: string;
-    beforeUpload?: (
-        file: File,
-        allFiles: File[],
-        currentFiles: File[]
-    ) => boolean | string | Promise<boolean | string>;
-    onChange?: (value: any, error?: string) => void;
     required?: boolean | string;
     imageWidth?: { lg?: number, md?: number, sm?: number, xs?: number };
 }
 
-export const Upload: FC<iUpload> = ({ value, name, setFile, multiple, onChange, beforeUpload, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, validateText, error }) => {
+export const Upload: FC<iUpload> = ({ beforeUpload, value, name, setFile, multiple, onChange, onRemove, required, label, imageWidth, disabled, imageHeight, imagePath, placeholder, validateText, error }) => {
     const { classes } = useStyles();
-    const [ files, setFiles ] = useState<any>([]);
-    const [ viewer, setViewer ] = useState<any>(false);
+    const [files, setFiles] = useState<any>([]);
+    const [viewer, setViewer] = useState<any>(false);
     const [touched, setTouched] = useState<any>(false);
-    const [ , forceUpdate ] = useReducer(x => x + 1, 0);
-    const [ viewerType, setViewerType ] = useState<any>(false);
-    const [ initValue, setInitValue ] = useState<string[]>([]);
+    const [, forceUpdate] = useReducer(x => x + 1, 0);
+    const [viewerType, setViewerType] = useState<any>(false);
+    const [initValue, setInitValue] = useState<string[]>([]);
     const element: any = document.getElementsByName(name || "default")[0];
     const { setValue, setError, clearErrors, formState: { errors } } = useFormContext() || {};
 
@@ -55,8 +55,8 @@ export const Upload: FC<iUpload> = ({ value, name, setFile, multiple, onChange, 
 
     // Clear Files History
     const clearHistory = () => {
-        try {element && (element.value = null)} catch(ex) { }
-        if (element?.value) {element.parentNode.replaceChild(element.cloneNode(true), element)}
+        try { element && (element.value = null) } catch (ex) { }
+        if (element?.value) { element.parentNode.replaceChild(element.cloneNode(true), element) }
     }
 
     // Initial Value
@@ -138,9 +138,26 @@ export const Upload: FC<iUpload> = ({ value, name, setFile, multiple, onChange, 
         forceUpdate();
     }
 
+    // Get File Type Handler
+    const getFileType = (fileUrl: any): string => {
+        if (typeof fileUrl !== 'string') return '';
+        if (fileUrl.startsWith('data:')) {
+            const match = fileUrl.match(/^data:([^;]+);/);
+            return match ? match[1] : '';
+        }
+        const ext = fileUrl.split('.').pop()?.split('?')[0]?.toLowerCase();
+        if (ext === 'pdf') return 'application/pdf';
+        if (ext === 'png') return 'image/png';
+        if (ext === 'jpg' || ext === 'jpeg') return 'image/jpeg';
+        if (ext === 'gif') return 'image/gif';
+        if (ext === 'webp') return 'image/webp';
+        if (ext === 'svg') return 'image/svg+xml';
+        return '';
+    };
+
     // Error Handling
     useEffect(() => {
-        if (required && touched) (!!initValue?.length || !!files?.length) ? clearErrors(name || "default") : setError(name || "default", {type: "required", message: "This Field Is Required"});
+        if (required && touched) (!!initValue?.length || !!files?.length) ? clearErrors(name || "default") : setError(name || "default", { type: "required", message: "This Field Is Required" });
     }, [required, files, initValue]);
 
     return (
@@ -149,14 +166,12 @@ export const Upload: FC<iUpload> = ({ value, name, setFile, multiple, onChange, 
                 {label && <label>{label}</label>}
                 <Box className={`${classes.container} ${((errors && errors[name || "default"]) || (error?.errors && error?.errors[name || "default"])) ? classes.error : ""}`}>
                     <Grid spacing={1} container>
-                        { !!files?.length && files.map((file: any, index: number) => (
+                        {!!files?.length && files.map((file: any, index: number) => (
                             <Grid key={index} xs={(imageWidth?.xs ? imageWidth.xs : 12)} sm={(imageWidth?.sm ? imageWidth.sm : 12)} md={(imageWidth?.md ? imageWidth.md : 12)} lg={(imageWidth?.lg ? imageWidth.lg : 12)} item>
                                 <Box className={classes.file} style={{ height: imageHeight ? `${imageHeight}px` : "80px" }}>
-                                    { file?.file?.type === "application/pdf" ? <Icons.PictureAsPdfOutlined />
-                                        : file?.file?.type === "image/png" ? <img src={file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg"} alt={"File"}/>
-                                        : file?.file?.type === "image/jpg" ? <img src={file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg"} alt={"File"}/>
-                                        : file?.file?.type === "image/jpeg" ? <img src={file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg"} alt={"File"}/>
-                                        : <Icons.ArticleOutlined />
+                                    {file?.file?.type === "application/pdf" ? <Icons.PictureAsPdfOutlined />
+                                        : file?.file?.type?.startsWith("image/") ? <img src={file?.image || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg"} alt={"File"} />
+                                            : <Icons.ArticleOutlined />
                                     }
                                     <Box className={classes.remove}>
                                         <Box onClick={() => {
@@ -167,37 +182,46 @@ export const Upload: FC<iUpload> = ({ value, name, setFile, multiple, onChange, 
                                     </Box>
                                 </Box>
                             </Grid>
-                        )) }
-                        { !!initValue?.length && initValue.map((file: any, index: number) => (
-                            <Grid key={index} xs={(imageWidth?.xs ? imageWidth.xs : 12)} sm={(imageWidth?.sm ? imageWidth.sm : 12)} md={(imageWidth?.md ? imageWidth.md : 12)} lg={(imageWidth?.lg ? imageWidth.lg : 12)} item>
-                                <Box className={classes.file} style={{ height: imageHeight ? `${imageHeight}px` : "80px" }}>
-                                    <img src={imagePath ? file[`${imagePath}`] : file || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg"} alt={"File"}/>
-                                    <Box className={classes.remove} style={{display: disabled ? 'none' : ''}}>
-                                        <Box onClick={() => setViewer(imagePath ? file[`${imagePath}`] : file)} className={classes.viewer} />
-                                        <IconButton onClick={() => removeInitFile(index)}><Icons.Close /></IconButton>
+                        ))}
+                        {!!initValue?.length && initValue.map((file: any, index: number) => {
+                            const fileUrl = imagePath ? file[`${imagePath}`] : file;
+                            const type = getFileType(fileUrl);
+                            const isImage = type.startsWith("image/") || (!type && typeof fileUrl === 'string');
+                            return (
+                                <Grid key={index} xs={(imageWidth?.xs ? imageWidth.xs : 12)} sm={(imageWidth?.sm ? imageWidth.sm : 12)} md={(imageWidth?.md ? imageWidth.md : 12)} lg={(imageWidth?.lg ? imageWidth.lg : 12)} item>
+                                    <Box className={classes.file} style={{ height: imageHeight ? `${imageHeight}px` : "80px" }}>
+                                        {type === "application/pdf" ? <Icons.PictureAsPdfOutlined />
+                                            : isImage ? <img src={fileUrl || "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty-300x240.jpg"} alt={"File"} />
+                                                : <Icons.ArticleOutlined />
+                                        }
+                                        <Box className={classes.remove} style={{ display: disabled ? 'none' : '' }}>
+                                            <Box onClick={() => {
+                                                setViewer(fileUrl);
+                                                setViewerType(type || (isImage ? "image/jpeg" : ""));
+                                            }} className={classes.viewer} />
+                                            <IconButton onClick={() => removeInitFile(index)}><Icons.Close /></IconButton>
+                                        </Box>
                                     </Box>
-                                </Box>
-                            </Grid>
-                        )) }
-                        { ((!multiple && !(files?.length) && !(initValue?.length)) || multiple) &&
+                                </Grid>
+                            );
+                        })}
+                        {((!multiple && !(files?.length) && !(initValue?.length)) || multiple) &&
                             <Grid xs sm md lg item>
                                 <Box className={classes.inputContainer} style={{ height: imageHeight ? `${imageHeight}px` : "80px" }}>
                                     <Icons.BackupOutlined />
                                     <Typography>{placeholder ? placeholder : "Upload Your Files"}</Typography>
-                                    <TextField autoComplete="off" name={name || "default"} type={"file"} onChange={fileChange} {...(disabled ? {disabled} : {})} inputProps={{multiple: multiple}} />
+                                    <TextField autoComplete="off" name={name || "default"} type={"file"} onChange={fileChange} {...(disabled ? { disabled } : {})} inputProps={{ multiple: multiple }} />
                                 </Box>
                             </Grid>
                         }
                     </Grid>
                 </Box>
-                { viewer &&
+                {viewer &&
                     <Modal open={!!viewer} setOpen={setViewer} title={"File Preview"}>
                         <Box className={classes.file}>
-                            { viewerType === "application/pdf" ? <Icons.PictureAsPdfOutlined />
-                                : viewerType === "image/png" ? <img className={classes.imageViewer} src={viewer} alt={"File"} style={{display: "block"}} />
-                                : viewerType === "image/jpg" ? <img className={classes.imageViewer} src={viewer} alt={"File"} style={{display: "block"}} />
-                                : viewerType === "image/jpeg" ? <img className={classes.imageViewer} src={viewer} alt={"File"} style={{display: "block"}} />
-                                : <Icons.ArticleOutlined />
+                            {viewerType === "application/pdf" ? <Icons.PictureAsPdfOutlined />
+                                : viewerType?.startsWith("image/") ? <img className={classes.imageViewer} src={viewer} alt={"File"} style={{ display: "block" }} />
+                                    : <Icons.ArticleOutlined />
                             }
                             <Box className={classes.download}>
                                 <IconButton href={viewer} download={"file"}><Icons.SaveOutlined /></IconButton>

@@ -10,5 +10,13 @@ interface CojectReportProps extends Omit<ButtonProps, 'onClick'> {
     fullWidth?: boolean;
     variant?: "contained" | "outlined" | "text";
 }
-export declare const CojectReport: FC<CojectReportProps>;
+interface CojectReportType extends FC<CojectReportProps> {
+    print: (params: {
+        reportData: any;
+        reportTemplate: any;
+        reportParameter?: any;
+        reportName?: string;
+    }) => Promise<void>;
+}
+export declare const CojectReport: CojectReportType;
 export {};

@@ -24,14 +24,16 @@ interface CojectReportProps extends Omit<ButtonProps, 'onClick'> {
     variant?: "contained" | "outlined" | "text";
 }
 
-export const CojectReport: FC<CojectReportProps> = ({ reportData, reportTemplate, reportCode, reportName, reportParameter, label, fullWidth, variant, ...buttonProps }) => {
+// Interface for add in CustomActions in Grid
+interface CojectReportType extends FC<CojectReportProps> {
+    print: (params: { reportData: any, reportTemplate: any, reportParameter?: any, reportName?: string }) => Promise<void>;
+}
+
+export const CojectReport: CojectReportType = ({ reportData, reportTemplate, reportCode, reportName, reportParameter, label, fullWidth, variant, ...buttonProps }) => {
 
     // Handle Print
     const handlePrint = async () => {
-        if (!reportTemplate) return;
-        const blob = await pdf(<PdfContainer data={reportData} jsonData={reportTemplate} parameter={reportParameter} reportName={reportName} />).toBlob();
-        const url = URL.createObjectURL(blob);
-        window.open(url, '_blank');
+        await CojectReport.print({ reportData, reportTemplate, reportParameter, reportName });
     };
 
     return (
@@ -41,4 +43,11 @@ export const CojectReport: FC<CojectReportProps> = ({ reportData, reportTemplate
             </Button>
         </React.Fragment>
     );
+};
+
+CojectReport.print = async ({ reportData, reportTemplate, reportParameter, reportName }: { reportData: any, reportTemplate: any, reportParameter?: any, reportName?: string }) => {
+    if (!reportTemplate) return;
+    const blob = await pdf(<PdfContainer data={reportData} jsonData={reportTemplate} parameter={reportParameter} reportName={reportName} />).toBlob();
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
 };

@@ -11,19 +11,19 @@ type iIban = Omit<TextFieldProps, | "name" | "helperText" | "required"> & {
     label?: string;
     helperText?: string;
     required?: boolean | string;
+    value?: string | number;
     errorMessages?: {
         required?: string;
         pattern?: string;
     };
 };
 
-export const Iban: FC<iIban> = ({ name, label, helperText, required = true, errorMessages, onChange: externalOnChange, ...props }) => {
+export const Iban: FC<iIban> = ({ name, label, helperText, required = true, errorMessages, onChange: externalOnChange, value, ...props }) => {
     const ibanRegex = /^[A-Za-z]{2}[0-9]{20}$/;
-    const { value, ...restProps } = props;
 
     return (
         <React.Fragment>
-            <Input name={name} label={label || "IBAN"} helperText={helperText} required={errorMessages?.required ?? required} inputProps={{ maxLength: 22 }}
+            <Input name={name} label={label || "IBAN"} helperText={helperText} required={errorMessages?.required ?? required} inputProps={{ maxLength: 22 }} value={value}
                 validation={{
                     pattern: {
                         value: ibanRegex,
@@ -41,12 +41,12 @@ export const Iban: FC<iIban> = ({ name, label, helperText, required = true, erro
                         const numbers = val.substring(2).replace(/[^0-9]/g, "");
                         val = letters + numbers;
                     }
-                    form.setValue(name, val);
+                    form?.setValue(name, val);
                     if (externalOnChange) {
                         externalOnChange({ target: { name, value: val } } as React.ChangeEvent<HTMLInputElement>);
                     }
                 }}
-                {...restProps}
+                {...props}
             />
         </React.Fragment>
     );

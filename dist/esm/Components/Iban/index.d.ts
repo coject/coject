@@ -5,6 +5,7 @@ type iIban = Omit<TextFieldProps, "name" | "helperText" | "required"> & {
     label?: string;
     helperText?: string;
     required?: boolean | string;
+    value?: string | number;
     errorMessages?: {
         required?: string;
         pattern?: string;

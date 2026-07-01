@@ -7,11 +7,10 @@ exports.Iban = void 0;
 const react_1 = __importDefault(require("react"));
 // Coject
 const Input_1 = require("../Input");
-const Iban = ({ name, label, helperText, required = true, errorMessages, onChange: externalOnChange, ...props }) => {
+const Iban = ({ name, label, helperText, required = true, errorMessages, onChange: externalOnChange, value, ...props }) => {
     const ibanRegex = /^[A-Za-z]{2}[0-9]{20}$/;
-    const { value, ...restProps } = props;
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(Input_1.Input, { name: name, label: label || "IBAN", helperText: helperText, required: errorMessages?.required ?? required, inputProps: { maxLength: 22 }, validation: {
+        react_1.default.createElement(Input_1.Input, { name: name, label: label || "IBAN", helperText: helperText, required: errorMessages?.required ?? required, inputProps: { maxLength: 22 }, value: value, validation: {
                 pattern: {
                     value: ibanRegex,
                     message: errorMessages?.pattern ?? "IBAN Must Start With 2 Letters Followed by 20 Digits"
@@ -28,11 +27,11 @@ const Iban = ({ name, label, helperText, required = true, errorMessages, onChang
                     const numbers = val.substring(2).replace(/[^0-9]/g, "");
                     val = letters + numbers;
                 }
-                form.setValue(name, val);
+                form?.setValue(name, val);
                 if (externalOnChange) {
                     externalOnChange({ target: { name, value: val } });
                 }
-            }, ...restProps })));
+            }, ...props })));
 };
 exports.Iban = Iban;
 //# sourceMappingURL=index.js.map

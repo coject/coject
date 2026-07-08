@@ -463,18 +463,13 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
         else if (typeof sourceData === 'object') {
             fieldValue = sourceData?.[item?.field] ?? '';
         }
-        return (React.createElement(View, { style: { position: itemStyles.position, left: itemStyles.left, top: itemStyles.top, width: itemStyles.width, height: itemStyles.height, zIndex: itemStyles.zIndex, border: itemStyles.border, boxShadow: itemStyles.boxShadow, backgroundColor: itemStyles.backgroundColor, transform: itemStyles.transform, transformOrigin: itemStyles.transformOrigin, display: 'flex', justifyContent: 'flex-end' } },
+        const { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin, ...textStyles } = itemStyles;
+        const containerStyles = { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin };
+        return (React.createElement(View, { style: containerStyles },
             React.createElement(Text, { style: {
-                    fontSize: itemStyles.fontSize || '12pt',
-                    color: itemStyles.color || 'black',
-                    fontFamily: itemStyles.fontFamily,
-                    textAlign: itemStyles.textAlign,
-                    fontWeight: itemStyles.fontWeight,
-                    fontStyle: itemStyles.fontStyle,
-                    textDecoration: itemStyles.textDecoration,
-                    letterSpacing: itemStyles.letterSpacing,
-                    wordSpacing: itemStyles.wordSpacing,
-                    width: '100%',
+                    ...textStyles,
+                    fontSize: textStyles.fontSize || '12pt',
+                    direction: json?.Direction || 'rtl',
                     hyphens: 'none'
                 } }, ensureWrap(fieldValue ?? ''))));
     }

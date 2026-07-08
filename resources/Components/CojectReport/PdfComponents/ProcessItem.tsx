@@ -536,19 +536,15 @@ const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tab
             fieldValue = sourceData?.[item?.field] ?? '';
         }
 
+        const { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin, ...textStyles } = itemStyles;
+        const containerStyles = { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin };
+
         return (
-            <View style={{ position: itemStyles.position, left: itemStyles.left, top: itemStyles.top, width: itemStyles.width, height: itemStyles.height, zIndex: itemStyles.zIndex, border: itemStyles.border, boxShadow: itemStyles.boxShadow, backgroundColor: itemStyles.backgroundColor, transform: itemStyles.transform, transformOrigin: itemStyles.transformOrigin, display: 'flex', justifyContent: 'flex-end' } as any}>
+            <View style={containerStyles as any}>
                 <Text style={{
-                    fontSize: itemStyles.fontSize || '12pt',
-                    color: itemStyles.color || 'black',
-                    fontFamily: itemStyles.fontFamily,
-                    textAlign: itemStyles.textAlign,
-                    fontWeight: itemStyles.fontWeight,
-                    fontStyle: itemStyles.fontStyle,
-                    textDecoration: itemStyles.textDecoration,
-                    letterSpacing: itemStyles.letterSpacing,
-                    wordSpacing: itemStyles.wordSpacing,
-                    width: '100%',
+                    ...textStyles,
+                    fontSize: textStyles.fontSize || '12pt',
+                    direction: json?.Direction || 'rtl',
                     hyphens: 'none'
                 } as any}>
                     {ensureWrap(fieldValue ?? '')}

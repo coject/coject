@@ -468,18 +468,13 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
         else if (typeof sourceData === 'object') {
             fieldValue = sourceData?.[item?.field] ?? '';
         }
-        return (react_1.default.createElement(renderer_1.View, { style: { position: itemStyles.position, left: itemStyles.left, top: itemStyles.top, width: itemStyles.width, height: itemStyles.height, zIndex: itemStyles.zIndex, border: itemStyles.border, boxShadow: itemStyles.boxShadow, backgroundColor: itemStyles.backgroundColor, transform: itemStyles.transform, transformOrigin: itemStyles.transformOrigin, display: 'flex', justifyContent: 'flex-end' } },
+        const { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin, ...textStyles } = itemStyles;
+        const containerStyles = { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin };
+        return (react_1.default.createElement(renderer_1.View, { style: containerStyles },
             react_1.default.createElement(renderer_1.Text, { style: {
-                    fontSize: itemStyles.fontSize || '12pt',
-                    color: itemStyles.color || 'black',
-                    fontFamily: itemStyles.fontFamily,
-                    textAlign: itemStyles.textAlign,
-                    fontWeight: itemStyles.fontWeight,
-                    fontStyle: itemStyles.fontStyle,
-                    textDecoration: itemStyles.textDecoration,
-                    letterSpacing: itemStyles.letterSpacing,
-                    wordSpacing: itemStyles.wordSpacing,
-                    width: '100%',
+                    ...textStyles,
+                    fontSize: textStyles.fontSize || '12pt',
+                    direction: json?.Direction || 'rtl',
                     hyphens: 'none'
                 } }, ensureWrap(fieldValue ?? ''))));
     }

@@ -616,7 +616,7 @@ const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tab
         }
 
         // Grouping Logic
-        const tableRows = tableData[item?.id] || [];
+        const tableRows = (tableData ?? {})[item?.id] || [];
         const groupConfigs = item?.groups || [];
         const footerConfigs = item?.footer || [];
         const shouldRepeatHeader = groupConfigs.some((g: any) => g.showHeader);
@@ -795,7 +795,7 @@ const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tab
                                 cellValue = (parameter && fCol.parameter) ? (parameter[fCol.parameter] ?? '') : '';
                             } else if (fCol.valueSource === 'field' && fCol.field) {
                                 const fieldName = fCol.field;
-                                const rowsToUse = rows || tableData[item?.id] || [];
+                                const rowsToUse = rows || (tableData ?? {})[item?.id] || [];
                                 let values = rowsToUse.map((r: any) => parseFloat(r[fieldName])).filter((v: any) => !isNaN(v));
 
                                 if (fCol.aggregate === 'sum') {
@@ -855,7 +855,7 @@ const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tab
         };
 
         return (
-            (tableData[item?.id]?.length || pageIndex == 0) ? (
+            ((tableData ?? {})[item?.id]?.length || pageIndex == 0) ? (
                 <View style={{ ...itemStyles, borderTop: '1px solid #000' }} wrap={true}>
                     {/* Header Row (Only once at top if not repeating) */}
                     {!shouldRepeatHeader && renderTableHeader('top-header')}

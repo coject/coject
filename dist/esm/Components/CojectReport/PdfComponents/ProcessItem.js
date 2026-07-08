@@ -529,7 +529,7 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
             }
         }
         // Grouping Logic
-        const tableRows = tableData[item?.id] || [];
+        const tableRows = (tableData ?? {})[item?.id] || [];
         const groupConfigs = item?.groups || [];
         const footerConfigs = item?.footer || [];
         const shouldRepeatHeader = groupConfigs.some((g) => g.showHeader);
@@ -686,7 +686,7 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
                     }
                     else if (fCol.valueSource === 'field' && fCol.field) {
                         const fieldName = fCol.field;
-                        const rowsToUse = rows || tableData[item?.id] || [];
+                        const rowsToUse = rows || (tableData ?? {})[item?.id] || [];
                         let values = rowsToUse.map((r) => parseFloat(r[fieldName])).filter((v) => !isNaN(v));
                         if (fCol.aggregate === 'sum') {
                             cellValue = values.reduce((a, b) => a + b, 0);
@@ -741,7 +741,7 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
                 })));
             });
         };
-        return ((tableData[item?.id]?.length || pageIndex == 0) ? (React.createElement(View, { style: { ...itemStyles, borderTop: '1px solid #000' }, wrap: true },
+        return (((tableData ?? {})[item?.id]?.length || pageIndex == 0) ? (React.createElement(View, { style: { ...itemStyles, borderTop: '1px solid #000' }, wrap: true },
             !shouldRepeatHeader && renderTableHeader('top-header'),
             React.createElement(View, { style: { flexDirection: 'column' } },
                 processedRows.map((pRow) => {

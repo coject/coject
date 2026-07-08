@@ -507,13 +507,14 @@ interface ProcessItemProps {
 const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tableData, json, parameter, totalPages }) => {
     if (item?.type === "text-object" && ((!item?.fixed && pageIndex == 0) || item?.fixed)) {
         const itemStyles = ProcessTextObjectItem(item, json);
-        const { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, ...textStyles } = itemStyles;
-        const containerStyles = { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor };
+        const { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin, ...textStyles } = itemStyles;
+        const containerStyles = { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin };
         return (
             <View style={containerStyles as any}>
                 <Text style={{
                     ...textStyles,
                     fontSize: textStyles.fontSize || '12pt',
+                    direction: json?.Direction || 'rtl',
                     hyphens: 'none'
                 } as any}>
                     {ensureWrap(item?.text)}
@@ -536,7 +537,7 @@ const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tab
         }
 
         return (
-            <View style={{ position: itemStyles.position, left: itemStyles.left, top: itemStyles.top, width: itemStyles.width, height: itemStyles.height, zIndex: itemStyles.zIndex, border: itemStyles.border, boxShadow: itemStyles.boxShadow, backgroundColor: itemStyles.backgroundColor } as any}>
+            <View style={{ position: itemStyles.position, left: itemStyles.left, top: itemStyles.top, width: itemStyles.width, height: itemStyles.height, zIndex: itemStyles.zIndex, border: itemStyles.border, boxShadow: itemStyles.boxShadow, backgroundColor: itemStyles.backgroundColor, transform: itemStyles.transform, transformOrigin: itemStyles.transformOrigin, display: 'flex', justifyContent: 'flex-end' } as any}>
                 <Text style={{
                     fontSize: itemStyles.fontSize || '12pt',
                     color: itemStyles.color || 'black',
@@ -545,11 +546,9 @@ const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tab
                     fontWeight: itemStyles.fontWeight,
                     fontStyle: itemStyles.fontStyle,
                     textDecoration: itemStyles.textDecoration,
-                    lineHeight: itemStyles.lineHeight,
                     letterSpacing: itemStyles.letterSpacing,
                     wordSpacing: itemStyles.wordSpacing,
-                    transform: itemStyles.transform,
-                    transformOrigin: itemStyles.transformOrigin,
+                    width: '100%',
                     hyphens: 'none'
                 } as any}>
                     {ensureWrap(fieldValue ?? '')}
@@ -583,7 +582,7 @@ const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tab
         };
         const value = getSpecialFieldValue(item.fieldType, context);
         return (
-            <View style={{ position: itemStyles.position, left: itemStyles.left, top: itemStyles.top, width: itemStyles.width, height: itemStyles.height, zIndex: itemStyles.zIndex, border: itemStyles.border, boxShadow: itemStyles.boxShadow, backgroundColor: itemStyles.backgroundColor } as any}>
+            <View style={{ position: itemStyles.position, left: itemStyles.left, top: itemStyles.top, width: itemStyles.width, height: itemStyles.height, zIndex: itemStyles.zIndex, border: itemStyles.border, boxShadow: itemStyles.boxShadow, backgroundColor: itemStyles.backgroundColor, transform: itemStyles.transform, transformOrigin: itemStyles.transformOrigin, display: 'flex', justifyContent: 'center' } as any}>
                 <Text style={{
                     fontSize: itemStyles.fontSize || '12pt',
                     color: itemStyles.color || 'black',
@@ -592,11 +591,9 @@ const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tab
                     fontWeight: itemStyles.fontWeight,
                     fontStyle: itemStyles.fontStyle,
                     textDecoration: itemStyles.textDecoration,
-                    lineHeight: itemStyles.lineHeight,
                     letterSpacing: itemStyles.letterSpacing,
                     wordSpacing: itemStyles.wordSpacing,
-                    transform: itemStyles.transform,
-                    transformOrigin: itemStyles.transformOrigin,
+                    width: '100%',
                     hyphens: 'none'
                 } as any}>
                     {String(value)}
@@ -776,11 +773,22 @@ const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tab
                             const colSpan = parseInt(fCol.colSpan) || 1;
 
                             let widthCm = 0;
-                            for (let i = 0; i < colSpan; i++) {
-                                if (currentTableColIndex + i < updatedColumnsEntries.length) {
-                                    const [, tableCol]: [string, any] = updatedColumnsEntries[currentTableColIndex + i] as [string, any];
-                                    widthCm += parseFloat(tableCol.Styles.width);
+                            if (fCol.width) {
+                                const pxPerCmH = json?.PxPerCmH || 53.057;
+                                widthCm = parseFloat(fCol.width) / pxPerCmH;
+                            } else if (updatedColumnsEntries.length > 0) {
+                                for (let i = 0; i < colSpan; i++) {
+                                    if (currentTableColIndex + i < updatedColumnsEntries.length) {
+                                        const [, tableCol]: [string, any] = updatedColumnsEntries[currentTableColIndex + i] as [string, any];
+                                        widthCm += parseFloat(tableCol.Styles.width);
+                                    }
                                 }
+                            } else {
+                                const tableTotalPx = getDecimal(item?.width) || 1064;
+                                const pxPerCmH = json?.PxPerCmH || 53.057;
+                                const tableWidthCm = tableTotalPx / pxPerCmH;
+                                const totalCols = parseInt(fCols.nOC) || colKeys.length || 1;
+                                widthCm = (tableWidthCm / totalCols) * colSpan;
                             }
                             currentTableColIndex += colSpan;
 
@@ -804,6 +812,9 @@ const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tab
                                     cellValue = values.length ? Math.min(...values) : 0;
                                 } else if (fCol.aggregate === 'max') {
                                     cellValue = values.length ? Math.max(...values) : 0;
+                                }
+                                else {
+                                    cellValue = rowsToUse[parseInt((fCol.rowNo) || "0") - 1]?.[fieldName] || '';
                                 }
 
                                 if (fCol.format) {

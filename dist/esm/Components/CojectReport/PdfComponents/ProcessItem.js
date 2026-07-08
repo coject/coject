@@ -443,12 +443,13 @@ const ProcessPanelItem = (item, json) => {
 const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, totalPages }) => {
     if (item?.type === "text-object" && ((!item?.fixed && pageIndex == 0) || item?.fixed)) {
         const itemStyles = ProcessTextObjectItem(item, json);
-        const { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, ...textStyles } = itemStyles;
-        const containerStyles = { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor };
+        const { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin, ...textStyles } = itemStyles;
+        const containerStyles = { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin };
         return (React.createElement(View, { style: containerStyles },
             React.createElement(Text, { style: {
                     ...textStyles,
                     fontSize: textStyles.fontSize || '12pt',
+                    direction: json?.Direction || 'rtl',
                     hyphens: 'none'
                 } }, ensureWrap(item?.text))));
     }
@@ -462,7 +463,7 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
         else if (typeof sourceData === 'object') {
             fieldValue = sourceData?.[item?.field] ?? '';
         }
-        return (React.createElement(View, { style: { position: itemStyles.position, left: itemStyles.left, top: itemStyles.top, width: itemStyles.width, height: itemStyles.height, zIndex: itemStyles.zIndex, border: itemStyles.border, boxShadow: itemStyles.boxShadow, backgroundColor: itemStyles.backgroundColor } },
+        return (React.createElement(View, { style: { position: itemStyles.position, left: itemStyles.left, top: itemStyles.top, width: itemStyles.width, height: itemStyles.height, zIndex: itemStyles.zIndex, border: itemStyles.border, boxShadow: itemStyles.boxShadow, backgroundColor: itemStyles.backgroundColor, transform: itemStyles.transform, transformOrigin: itemStyles.transformOrigin, display: 'flex', justifyContent: 'flex-end' } },
             React.createElement(Text, { style: {
                     fontSize: itemStyles.fontSize || '12pt',
                     color: itemStyles.color || 'black',
@@ -471,11 +472,9 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
                     fontWeight: itemStyles.fontWeight,
                     fontStyle: itemStyles.fontStyle,
                     textDecoration: itemStyles.textDecoration,
-                    lineHeight: itemStyles.lineHeight,
                     letterSpacing: itemStyles.letterSpacing,
                     wordSpacing: itemStyles.wordSpacing,
-                    transform: itemStyles.transform,
-                    transformOrigin: itemStyles.transformOrigin,
+                    width: '100%',
                     hyphens: 'none'
                 } }, ensureWrap(fieldValue ?? ''))));
     }
@@ -501,7 +500,7 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
             format: item?.format || (item?.fieldType == "currentTime" ? "HH:mm" : "dd/MM/yyyy HH:mm")
         };
         const value = getSpecialFieldValue(item.fieldType, context);
-        return (React.createElement(View, { style: { position: itemStyles.position, left: itemStyles.left, top: itemStyles.top, width: itemStyles.width, height: itemStyles.height, zIndex: itemStyles.zIndex, border: itemStyles.border, boxShadow: itemStyles.boxShadow, backgroundColor: itemStyles.backgroundColor } },
+        return (React.createElement(View, { style: { position: itemStyles.position, left: itemStyles.left, top: itemStyles.top, width: itemStyles.width, height: itemStyles.height, zIndex: itemStyles.zIndex, border: itemStyles.border, boxShadow: itemStyles.boxShadow, backgroundColor: itemStyles.backgroundColor, transform: itemStyles.transform, transformOrigin: itemStyles.transformOrigin, display: 'flex', justifyContent: 'center' } },
             React.createElement(Text, { style: {
                     fontSize: itemStyles.fontSize || '12pt',
                     color: itemStyles.color || 'black',
@@ -510,11 +509,9 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
                     fontWeight: itemStyles.fontWeight,
                     fontStyle: itemStyles.fontStyle,
                     textDecoration: itemStyles.textDecoration,
-                    lineHeight: itemStyles.lineHeight,
                     letterSpacing: itemStyles.letterSpacing,
                     wordSpacing: itemStyles.wordSpacing,
-                    transform: itemStyles.transform,
-                    transformOrigin: itemStyles.transformOrigin,
+                    width: '100%',
                     hyphens: 'none'
                 } }, String(value))));
     }
@@ -665,11 +662,24 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
                     const fCol = fCols[colKey];
                     const colSpan = parseInt(fCol.colSpan) || 1;
                     let widthCm = 0;
-                    for (let i = 0; i < colSpan; i++) {
-                        if (currentTableColIndex + i < updatedColumnsEntries.length) {
-                            const [, tableCol] = updatedColumnsEntries[currentTableColIndex + i];
-                            widthCm += parseFloat(tableCol.Styles.width);
+                    if (fCol.width) {
+                        const pxPerCmH = json?.PxPerCmH || 53.057;
+                        widthCm = parseFloat(fCol.width) / pxPerCmH;
+                    }
+                    else if (updatedColumnsEntries.length > 0) {
+                        for (let i = 0; i < colSpan; i++) {
+                            if (currentTableColIndex + i < updatedColumnsEntries.length) {
+                                const [, tableCol] = updatedColumnsEntries[currentTableColIndex + i];
+                                widthCm += parseFloat(tableCol.Styles.width);
+                            }
                         }
+                    }
+                    else {
+                        const tableTotalPx = getDecimal(item?.width) || 1064;
+                        const pxPerCmH = json?.PxPerCmH || 53.057;
+                        const tableWidthCm = tableTotalPx / pxPerCmH;
+                        const totalCols = parseInt(fCols.nOC) || colKeys.length || 1;
+                        widthCm = (tableWidthCm / totalCols) * colSpan;
                     }
                     currentTableColIndex += colSpan;
                     let cellValue = '';
@@ -697,6 +707,9 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
                         }
                         else if (fCol.aggregate === 'max') {
                             cellValue = values.length ? Math.max(...values) : 0;
+                        }
+                        else {
+                            cellValue = rowsToUse[parseInt((fCol.rowNo) || "0") - 1]?.[fieldName] || '';
                         }
                         if (fCol.format) {
                             cellValue = formatNumber(cellValue, fCol.format);

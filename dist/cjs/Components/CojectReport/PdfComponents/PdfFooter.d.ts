@@ -4,6 +4,7 @@ interface PdfFooterProps {
     footerData?: any;
     pageIndex?: number;
     parameter?: any;
+    tableData?: any;
     totalPages?: number;
 }
 declare const Footer: React.FC<PdfFooterProps>;

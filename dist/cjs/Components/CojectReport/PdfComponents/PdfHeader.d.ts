@@ -4,6 +4,7 @@ interface PdfHeaderProps {
     headerData?: any;
     pageIndex?: number;
     parameter?: any;
+    tableData?: any;
     totalPages?: number;
 }
 declare const Header: React.FC<PdfHeaderProps>;

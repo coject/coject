@@ -226,13 +226,13 @@ const PdfContainer: React.FC<PdfContainerProps> = ({ data, jsonData, parameter, 
                         direction: jsonData.Direction
                     }}>
                         {/* Pdf Header */}
-                        <PdfHeader apiData={data} headerData={jsonData} pageIndex={pageIndex} parameter={parameter} totalPages={maxLength || 1} />
+                        <PdfHeader apiData={data} headerData={jsonData} tableData={data} pageIndex={pageIndex} parameter={parameter} totalPages={maxLength || 1} />
 
                         {/* Pdf Body */}
                         <PdfBody apiData={data} bodyData={jsonData} tableData={pageDataWithIds} pageIndex={pageIndex} parameter={parameter} totalPages={maxLength || 1} />
 
                         {/* Pdf Footer */}
-                        <PdfFooter apiData={data} footerData={jsonData} pageIndex={pageIndex} parameter={parameter} totalPages={maxLength || 1} />
+                        <PdfFooter apiData={data} footerData={jsonData} tableData={data} pageIndex={pageIndex} parameter={parameter} totalPages={maxLength || 1} />
                     </PDFPage>
                 );
             })}

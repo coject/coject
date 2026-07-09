@@ -505,6 +505,7 @@ interface ProcessItemProps {
 }
 
 const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tableData, json, parameter, totalPages }) => {
+    debugger;
     if (item?.type === "text-object" && ((!item?.fixed && pageIndex == 0) || item?.fixed)) {
         const itemStyles = ProcessTextObjectItem(item, json);
         const { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin, ...textStyles } = itemStyles;
@@ -616,7 +617,7 @@ const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tab
         }
 
         // Grouping Logic
-        const tableRows = (tableData ?? {})[item?.id] || [];
+        const tableRows = (tableData ?? {})[item?.id] || (apiData ?? {})[item?.dataSource] || [];
         const groupConfigs = item?.groups || [];
         const footerConfigs = item?.footer || [];
         const shouldRepeatHeader = groupConfigs.some((g: any) => g.showHeader);
@@ -795,7 +796,7 @@ const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tab
                                 cellValue = (parameter && fCol.parameter) ? (parameter[fCol.parameter] ?? '') : '';
                             } else if (fCol.valueSource === 'field' && fCol.field) {
                                 const fieldName = fCol.field;
-                                const rowsToUse = rows || (tableData ?? {})[item?.id] || [];
+                                const rowsToUse = rows || (tableData ?? {})[item?.id] || (apiData ?? {})[item?.dataSource] || [];
                                 let values = rowsToUse.map((r: any) => parseFloat(r[fieldName])).filter((v: any) => !isNaN(v));
 
                                 if (fCol.aggregate === 'sum') {
@@ -855,7 +856,7 @@ const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tab
         };
 
         return (
-            ((tableData ?? {})[item?.id]?.length || pageIndex == 0) ? (
+            (((tableData ?? {})[item?.id] || (apiData ?? {})[item?.dataSource])?.length || pageIndex == 0) ? (
                 <View style={{ ...itemStyles, borderTop: '1px solid #000' }} wrap={true}>
                     {/* Header Row (Only once at top if not repeating) */}
                     {!shouldRepeatHeader && renderTableHeader('top-header')}

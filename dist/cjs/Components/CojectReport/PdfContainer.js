@@ -197,9 +197,9 @@ const PdfContainer = ({ data, jsonData, parameter, reportName }) => {
                 textAlign: jsonData.Direction === 'rtl' ? 'right' : 'left',
                 direction: jsonData.Direction
             } },
-            react_1.default.createElement(PdfHeader_1.default, { apiData: data, headerData: jsonData, pageIndex: pageIndex, parameter: parameter, totalPages: maxLength || 1 }),
+            react_1.default.createElement(PdfHeader_1.default, { apiData: data, headerData: jsonData, tableData: data, pageIndex: pageIndex, parameter: parameter, totalPages: maxLength || 1 }),
             react_1.default.createElement(PdfBody_1.default, { apiData: data, bodyData: jsonData, tableData: pageDataWithIds, pageIndex: pageIndex, parameter: parameter, totalPages: maxLength || 1 }),
-            react_1.default.createElement(PdfFooter_1.default, { apiData: data, footerData: jsonData, pageIndex: pageIndex, parameter: parameter, totalPages: maxLength || 1 })));
+            react_1.default.createElement(PdfFooter_1.default, { apiData: data, footerData: jsonData, tableData: data, pageIndex: pageIndex, parameter: parameter, totalPages: maxLength || 1 })));
     })));
 };
 exports.default = PdfContainer;

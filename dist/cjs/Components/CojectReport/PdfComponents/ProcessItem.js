@@ -446,6 +446,7 @@ const ProcessPanelItem = (item, json) => {
     return ProcessItemCommonStyles(item, json);
 };
 const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, totalPages }) => {
+    debugger;
     if (item?.type === "text-object" && ((!item?.fixed && pageIndex == 0) || item?.fixed)) {
         const itemStyles = ProcessTextObjectItem(item, json);
         const { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin, ...textStyles } = itemStyles;
@@ -534,7 +535,7 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
             }
         }
         // Grouping Logic
-        const tableRows = (tableData ?? {})[item?.id] || [];
+        const tableRows = (tableData ?? {})[item?.id] || (apiData ?? {})[item?.dataSource] || [];
         const groupConfigs = item?.groups || [];
         const footerConfigs = item?.footer || [];
         const shouldRepeatHeader = groupConfigs.some((g) => g.showHeader);
@@ -691,7 +692,7 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
                     }
                     else if (fCol.valueSource === 'field' && fCol.field) {
                         const fieldName = fCol.field;
-                        const rowsToUse = rows || (tableData ?? {})[item?.id] || [];
+                        const rowsToUse = rows || (tableData ?? {})[item?.id] || (apiData ?? {})[item?.dataSource] || [];
                         let values = rowsToUse.map((r) => parseFloat(r[fieldName])).filter((v) => !isNaN(v));
                         if (fCol.aggregate === 'sum') {
                             cellValue = values.reduce((a, b) => a + b, 0);
@@ -746,7 +747,7 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
                 })));
             });
         };
-        return (((tableData ?? {})[item?.id]?.length || pageIndex == 0) ? (react_1.default.createElement(renderer_1.View, { style: { ...itemStyles, borderTop: '1px solid #000' }, wrap: true },
+        return ((((tableData ?? {})[item?.id] || (apiData ?? {})[item?.dataSource])?.length || pageIndex == 0) ? (react_1.default.createElement(renderer_1.View, { style: { ...itemStyles, borderTop: '1px solid #000' }, wrap: true },
             !shouldRepeatHeader && renderTableHeader('top-header'),
             react_1.default.createElement(renderer_1.View, { style: { flexDirection: 'column' } },
                 processedRows.map((pRow) => {

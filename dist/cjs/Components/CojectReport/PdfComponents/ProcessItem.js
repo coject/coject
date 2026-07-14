@@ -445,6 +445,29 @@ const formatNumber = (val, format) => {
 const ProcessPanelItem = (item, json) => {
     return ProcessItemCommonStyles(item, json);
 };
+const getColumnType = (json, dataSource, fieldName) => {
+    if (json?.Datasources?.[dataSource]?.columns) {
+        const columns = json.Datasources[dataSource].columns;
+        if (Array.isArray(columns)) {
+            const column = columns.find((c) => c.name === fieldName);
+            if (column)
+                return column.type;
+        }
+    }
+    return null;
+};
+const formatValueByType = (value, type) => {
+    if (!value || !type)
+        return value;
+    const strVal = String(value);
+    if (type === 'date') {
+        return strVal.split('T')[0];
+    }
+    else if (type === 'dateTime') {
+        return strVal.includes('T') ? strVal : `${strVal}T00:00:00`;
+    }
+    return value;
+};
 const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, totalPages }) => {
     debugger;
     if (item?.type === "text-object" && ((!item?.fixed && pageIndex == 0) || item?.fixed)) {
@@ -469,6 +492,8 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
         else if (typeof sourceData === 'object') {
             fieldValue = sourceData?.[item?.field] ?? '';
         }
+        const colType = getColumnType(json, item?.dataSource, item?.field);
+        fieldValue = formatValueByType(fieldValue, colType);
         const { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin, ...textStyles } = itemStyles;
         const containerStyles = { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin };
         return (react_1.default.createElement(renderer_1.View, { style: containerStyles },
@@ -715,6 +740,10 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
                         if (fCol.format) {
                             cellValue = formatNumber(cellValue, fCol.format);
                         }
+                        else {
+                            const colType = getColumnType(json, item?.dataSource, fieldName);
+                            cellValue = formatValueByType(cellValue, colType);
+                        }
                     }
                     const cellStyle = {
                         width: `${widthCm}cm`,
@@ -790,6 +819,8 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
                         else {
                             cellValue = row[key] ?? '';
                         }
+                        const colType = getColumnType(json, item?.dataSource, key);
+                        cellValue = formatValueByType(cellValue, colType);
                         return (react_1.default.createElement(renderer_1.View, { key: i, style: { ...filteredStyles, backgroundColor: backgroundColor } },
                             react_1.default.createElement(renderer_1.Text, { style: {
                                     width: '100%',

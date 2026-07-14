@@ -494,6 +494,28 @@ const ProcessPanelItem = (item: any, json: any): any => {
     return ProcessItemCommonStyles(item, json);
 };
 
+const getColumnType = (json: any, dataSource: string, fieldName: string) => {
+    if (json?.Datasources?.[dataSource]?.columns) {
+        const columns = json.Datasources[dataSource].columns;
+        if (Array.isArray(columns)) {
+            const column = columns.find((c: any) => c.name === fieldName);
+            if (column) return column.type;
+        }
+    }
+    return null;
+};
+
+const formatValueByType = (value: any, type: string | null) => {
+    if (!value || !type) return value;
+    const strVal = String(value);
+    if (type === 'date') {
+        return strVal.split('T')[0];
+    } else if (type === 'dateTime') {
+        return strVal.includes('T') ? strVal : `${strVal}T00:00:00`;
+    }
+    return value;
+};
+
 interface ProcessItemProps {
     apiData?: any;
     item?: any;
@@ -536,6 +558,9 @@ const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tab
         else if (typeof sourceData === 'object') {
             fieldValue = sourceData?.[item?.field] ?? '';
         }
+
+        const colType = getColumnType(json, item?.dataSource, item?.field);
+        fieldValue = formatValueByType(fieldValue, colType);
 
         const { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin, ...textStyles } = itemStyles;
         const containerStyles = { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin };
@@ -816,6 +841,9 @@ const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tab
 
                                 if (fCol.format) {
                                     cellValue = formatNumber(cellValue, fCol.format);
+                                } else {
+                                    const colType = getColumnType(json, item?.dataSource, fieldName);
+                                    cellValue = formatValueByType(cellValue, colType);
                                 }
                             }
 
@@ -904,6 +932,10 @@ const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tab
                                         } else {
                                             cellValue = row[key] ?? '';
                                         }
+
+                                        const colType = getColumnType(json, item?.dataSource, key);
+                                        cellValue = formatValueByType(cellValue, colType);
+
                                         return (
                                             <View key={i} style={{ ...filteredStyles, backgroundColor: backgroundColor }}>
                                                 <Text style={{

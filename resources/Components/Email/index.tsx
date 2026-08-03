@@ -33,6 +33,6 @@ export const Email: FC<iEmail> = ({ name, label, helperText, value, validation, 
     }, [validation]);
 
     return (
-        <Input name={name} label={label || "Email"} type="email" helperText={helperText} validation={validate} value={value} {...props} />
+        <Input name={name} label={label || ""} type="email" helperText={helperText} validation={validate} value={value} {...props} />
     );
 };

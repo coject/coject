@@ -34,7 +34,7 @@ export const NationalId: FC<iNationalId> = ({ name, label, helperText, value, va
 
     return (
         <React.Fragment>
-            <Input name={name} label={label || "National ID"} type="text" helperText={helperText}
+            <Input name={name} label={label || ""} type="text" helperText={helperText}
                 validation={validate} value={value} inputProps={{ inputMode: "numeric", maxLength: 10, pattern: "[0-9]*" }}
                 {...props}
             />

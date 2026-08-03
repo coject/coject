@@ -10,7 +10,7 @@ const Input_1 = require("../Input");
 const Iban = ({ name, label, helperText, required = true, errorMessages, onChange: externalOnChange, value, ...props }) => {
     const ibanRegex = /^[A-Za-z]{2}[0-9]{20}$/;
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(Input_1.Input, { name: name, label: label || "IBAN", helperText: helperText, required: errorMessages?.required ?? required, inputProps: { maxLength: 22 }, value: value, validation: {
+        react_1.default.createElement(Input_1.Input, { name: name, label: label || "", helperText: helperText, required: errorMessages?.required ?? required, inputProps: { maxLength: 22 }, value: value, validation: {
                 pattern: {
                     value: ibanRegex,
                     message: errorMessages?.pattern ?? "IBAN Must Start With 2 Letters Followed by 20 Digits"

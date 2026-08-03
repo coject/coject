@@ -52,7 +52,7 @@ export const Phone: FC<iPhone> = ({ name, label, helperText, value, validation, 
     const displayValue = typeof value === "string" && value.startsWith("966") ? value.slice(3) : value || "";
 
     return (
-        <Input name={name} label={label || "Phone"} helperText={helperText} validation={validate} value={displayValue} onChange={handleChange} onKeyDown={handleKeyDown}
+        <Input name={name} label={label || ""} helperText={helperText} validation={validate} value={displayValue} onChange={handleChange} onKeyDown={handleKeyDown}
             inputProps={{ maxLength: 9, inputMode: "numeric", pattern: "[0-9]*", dir: "ltr" }}
             InputProps={{
                 ...props.InputProps,

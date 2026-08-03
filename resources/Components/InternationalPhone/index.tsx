@@ -64,7 +64,7 @@ export const InternationalPhone: FC<Props> = ({ name, label, value, required, fu
 
     return (
         <React.Fragment>
-            <TextField disabled={disabled} fullWidth={fullWidth} label={label || "Phone Number"} value={phone} required={!!required} dir="ltr"
+            <TextField disabled={disabled} fullWidth={fullWidth} label={label || ""} value={phone} required={!!required} dir="ltr"
                 helperText={touched && !!required && !phone ? (typeof required === "string" ? required : "This Field Is Required") : ""}
                 onBlur={() => setTouched(true)}
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}

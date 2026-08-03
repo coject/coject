@@ -11,6 +11,6 @@ export const Email = ({ name, label, helperText, value, validation, errorMessage
             required: errorMessages?.required ?? "Email is required"
         };
     }, [validation]);
-    return (React.createElement(Input, { name: name, label: label || "Email", type: "email", helperText: helperText, validation: validate, value: value, ...props }));
+    return (React.createElement(Input, { name: name, label: label || "", type: "email", helperText: helperText, validation: validate, value: value, ...props }));
 };
 //# sourceMappingURL=index.js.map

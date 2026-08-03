@@ -23,7 +23,7 @@ export const Iban: FC<iIban> = ({ name, label, helperText, required = true, erro
 
     return (
         <React.Fragment>
-            <Input name={name} label={label || "IBAN"} helperText={helperText} required={errorMessages?.required ?? required} inputProps={{ maxLength: 22 }} value={value}
+            <Input name={name} label={label || ""} helperText={helperText} required={errorMessages?.required ?? required} inputProps={{ maxLength: 22 }} value={value}
                 validation={{
                     pattern: {
                         value: ibanRegex,

@@ -4,7 +4,7 @@ import { Input } from "../Input";
 export const Iban = ({ name, label, helperText, required = true, errorMessages, onChange: externalOnChange, value, ...props }) => {
     const ibanRegex = /^[A-Za-z]{2}[0-9]{20}$/;
     return (React.createElement(React.Fragment, null,
-        React.createElement(Input, { name: name, label: label || "IBAN", helperText: helperText, required: errorMessages?.required ?? required, inputProps: { maxLength: 22 }, value: value, validation: {
+        React.createElement(Input, { name: name, label: label || "", helperText: helperText, required: errorMessages?.required ?? required, inputProps: { maxLength: 22 }, value: value, validation: {
                 pattern: {
                     value: ibanRegex,
                     message: errorMessages?.pattern ?? "IBAN Must Start With 2 Letters Followed by 20 Digits"

@@ -12,6 +12,6 @@ export const NationalId = ({ name, label, helperText, value, validation, errorMe
         };
     }, [validation]);
     return (React.createElement(React.Fragment, null,
-        React.createElement(Input, { name: name, label: label || "National ID", type: "text", helperText: helperText, validation: validate, value: value, inputProps: { inputMode: "numeric", maxLength: 10, pattern: "[0-9]*" }, ...props })));
+        React.createElement(Input, { name: name, label: label || "", type: "text", helperText: helperText, validation: validate, value: value, inputProps: { inputMode: "numeric", maxLength: 10, pattern: "[0-9]*" }, ...props })));
 };
 //# sourceMappingURL=index.js.map

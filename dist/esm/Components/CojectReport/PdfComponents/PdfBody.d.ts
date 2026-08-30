@@ -6,6 +6,10 @@ interface PdfBodyProps {
     pageIndex?: number;
     parameter?: any;
     totalPages?: number;
+    adjustedLayouts?: Record<string, {
+        y: number;
+        height: number;
+    }>;
 }
 declare const Body: React.FC<PdfBodyProps>;
 export default Body;

@@ -14,40 +14,9 @@ export const Scanner = ({ name, value, onChange, disabled, multiple, placeholder
     const formContext = useFormContext();
     const [isScanning, setIsScanning] = useState(false);
     const [pdfUrl, setPdfUrl] = useState(null);
-    const [isScriptLoaded, setIsScriptLoaded] = useState(false);
     const [scannedImages, setScannedImages] = useState(value || []);
     const { setValue, setError, clearErrors, formState } = formContext || {};
     const errors = formState?.errors || {};
-    // Load ScannerJs File
-    useEffect(() => {
-        if (document.querySelector('script[src*="asprise.com/scannerjs"]')) {
-            setIsScriptLoaded(true);
-            return;
-        }
-        const script = document.createElement('script');
-        script.src = '//cdn.asprise.com/scannerjs/scanner.js';
-        script.type = 'text/javascript';
-        script.async = true;
-        script.onload = () => {
-            setIsScriptLoaded(true);
-        };
-        script.onerror = () => {
-            console.error('Failed to load ScannerJS script');
-        };
-        document.head.appendChild(script);
-        // Cleanup function
-        return () => { };
-    }, []);
-    // Load Scanner File
-    useEffect(() => {
-        const timer = setInterval(() => {
-            if (window.scanner) {
-                setIsScriptLoaded(true);
-                clearInterval(timer);
-            }
-        }, 300);
-        return () => clearInterval(timer);
-    }, []);
     // Update Images From Props
     useEffect(() => {
         if (value)
@@ -90,22 +59,6 @@ export const Scanner = ({ name, value, onChange, disabled, multiple, placeholder
             URL.revokeObjectURL(url);
         };
     }, [scannedImages]);
-    // Scan Handler
-    const handleScan = useCallback(() => {
-        const { scanner } = window;
-        if (!scanner || !isScriptLoaded) {
-            alert("Scanner Not Available!");
-            return;
-        }
-        setIsScanning(true);
-        const scanRequest = {
-            use_asprise_dialog: true,
-            show_scanner_ui: true,
-            twain_cap_setting: { ICAP_PIXELTYPE: "TWPT_RGB" },
-            output_settings: [{ type: "return-base64", format: "jpg" }],
-        };
-        scanner.scan(displayImagesOnPage, scanRequest);
-    }, [isScriptLoaded]);
     // Process Scanned Images
     const displayImagesOnPage = useCallback((successful, mesg, response) => {
         setIsScanning(false);
@@ -122,6 +75,63 @@ export const Scanner = ({ name, value, onChange, disabled, multiple, placeholder
             setValue?.(name || "default", updatedImages);
         }
     }, [scannedImages, multiple, name, setValue]);
+    // Scan Handler
+    const handleScan = useCallback(async () => {
+        if (isScanning)
+            return;
+        const loadScannerScript = () => {
+            return new Promise((resolve, reject) => {
+                if (window.scanner) {
+                    resolve(window.scanner);
+                    return;
+                }
+                const script = document.createElement('script');
+                script.src = '//cdn.asprise.com/scannerjs/scanner.js';
+                script.type = 'text/javascript';
+                script.async = true;
+                script.onload = () => {
+                    const checkScanner = setInterval(() => {
+                        if (window.scanner) {
+                            clearInterval(checkScanner);
+                            resolve(window.scanner);
+                        }
+                    }, 100);
+                    // Timeout after 5 seconds
+                    setTimeout(() => {
+                        clearInterval(checkScanner);
+                        if (!window.scanner)
+                            reject(new Error("ScannerJS loaded but window.scanner is not defined"));
+                    }, 5000);
+                };
+                script.onerror = () => {
+                    reject(new Error('Failed to load ScannerJS script'));
+                };
+                document.head.appendChild(script);
+            });
+        };
+        setIsScanning(true);
+        try {
+            let scanner = window.scanner;
+            if (!scanner) {
+                scanner = await loadScannerScript();
+            }
+            if (scanner && typeof scanner.initialize === 'function') {
+                scanner.initialize();
+            }
+            const scanRequest = {
+                use_asprise_dialog: true,
+                show_scanner_ui: true,
+                twain_cap_setting: { ICAP_PIXELTYPE: "TWPT_RGB" },
+                output_settings: [{ type: "return-base64", format: "jpg" }],
+            };
+            scanner.scan(displayImagesOnPage, scanRequest);
+        }
+        catch (error) {
+            console.error(error);
+            alert("Scanner Not Available or Failed to load!");
+            setIsScanning(false);
+        }
+    }, [isScanning, displayImagesOnPage]);
     // Download PDF
     const handleDownloadPDF = () => {
         if (!pdfUrl)
@@ -148,20 +158,19 @@ export const Scanner = ({ name, value, onChange, disabled, multiple, placeholder
         onChange?.(null);
         clearErrors?.(name || "default");
     };
-    return (React.createElement(React.Fragment, null,
-        React.createElement(Box, { className: classes.root },
-            React.createElement(Box, { className: classes.header },
-                React.createElement(Typography, { className: classes.title }, localeText?.scanTitle || "Document Scanner"),
-                React.createElement(Box, { className: classes.actions },
-                    React.createElement(Button, { variant: variant, onClick: handleScan, disabled: !isScriptLoaded || disabled || isScanning, startIcon: React.createElement(MuiIcons.Scanner, null) }, isScanning ? localeText?.scanningText || "Scanning..." : localeText?.scanButton || "Scan Document"),
-                    pdfUrl && (React.createElement(React.Fragment, null,
-                        React.createElement(Button, { variant: variant, startIcon: React.createElement(MuiIcons.Download, null), onClick: handleDownloadPDF }, localeText?.downloadButton || "Download PDF"),
-                        React.createElement(Button, { variant: variant, startIcon: React.createElement(MuiIcons.OpenInNew, null), onClick: handleOpenPDF }, localeText?.openPdfButton || "Open PDF"),
-                        React.createElement(Button, { variant: variant, startIcon: React.createElement(MuiIcons.Delete, null), onClick: handleClear }, localeText?.clearButton || "Clear"))))),
-            pdfUrl ? (React.createElement(Box, { className: classes.previewBox, style: { width: pdfWidth, height: pdfHeight } },
-                React.createElement("iframe", { src: pdfUrl, className: classes.iframe, title: "PDF Preview" }))) : (React.createElement(Box, { className: classes.placeholder },
-                React.createElement(MuiIcons.Scanner, { fontSize: "large", className: classes.placeholderIcon }),
-                React.createElement(Typography, { className: classes.placeholderText }, placeholder || "No Scanned Documents Yet. Click Scan To Begin"))),
-            hasError && (React.createElement(FormHelperText, { className: classes.errorText }, String(errors?.[name || "default"]?.message || ""))))));
+    return (React.createElement(Box, { className: classes.root },
+        React.createElement(Box, { className: classes.header },
+            React.createElement(Typography, { className: classes.title }, localeText?.scanTitle || "Document Scanner"),
+            React.createElement(Box, { className: classes.actions },
+                React.createElement(Button, { variant: variant, onClick: handleScan, disabled: disabled || isScanning, startIcon: React.createElement(MuiIcons.Scanner, null) }, isScanning ? localeText?.scanningText || "Scanning..." : localeText?.scanButton || "Scan Document"),
+                pdfUrl && (React.createElement(React.Fragment, null,
+                    React.createElement(Button, { variant: variant, startIcon: React.createElement(MuiIcons.Download, null), onClick: handleDownloadPDF }, localeText?.downloadButton || "Download PDF"),
+                    React.createElement(Button, { variant: variant, startIcon: React.createElement(MuiIcons.OpenInNew, null), onClick: handleOpenPDF }, localeText?.openPdfButton || "Open PDF"),
+                    React.createElement(Button, { variant: variant, startIcon: React.createElement(MuiIcons.Delete, null), onClick: handleClear }, localeText?.clearButton || "Clear"))))),
+        pdfUrl ? (React.createElement(Box, { className: classes.previewBox, style: { width: pdfWidth, height: pdfHeight } },
+            React.createElement("iframe", { src: pdfUrl, className: classes.iframe, title: "PDF Preview" }))) : (React.createElement(Box, { className: classes.placeholder },
+            React.createElement(MuiIcons.Scanner, { fontSize: "large", className: classes.placeholderIcon }),
+            React.createElement(Typography, { className: classes.placeholderText }, placeholder || "No Scanned Documents Yet. Click Scan To Begin"))),
+        hasError && (React.createElement(FormHelperText, { className: classes.errorText }, String(errors?.[name || "default"]?.message || "")))));
 };
 //# sourceMappingURL=index.js.map

@@ -463,9 +463,17 @@ const formatValueByType = (value, type) => {
     }
     return value;
 };
-const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, totalPages }) => {
-    debugger;
-    if (item?.type === "text-object" && ((!item?.fixed && pageIndex == 0) || item?.fixed)) {
+const ProcessItem = ({ apiData, item: rawItem, pageIndex, tableData, json, parameter, totalPages, adjustedLayouts }) => {
+    const item = (adjustedLayouts && adjustedLayouts[rawItem?.id])
+        ? { ...rawItem, y: adjustedLayouts[rawItem.id].y }
+        : rawItem;
+    const isVisible = item?.fixed ||
+        (adjustedLayouts
+            ? !!adjustedLayouts[item?.id]
+            : (item?.type === "text-object" ? pageIndex === 0 : true));
+    if (!isVisible)
+        return null;
+    if (item?.type === "text-object") {
         const itemStyles = ProcessTextObjectItem(item, json);
         const { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin, ...textStyles } = itemStyles;
         const containerStyles = { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin };
@@ -512,15 +520,6 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
     }
     else if (item?.type === "special-field") {
         const itemStyles = ProcessSpecialFieldItem(item, json);
-        const context = {
-            dir: json?.Direction,
-            pageNumber: (pageIndex ?? 0) + 1,
-            totalPages: totalPages || 1,
-            printedBy: "Coject User",
-            printDate: new Date(),
-            format: item?.format || (item?.fieldType == "currentTime" ? "HH:mm" : "dd/MM/yyyy HH:mm")
-        };
-        const value = getSpecialFieldValue(item.fieldType, context);
         return (React.createElement(View, { style: { position: itemStyles.position, left: itemStyles.left, top: itemStyles.top, width: itemStyles.width, height: itemStyles.height, zIndex: itemStyles.zIndex, border: itemStyles.border, boxShadow: itemStyles.boxShadow, backgroundColor: itemStyles.backgroundColor, transform: itemStyles.transform, transformOrigin: itemStyles.transformOrigin, display: 'flex', justifyContent: 'center' } },
             React.createElement(Text, { style: {
                     fontSize: itemStyles.fontSize || '12pt',
@@ -534,7 +533,18 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
                     wordSpacing: itemStyles.wordSpacing,
                     width: '100%',
                     hyphens: 'none'
-                } }, String(value))));
+                }, render: ({ pageNumber, totalPages }) => {
+                    const context = {
+                        dir: json?.Direction,
+                        pageNumber,
+                        totalPages,
+                        printedBy: "Coject User",
+                        printDate: new Date(),
+                        format: item?.format || (item?.fieldType == "currentTime" ? "HH:mm" : "dd/MM/yyyy HH:mm")
+                    };
+                    const value = getSpecialFieldValue(item.fieldType, context);
+                    return String(value);
+                } })));
     }
     else if (item?.type === "table-object") {
         const itemStyles = ProcessTableObjectItem(item, json);
@@ -730,7 +740,7 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
                             cellValue = values.length ? Math.max(...values) : 0;
                         }
                         else {
-                            cellValue = rowsToUse[parseInt((fCol.rowNo) || "0") - 1]?.[fieldName] || '';
+                            cellValue = (rowsToUse[parseInt((fCol.rowNo) || "1") - 1]?.[fieldName]) ?? '';
                         }
                         if (fCol.format) {
                             cellValue = formatNumber(cellValue, fCol.format);
@@ -771,7 +781,21 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
                 })));
             });
         };
-        return ((((tableData ?? {})[item?.id] || (apiData ?? {})[item?.dataSource])?.length || pageIndex == 0) ? (React.createElement(View, { style: { ...itemStyles, borderTop: '1px solid #000' }, wrap: true },
+        const hasVisibleColumns = updatedColumnsEntries.length > 0;
+        const hasVisibleFooters = item?.footer && Array.isArray(item.footer) && item.footer.some((footerRow) => {
+            const fCols = footerRow?.columns || {};
+            const groupCol = fCols.groupColumn;
+            if (groupCol)
+                return false;
+            const visibility = fCols.footerVisibility || "ALL";
+            if (visibility === "LAST" && (pageIndex ?? 0) !== (totalPages ?? 1) - 1) {
+                return false;
+            }
+            return true;
+        });
+        const hasVisibleRows = hasVisibleColumns && processedRows.length > 0;
+        const isTableVisibleOnThisPage = hasVisibleRows || hasVisibleFooters || (!shouldRepeatHeader && hasVisibleColumns);
+        return ((isTableVisibleOnThisPage && (((tableData ?? {})[item?.id] || (apiData ?? {})[item?.dataSource])?.length || (pageIndex ?? 0) == 0)) ? (React.createElement(View, { style: { ...itemStyles, borderTop: '1px solid #000' }, wrap: true },
             !shouldRepeatHeader && renderTableHeader('top-header'),
             React.createElement(View, { style: { flexDirection: 'column' } },
                 processedRows.map((pRow) => {
@@ -833,7 +857,7 @@ const ProcessItem = ({ apiData, item, pageIndex, tableData, json, parameter, tot
     }
     else if (item?.type === "panel") {
         const itemStyles = ProcessPanelItem(item, json);
-        return (React.createElement(View, { style: { ...itemStyles } }, item?.body?.items?.map((childItem, index) => (React.createElement(ProcessItem, { key: index, apiData: apiData, item: childItem, json: json, pageIndex: pageIndex, tableData: tableData, parameter: parameter, totalPages: totalPages })))));
+        return (React.createElement(View, { style: { ...itemStyles } }, item?.body?.items?.map((childItem, index) => (React.createElement(ProcessItem, { key: index, apiData: apiData, item: childItem, json: json, pageIndex: pageIndex, tableData: tableData, parameter: parameter, totalPages: totalPages, adjustedLayouts: adjustedLayouts })))));
     }
     return null;
 };

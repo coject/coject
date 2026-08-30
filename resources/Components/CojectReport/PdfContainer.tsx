@@ -97,76 +97,9 @@ function estimateFooterHeight(footer: any): number {
     return footer.length * 1.1;
 }
 
-// Pagination logic to handle page breaks
-function paginateByHeight(data: any[], columns: any, availableHeight: number, json: any, tableItem: any): any[] {
-    const pages = [];
-    let currentPage = [];
-    let usedHeight = 0;
-
-    const groupConfigs = tableItem?.groups || [];
-    const shouldRepeatHeader = groupConfigs.some((g: any) => g.showHeader);
-    const headerHeight = estimateHeaderHeight(columns, json);
-
-    let lastGroupValues: any = {};
-
-    for (const row of data) {
-        // Simulate ProcessItem's group detection logic
-        let tempLastGroupValues: any = { ...lastGroupValues };
-        let tempGroupChanged = false;
-        let tempExtraHeight = 0;
-
-        groupConfigs.forEach((group: any) => {
-            const val = row[group.field];
-            if (tempGroupChanged || val !== tempLastGroupValues[group.field]) {
-                tempGroupChanged = true;
-                tempLastGroupValues[group.field] = val;
-                // Group header height estimation: padding (4pt*2) + fontSize(10pt) + border/margin
-                tempExtraHeight += 0.8;
-            }
-        });
-
-        if (shouldRepeatHeader) {
-            tempExtraHeight += headerHeight;
-        }
-
-        const rowHeight = estimateRowHeight(row, columns, json);
-        const totalRowHeight = rowHeight + tempExtraHeight;
-
-        // If this row (with its headers) doesn't fit, start a new page
-        if (usedHeight + totalRowHeight > availableHeight && currentPage.length > 0) {
-            pages.push(currentPage);
-            currentPage = [];
-            usedHeight = 0;
-            lastGroupValues = {}; // Reset for new page (matching ProcessItem's per-page initialization)
-
-            // Re-calculate headers for the first row of the new page
-            let newPageExtraHeight = 0;
-            let newPageGroupChanged = false;
-            groupConfigs.forEach((group: any) => {
-                const val = row[group.field];
-                if (newPageGroupChanged || val !== lastGroupValues[group.field]) {
-                    newPageGroupChanged = true;
-                    lastGroupValues[group.field] = val;
-                    newPageExtraHeight += 0.8;
-                }
-            });
-            if (shouldRepeatHeader) newPageExtraHeight += headerHeight;
-
-            currentPage.push(row);
-            usedHeight += rowHeight + newPageExtraHeight;
-        } else {
-            // Fits on current page
-            currentPage.push(row);
-            usedHeight += totalRowHeight;
-            lastGroupValues = tempLastGroupValues;
-        }
-    }
-
-    if (currentPage.length) {
-        pages.push(currentPage);
-    }
-
-    return pages;
+interface PageLayout {
+    adjustedLayouts: Record<string, { y: number; height: number }>;
+    tableData: Record<string, any[]>;
 }
 
 const getDecimal = (value: any): number => {
@@ -176,6 +109,236 @@ const getDecimal = (value: any): number => {
     return isNaN(parsed) ? 0 : parsed;
 };
 
+// Pagination logic to handle page breaks sequentially for all elements
+function computeSequentialLayout(jsonData: any, data: any): PageLayout[] {
+    const PxPerCmV = jsonData?.PxPerCmV || 29.7336;
+    const bodyHeightPx = jsonData?.Body?.height ?? jsonData?.Body?.Height ?? 0;
+
+    // Separate fixed and flow items
+    const allItems = jsonData?.Body?.items || [];
+    const flowItems = [...allItems]
+        .filter((item: any) => !item?.fixed)
+        .sort((a: any, b: any) => {
+            const dy = getDecimal(a?.y) - getDecimal(b?.y);
+            if (dy !== 0) return dy;
+            return getDecimal(a?.x) - getDecimal(b?.x);
+        });
+
+    // Group flow items by y coordinate to preserve horizontal rows (side-by-side elements)
+    const groups: any[][] = [];
+    let currentGroup: any[] = [];
+    flowItems.forEach((item) => {
+        if (currentGroup.length === 0) {
+            currentGroup.push(item);
+        } else {
+            const prevInGroup = currentGroup[currentGroup.length - 1];
+            // If the item's y is within 10 pixels of the previous item in the group, they are side-by-side
+            if (getDecimal(item.y) - getDecimal(prevInGroup.y) < 10) {
+                currentGroup.push(item);
+            } else {
+                groups.push(currentGroup);
+                currentGroup = [item];
+            }
+        }
+    });
+    if (currentGroup.length > 0) {
+        groups.push(currentGroup);
+    }
+
+    const pages: PageLayout[] = [];
+    let currentPageIndex = 0;
+
+    let currentPage: PageLayout & { yCursor: number } = {
+        yCursor: 0,
+        adjustedLayouts: {},
+        tableData: {}
+    };
+    pages.push(currentPage);
+
+    function startNewPage() {
+        currentPageIndex++;
+        currentPage = {
+            yCursor: 6, // 6 pixels top margin on new pages (approx 0.2cm)
+            adjustedLayouts: {},
+            tableData: {}
+        };
+        pages.push(currentPage);
+    }
+
+    let prevGroup: any[] | null = null;
+    let prevGroupPageIndex = 0;
+
+    groups.forEach((group, groupIdx) => {
+        if (groupIdx === 0) {
+            // Respect the design's top gap on the first page
+            currentPage.yCursor = getDecimal(group[0]?.y);
+        }
+
+        const isTable = group.length === 1 && group[0]?.type === "table-object";
+
+        if (isTable) {
+            const item = group[0];
+            const columns = item?.columns || {};
+            const tableDataSource = item?.dataSource || '';
+            const tableRows = data[tableDataSource] || [];
+
+            const headerHeight = estimateHeaderHeight(columns, jsonData) * PxPerCmV;
+            const footerHeight = estimateFooterHeight(item?.footer) * PxPerCmV;
+
+            const groupConfigs = item?.groups || [];
+            const shouldRepeatHeader = groupConfigs.some((g: any) => g.showHeader);
+
+            // Calculate design gap from the previous group on the same page
+            let designGap = 0;
+            if (prevGroup && currentPageIndex === prevGroupPageIndex) {
+                const maxPrevHeight = Math.max(...prevGroup.map((gItem: any) => getDecimal(gItem.height)));
+                designGap = Math.max(0, getDecimal(item.y) - (getDecimal(prevGroup[0].y) + maxPrevHeight));
+            }
+            // Clamp the gap to standard professional spacing (10px to 20px) to prevent both overlaps and huge empty spaces
+            const gap = prevGroup ? Math.min(20, Math.max(10, designGap)) : 0;
+
+            let tableStartCursor = currentPage.yCursor + gap;
+
+            // Ensure we can fit at least the header on the current page
+            if (tableStartCursor + headerHeight > bodyHeightPx) {
+                startNewPage();
+                tableStartCursor = currentPage.yCursor; // 6 pixels
+            } else {
+                currentPage.yCursor = tableStartCursor;
+            }
+
+            let lastGroupValues: any = {};
+            let tableRowIndex = 0;
+
+            if (tableRows.length === 0) {
+                // Empty table gets header + footer
+                const emptyTableHeight = headerHeight + footerHeight;
+                currentPage.tableData[item.id] = [];
+                currentPage.adjustedLayouts[item.id] = {
+                    y: currentPage.yCursor,
+                    height: emptyTableHeight
+                };
+                currentPage.yCursor += emptyTableHeight;
+            } else {
+                while (tableRowIndex < tableRows.length) {
+                    let tableHeightOnThisPage = 0;
+
+                    // If not repeating header, header is only on the very first page of the table
+                    const isFirstPageOfTable = !currentPage.adjustedLayouts[item.id];
+                    if (!shouldRepeatHeader && isFirstPageOfTable) {
+                        tableHeightOnThisPage += headerHeight;
+                    }
+
+                    const pageRows: any[] = [];
+                    let pageUsedHeight = tableHeightOnThisPage;
+
+                    while (tableRowIndex < tableRows.length) {
+                        const row = tableRows[tableRowIndex];
+
+                        let tempLastGroupValues = { ...lastGroupValues };
+                        let tempGroupChanged = false;
+                        let tempExtraHeight = 0;
+
+                        groupConfigs.forEach((gConf: any) => {
+                            const val = row[gConf.field];
+                            if (tempGroupChanged || val !== tempLastGroupValues[gConf.field]) {
+                                tempGroupChanged = true;
+                                tempLastGroupValues[gConf.field] = val;
+                                tempExtraHeight += 0.8 * PxPerCmV;
+                            }
+                        });
+
+                        if (shouldRepeatHeader) {
+                            tempExtraHeight += headerHeight;
+                        }
+
+                        const rowHeight = estimateRowHeight(row, columns, jsonData) * PxPerCmV;
+                        let totalRowHeight = rowHeight + tempExtraHeight;
+
+                        const isLastRow = (tableRowIndex === tableRows.length - 1);
+                        if (isLastRow) {
+                            totalRowHeight += footerHeight;
+                        }
+
+                        // Check overflow
+                        if (currentPage.yCursor + pageUsedHeight + totalRowHeight > bodyHeightPx && pageRows.length > 0) {
+                            break;
+                        }
+
+                        pageRows.push(row);
+                        pageUsedHeight += totalRowHeight;
+                        lastGroupValues = tempLastGroupValues;
+                        tableRowIndex++;
+                    }
+
+                    if (pageRows.length === 0 && tableRowIndex < tableRows.length) {
+                        // Force layout of at least one row to prevent infinite loop
+                        const row = tableRows[tableRowIndex];
+                        pageRows.push(row);
+
+                        let tempExtraHeight = 0;
+                        if (shouldRepeatHeader) tempExtraHeight += headerHeight;
+                        const rowHeight = estimateRowHeight(row, columns, jsonData) * PxPerCmV;
+                        pageUsedHeight += rowHeight + tempExtraHeight;
+                        tableRowIndex++;
+                    }
+
+                    currentPage.tableData[item.id] = pageRows;
+                    currentPage.adjustedLayouts[item.id] = {
+                        y: currentPage.yCursor,
+                        height: pageUsedHeight
+                    };
+
+                    currentPage.yCursor += pageUsedHeight;
+
+                    if (tableRowIndex < tableRows.length) {
+                        startNewPage();
+                        tableStartCursor = currentPage.yCursor;
+                    }
+                }
+            }
+
+            prevGroup = group;
+            prevGroupPageIndex = currentPageIndex;
+
+        } else {
+            // Non-table flow group (could contain multiple side-by-side elements)
+            const maxGroupHeight = Math.max(...group.map(gItem => getDecimal(gItem.height)));
+
+            // Calculate design gap from the previous group
+            let designGap = 0;
+            if (prevGroup && currentPageIndex === prevGroupPageIndex) {
+                const maxPrevHeight = Math.max(...prevGroup.map((gItem: any) => getDecimal(gItem.height)));
+                designGap = Math.max(0, getDecimal(group[0].y) - (getDecimal(prevGroup[0].y) + maxPrevHeight));
+            }
+            // Clamp the gap to standard professional spacing (10px to 20px) to prevent both overlaps and huge empty spaces
+            const gap = prevGroup ? Math.min(20, Math.max(10, designGap)) : 0;
+
+            if (currentPage.yCursor + gap + maxGroupHeight > bodyHeightPx) {
+                startNewPage();
+                // On new page, gap resets, starting from top margin (6px)
+                currentPage.yCursor = 6;
+            } else {
+                currentPage.yCursor += gap;
+            }
+
+            // Lay out all items in the group at the same yCursor
+            group.forEach((item) => {
+                currentPage.adjustedLayouts[item.id] = {
+                    y: currentPage.yCursor,
+                    height: getDecimal(item?.height)
+                };
+            });
+
+            currentPage.yCursor += maxGroupHeight;
+            prevGroup = group;
+            prevGroupPageIndex = currentPageIndex;
+        }
+    });
+
+    return pages;
+}
+
 interface PdfContainerProps {
     data: any;
     jsonData: any;
@@ -184,41 +347,24 @@ interface PdfContainerProps {
 }
 
 const PdfContainer: React.FC<PdfContainerProps> = ({ data, jsonData, parameter, reportName }) => {
-    let maxLength: number | undefined;
-    let paginatedDataForTables: any[] = [];
-    const tableItems = jsonData?.Body?.items?.filter((i: any) => i.type === "table-object") || [];
-    if (tableItems.length > 0) {
-        const columnsForTables = tableItems.map((item: any) => item.columns || {});
-        const tableTops = tableItems.map((item: any) => parseFloat((getDecimal(item?.y) / jsonData.PxPerCmV) as any || '0'));
-        const bodyHeightPx = jsonData?.Body?.height ?? jsonData?.Body?.Height ?? 0;
-        const bodyHeight = Math.trunc(((bodyHeightPx + 7) / jsonData?.PxPerCmV) * 100) / 100;
-        const headerHeights = columnsForTables.map((columns: any) => estimateHeaderHeight(columns, jsonData));
-        const footerHeights = tableItems.map((item: any) => estimateFooterHeight(item.footer));
-        const availableHeights = tableItems.map((item: any, index: number) => {
-            const groupConfigs = item?.groups || [];
-            const shouldRepeatHeader = groupConfigs.some((g: any) => g.showHeader);
-            const initialHeaderHeight = shouldRepeatHeader ? 0 : headerHeights[index];
-            return bodyHeight - tableTops[index] - initialHeaderHeight - footerHeights[index] - 0.5;
-        });
-        paginatedDataForTables = tableItems.map((item: any, index: number) => {
-            const tableDataSource = item.dataSource || '';
-            const tableData = data[tableDataSource] || [];
-            return {
-                id: item.id,
-                paginatedData: paginateByHeight(tableData, columnsForTables[index], availableHeights[index], jsonData, item)
-            };
-        });
-        maxLength = Math.max(...paginatedDataForTables.map((item: any) => item.paginatedData.length));
+    if (!jsonData || !jsonData.Body || !jsonData.Body.items) {
+        return (
+            <Document title={reportName}>
+                <PDFPage size="A4" style={{ fontFamily: 'Almarai' }}>
+                    <PdfHeader apiData={data} headerData={jsonData} tableData={data} pageIndex={0} parameter={parameter} totalPages={1} />
+                    <PdfBody apiData={data} bodyData={jsonData} tableData={{}} pageIndex={0} parameter={parameter} totalPages={1} />
+                    <PdfFooter apiData={data} footerData={jsonData} tableData={data} pageIndex={0} parameter={parameter} totalPages={1} />
+                </PDFPage>
+            </Document>
+        );
     }
+
+    const pages = computeSequentialLayout(jsonData, data);
+    const maxLength = pages.length;
 
     return (
         <Document title={reportName}>
-            {Array.from({ length: maxLength || 1 }).map((_, pageIndex) => {
-                const pageDataWithIds = tableItems.length > 0 && paginatedDataForTables.reduce((acc: any, item: any) => {
-                    acc[item.id] = item.paginatedData[pageIndex] || [];
-                    return acc;
-                }, {});
-
+            {pages.map((pageLayout, pageIndex) => {
                 return (
                     <PDFPage key={pageIndex} size={jsonData?.PaperSize} orientation={jsonData?.PageOrientation} style={{
                         fontFamily: 'Almarai',
@@ -229,7 +375,15 @@ const PdfContainer: React.FC<PdfContainerProps> = ({ data, jsonData, parameter, 
                         <PdfHeader apiData={data} headerData={jsonData} tableData={data} pageIndex={pageIndex} parameter={parameter} totalPages={maxLength || 1} />
 
                         {/* Pdf Body */}
-                        <PdfBody apiData={data} bodyData={jsonData} tableData={pageDataWithIds} pageIndex={pageIndex} parameter={parameter} totalPages={maxLength || 1} />
+                        <PdfBody 
+                            apiData={data} 
+                            bodyData={jsonData} 
+                            tableData={pageLayout.tableData} 
+                            pageIndex={pageIndex} 
+                            parameter={parameter} 
+                            totalPages={maxLength || 1} 
+                            adjustedLayouts={pageLayout.adjustedLayouts}
+                        />
 
                         {/* Pdf Footer */}
                         <PdfFooter apiData={data} footerData={jsonData} tableData={data} pageIndex={pageIndex} parameter={parameter} totalPages={maxLength || 1} />

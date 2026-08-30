@@ -524,11 +524,22 @@ interface ProcessItemProps {
     json?: any;
     parameter?: any;
     totalPages?: number;
+    adjustedLayouts?: Record<string, { y: number; height: number }>;
 }
 
-const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tableData, json, parameter, totalPages }) => {
-    debugger;
-    if (item?.type === "text-object" && ((!item?.fixed && pageIndex == 0) || item?.fixed)) {
+const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item: rawItem, pageIndex, tableData, json, parameter, totalPages, adjustedLayouts }) => {
+    const item = (adjustedLayouts && adjustedLayouts[rawItem?.id])
+        ? { ...rawItem, y: adjustedLayouts[rawItem.id].y }
+        : rawItem;
+
+    const isVisible = item?.fixed ||
+        (adjustedLayouts
+            ? !!adjustedLayouts[item?.id]
+            : (item?.type === "text-object" ? pageIndex === 0 : true));
+
+    if (!isVisible) return null;
+
+    if (item?.type === "text-object") {
         const itemStyles = ProcessTextObjectItem(item, json);
         const { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin, ...textStyles } = itemStyles;
         const containerStyles = { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin };
@@ -594,32 +605,35 @@ const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tab
     }
     else if (item?.type === "special-field") {
         const itemStyles = ProcessSpecialFieldItem(item, json);
-        const context = {
-            dir: json?.Direction,
-            pageNumber: (pageIndex ?? 0) + 1,
-            totalPages: totalPages || 1,
-            printedBy: "Coject User",
-            printDate: new Date(),
-            format: item?.format || (item?.fieldType == "currentTime" ? "HH:mm" : "dd/MM/yyyy HH:mm")
-        };
-        const value = getSpecialFieldValue(item.fieldType, context);
         return (
             <View style={{ position: itemStyles.position, left: itemStyles.left, top: itemStyles.top, width: itemStyles.width, height: itemStyles.height, zIndex: itemStyles.zIndex, border: itemStyles.border, boxShadow: itemStyles.boxShadow, backgroundColor: itemStyles.backgroundColor, transform: itemStyles.transform, transformOrigin: itemStyles.transformOrigin, display: 'flex', justifyContent: 'center' } as any}>
-                <Text style={{
-                    fontSize: itemStyles.fontSize || '12pt',
-                    color: itemStyles.color || 'black',
-                    fontFamily: itemStyles.fontFamily,
-                    textAlign: itemStyles.textAlign,
-                    fontWeight: itemStyles.fontWeight,
-                    fontStyle: itemStyles.fontStyle,
-                    textDecoration: itemStyles.textDecoration,
-                    letterSpacing: itemStyles.letterSpacing,
-                    wordSpacing: itemStyles.wordSpacing,
-                    width: '100%',
-                    hyphens: 'none'
-                } as any}>
-                    {String(value)}
-                </Text>
+                <Text
+                    style={{
+                        fontSize: itemStyles.fontSize || '12pt',
+                        color: itemStyles.color || 'black',
+                        fontFamily: itemStyles.fontFamily,
+                        textAlign: itemStyles.textAlign,
+                        fontWeight: itemStyles.fontWeight,
+                        fontStyle: itemStyles.fontStyle,
+                        textDecoration: itemStyles.textDecoration,
+                        letterSpacing: itemStyles.letterSpacing,
+                        wordSpacing: itemStyles.wordSpacing,
+                        width: '100%',
+                        hyphens: 'none'
+                    } as any}
+                    render={({ pageNumber, totalPages }) => {
+                        const context = {
+                            dir: json?.Direction,
+                            pageNumber,
+                            totalPages,
+                            printedBy: "Coject User",
+                            printDate: new Date(),
+                            format: item?.format || (item?.fieldType == "currentTime" ? "HH:mm" : "dd/MM/yyyy HH:mm")
+                        };
+                        const value = getSpecialFieldValue(item.fieldType, context);
+                        return String(value);
+                    }}
+                />
             </View>
         )
     }
@@ -836,7 +850,7 @@ const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tab
                                     cellValue = values.length ? Math.max(...values) : 0;
                                 }
                                 else {
-                                    cellValue = rowsToUse[parseInt((fCol.rowNo) || "0") - 1]?.[fieldName] || '';
+                                    cellValue = (rowsToUse[parseInt((fCol.rowNo) || "1") - 1]?.[fieldName]) ?? '';
                                 }
 
                                 if (fCol.format) {
@@ -883,8 +897,22 @@ const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tab
             });
         };
 
+        const hasVisibleColumns = updatedColumnsEntries.length > 0;
+        const hasVisibleFooters = item?.footer && Array.isArray(item.footer) && item.footer.some((footerRow: any) => {
+            const fCols = footerRow?.columns || {};
+            const groupCol = fCols.groupColumn;
+            if (groupCol) return false;
+            const visibility = fCols.footerVisibility || "ALL";
+            if (visibility === "LAST" && (pageIndex ?? 0) !== (totalPages ?? 1) - 1) {
+                return false;
+            }
+            return true;
+        });
+        const hasVisibleRows = hasVisibleColumns && processedRows.length > 0;
+        const isTableVisibleOnThisPage = hasVisibleRows || hasVisibleFooters || (!shouldRepeatHeader && hasVisibleColumns);
+
         return (
-            (((tableData ?? {})[item?.id] || (apiData ?? {})[item?.dataSource])?.length || pageIndex == 0) ? (
+            (isTableVisibleOnThisPage && (((tableData ?? {})[item?.id] || (apiData ?? {})[item?.dataSource])?.length || (pageIndex ?? 0) == 0)) ? (
                 <View style={{ ...itemStyles, borderTop: '1px solid #000' }} wrap={true}>
                     {/* Header Row (Only once at top if not repeating) */}
                     {!shouldRepeatHeader && renderTableHeader('top-header')}
@@ -976,6 +1004,7 @@ const ProcessItem: React.FC<ProcessItemProps> = ({ apiData, item, pageIndex, tab
                         tableData={tableData}
                         parameter={parameter}
                         totalPages={totalPages}
+                        adjustedLayouts={adjustedLayouts}
                     />
                 ))}
             </View>

@@ -7,6 +7,10 @@ interface ProcessItemProps {
     json?: any;
     parameter?: any;
     totalPages?: number;
+    adjustedLayouts?: Record<string, {
+        y: number;
+        height: number;
+    }>;
 }
 declare const ProcessItem: React.FC<ProcessItemProps>;
 export default ProcessItem;

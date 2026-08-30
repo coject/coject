@@ -14,12 +14,13 @@ interface PdfBodyProps {
     pageIndex?: number;
     parameter?: any;
     totalPages?: number;
+    adjustedLayouts?: Record<string, { y: number; height: number }>;
 }
 
-const Body: React.FC<PdfBodyProps> = ({ apiData, bodyData, tableData, pageIndex, parameter, totalPages }) => (
+const Body: React.FC<PdfBodyProps> = ({ apiData, bodyData, tableData, pageIndex, parameter, totalPages, adjustedLayouts }) => (
     <View style={{ position: 'relative', height: bodyData?.Body?.height ? `${Math.trunc(((bodyData?.Body?.height + 7) / bodyData?.PxPerCmV) * 100) / 100}cm` : 0 }}>
         {bodyData?.Body?.items?.map((item: any, index: number) => {
-            return (<ProcessItem key={index} apiData={apiData} item={item} json={bodyData} pageIndex={pageIndex} tableData={tableData} parameter={parameter} totalPages={totalPages} />);
+            return (<ProcessItem key={index} apiData={apiData} item={item} json={bodyData} pageIndex={pageIndex} tableData={tableData} parameter={parameter} totalPages={totalPages} adjustedLayouts={adjustedLayouts} />);
         })}
     </View>
 );

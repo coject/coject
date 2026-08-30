@@ -85,68 +85,6 @@ function estimateFooterHeight(footer) {
         return 0;
     return footer.length * 1.1;
 }
-// Pagination logic to handle page breaks
-function paginateByHeight(data, columns, availableHeight, json, tableItem) {
-    const pages = [];
-    let currentPage = [];
-    let usedHeight = 0;
-    const groupConfigs = tableItem?.groups || [];
-    const shouldRepeatHeader = groupConfigs.some((g) => g.showHeader);
-    const headerHeight = estimateHeaderHeight(columns, json);
-    let lastGroupValues = {};
-    for (const row of data) {
-        // Simulate ProcessItem's group detection logic
-        let tempLastGroupValues = { ...lastGroupValues };
-        let tempGroupChanged = false;
-        let tempExtraHeight = 0;
-        groupConfigs.forEach((group) => {
-            const val = row[group.field];
-            if (tempGroupChanged || val !== tempLastGroupValues[group.field]) {
-                tempGroupChanged = true;
-                tempLastGroupValues[group.field] = val;
-                // Group header height estimation: padding (4pt*2) + fontSize(10pt) + border/margin
-                tempExtraHeight += 0.8;
-            }
-        });
-        if (shouldRepeatHeader) {
-            tempExtraHeight += headerHeight;
-        }
-        const rowHeight = estimateRowHeight(row, columns, json);
-        const totalRowHeight = rowHeight + tempExtraHeight;
-        // If this row (with its headers) doesn't fit, start a new page
-        if (usedHeight + totalRowHeight > availableHeight && currentPage.length > 0) {
-            pages.push(currentPage);
-            currentPage = [];
-            usedHeight = 0;
-            lastGroupValues = {}; // Reset for new page (matching ProcessItem's per-page initialization)
-            // Re-calculate headers for the first row of the new page
-            let newPageExtraHeight = 0;
-            let newPageGroupChanged = false;
-            groupConfigs.forEach((group) => {
-                const val = row[group.field];
-                if (newPageGroupChanged || val !== lastGroupValues[group.field]) {
-                    newPageGroupChanged = true;
-                    lastGroupValues[group.field] = val;
-                    newPageExtraHeight += 0.8;
-                }
-            });
-            if (shouldRepeatHeader)
-                newPageExtraHeight += headerHeight;
-            currentPage.push(row);
-            usedHeight += rowHeight + newPageExtraHeight;
-        }
-        else {
-            // Fits on current page
-            currentPage.push(row);
-            usedHeight += totalRowHeight;
-            lastGroupValues = tempLastGroupValues;
-        }
-    }
-    if (currentPage.length) {
-        pages.push(currentPage);
-    }
-    return pages;
-}
 const getDecimal = (value) => {
     if (value === null || value === undefined)
         return 0;
@@ -155,45 +93,223 @@ const getDecimal = (value) => {
     const parsed = parseFloat(value);
     return isNaN(parsed) ? 0 : parsed;
 };
-const PdfContainer = ({ data, jsonData, parameter, reportName }) => {
-    let maxLength;
-    let paginatedDataForTables = [];
-    const tableItems = jsonData?.Body?.items?.filter((i) => i.type === "table-object") || [];
-    if (tableItems.length > 0) {
-        const columnsForTables = tableItems.map((item) => item.columns || {});
-        const tableTops = tableItems.map((item) => parseFloat((getDecimal(item?.y) / jsonData.PxPerCmV) || '0'));
-        const bodyHeightPx = jsonData?.Body?.height ?? jsonData?.Body?.Height ?? 0;
-        const bodyHeight = Math.trunc(((bodyHeightPx + 7) / jsonData?.PxPerCmV) * 100) / 100;
-        const headerHeights = columnsForTables.map((columns) => estimateHeaderHeight(columns, jsonData));
-        const footerHeights = tableItems.map((item) => estimateFooterHeight(item.footer));
-        const availableHeights = tableItems.map((item, index) => {
+// Pagination logic to handle page breaks sequentially for all elements
+function computeSequentialLayout(jsonData, data) {
+    const PxPerCmV = jsonData?.PxPerCmV || 29.7336;
+    const bodyHeightPx = jsonData?.Body?.height ?? jsonData?.Body?.Height ?? 0;
+    // Separate fixed and flow items
+    const allItems = jsonData?.Body?.items || [];
+    const flowItems = [...allItems]
+        .filter((item) => !item?.fixed)
+        .sort((a, b) => {
+        const dy = getDecimal(a?.y) - getDecimal(b?.y);
+        if (dy !== 0)
+            return dy;
+        return getDecimal(a?.x) - getDecimal(b?.x);
+    });
+    // Group flow items by y coordinate to preserve horizontal rows (side-by-side elements)
+    const groups = [];
+    let currentGroup = [];
+    flowItems.forEach((item) => {
+        if (currentGroup.length === 0) {
+            currentGroup.push(item);
+        }
+        else {
+            const prevInGroup = currentGroup[currentGroup.length - 1];
+            // If the item's y is within 10 pixels of the previous item in the group, they are side-by-side
+            if (getDecimal(item.y) - getDecimal(prevInGroup.y) < 10) {
+                currentGroup.push(item);
+            }
+            else {
+                groups.push(currentGroup);
+                currentGroup = [item];
+            }
+        }
+    });
+    if (currentGroup.length > 0) {
+        groups.push(currentGroup);
+    }
+    const pages = [];
+    let currentPageIndex = 0;
+    let currentPage = {
+        yCursor: 0,
+        adjustedLayouts: {},
+        tableData: {}
+    };
+    pages.push(currentPage);
+    function startNewPage() {
+        currentPageIndex++;
+        currentPage = {
+            yCursor: 6, // 6 pixels top margin on new pages (approx 0.2cm)
+            adjustedLayouts: {},
+            tableData: {}
+        };
+        pages.push(currentPage);
+    }
+    let prevGroup = null;
+    let prevGroupPageIndex = 0;
+    groups.forEach((group, groupIdx) => {
+        if (groupIdx === 0) {
+            // Respect the design's top gap on the first page
+            currentPage.yCursor = getDecimal(group[0]?.y);
+        }
+        const isTable = group.length === 1 && group[0]?.type === "table-object";
+        if (isTable) {
+            const item = group[0];
+            const columns = item?.columns || {};
+            const tableDataSource = item?.dataSource || '';
+            const tableRows = data[tableDataSource] || [];
+            const headerHeight = estimateHeaderHeight(columns, jsonData) * PxPerCmV;
+            const footerHeight = estimateFooterHeight(item?.footer) * PxPerCmV;
             const groupConfigs = item?.groups || [];
             const shouldRepeatHeader = groupConfigs.some((g) => g.showHeader);
-            const initialHeaderHeight = shouldRepeatHeader ? 0 : headerHeights[index];
-            return bodyHeight - tableTops[index] - initialHeaderHeight - footerHeights[index] - 0.5;
-        });
-        paginatedDataForTables = tableItems.map((item, index) => {
-            const tableDataSource = item.dataSource || '';
-            const tableData = data[tableDataSource] || [];
-            return {
-                id: item.id,
-                paginatedData: paginateByHeight(tableData, columnsForTables[index], availableHeights[index], jsonData, item)
-            };
-        });
-        maxLength = Math.max(...paginatedDataForTables.map((item) => item.paginatedData.length));
+            // Calculate design gap from the previous group on the same page
+            let designGap = 0;
+            if (prevGroup && currentPageIndex === prevGroupPageIndex) {
+                const maxPrevHeight = Math.max(...prevGroup.map((gItem) => getDecimal(gItem.height)));
+                designGap = Math.max(0, getDecimal(item.y) - (getDecimal(prevGroup[0].y) + maxPrevHeight));
+            }
+            // Clamp the gap to standard professional spacing (10px to 20px) to prevent both overlaps and huge empty spaces
+            const gap = prevGroup ? Math.min(20, Math.max(10, designGap)) : 0;
+            let tableStartCursor = currentPage.yCursor + gap;
+            // Ensure we can fit at least the header on the current page
+            if (tableStartCursor + headerHeight > bodyHeightPx) {
+                startNewPage();
+                tableStartCursor = currentPage.yCursor; // 6 pixels
+            }
+            else {
+                currentPage.yCursor = tableStartCursor;
+            }
+            let lastGroupValues = {};
+            let tableRowIndex = 0;
+            if (tableRows.length === 0) {
+                // Empty table gets header + footer
+                const emptyTableHeight = headerHeight + footerHeight;
+                currentPage.tableData[item.id] = [];
+                currentPage.adjustedLayouts[item.id] = {
+                    y: currentPage.yCursor,
+                    height: emptyTableHeight
+                };
+                currentPage.yCursor += emptyTableHeight;
+            }
+            else {
+                while (tableRowIndex < tableRows.length) {
+                    let tableHeightOnThisPage = 0;
+                    // If not repeating header, header is only on the very first page of the table
+                    const isFirstPageOfTable = !currentPage.adjustedLayouts[item.id];
+                    if (!shouldRepeatHeader && isFirstPageOfTable) {
+                        tableHeightOnThisPage += headerHeight;
+                    }
+                    const pageRows = [];
+                    let pageUsedHeight = tableHeightOnThisPage;
+                    while (tableRowIndex < tableRows.length) {
+                        const row = tableRows[tableRowIndex];
+                        let tempLastGroupValues = { ...lastGroupValues };
+                        let tempGroupChanged = false;
+                        let tempExtraHeight = 0;
+                        groupConfigs.forEach((gConf) => {
+                            const val = row[gConf.field];
+                            if (tempGroupChanged || val !== tempLastGroupValues[gConf.field]) {
+                                tempGroupChanged = true;
+                                tempLastGroupValues[gConf.field] = val;
+                                tempExtraHeight += 0.8 * PxPerCmV;
+                            }
+                        });
+                        if (shouldRepeatHeader) {
+                            tempExtraHeight += headerHeight;
+                        }
+                        const rowHeight = estimateRowHeight(row, columns, jsonData) * PxPerCmV;
+                        let totalRowHeight = rowHeight + tempExtraHeight;
+                        const isLastRow = (tableRowIndex === tableRows.length - 1);
+                        if (isLastRow) {
+                            totalRowHeight += footerHeight;
+                        }
+                        // Check overflow
+                        if (currentPage.yCursor + pageUsedHeight + totalRowHeight > bodyHeightPx && pageRows.length > 0) {
+                            break;
+                        }
+                        pageRows.push(row);
+                        pageUsedHeight += totalRowHeight;
+                        lastGroupValues = tempLastGroupValues;
+                        tableRowIndex++;
+                    }
+                    if (pageRows.length === 0 && tableRowIndex < tableRows.length) {
+                        // Force layout of at least one row to prevent infinite loop
+                        const row = tableRows[tableRowIndex];
+                        pageRows.push(row);
+                        let tempExtraHeight = 0;
+                        if (shouldRepeatHeader)
+                            tempExtraHeight += headerHeight;
+                        const rowHeight = estimateRowHeight(row, columns, jsonData) * PxPerCmV;
+                        pageUsedHeight += rowHeight + tempExtraHeight;
+                        tableRowIndex++;
+                    }
+                    currentPage.tableData[item.id] = pageRows;
+                    currentPage.adjustedLayouts[item.id] = {
+                        y: currentPage.yCursor,
+                        height: pageUsedHeight
+                    };
+                    currentPage.yCursor += pageUsedHeight;
+                    if (tableRowIndex < tableRows.length) {
+                        startNewPage();
+                        tableStartCursor = currentPage.yCursor;
+                    }
+                }
+            }
+            prevGroup = group;
+            prevGroupPageIndex = currentPageIndex;
+        }
+        else {
+            // Non-table flow group (could contain multiple side-by-side elements)
+            const maxGroupHeight = Math.max(...group.map(gItem => getDecimal(gItem.height)));
+            // Calculate design gap from the previous group
+            let designGap = 0;
+            if (prevGroup && currentPageIndex === prevGroupPageIndex) {
+                const maxPrevHeight = Math.max(...prevGroup.map((gItem) => getDecimal(gItem.height)));
+                designGap = Math.max(0, getDecimal(group[0].y) - (getDecimal(prevGroup[0].y) + maxPrevHeight));
+            }
+            // Clamp the gap to standard professional spacing (10px to 20px) to prevent both overlaps and huge empty spaces
+            const gap = prevGroup ? Math.min(20, Math.max(10, designGap)) : 0;
+            if (currentPage.yCursor + gap + maxGroupHeight > bodyHeightPx) {
+                startNewPage();
+                // On new page, gap resets, starting from top margin (6px)
+                currentPage.yCursor = 6;
+            }
+            else {
+                currentPage.yCursor += gap;
+            }
+            // Lay out all items in the group at the same yCursor
+            group.forEach((item) => {
+                currentPage.adjustedLayouts[item.id] = {
+                    y: currentPage.yCursor,
+                    height: getDecimal(item?.height)
+                };
+            });
+            currentPage.yCursor += maxGroupHeight;
+            prevGroup = group;
+            prevGroupPageIndex = currentPageIndex;
+        }
+    });
+    return pages;
+}
+const PdfContainer = ({ data, jsonData, parameter, reportName }) => {
+    if (!jsonData || !jsonData.Body || !jsonData.Body.items) {
+        return (React.createElement(Document, { title: reportName },
+            React.createElement(PDFPage, { size: "A4", style: { fontFamily: 'Almarai' } },
+                React.createElement(PdfHeader, { apiData: data, headerData: jsonData, tableData: data, pageIndex: 0, parameter: parameter, totalPages: 1 }),
+                React.createElement(PdfBody, { apiData: data, bodyData: jsonData, tableData: {}, pageIndex: 0, parameter: parameter, totalPages: 1 }),
+                React.createElement(PdfFooter, { apiData: data, footerData: jsonData, tableData: data, pageIndex: 0, parameter: parameter, totalPages: 1 }))));
     }
-    return (React.createElement(Document, { title: reportName }, Array.from({ length: maxLength || 1 }).map((_, pageIndex) => {
-        const pageDataWithIds = tableItems.length > 0 && paginatedDataForTables.reduce((acc, item) => {
-            acc[item.id] = item.paginatedData[pageIndex] || [];
-            return acc;
-        }, {});
+    const pages = computeSequentialLayout(jsonData, data);
+    const maxLength = pages.length;
+    return (React.createElement(Document, { title: reportName }, pages.map((pageLayout, pageIndex) => {
         return (React.createElement(PDFPage, { key: pageIndex, size: jsonData?.PaperSize, orientation: jsonData?.PageOrientation, style: {
                 fontFamily: 'Almarai',
                 textAlign: jsonData.Direction === 'rtl' ? 'right' : 'left',
                 direction: jsonData.Direction
             } },
             React.createElement(PdfHeader, { apiData: data, headerData: jsonData, tableData: data, pageIndex: pageIndex, parameter: parameter, totalPages: maxLength || 1 }),
-            React.createElement(PdfBody, { apiData: data, bodyData: jsonData, tableData: pageDataWithIds, pageIndex: pageIndex, parameter: parameter, totalPages: maxLength || 1 }),
+            React.createElement(PdfBody, { apiData: data, bodyData: jsonData, tableData: pageLayout.tableData, pageIndex: pageIndex, parameter: parameter, totalPages: maxLength || 1, adjustedLayouts: pageLayout.adjustedLayouts }),
             React.createElement(PdfFooter, { apiData: data, footerData: jsonData, tableData: data, pageIndex: pageIndex, parameter: parameter, totalPages: maxLength || 1 })));
     })));
 };

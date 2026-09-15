@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getImageSource = exports.isImageValue = void 0;
 const react_1 = __importDefault(require("react"));
 // React Pdf
 const renderer_1 = require("@react-pdf/renderer");
@@ -31,6 +32,72 @@ const ensureWrap = (val) => {
         return word;
     }).join(' ');
 };
+// Function to check if a value or column represents an image
+const isImageValue = (val, colDef) => {
+    if (colDef?.type === 'image' || colDef?.valueType === 'image' || colDef?.isImage) {
+        return !!val;
+    }
+    if (val && typeof val === 'object' && (val.fileContentBase64 || val.base64)) {
+        return true;
+    }
+    if (typeof val !== 'string')
+        return false;
+    const str = val.trim();
+    if (!str)
+        return false;
+    if (str.startsWith('data:image/') || str.startsWith('blob:'))
+        return true;
+    if (/^https?:\/\/.*\.(png|jpg|jpeg|gif|webp|svg)(\?.*)?$/i.test(str))
+        return true;
+    // Check base64 magic headers
+    if (str.startsWith('iVBORw0KGgo') || str.startsWith('/9j/') || str.startsWith('R0lGOD') || str.startsWith('UklGR')) {
+        return true;
+    }
+    const nameHint = String(colDef?.parameter || colDef?.field || colDef?.text || '').toLowerCase();
+    const isImageNameHint = nameHint.includes('image') || nameHint.includes('img') || nameHint.includes('sign') || nameHint.includes('photo') || nameHint.includes('logo') || nameHint.includes('صورة') || nameHint.includes('توقيع');
+    const clean = str.replace(/\s+/g, '');
+    if (isImageNameHint && clean.length > 20 && /^[A-Za-z0-9+/=]+$/.test(clean)) {
+        return true;
+    }
+    if (clean.length > 100 && /^[A-Za-z0-9+/=]+$/.test(clean)) {
+        return true;
+    }
+    return false;
+};
+exports.isImageValue = isImageValue;
+// Function to get proper image source URL or Data URI
+const getImageSource = (val) => {
+    if (val && typeof val === 'object') {
+        const b64 = (val.fileContentBase64 || val.base64 || '').trim().replace(/\s+/g, '');
+        const mime = val.contentType || val.mimeType || 'image/png';
+        if (b64) {
+            return b64.startsWith('data:') ? b64 : `data:${mime};base64,${b64}`;
+        }
+    }
+    if (typeof val !== 'string')
+        return '';
+    const clean = val.trim().replace(/\s+/g, '');
+    if (clean.startsWith('http')) {
+        return `https://wsrv.nl/?url=${encodeURIComponent(val.trim())}&fit=contain&output=png&.png`;
+    }
+    if (clean.startsWith('data:image/') || clean.startsWith('blob:')) {
+        return val.trim();
+    }
+    if (clean.startsWith('iVBORw0KGgo')) {
+        return `data:image/png;base64,${clean}`;
+    }
+    if (clean.startsWith('/9j/')) {
+        return `data:image/jpeg;base64,${clean}`;
+    }
+    if (clean.startsWith('R0lGOD')) {
+        return `data:image/gif;base64,${clean}`;
+    }
+    if (clean.startsWith('UklGR')) {
+        return `data:image/webp;base64,${clean}`;
+    }
+    return `data:image/png;base64,${clean}`;
+};
+exports.getImageSource = getImageSource;
 // Function to get common styles
 const ProcessItemCommonStyles = (item, json) => {
     const x = getDecimal(item?.x);
@@ -504,6 +571,10 @@ const ProcessItem = ({ apiData, item: rawItem, pageIndex, tableData, json, param
         fieldValue = formatValueByType(fieldValue, colType);
         const { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin, ...textStyles } = itemStyles;
         const containerStyles = { position, left, top, width, height, zIndex, border, boxShadow, backgroundColor, transform, transformOrigin };
+        if ((0, exports.isImageValue)(fieldValue, item)) {
+            const imgSrc = (0, exports.getImageSource)(fieldValue);
+            return (react_1.default.createElement(renderer_1.View, { style: containerStyles }, imgSrc ? (react_1.default.createElement(renderer_1.Image, { src: imgSrc, cache: false, style: { width: '100%', height: '100%', objectFit: 'contain' } })) : null));
+        }
         return (react_1.default.createElement(renderer_1.View, { style: containerStyles },
             react_1.default.createElement(renderer_1.Text, { style: {
                     ...textStyles,
@@ -515,11 +586,8 @@ const ProcessItem = ({ apiData, item: rawItem, pageIndex, tableData, json, param
     else if (item?.type === "picture") {
         const itemStyles = ProcessPictureItem(item, json);
         let source = item?.sourceType === "parameter" ? parameter[item?.parameter] : item?.source;
-        if (typeof source === 'string' && source.startsWith('http')) {
-            source = `https://wsrv.nl/?url=${encodeURIComponent(source)}&fit=contain&output=png&.png`;
-        }
-        else if (typeof source === 'string' && !source.startsWith('data:') && source.length > 100) {
-            source = `data:image/png;base64,${source}`;
+        if (source) {
+            source = (0, exports.getImageSource)(source);
         }
         return (react_1.default.createElement(renderer_1.View, { style: { ...itemStyles } }, source ? react_1.default.createElement(renderer_1.Image, { src: source, cache: false }) : null));
     }
@@ -570,7 +638,8 @@ const ProcessItem = ({ apiData, item: rawItem, pageIndex, tableData, json, param
             }
         }
         // Grouping Logic
-        const tableRows = (tableData ?? {})[item?.id] || (apiData ?? {})[item?.dataSource] || [];
+        const rawRows = (tableData ?? {})[item?.id] || (apiData ?? {})[item?.dataSource] || [];
+        const tableRows = Array.isArray(rawRows) ? rawRows : (rawRows && typeof rawRows === 'object' && Object.keys(rawRows).length > 0 ? [rawRows] : []);
         const groupConfigs = item?.groups || [];
         const footerConfigs = item?.footer || [];
         const shouldRepeatHeader = groupConfigs.some((g) => g.showHeader);
@@ -648,11 +717,17 @@ const ProcessItem = ({ apiData, item: rawItem, pageIndex, tableData, json, param
             }
         });
         const renderTableHeader = (headerKey) => (react_1.default.createElement(renderer_1.View, { key: headerKey, style: { flexDirection: json?.Direction == 'rtl' ? 'row-reverse' : 'row' } }, headerItems.map((hItem, idx) => {
+            const isLastHeaderItem = idx === headerItems.length - 1;
+            const isFirstHeaderItem = idx === 0;
+            const isOuterLeft = (isLastHeaderItem && json?.Direction === 'rtl') || (isFirstHeaderItem && json?.Direction === 'ltr');
+            const isOuterRight = (isFirstHeaderItem && json?.Direction === 'rtl') || (isLastHeaderItem && json?.Direction === 'ltr');
             if (hItem.type === 'single') {
                 return (react_1.default.createElement(renderer_1.View, { key: idx, style: {
                         ...hItem.col.Styles,
                         minHeight: hasMerge ? '2cm' : '1cm',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
+                        ...(isOuterLeft ? { borderLeft: '1px solid #000' } : {}),
+                        ...(isOuterRight ? { borderRight: '1px solid #000' } : {})
                     } },
                     react_1.default.createElement(renderer_1.Text, { wrap: true, style: { textAlign: hItem.col.Styles.textAlign || 'left', width: '100%', hyphens: 'none' } }, ensureWrap(hItem.col.text || hItem.key))));
             }
@@ -665,11 +740,23 @@ const ProcessItem = ({ apiData, item: rawItem, pageIndex, tableData, json, param
                             width: `${totalWidthCm}cm`,
                             minHeight: '1cm',
                             justifyContent: 'center',
-                            alignItems: 'center'
+                            alignItems: 'center',
+                            ...(isOuterLeft ? { borderLeft: '1px solid #000' } : {}),
+                            ...(isOuterRight ? { borderRight: '1px solid #000' } : {})
                         } },
                         react_1.default.createElement(renderer_1.Text, { wrap: true, style: { textAlign: 'center', hyphens: 'none' } }, ensureWrap(hItem.col.colSpanLabel || ""))),
-                    react_1.default.createElement(renderer_1.View, { style: { flexDirection: json?.Direction == 'rtl' ? 'row-reverse' : 'row' } }, hItem.subCols.map(([sk, sc], sidx) => (react_1.default.createElement(renderer_1.View, { key: sidx, style: { ...sc.Styles, minHeight: '1cm', justifyContent: 'center' } },
-                        react_1.default.createElement(renderer_1.Text, { wrap: true, style: { textAlign: sc.Styles.textAlign || 'left', width: '100%', hyphens: 'none' } }, ensureWrap(sc.text || sk))))))));
+                    react_1.default.createElement(renderer_1.View, { style: { flexDirection: json?.Direction == 'rtl' ? 'row-reverse' : 'row' } }, hItem.subCols.map(([sk, sc], sidx) => {
+                        const isSubColOuterLeft = (sidx === hItem.subCols.length - 1 && json?.Direction === 'rtl') || (sidx === 0 && json?.Direction === 'ltr');
+                        const isSubColOuterRight = (sidx === 0 && json?.Direction === 'rtl') || (sidx === hItem.subCols.length - 1 && json?.Direction === 'ltr');
+                        return (react_1.default.createElement(renderer_1.View, { key: sidx, style: {
+                                ...sc.Styles,
+                                minHeight: '1cm',
+                                justifyContent: 'center',
+                                ...(isOuterLeft && isSubColOuterLeft ? { borderLeft: '1px solid #000' } : {}),
+                                ...(isOuterRight && isSubColOuterRight ? { borderRight: '1px solid #000' } : {})
+                            } },
+                            react_1.default.createElement(renderer_1.Text, { wrap: true, style: { textAlign: sc.Styles.textAlign || 'left', width: '100%', hyphens: 'none' } }, ensureWrap(sc.text || sk))));
+                    }))));
             }
         })));
         const renderTableFooters = (rows, specificFooterIndex) => {
@@ -781,6 +868,13 @@ const ProcessItem = ({ apiData, item: rawItem, pageIndex, tableData, json, param
                         cellStyle.backgroundColor = fCol.backgroundColor;
                     if (fCol.textAlign)
                         cellStyle.textAlign = fCol.textAlign;
+                    const isImage = (0, exports.isImageValue)(cellValue, fCol);
+                    if (isImage) {
+                        const imgSrc = (0, exports.getImageSource)(cellValue);
+                        const align = cellStyle.textAlign === 'center' ? 'center' : (cellStyle.textAlign === 'right' ? 'flex-end' : 'flex-start');
+                        const imgHeight = fCol?.height ? `${getDecimal(fCol.height) / json.PxPerCmV}cm` : '0.8cm';
+                        return (react_1.default.createElement(renderer_1.View, { key: cIdx, style: { ...cellStyle, alignItems: align, justifyContent: 'center' } }, imgSrc ? (react_1.default.createElement(renderer_1.Image, { src: imgSrc, cache: false, style: { height: imgHeight, maxHeight: '100%', maxWidth: '100%', objectFit: 'contain', alignSelf: align } })) : null));
+                    }
                     return (react_1.default.createElement(renderer_1.View, { key: cIdx, style: { ...cellStyle } },
                         react_1.default.createElement(renderer_1.Text, { style: { textAlign: cellStyle.textAlign || 'left', width: '100%', hyphens: 'none' } }, ensureWrap(cellValue))));
                 })));
@@ -800,7 +894,7 @@ const ProcessItem = ({ apiData, item: rawItem, pageIndex, tableData, json, param
         });
         const hasVisibleRows = hasVisibleColumns && processedRows.length > 0;
         const isTableVisibleOnThisPage = hasVisibleRows || hasVisibleFooters || (!shouldRepeatHeader && hasVisibleColumns);
-        return ((isTableVisibleOnThisPage && (((tableData ?? {})[item?.id] || (apiData ?? {})[item?.dataSource])?.length || (pageIndex ?? 0) == 0)) ? (react_1.default.createElement(renderer_1.View, { style: { ...itemStyles, borderTop: '1px solid #000' }, wrap: true },
+        return ((isTableVisibleOnThisPage && (tableRows.length || (pageIndex ?? 0) == 0)) ? (react_1.default.createElement(renderer_1.View, { style: { ...itemStyles, borderTop: '1px solid #000' }, wrap: true },
             !shouldRepeatHeader && renderTableHeader('top-header'),
             react_1.default.createElement(renderer_1.View, { style: { flexDirection: 'column' } },
                 processedRows.map((pRow) => {
@@ -845,6 +939,20 @@ const ProcessItem = ({ apiData, item: rawItem, pageIndex, tableData, json, param
                         }
                         const colType = getColumnType(json, item?.dataSource, key);
                         cellValue = formatValueByType(cellValue, colType);
+                        const isImage = (0, exports.isImageValue)(cellValue, col);
+                        if (isImage) {
+                            const imgSrc = (0, exports.getImageSource)(cellValue);
+                            const textAlign = filteredStyles.textAlign || (json?.Direction === 'rtl' ? 'right' : 'left');
+                            const align = textAlign === 'center' ? 'center' : (textAlign === 'right' ? 'flex-end' : 'flex-start');
+                            const imgHeight = col?.height ? `${getDecimal(col.height) / json.PxPerCmV}cm` : '0.8cm';
+                            return (react_1.default.createElement(renderer_1.View, { key: i, style: { ...filteredStyles, backgroundColor: backgroundColor, alignItems: align, justifyContent: 'center' } }, imgSrc ? (react_1.default.createElement(renderer_1.Image, { src: imgSrc, cache: false, style: {
+                                    height: imgHeight,
+                                    maxHeight: '100%',
+                                    maxWidth: '100%',
+                                    objectFit: 'contain',
+                                    alignSelf: align
+                                } })) : null));
+                        }
                         return (react_1.default.createElement(renderer_1.View, { key: i, style: { ...filteredStyles, backgroundColor: backgroundColor } },
                             react_1.default.createElement(renderer_1.Text, { style: {
                                     width: '100%',

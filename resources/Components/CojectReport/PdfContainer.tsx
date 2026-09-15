@@ -7,6 +7,7 @@ import { Document, Page as PDFPage, Font } from '@react-pdf/renderer';
 import PdfBody from './PdfComponents/PdfBody';
 import PdfHeader from './PdfComponents/PdfHeader';
 import PdfFooter from './PdfComponents/PdfFooter';
+import { isImageValue } from './PdfComponents/ProcessItem';
 
 // Add Fonts
 Font.register({
@@ -56,6 +57,11 @@ function estimateRowHeight(row: any, columns: any, json: any, fontSizeCm: number
 
     for (const key in columns) {
         if (columns[key]?.hide) continue;
+
+        if (isImageValue(row[key], columns[key])) {
+            maxHeightCm = Math.max(maxHeightCm, 1);
+            continue;
+        }
 
         const text = String(row[key] || '');
         const colWidthCm = parseFloat(((getDecimal(columns[key]?.width) / pxPerCmH) || '3') as string);

@@ -5,6 +5,7 @@ import { Document, Page as PDFPage, Font } from '@react-pdf/renderer';
 import PdfBody from './PdfComponents/PdfBody';
 import PdfHeader from './PdfComponents/PdfHeader';
 import PdfFooter from './PdfComponents/PdfFooter';
+import { isImageValue } from './PdfComponents/ProcessItem';
 // Add Fonts
 Font.register({
     family: 'Almarai',
@@ -45,6 +46,10 @@ function estimateRowHeight(row, columns, json, fontSizeCm = 0.4, lineHeightMulti
     for (const key in columns) {
         if (columns[key]?.hide)
             continue;
+        if (isImageValue(row[key], columns[key])) {
+            maxHeightCm = Math.max(maxHeightCm, 1);
+            continue;
+        }
         const text = String(row[key] || '');
         const colWidthCm = parseFloat(((getDecimal(columns[key]?.width) / pxPerCmH) || '3'));
         const minHeightCm = 1;

@@ -14,7 +14,7 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { DatePicker as MuiDatePicker } from "@mui/x-date-pickers/DatePicker";
 // Styles
 import useStyles from "./theme";
-export const DatePicker = ({ name, value, hijri, viewFormat, actionFormat, minDate, maxDate, error, helperText, style, withTime, textView, fullWidth, onChange, required, tooltipPlacement, ...props }) => {
+export const DatePicker = ({ name, value, hijri, viewFormat, actionFormat, minDate, maxDate, error, helperText, style, withTime, textView, fullWidth, onChange, required, tooltipPlacement, placeholder, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const DateComponent = withTime ? DateTimePicker : MuiDatePicker;
@@ -107,9 +107,12 @@ export const DatePicker = ({ name, value, hijri, viewFormat, actionFormat, minDa
                     React.createElement("span", { style: { display: fullWidth ? "block" : "inline-block" } }, textView
                         ? React.createElement(Typography, { ...style, ...props }, selectedDate ? selectedDate.format(viewFormat ? viewFormat : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY") : '')
                         : React.createElement(DateComponent, { className: `${fullWidth ? "MuiFormControl-fullWidth" : ""}`, label: props.label ? props.label : name, value: selectedDate, ...style, ...Calendar, ...props, format: viewFormat ? viewFormat : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY", slotProps: {
+                                ...props.slotProps,
                                 textField: {
                                     error: !!(error || isRequiredError),
-                                    onBlur: handleBlur
+                                    onBlur: handleBlur,
+                                    ...(placeholder ? { placeholder } : {}),
+                                    ...props.slotProps?.textField
                                 }
                             }, onChange: handleChange })))),
             helperText && React.createElement(FormHelperText, { className: classes.error }, helperText))));

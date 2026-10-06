@@ -15,6 +15,7 @@ type iDatePicker = DateTimePickerProps<any> & DatePickerProps<any> & {
     fullWidth?: boolean;
     helperText?: string;
     viewFormat?: string;
+    placeholder?: string;
     actionFormat?: string;
     required?: boolean | string;
     tooltipPlacement?: "top" | "bottom" | "left" | "right";

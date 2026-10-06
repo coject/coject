@@ -35,12 +35,13 @@ type iDatePicker = DateTimePickerProps<any> & DatePickerProps<any> & {
     fullWidth?: boolean;
     helperText?: string;
     viewFormat?: string;
+    placeholder?: string;
     actionFormat?: string;
     required?: boolean | string;
     tooltipPlacement?: "top" | "bottom" | "left" | "right";
 }
 
-export const DatePicker: FC<iDatePicker> = ({ name, value, hijri, viewFormat, actionFormat, minDate, maxDate, error, helperText, style, withTime, textView, fullWidth, onChange, required, tooltipPlacement, ...props }) => {
+export const DatePicker: FC<iDatePicker> = ({ name, value, hijri, viewFormat, actionFormat, minDate, maxDate, error, helperText, style, withTime, textView, fullWidth, onChange, required, tooltipPlacement, placeholder, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
     const DateComponent: any = withTime ? DateTimePicker : MuiDatePicker;
@@ -145,9 +146,12 @@ export const DatePicker: FC<iDatePicker> = ({ name, value, hijri, viewFormat, ac
                                     value={selectedDate} {...style} {...Calendar} {...props}
                                     format={viewFormat ? viewFormat : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY"}
                                     slotProps={{
+                                        ...props.slotProps,
                                         textField: {
                                             error: !!(error || isRequiredError),
-                                            onBlur: handleBlur
+                                            onBlur: handleBlur,
+                                            ...(placeholder ? { placeholder } : {}),
+                                            ...props.slotProps?.textField
                                         }
                                     }}
                                     onChange={handleChange}

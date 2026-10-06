@@ -43,7 +43,7 @@ const DateTimePicker_1 = require("@mui/x-date-pickers/DateTimePicker");
 const DatePicker_1 = require("@mui/x-date-pickers/DatePicker");
 // Styles
 const theme_1 = __importDefault(require("./theme"));
-const DatePicker = ({ name, value, hijri, viewFormat, actionFormat, minDate, maxDate, error, helperText, style, withTime, textView, fullWidth, onChange, required, tooltipPlacement, ...props }) => {
+const DatePicker = ({ name, value, hijri, viewFormat, actionFormat, minDate, maxDate, error, helperText, style, withTime, textView, fullWidth, onChange, required, tooltipPlacement, placeholder, ...props }) => {
     const { classes } = (0, theme_1.default)();
     const Methods = (0, react_hook_form_1.useFormContext)() || {};
     const DateComponent = withTime ? DateTimePicker_1.DateTimePicker : DatePicker_1.DatePicker;
@@ -136,9 +136,12 @@ const DatePicker = ({ name, value, hijri, viewFormat, actionFormat, minDate, max
                     react_1.default.createElement("span", { style: { display: fullWidth ? "block" : "inline-block" } }, textView
                         ? react_1.default.createElement(material_1.Typography, { ...style, ...props }, selectedDate ? selectedDate.format(viewFormat ? viewFormat : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY") : '')
                         : react_1.default.createElement(DateComponent, { className: `${fullWidth ? "MuiFormControl-fullWidth" : ""}`, label: props.label ? props.label : name, value: selectedDate, ...style, ...Calendar, ...props, format: viewFormat ? viewFormat : hijri ? (withTime ? "iDD-iMM-iYYYY HH:mm" : "iDD-iMM-iYYYY") : withTime ? "DD-MM-YYYY HH:mm" : "DD-MM-YYYY", slotProps: {
+                                ...props.slotProps,
                                 textField: {
                                     error: !!(error || isRequiredError),
-                                    onBlur: handleBlur
+                                    onBlur: handleBlur,
+                                    ...(placeholder ? { placeholder } : {}),
+                                    ...props.slotProps?.textField
                                 }
                             }, onChange: handleChange })))),
             helperText && react_1.default.createElement(material_1.FormHelperText, { className: classes.error }, helperText))));

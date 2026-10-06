@@ -16,5 +16,6 @@ export { DatePicker } from "./DatePicker";
 export { Upload } from "./Upload";
 export { PDFGenerator } from "./PDFGenerator";
 export { Scanner } from "./Scanner";
+export { Tabs } from "./Tabs";
 export declare const Icons: any;
 export { CojectReport } from "./CojectReport";

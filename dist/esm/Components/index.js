@@ -36,6 +36,8 @@ export { Upload } from "./Upload";
 export { PDFGenerator } from "./PDFGenerator";
 // Scanner
 export { Scanner } from "./Scanner";
+// Tabs
+export { Tabs } from "./Tabs";
 // Icons
 export const Icons = MuiIcons;
 // Coject Report

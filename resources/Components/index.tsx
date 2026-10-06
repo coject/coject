@@ -55,6 +55,9 @@ export { PDFGenerator } from "./PDFGenerator";
 // Scanner
 export { Scanner } from "./Scanner";
 
+// Tabs
+export { Tabs } from "./Tabs";
+
 // Icons
 export const Icons: any = MuiIcons;
 

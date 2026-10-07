@@ -53,6 +53,7 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     required?: boolean | string;
     fixedOption?: (string | number)[];
     disabledOption?: (string | number)[];
+    getOptionKey?: (option: any) => string | number;
 }
 export declare const Select: FC<Omit<iSelect, "options" | "renderInput">>;
 export {};

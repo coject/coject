@@ -70,14 +70,16 @@ interface iSelect extends AutocompleteProps<any, any, any, any> {
     required?: boolean | string;
     fixedOption?: (string | number)[];
     disabledOption?: (string | number)[];
+    getOptionKey?: (option: any) => string | number;
 }
 
-export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, value, label, noOptionsText, callback, staticData, disabled, helperText, dataSource, dependancies, multiple, separate, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
+export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ getOptionKey = (option) => customKey ? option[`${customKey}`] : option.id, name, value, label, noOptionsText, callback, staticData, disabled, helperText, dataSource, dependancies, multiple, separate, checkboxes, customKey, customName, renderOption, fixedOption, disabledOption, onChange, required, inputProps, error, ...props }) => {
     const { classes } = useStyles();
     const Methods = useFormContext() || {};
-    const [selectedValue, setSelectedValue] = useState<any>(multiple ? [] : null);
     const [selectData, setSelectData] = useState<any>([]);
     const { setValue, control, watch, getValues } = useFormContext() || {};
+    const [selectedValue, setSelectedValue] = useState<any>(multiple ? [] : null);
+    const allSelected = multiple && !!selectData?.length && selectData.every((item: any) => selectedValue?.includes(customKey ? item[customKey] : item.id));
 
     // Methods Watching
     useEffect(() => {
@@ -121,11 +123,18 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
         <React.Fragment>
             <Box className={`${classes.root} coject_select`}>
                 {control ?
-                    <Controller name={name || "default"} control={control}
+                    <Controller name={name || "default"} control={control} 
                         rules={ required ? { validate: (value) => multiple ? (Array.isArray(value) && value.length > 0) || (typeof required === "string" ? required : "This Field is Required") : !!value || (typeof required === "string" ? required : "This Field is Required") } : undefined }
-                        render={({ fieldState }) => {
+                         render={({ fieldState }) => {
                             return (
-                                <Autocomplete noOptionsText={noOptionsText} options={selectData} multiple={multiple} disabled={disabled} readOnly={disabled} {...props}
+                                <Autocomplete 
+                                    getOptionKey={(option: any) => option.isSelectAll ? 'select-all' : getOptionKey(option)} 
+                                    noOptionsText={noOptionsText} 
+                                    options={multiple && selectData?.length > 0 ? [{ isSelectAll: true }, ...selectData] : selectData} 
+                                    multiple={multiple} 
+                                    disabled={disabled} 
+                                    readOnly={disabled} 
+                                    {...props}
                                     value={!!selectData?.length && selectedValue !== undefined && selectedValue !== null
                                         ? multiple
                                             ? selectedValue?.map((SValue: string) => selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === SValue))
@@ -138,32 +147,67 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
                                             : multiple ? [] : selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
                                         : multiple ? [] : null
                                     }
-                                    onChange={(event, newValue) => {
-                                        onChange && onChange(event, newValue, Methods);
-                                        setSelectedValue(multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
-                                        control && setValue(name || "default", multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id), { shouldValidate: true, shouldDirty: true});
+                                    onChange={(event, newValue: any) => {
+                                        let finalValue = newValue;
+                                        if (multiple && newValue?.some((v: any) => v.isSelectAll)) {
+                                            if (allSelected) {
+                                                finalValue = selectData.filter((item: any) => fixedOption?.includes(customKey ? item[customKey] : item.id));
+                                            } else {
+                                                finalValue = selectData;
+                                            }
+                                        }
+
+                                        const valueToSet = multiple 
+                                            ? [...new Set([...(fixedOption || []), ...(finalValue?.map((v: any) => (customKey ? v[customKey] : v.id)) || [])])]
+                                            : (customKey ? (finalValue && finalValue[customKey]) : finalValue?.id);
+
+                                        onChange && onChange(event, finalValue, Methods);
+                                        setSelectedValue(valueToSet);
+                                        control && setValue(name || "default", valueToSet, { shouldValidate: true, shouldDirty: true });
                                     }}
                                     renderTags={(tagValue, getTagProps) => tagValue.map((row, index) => (
-                                        <Chip {...getTagProps({ index })} key={index} label={customName ? row[`${customName}`] : row.label} disabled={(fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false} />
+                                        <Chip {...getTagProps({ index })} key={getOptionKey(row)} label={customName ? row[`${customName}`] : row.label} disabled={(fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false} />
                                     ))}
-                                    {...(customName ? { getOptionLabel: (option: any) => option[`${customName}`] } : {})}
-                                    {...((renderOption || checkboxes) ? {
-                                        renderOption: (props, row: any, { selected }) => <Box component={"li"} {...props}>
-                                            {checkboxes
-                                                ? <React.Fragment>
-                                                    <Checkbox icon={<Icons.CheckBoxOutlineBlank fontSize="small" />} checkedIcon={<Icons.CheckBox fontSize="small" />} style={{ marginRight: 5 }} checked={selected} />
-                                                    {customName ? row[`${customName}`] : row.label}
-                                                </React.Fragment>
-                                                : renderOption(row)
-                                            }
-                                        </Box>
+                                    getOptionLabel={(option: any) => {
+                                        if (option.isSelectAll) return localStorage?.language === 'ar' ? "تحديد الكل" : "Select All";
+                                        return customName ? (option[customName] || "") : (option.label || "");
+                                    }}
+                                    {...((renderOption || checkboxes || multiple) ? {
+                                        renderOption: (props, row: any, { selected }) => {
+                                            const isSelectAll = row.isSelectAll;
+                                            const isChecked = isSelectAll ? allSelected : selected;
+                                            return (
+                                                <Box component={"li"} {...props} key={isSelectAll ? 'select-all' : getOptionKey(row)}>
+                                                    {(checkboxes || multiple)
+                                                        ? <React.Fragment>
+                                                            <Checkbox 
+                                                                icon={<Icons.CheckBoxOutlineBlank fontSize="small" />} 
+                                                                checkedIcon={<Icons.CheckBox fontSize="small" />} 
+                                                                style={{ marginRight: 5 }} 
+                                                                checked={isChecked} 
+                                                                indeterminate={isSelectAll && !allSelected && selectedValue?.length > 0}
+                                                            />
+                                                            {isSelectAll ? (localStorage?.language === 'ar' ? "تحديد الكل" : "Select All") : (customName ? row[`${customName}`] : row.label)}
+                                                        </React.Fragment>
+                                                        : renderOption ? renderOption(row) : (customName ? row[customName] : row.label)
+                                                    }
+                                                </Box>
+                                            )
+                                        }
                                     } : {})}
                                     getOptionDisabled={(row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false)}
                                     renderInput={(params) => <Tooltip title={fieldState?.error?.message || ""} open={!!fieldState?.error?.message} arrow disableHoverListener placement={localStorage?.language === 'ar' ? "left" : "right"}><TextField {...params} InputProps={{ ...params.InputProps, ...inputProps }} fullWidth={!!inputProps?.fullWidth} error={!!fieldState?.error} label={label ? label : (name || "default")} helperText={null} /></Tooltip>}
                                 />
                             )
-                    }} />
-                    : <Autocomplete noOptionsText={noOptionsText} options={selectData} multiple={multiple} disabled={disabled} readOnly={disabled} {...props}
+                        }} />
+                    : <Autocomplete 
+                        getOptionKey={(option: any) => option.isSelectAll ? 'select-all' : getOptionKey(option)} 
+                        noOptionsText={noOptionsText} 
+                        options={multiple && selectData?.length > 0 ? [{ isSelectAll: true }, ...selectData] : selectData} 
+                        multiple={multiple} 
+                        disabled={disabled} 
+                        readOnly={disabled} 
+                        {...props}
                         value={!!selectData?.length && selectedValue !== undefined && selectedValue !== null
                             ? multiple
                                 ? selectedValue?.map((SValue: string) => selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === SValue))
@@ -176,24 +220,51 @@ export const Select: FC<Omit<iSelect, "options" | "renderInput">> = ({ name, val
                                 : multiple ? [] : selectData.find((option: any) => (customKey ? option[`${customKey}`] : option.id) === selectedValue)
                             : multiple ? [] : null
                         }
-                        onChange={(event, newValue) => {
-                            onChange && onChange(event, newValue, Methods);
-                            setSelectedValue(multiple ? [...new Set([...(fixedOption ? fixedOption : []), ...(newValue?.map((NValue: any) => (customKey ? NValue[`${customKey}`] : NValue.id)))])] : (customKey ? (newValue && newValue[`${customKey}`]) : newValue?.id));
+                        onChange={(event, newValue: any) => {
+                            let finalValue = newValue;
+                            if (multiple && newValue?.some((v: any) => v.isSelectAll)) {
+                                if (allSelected) {
+                                    finalValue = selectData.filter((item: any) => fixedOption?.includes(customKey ? item[customKey] : item.id));
+                                } else {
+                                    finalValue = selectData;
+                                }
+                            }
+                            const valueToSet = multiple 
+                                ? [...new Set([...(fixedOption || []), ...(finalValue?.map((v: any) => (customKey ? v[customKey] : v.id)) || [])])]
+                                : (customKey ? (finalValue && finalValue[customKey]) : finalValue?.id);
+
+                            onChange && onChange(event, finalValue, Methods);
+                            setSelectedValue(valueToSet);
                         }}
                         renderTags={(tagValue, getTagProps) => tagValue.map((row, index) => (
-                            <Chip {...getTagProps({ index })} key={index} label={customName ? row[`${customName}`] : row.label} disabled={(fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false} />
+                            <Chip {...getTagProps({ index })} key={getOptionKey(row)} label={customName ? row[`${customName}`] : row.label} disabled={(fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false} />
                         ))}
-                        {...(customName ? { getOptionLabel: (option: any) => option[`${customName}`] } : {})}
-                        {...((renderOption || checkboxes) ? {
-                            renderOption: (props, row: any, { selected }) => <Box component={"li"} {...props}>
-                                {checkboxes
-                                    ? <React.Fragment>
-                                        <Checkbox icon={<Icons.CheckBoxOutlineBlank fontSize="small" />} checkedIcon={<Icons.CheckBox fontSize="small" />} style={{ marginRight: 5 }} checked={selected} />
-                                        {customName ? row[`${customName}`] : row.label}
-                                    </React.Fragment>
-                                    : renderOption(row)
-                                }
-                            </Box>
+                        getOptionLabel={(option: any) => {
+                            if (option.isSelectAll) return localStorage?.language === 'ar' ? "تحديد الكل" : "Select All";
+                            return customName ? (option[customName] || "") : (option.label || "");
+                        }}
+                        {...((renderOption || checkboxes || multiple) ? {
+                            renderOption: (props, row: any, { selected }) => {
+                                const isSelectAll = row.isSelectAll;
+                                const isChecked = isSelectAll ? allSelected : selected;
+                                return (
+                                    <Box component={"li"} {...props} key={isSelectAll ? 'select-all' : getOptionKey(row)}>
+                                        {(checkboxes || multiple)
+                                            ? <React.Fragment>
+                                                <Checkbox 
+                                                    icon={<Icons.CheckBoxOutlineBlank fontSize="small" />} 
+                                                    checkedIcon={<Icons.CheckBox fontSize="small" />} 
+                                                    style={{ marginRight: 5 }} 
+                                                    checked={isChecked} 
+                                                    indeterminate={isSelectAll && !allSelected && selectedValue?.length > 0}
+                                                />
+                                                {isSelectAll ? (localStorage?.language === 'ar' ? "تحديد الكل" : "Select All") : (customName ? row[`${customName}`] : row.label)}
+                                            </React.Fragment>
+                                            : renderOption ? renderOption(row) : (customName ? row[customName] : row.label)
+                                        }
+                                    </Box>
+                                )
+                            }
                         } : {})}
                         getOptionDisabled={(row) => (disabledOption ? disabledOption.includes(customKey ? row[`${customKey}`] : row.id) : false) || ((fixedOption && multiple) ? fixedOption.includes(customKey ? row[`${customKey}`] : row.id) : false)}
                         renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, ...inputProps }} fullWidth={!!inputProps?.fullWidth} error={error} label={label ? label : (name || "default")} required={!!required} />}
